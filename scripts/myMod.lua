@@ -5,12 +5,49 @@ function string:split(sep)
         self:gsub(pattern, function(c) fields[#fields+1] = c end)
         return fields
 end
-
 local Methods = {}
 
 local Players
 
-Methods.GetPlayerList = function()
+Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
+	if originPlayer ~= nil and targetPlayer ~= nil and type(tonumber(originPlayer)) == "number" and type(tonumber(targetPlayer)) == "number" then
+		if tonumber(originPlayer) >= 0 and tonumber(originPlayer) <= #Players and tonumber(targetPlayer) >= 0 and tonumber(targetPlayer) <= #Players then
+			if Players[tonumber(originPlayer)]:IsLoggedOn() and Players[tonumber(targetPlayer)]:IsLoggedOn() then
+				local originPlayerName = tes3mp.GetName(originPlayer)
+				local targetPlayerName = tes3mp.GetName(targetPlayer)
+				local targetCell
+				if tes3mp.IsInInterior(targetPlayer) then
+					targetCell = tes3mp.GetCell(targetPlayer)
+				else
+					targetCell = tes3mp.GetCell(targetPlayer) -- Placeholder
+				end
+				if targetCell == nil then
+					targetCell = "ToddTest"
+				end
+				local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCell .. ")\n"
+				local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
+				tes3mp.SendMessage(originPlayer, originMessage, 0)
+				tes3mp.SendMessage(targetPlayer, targetMessage, 0)
+				tes3mp.SetCell(originPlayer,targetCell)
+			else
+				local message = "That player is not logged on!\n"
+				tes3mp.SendMessage(pid, message, 0)
+			end
+		else
+			local message = "That player is not logged on!\n"
+			tes3mp.SendMessage(pid, message, 0)
+		end
+	else
+		local message = "Please specify the player ID.\n"
+		tes3mp.SendMessage(pid, message, 0)
+	end
+end
+
+Methods.GetConnectedPlayerNumber = function()
+	return #Players+1
+end
+
+Methods.GetConnectedPlayerList = function()
 	local list = ""
 	local divider = ""
 	for i=0,#Players do
