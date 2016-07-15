@@ -23,10 +23,12 @@ function OnLogin(pid) -- timer-based event see myMod.OnPlayerConnect
 end
 
 function OnPlayerDisconnect(pid)
+	print("Player with pid("..pid..") disconnected.")
+	myMod.OnPlayerDisconnect(pid)
 end
 
 function OnPlayerDeath(pid)
-    tes3mp.Resurrect(pid)
+	tes3mp.Resurrect(pid)
 end
 
 function OnPlayerResurrect(pid)
