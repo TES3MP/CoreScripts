@@ -13,8 +13,8 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 	if originPlayer ~= nil and targetPlayer ~= nil and type(tonumber(originPlayer)) == "number" and type(tonumber(targetPlayer)) == "number" then
 		if tonumber(originPlayer) >= 0 and tonumber(originPlayer) <= #Players and tonumber(targetPlayer) >= 0 and tonumber(targetPlayer) <= #Players then
 			if Players[tonumber(originPlayer)]:IsLoggedOn() and Players[tonumber(targetPlayer)]:IsLoggedOn() then
-				local originPlayerName = tes3mp.GetName(originPlayer)
-				local targetPlayerName = tes3mp.GetName(targetPlayer)
+				local originPlayerName = Players[originPlayer].name
+				local targetPlayerName = Players[targetPlayer].name
 				local targetCell
 				if tes3mp.IsInInterior(targetPlayer) then
 					targetCell = tes3mp.GetCell(targetPlayer)
@@ -44,7 +44,13 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 end
 
 Methods.GetConnectedPlayerNumber = function()
-	return #Players+1
+	local playernumber = 0
+	for i=0,#Players do
+		if Players[i]:IsLoggedOn() then
+			playernumber = playernumber + 1
+		end
+	end
+	return playernumber
 end
 
 Methods.GetConnectedPlayerList = function()
@@ -56,7 +62,9 @@ Methods.GetConnectedPlayerList = function()
 		else
 			divider = ", "
 		end
-		list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
+		if Players[i]:IsLoggedOn() then
+			list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
+		end
 	end
 	return list
 end
@@ -83,7 +91,7 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 	Players[pid]:Destroy()
-    Players[pid] = nil
+	Players[pid] = nil
 end
 
 Methods.OnPlayerMessage = function(pid, message)
