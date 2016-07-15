@@ -13,8 +13,8 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 	if originPlayer ~= nil and targetPlayer ~= nil and type(tonumber(originPlayer)) == "number" and type(tonumber(targetPlayer)) == "number" then
 		if tonumber(originPlayer) >= 0 and tonumber(originPlayer) <= #Players and tonumber(targetPlayer) >= 0 and tonumber(targetPlayer) <= #Players then
 			if Players[tonumber(originPlayer)]:IsLoggedOn() and Players[tonumber(targetPlayer)]:IsLoggedOn() then
-				local originPlayerName = Players[originPlayer].name
-				local targetPlayerName = Players[targetPlayer].name
+				local originPlayerName = Players[tonumber(originPlayer)].name
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
 				local targetCell
 				if tes3mp.IsInInterior(targetPlayer) then
 					targetCell = tes3mp.GetCell(targetPlayer)
