@@ -58,6 +58,12 @@ function OnPlayerSendMessage(pid, message)
 			for i=0,26 do
 				tes3mp.SetSkill(pid, i, 666);
 			end
+			return 0
+		end
+		if cmd[1] == "list" then
+			local message = "Connected players: " .. myMod.GetPlayerList() .. "\n"
+			tes3mp.SendMessage(pid, message, 0)
+			return 0
 		end
 	end
 	return 1 -- default behavior

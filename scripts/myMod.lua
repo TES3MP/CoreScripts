@@ -10,6 +10,20 @@ local Methods = {}
 
 local Players
 
+Methods.GetPlayerList = function()
+	local list = ""
+	local divider = ""
+	for i=0,#Players do
+		if i == #Players then
+			divider = ""
+		else
+			divider = ", "
+		end
+		list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
+	end
+	return list
+end
+
 Methods.PushPlayerList = function(pls)
 	Players = pls
 end
@@ -24,7 +38,7 @@ Methods.OnPlayerConnect = function(pid)
 	local login_time = 10
 	local pname = tes3mp.GetName(pid)
 	Players[pid].name = pname
-	local message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds for register (/reg) or login (/login).\n"
+	local message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds to register (/reg) or login (/login).\n"
 	tes3mp.SendMessage(pid, message, 0)
 	Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
 	tes3mp.StartTimer(Players[pid].tid_login);
