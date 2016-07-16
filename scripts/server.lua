@@ -19,15 +19,24 @@ function OnPlayerConnect(pid)
 end
 
 function OnLogin(pid) -- timer-based event see myMod.OnPlayerConnect
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."joined the server.\n"
+	tes3mp.SendMessage(pid, message, 1)
 	myMod.AuthCheck(pid)
 end
 
 function OnPlayerDisconnect(pid)
 	print("Player with pid("..pid..") disconnected.")
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."left the server.\n"
+	tes3mp.SendMessage(pid, message, 1)
 	myMod.OnPlayerDisconnect(pid)
 end
 
 function OnPlayerDeath(pid)
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."died.\n"
+	tes3mp.SendMessage(pid, message, 1)
 	tes3mp.Resurrect(pid)
 end
 
