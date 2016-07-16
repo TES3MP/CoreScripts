@@ -19,14 +19,25 @@ function OnPlayerConnect(pid)
 end
 
 function OnLogin(pid) -- timer-based event see myMod.OnPlayerConnect
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."joined the server.\n"
+	tes3mp.SendMessage(pid, message, 1)
 	myMod.AuthCheck(pid)
 end
 
 function OnPlayerDisconnect(pid)
+	print("Player with pid("..pid..") disconnected.")
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."left the server.\n"
+	tes3mp.SendMessage(pid, message, 1)
+	myMod.OnPlayerDisconnect(pid)
 end
 
 function OnPlayerDeath(pid)
-    tes3mp.Resurrect(pid)
+	local pname = tes3mp.GetName(pid)
+	local message = pname.." ("..pid..") ".."died.\n"
+	tes3mp.SendMessage(pid, message, 1)
+	tes3mp.Resurrect(pid)
 end
 
 function OnPlayerResurrect(pid)
@@ -35,7 +46,8 @@ end
 function OnPlayerChangeCell(pid)
 	local curCell = tes3mp.GetCell(pid);
 	if curCell ~= "ToddTest" or not tes3mp.IsInInterior(pid) then
-		tes3mp.SetCell(pid, "ToddTest") end
+		--tes3mp.SetCell(pid, "ToddTest")
+	end
 end
 
 function OnPlayerUpdateEquiped(pid)
@@ -58,15 +70,26 @@ function OnPlayerSendMessage(pid, message)
 			for i=0,26 do
 				tes3mp.SetSkill(pid, i, 666);
 			end
-			return 0
-		end
-		if cmd[1] == "list" then
-			local message = "Connected players: " .. myMod.GetPlayerList() .. "\n"
+		elseif cmd[1] == "list" then
+			local text
+			if myMod.GetConnectedPlayerNumber() == 1 then
+				text = "player"
+			else
+				text = "players"
+			end
+			local message = myMod.GetConnectedPlayerNumber() .. " connected " .. text .. ": " .. myMod.GetConnectedPlayerList() .. "\n"
 			tes3mp.SendMessage(pid, message, 0)
-			return 0
+		elseif cmd[1] == "teleport" or cmd[1] == "tp" then
+			myMod.TeleportToPlayer(pid, cmd[2], pid)
+		elseif cmd[1] == "teleportto" or cmd[1] == "tpto" then
+			myMod.TeleportToPlayer(pid, pid, cmd[2])
+		else
+			local message = "Not a valid command. Type /help for more info.\n"
+			tes3mp.SendMessage(pid, message, 0)
 		end
+		return 0 -- commands should be hidden
 	end
-	return 1 -- default behavior
+	return 1 -- default behavior, chat messages should not
 end
 
 function OnPlayerEndCharGen(pid)

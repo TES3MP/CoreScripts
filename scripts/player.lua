@@ -94,7 +94,7 @@ function Player:Destroy()
 		print("Saving player...")
 		self:Save()
 	end
-    self.loggedOn = false
+	self.loggedOn = false
 	self.hasAccount = nil
 end
 

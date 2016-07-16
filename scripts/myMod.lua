@@ -5,12 +5,55 @@ function string:split(sep)
         self:gsub(pattern, function(c) fields[#fields+1] = c end)
         return fields
 end
-
 local Methods = {}
 
 local Players
 
-Methods.GetPlayerList = function()
+Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
+	if originPlayer ~= nil and targetPlayer ~= nil and type(tonumber(originPlayer)) == "number" and type(tonumber(targetPlayer)) == "number" then
+		if tonumber(originPlayer) >= 0 and tonumber(originPlayer) <= #Players and tonumber(targetPlayer) >= 0 and tonumber(targetPlayer) <= #Players then
+			if Players[tonumber(originPlayer)]:IsLoggedOn() and Players[tonumber(targetPlayer)]:IsLoggedOn() then
+				local originPlayerName = Players[tonumber(originPlayer)].name
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+				local targetCell
+				if tes3mp.IsInInterior(targetPlayer) then
+					targetCell = tes3mp.GetCell(targetPlayer)
+				else
+					targetCell = tes3mp.GetCell(targetPlayer) -- Placeholder
+				end
+				if targetCell == nil then
+					targetCell = "ToddTest"
+				end
+				local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCell .. ")\n"
+				local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
+				tes3mp.SendMessage(originPlayer, originMessage, 0)
+				tes3mp.SendMessage(targetPlayer, targetMessage, 0)
+				tes3mp.SetCell(originPlayer,targetCell)
+			else
+				local message = "That player is not logged on!\n"
+				tes3mp.SendMessage(pid, message, 0)
+			end
+		else
+			local message = "That player is not logged on!\n"
+			tes3mp.SendMessage(pid, message, 0)
+		end
+	else
+		local message = "Please specify the player ID.\n"
+		tes3mp.SendMessage(pid, message, 0)
+	end
+end
+
+Methods.GetConnectedPlayerNumber = function()
+	local playernumber = 0
+	for i=0,#Players do
+		if Players[i]:IsLoggedOn() then
+			playernumber = playernumber + 1
+		end
+	end
+	return playernumber
+end
+
+Methods.GetConnectedPlayerList = function()
 	local list = ""
 	local divider = ""
 	for i=0,#Players do
@@ -19,7 +62,9 @@ Methods.GetPlayerList = function()
 		else
 			divider = ", "
 		end
-		list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
+		if Players[i]:IsLoggedOn() then
+			list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
+		end
 	end
 	return list
 end
@@ -46,7 +91,7 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 	Players[pid]:Destroy()
-    Players[pid] = nil
+--	Players[pid] = nil
 end
 
 Methods.OnPlayerMessage = function(pid, message)
@@ -56,31 +101,31 @@ Methods.OnPlayerMessage = function(pid, message)
 	
 	if cmd[1] == "register" or cmd[1] == "reg" then
 		if Players[pid]:IsLoggedOn() then
-			Players[pid]:Message("You are already logged in.")
+			Players[pid]:Message("You are already logged in.\n")
 			return 0
 		elseif Players[pid]:HasAccount() then
-			Players[pid]:Message("You already have an account. Try \"/login password\".")
+			Players[pid]:Message("You already have an account. Try \"/login password\".\n")
 			return 0
 		elseif cmd[2] == nil then
-			Players[pid]:Message("Incorrect password!")
+			Players[pid]:Message("Incorrect password!\n")
 			return 0 
 		end
 		Players[pid]:Registered(cmd[2])
 		return 0
 	elseif cmd[1] == "login" then
 		if Players[pid]:IsLoggedOn() then
-			Players[pid]:Message("You are already logged in.")
+			Players[pid]:Message("You are already logged in.\n")
 			return 0
 		elseif not Players[pid]:HasAccount() then
-			Players[pid]:Message("You do not have an account. Try \"/register password\".")
+			Players[pid]:Message("You do not have an account. Try \"/register password\".\n")
 			return 0
 		elseif cmd[2] == nil then
-			Players[pid]:Message("Password can not be empty")
+			Players[pid]:Message("Password can not be empty\n")
 			return 0 
 		end
 		Players[pid]:Load()
 		if Players[pid].data.general.password ~= cmd[2] then
-			Players[pid]:Message("Incorrect password!")
+			Players[pid]:Message("Incorrect password!\n")
             return 0
 		end
 		Players[pid]:LoggedOn()
