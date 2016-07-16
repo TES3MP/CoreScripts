@@ -91,7 +91,7 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 	Players[pid]:Destroy()
-	Players[pid] = nil
+--	Players[pid] = nil
 end
 
 Methods.OnPlayerMessage = function(pid, message)
