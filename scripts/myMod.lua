@@ -7,28 +7,14 @@ function string:split(sep)
 end
 local Methods = {}
 
-local Players
+Players = {}
 
-Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
-	if originPlayer ~= nil and targetPlayer ~= nil and type(tonumber(originPlayer)) == "number" and type(tonumber(targetPlayer)) == "number" then
-		if tonumber(originPlayer) >= 0 and tonumber(originPlayer) <= #Players and tonumber(targetPlayer) >= 0 and tonumber(targetPlayer) <= #Players then
-			if Players[tonumber(originPlayer)]:IsLoggedOn() and Players[tonumber(targetPlayer)]:IsLoggedOn() then
-				local originPlayerName = Players[tonumber(originPlayer)].name
-				local targetPlayerName = Players[tonumber(targetPlayer)].name
-				local targetCell
-				if tes3mp.IsInInterior(targetPlayer) then
-					targetCell = tes3mp.GetCell(targetPlayer)
-				else
-					targetCell = tes3mp.GetCell(targetPlayer) -- Placeholder
-				end
-				if targetCell == nil then
-					targetCell = "ToddTest"
-				end
-				local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCell .. ")\n"
-				local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-				tes3mp.SendMessage(originPlayer, originMessage, 0)
-				tes3mp.SendMessage(targetPlayer, targetMessage, 0)
-				tes3mp.SetCell(originPlayer,targetCell)
+Methods.CheckPlayerValidity = function(pid, targetPlayer)
+	local valid = false
+	if targetPlayer ~= nil and type(tonumber(targetPlayer)) == "number" then
+		if tonumber(targetPlayer) >=0 and tonumber(targetPlayer) <= #Players then
+			if Players[tonumber(targetPlayer)]:IsLoggedOn() then
+				valid = true
 			else
 				local message = "That player is not logged on!\n"
 				tes3mp.SendMessage(pid, message, 0)
@@ -40,6 +26,40 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 	else
 		local message = "Please specify the player ID.\n"
 		tes3mp.SendMessage(pid, message, 0)
+	end
+	return valid
+end
+
+Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
+	if Methods.CheckPlayerValidity(pid, originPlayer) and Methods.CheckPlayerValidity(pid, targetPlayer) then
+		if tonumber(originPlayer) ~= tonumber(targetPlayer) then
+			local originPlayerName = Players[tonumber(originPlayer)].name
+			local targetPlayerName = Players[tonumber(targetPlayer)].name
+			local targetCell = ""
+			local targetCellName
+			local targetPos = {0, 0, 0}
+			targetPos[0] = tes3mp.GetPosX(targetPlayer)
+			targetPos[1] = tes3mp.GetPosY(targetPlayer)
+			targetPos[2] = tes3mp.GetPosZ(targetPlayer)
+			targetCell = tes3mp.GetCell(targetPlayer)
+			if targetCell ~= "" then
+				targetCellName = targetCell
+			else
+				targetCellName = "Exterior"
+				if tes3mp.IsInInterior(originPlayer) then
+					-- We need a SetCell like function that brings people to the exterior, like "coc Balmora" does
+				end
+			end
+			local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
+			local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
+			tes3mp.SendMessage(originPlayer, originMessage, 0)
+			tes3mp.SendMessage(targetPlayer, targetMessage, 0)
+			tes3mp.SetCell(originPlayer,targetCell)
+			tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
+		else
+			local message = "You can't teleport to yourself.\n"
+			tes3mp.SendMessage(pid, message, 0)
+		end
 	end
 end
 
@@ -91,7 +111,6 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 	Players[pid]:Destroy()
---	Players[pid] = nil
 end
 
 Methods.OnPlayerMessage = function(pid, message)
@@ -146,11 +165,11 @@ Methods.AuthCheck = function(pid)
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
-    Players[pid]:UpdateGeneral()
+	Players[pid]:UpdateGeneral()
 	Players[pid]:UpdateSkills()
 	Players[pid]:UpdateAttributes()
 	Players[pid]:UpdateCharacter()
-    Players[pid]:CreateAccount()
+	Players[pid]:CreateAccount()
 end
 
 return Methods
