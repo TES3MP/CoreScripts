@@ -1,8 +1,9 @@
 myMod = require("myMod")
 Player = require("player")
 
-Players = {}
-
+local helptext = "Command list:\
+/list - Lists all players on the server\
+WIP\n"
 
 function OnServerInit()
 	myMod.PushPlayerList(Players)
@@ -60,10 +61,21 @@ function OnPlayerSendMessage(pid, message)
 	if myMod.OnPlayerMessage(pid, message) == 0 then
 		return 0
 	end
+
+	local admin = false
+	local moderator = false
+	if Players[pid]:IsAdmin() then
+		admin = true
+		moderator = true
+	elseif Players[pid]:IsModerator() then
+		moderator = true
+	end
 	
 	if message:sub(1,1) == '/' then
 		local cmd = (message:sub(2, #message)):split(" ")
-		if cmd[1] == "cheat" then
+		if cmd[1] == "help" then
+			tes3mp.SendMessage(pid, helptext, 0)
+		elseif cmd[1] == "cheat" and moderator then
 			for i=0,7 do
 				tes3mp.SetAttribute(pid, i, 666)
 			end
@@ -79,10 +91,38 @@ function OnPlayerSendMessage(pid, message)
 			end
 			local message = myMod.GetConnectedPlayerNumber() .. " connected " .. text .. ": " .. myMod.GetConnectedPlayerList() .. "\n"
 			tes3mp.SendMessage(pid, message, 0)
-		elseif cmd[1] == "teleport" or cmd[1] == "tp" then
+		elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
 			myMod.TeleportToPlayer(pid, cmd[2], pid)
-		elseif cmd[1] == "teleportto" or cmd[1] == "tpto" then
+		elseif (cmd[1] == "teleportto" or cmd[1] == "tpto") and moderator then
 			myMod.TeleportToPlayer(pid, pid, cmd[2])
+		elseif cmd[1] == "kick" and moderator then
+			local targetPlayer = cmd[2]
+			if myMod.CheckPlayerValidity(pid, targetPlayer) then
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+				local message = targetPlayerName.." was kicked from the server!\n"
+				tes3mp.SendMessage(pid, message, 1)
+				Players[tonumber(targetPlayer)]:Kick()
+			end
+		elseif cmd[1] == "setmoderator" and admin then
+			local targetPlayer = cmd[2]
+			if myMod.CheckPlayerValidity(pid, targetPlayer) then
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+				local message = targetPlayerName.." was promoted to Moderator!\n"
+				tes3mp.SendMessage(pid, message, 1)
+				Players[tonumber(targetPlayer)].data.general.admin = 1
+				Players[tonumber(targetPlayer)]:Save()
+			end
+		elseif cmd[1] == "getpos" and moderator then
+			local targetPlayer = cmd[2]
+			if myMod.CheckPlayerValidity(pid, cmd[2]) then
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+				local x, y, z
+				x = tes3mp.GetPosX(targetPlayer)
+				y = tes3mp.GetPosY(targetPlayer)
+				z = tes3mp.GetPosZ(targetPlayer)
+				message = targetPlayerName.." ("..targetPlayer..") is at "..x.." "..y.." "..z.."\n"
+				tes3mp.SendMessage(pid, message, 0)
+			end
 		else
 			local message = "Not a valid command. Type /help for more info.\n"
 			tes3mp.SendMessage(pid, message, 0)
@@ -95,4 +135,3 @@ end
 function OnPlayerEndCharGen(pid)
 	myMod.OnPlayerEndCharGen(pid)
 end
-

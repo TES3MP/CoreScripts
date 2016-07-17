@@ -77,7 +77,7 @@ function Player.new(pid)
 		},
     };
 	self.accountName = tes3mp.GetName(pid)..".txt"
-    self.pid = pid
+	self.pid = pid
 	self.loggedOn = false
 	self.tid_login = nil
 	self.admin = 0
@@ -125,16 +125,16 @@ function Player:IsLoggedOn()
 end
 
 function Player:IsAdmin()
-	return self.admin == 2
+	return self.data.general.admin == 2
 end
 
 function Player:IsModerator()
-	return self.admin == 1
+	return self.data.general.admin == 1
 end
 
 function Player:PromoteModerator(other)
 	if self.IsAdmin() then
-		other.admin = 1
+		other.data.general.admin = 1
 		return true
 	end
 	return false
