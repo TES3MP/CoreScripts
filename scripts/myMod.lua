@@ -11,21 +11,31 @@ Players = {}
 
 Methods.CheckPlayerValidity = function(pid, targetPlayer)
 	local valid = false
+	local sendMessage = true
+	if pid == nil then
+		local sendMessage = false
+	end
 	if targetPlayer ~= nil and type(tonumber(targetPlayer)) == "number" then
 		if tonumber(targetPlayer) >=0 and tonumber(targetPlayer) <= #Players then
 			if Players[tonumber(targetPlayer)]:IsLoggedOn() then
 				valid = true
 			else
+				if sendMessage then
+					local message = "That player is not logged on!\n"
+					tes3mp.SendMessage(pid, message, 0)
+				end
+			end
+		else
+			if sendMessage then
 				local message = "That player is not logged on!\n"
 				tes3mp.SendMessage(pid, message, 0)
 			end
-		else
-			local message = "That player is not logged on!\n"
-			tes3mp.SendMessage(pid, message, 0)
 		end
 	else
-		local message = "Please specify the player ID.\n"
-		tes3mp.SendMessage(pid, message, 0)
+		if sendMessage then
+			local message = "Please specify the player ID.\n"
+			tes3mp.SendMessage(pid, message, 0)
+		end
 	end
 	return valid
 end
@@ -54,7 +64,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 			local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
 			tes3mp.SendMessage(originPlayer, originMessage, 0)
 			tes3mp.SendMessage(targetPlayer, targetMessage, 0)
-			tes3mp.SetCell(originPlayer,targetCell)
+			tes3mp.SetCell(originPlayer, targetCell)
 			tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
 		else
 			local message = "You can't teleport to yourself.\n"
@@ -64,13 +74,13 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 end
 
 Methods.GetConnectedPlayerNumber = function()
-	local playernumber = 0
+	local playerNumber = 0
 	for i=0,#Players do
 		if Players[i]:IsLoggedOn() then
-			playernumber = playernumber + 1
+			playerNumber = playerNumber + 1
 		end
 	end
-	return playernumber
+	return playerNumber
 end
 
 Methods.GetConnectedPlayerList = function()
@@ -102,6 +112,8 @@ Methods.OnPlayerConnect = function(pid)
 	Players[pid] = Player.new(pid)
 	local login_time = 10
 	local pname = tes3mp.GetName(pid)
+--	pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
+--	pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
 	Players[pid].name = pname
 	local message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds to register (/reg) or login (/login).\n"
 	tes3mp.SendMessage(pid, message, 0)
