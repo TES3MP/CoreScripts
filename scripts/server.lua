@@ -45,10 +45,6 @@ function OnPlayerResurrect(pid)
 end
 
 function OnPlayerChangeCell(pid)
-	local curCell = tes3mp.GetCell(pid);
-	if curCell ~= "ToddTest" or not tes3mp.IsInInterior(pid) then
-		--tes3mp.SetCell(pid, "ToddTest")
-	end
 end
 
 function OnPlayerUpdateEquiped(pid)
@@ -92,7 +88,17 @@ function OnPlayerSendMessage(pid, message)
 			local message = myMod.GetConnectedPlayerNumber() .. " connected " .. text .. ": " .. myMod.GetConnectedPlayerList() .. "\n"
 			tes3mp.SendMessage(pid, message, 0)
 		elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
-			myMod.TeleportToPlayer(pid, cmd[2], pid)
+			if cmd[2] ~= "all" then
+				myMod.TeleportToPlayer(pid, cmd[2], pid)
+			else
+				for i=0,#Players do
+					if i ~= pid then
+						if Players[i]:IsLoggedOn() then
+							myMod.TeleportToPlayer(pid, i, pid)
+						end
+					end
+				end
+			end
 		elseif (cmd[1] == "teleportto" or cmd[1] == "tpto") and moderator then
 			myMod.TeleportToPlayer(pid, pid, cmd[2])
 		elseif cmd[1] == "kick" and moderator then
@@ -114,15 +120,19 @@ function OnPlayerSendMessage(pid, message)
 			end
 		elseif cmd[1] == "getpos" and moderator then
 			local targetPlayer = cmd[2]
-			if myMod.CheckPlayerValidity(pid, cmd[2]) then
+			if myMod.CheckPlayerValidity(pid, targetPlayer) then
 				local targetPlayerName = Players[tonumber(targetPlayer)].name
+				local targetCell = tes3mp.GetCell(targetPlayer)
 				local x, y, z
 				x = tes3mp.GetPosX(targetPlayer)
 				y = tes3mp.GetPosY(targetPlayer)
 				z = tes3mp.GetPosZ(targetPlayer)
-				message = targetPlayerName.." ("..targetPlayer..") is at "..x.." "..y.." "..z.."\n"
+				message = targetPlayerName.." ("..targetPlayer..") is at "..x.." "..y.." "..z.." ("..targetCell..")\n"
 				tes3mp.SendMessage(pid, message, 0)
 			end
+		elseif cmd[1] == "superman" and moderator then
+			tes3mp.SetAttribute(pid, 4, 400)
+			tes3mp.SetSkill(pid, 20, 200);
 		else
 			local message = "Not a valid command. Type /help for more info.\n"
 			tes3mp.SendMessage(pid, message, 0)
