@@ -145,3 +145,7 @@ end
 function OnPlayerEndCharGen(pid)
 	myMod.OnPlayerEndCharGen(pid)
 end
+
+function OnGUIAction(pid, idGui, data)
+	
+end
