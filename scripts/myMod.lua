@@ -48,9 +48,13 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 			local targetCell = ""
 			local targetCellName
 			local targetPos = {0, 0, 0}
+			local targetAngle = {0, 0, 0}
 			targetPos[0] = tes3mp.GetPosX(targetPlayer)
 			targetPos[1] = tes3mp.GetPosY(targetPlayer)
 			targetPos[2] = tes3mp.GetPosZ(targetPlayer)
+			targetAngle[0] = tes3mp.GetAngleX(targetPlayer)
+			targetAngle[1] = tes3mp.GetAngleY(targetPlayer)
+			targetAngle[2] = tes3mp.GetAngleZ(targetPlayer)
 			targetCell = tes3mp.GetCell(targetPlayer)
 			if targetCell ~= "" then
 				targetCellName = targetCell
@@ -66,6 +70,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 			tes3mp.SendMessage(targetPlayer, targetMessage, 0)
 			tes3mp.SetCell(originPlayer, targetCell)
 			tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
+			tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
 		else
 			local message = "You can't teleport to yourself.\n"
 			tes3mp.SendMessage(pid, message, 0)
@@ -122,7 +127,9 @@ Methods.OnPlayerConnect = function(pid)
 end
 
 Methods.OnPlayerDisconnect = function(pid)
-	Players[pid]:Destroy()
+	if pid ~= nil and type(tonumber(pid)) == "number" then
+		Players[pid]:Destroy()
+	end
 end
 
 Methods.OnPlayerMessage = function(pid, message)
