@@ -127,7 +127,7 @@ Methods.OnPlayerConnect = function(pid)
 end
 
 Methods.OnPlayerDisconnect = function(pid)
-	if pid ~= nil and type(tonumber(pid)) == "number" then
+	if Players[pid] ~= nil then
 		Players[pid]:Destroy()
 	end
 end
