@@ -41,41 +41,42 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
 end
 
 Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
-	if Methods.CheckPlayerValidity(pid, originPlayer) and Methods.CheckPlayerValidity(pid, targetPlayer) then
-		if tonumber(originPlayer) ~= tonumber(targetPlayer) then
-			local originPlayerName = Players[tonumber(originPlayer)].name
-			local targetPlayerName = Players[tonumber(targetPlayer)].name
-			local targetCell = ""
-			local targetCellName
-			local targetPos = {0, 0, 0}
-			local targetAngle = {0, 0, 0}
-			targetPos[0] = tes3mp.GetPosX(targetPlayer)
-			targetPos[1] = tes3mp.GetPosY(targetPlayer)
-			targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-			targetAngle[0] = tes3mp.GetAngleX(targetPlayer)
-			targetAngle[1] = tes3mp.GetAngleY(targetPlayer)
-			targetAngle[2] = tes3mp.GetAngleZ(targetPlayer)
-			targetCell = tes3mp.GetCell(targetPlayer)
-			if targetCell ~= "" then
-				targetCellName = targetCell
-			else
-				targetCellName = "Exterior"
-				if tes3mp.IsInInterior(originPlayer) then
-					-- We need a SetCell like function that brings people to the exterior, like "coc Balmora" does
-				end
-			end
-			local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
-			local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-			tes3mp.SendMessage(originPlayer, originMessage, 0)
-			tes3mp.SendMessage(targetPlayer, targetMessage, 0)
-			tes3mp.SetCell(originPlayer, targetCell)
-			tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
-			tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
-		else
-			local message = "You can't teleport to yourself.\n"
-			tes3mp.SendMessage(pid, message, 0)
-		end
+	if (not Methods.CheckPlayerValidity(pid, originPlayer)) or (not Methods.CheckPlayerValidity(pid, targetPlayer)) then
+		return
+	elseif tonumber(originPlayer) == tonumber(targetPlayer) then
+		local message = "You can't teleport to yourself.\n"
+		tes3mp.SendMessage(pid, message, 0)
+		return
 	end
+	local originPlayerName = Players[tonumber(originPlayer)].name
+	local targetPlayerName = Players[tonumber(targetPlayer)].name
+	local targetCell = ""
+	local targetCellName
+	local targetPos = {0, 0, 0}
+	local targetAngle = {0, 0, 0}
+	local targetGrid = {0, 0}
+	targetPos[0] = tes3mp.GetPosX(targetPlayer)
+	targetPos[1] = tes3mp.GetPosY(targetPlayer)
+	targetPos[2] = tes3mp.GetPosZ(targetPlayer)
+	targetAngle[0] = tes3mp.GetAngleX(targetPlayer)
+	targetAngle[1] = tes3mp.GetAngleY(targetPlayer)
+	targetAngle[2] = tes3mp.GetAngleZ(targetPlayer)
+	targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
+	targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
+	targetCell = tes3mp.GetCell(targetPlayer)
+	if targetCell ~= "" then
+		targetCellName = targetCell
+		tes3mp.SetCell(originPlayer, targetCell)
+	else
+		targetCellName = "Exterior "..targetGrid[0]..", "..targetGrid[1]..""
+		tes3mp.SetExterior(originPlayer, targetGrid[0], targetGrid[1])
+	end
+	tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
+	tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
+	local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
+	local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
+	tes3mp.SendMessage(originPlayer, originMessage, 0)
+	tes3mp.SendMessage(targetPlayer, targetMessage, 0)
 end
 
 Methods.GetConnectedPlayerNumber = function()
@@ -102,6 +103,31 @@ Methods.GetConnectedPlayerList = function()
 		end
 	end
 	return list
+end
+
+Methods.PrintPlayerPosition = function(pid, targetPlayer)
+	if not Methods.CheckPlayerValidity(pid, targetPlayer) then
+		return
+	end
+	local message = ""
+	local targetPlayerName = Players[tonumber(targetPlayer)].name
+	local targetCell = ""
+	local targetCellName = ""
+	local targetPos = {0, 0, 0}
+	local targetGrid = {0, 0}
+	targetPos[0] = tes3mp.GetPosX(targetPlayer)
+	targetPos[1] = tes3mp.GetPosY(targetPlayer)
+	targetPos[2] = tes3mp.GetPosZ(targetPlayer)
+	targetCell = tes3mp.GetCell(targetPlayer)
+	if targetCell ~= "" then
+		targetCellName = targetCell
+	else
+		targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
+		targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
+		targetCellName = "Exterior ("..targetGrid[0]..", "..targetGrid[1]..")"
+	end
+	message = targetPlayerName.." ("..targetPlayer..") is in "..targetCellName.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
+	tes3mp.SendMessage(pid, message, 0)
 end
 
 Methods.PushPlayerList = function(pls)

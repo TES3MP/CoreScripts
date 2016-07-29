@@ -1,16 +1,26 @@
 myMod = require("myMod")
 Player = require("player")
 
-local helptext = "Command list:\
-/list - Lists all players on the server\
-WIP\n"
+local helptext = "\nCommand list:\
+/list - List all players on the server\
+\
+Moderators only:\
+/superman - Increasce acrobatics and speed\
+/teleport (<pid>/all) - Teleport another player to your position (/tp)\
+/teleportto <pid> - Teleport yourself to another player (/tpto)\
+/gepos <pid> - Get player position and cell\
+/kick <pid> - Kick player\
+\
+Admins only:\
+/setmoderator <pid> - Promote player to moderator\
+\n"
 
 function OnServerInit()
 	myMod.PushPlayerList(Players)
 end
 
 function OnServerExit(err)
-
+	print(err)
 end
 
 function OnPlayerConnect(pid)
@@ -118,21 +128,15 @@ function OnPlayerSendMessage(pid, message)
 				Players[tonumber(targetPlayer)].data.general.admin = 1
 				Players[tonumber(targetPlayer)]:Save()
 			end
-		elseif cmd[1] == "getpos" and moderator then
-			local targetPlayer = cmd[2]
-			if myMod.CheckPlayerValidity(pid, targetPlayer) then
-				local targetPlayerName = Players[tonumber(targetPlayer)].name
-				local targetCell = tes3mp.GetCell(targetPlayer)
-				local x, y, z
-				x = tes3mp.GetPosX(targetPlayer)
-				y = tes3mp.GetPosY(targetPlayer)
-				z = tes3mp.GetPosZ(targetPlayer)
-				message = targetPlayerName.." ("..targetPlayer..") is at "..x.." "..y.." "..z.." ("..targetCell..")\n"
-				tes3mp.SendMessage(pid, message, 0)
-			end
 		elseif cmd[1] == "superman" and moderator then
 			tes3mp.SetAttribute(pid, 4, 400)
 			tes3mp.SetSkill(pid, 20, 200);
+		elseif cmd[1] == "help" then
+			tes3mp.MessageBox(pid, 1, helptext)
+		elseif cmd[1] == "setext" and admin then
+			tes3mp.SetExterior(pid, cmd[2], cmd[3])
+		elseif cmd[1] == "getpos" and moderator then
+			myMod.PrintPlayerPosition(pid, cmd[2])
 		else
 			local message = "Not a valid command. Type /help for more info.\n"
 			tes3mp.SendMessage(pid, message, 0)
