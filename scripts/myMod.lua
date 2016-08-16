@@ -141,7 +141,7 @@ end
 
 Methods.OnPlayerConnect = function(pid)
 	Players[pid] = Player.new(pid)
-	local login_time = 10
+	local login_time = 60
 	local pname = tes3mp.GetName(pid)
 --	pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
 --	pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
