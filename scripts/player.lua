@@ -142,12 +142,12 @@ function Player:PromoteModerator(other)
 end
 
 function Player:GetHealth()
-	self.health[2] = tes3mp.GetHealth(self.pid)
-	return self.health[2]
+	self.data.stats.healthCurrent = tes3mp.GetHealth(self.pid)
+	return self.data.stats.healthCurrent
 end
 
 function Player:SetHealth(health)
-	self.health[2] = health
+	self.data.stats.healthCurrent = health
 	tes3mp.SetHealth(self.pid, health)
 end
 
