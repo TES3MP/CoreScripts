@@ -211,6 +211,7 @@ function Player:LoadCharacter()
 	tes3mp.SetHead(self.pid,self.data.character.head)
 	tes3mp.SetHair(self.pid,self.data.character.hair)
 	tes3mp.SetIsMale(self.pid,self.data.character.sex)
+	tes3mp.SendBaseInfo(self.pid)
 --	tes3mp.GetClass(self.pid,self.data.character.class)
 end
 
@@ -308,6 +309,8 @@ function Player:LoadAttributes()
 		print(name .. "=="..tostring(value))
 		tes3mp.SetAttribute(self.pid, GetAttributeIdByName(name), value)
 	end
+
+	tes3mp.SendAttributes(self.pid)
 end
 
 function Player:SetAttribute(attribute, newValue)
@@ -330,6 +333,8 @@ function Player:LoadSkills()
 	for name,value in pairs(self.data.skills) do
 		tes3mp.SetSkill(self.pid, GetSkillIdByName(name), value)
 	end
+
+	tes3mp.SendSkills(self.pid)
 end
 
 function Player:GetAttribute(attribute)
