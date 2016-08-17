@@ -8,7 +8,9 @@ Moderators only:\
 /superman - Increase acrobatics, athletics and speed\
 /teleport (<pid>/all) - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
-/gepos <pid> - Get player position and cell\
+/getpos <pid> - Get player position and cell\
+/setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
+/setskill <pid> <skill> <value> - Set a player's skill to a certain value\
 /kick <pid> - Kick player\
 \
 Admins only:\
@@ -138,6 +140,56 @@ function OnPlayerSendMessage(pid, message)
 
 			tes3mp.SendAttributes(pid)
 			tes3mp.SendSkills(pid)
+		elseif cmd[1] == "setattr" and moderator then
+
+			local targetPlayer = cmd[2]
+			if myMod.CheckPlayerValidity(pid, targetPlayer) then
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+
+				if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
+					local attrid
+					local value = tonumber(cmd[4])
+
+					if tonumber(cmd[3]) ~= nil then
+						attrid = tonumber(cmd[3])
+					else
+						attrid = tes3mp.GetAttributeId(cmd[3])
+					end
+
+					if skillid ~= -1 then
+						tes3mp.SetAttribute(targetPlayer, attrid, value)
+						tes3mp.SendAttributes(targetPlayer)
+
+						local message = targetPlayerName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
+						tes3mp.SendMessage(pid, message, 0)
+					end
+				end
+			end
+		elseif cmd[1] == "setskill" and moderator then
+
+			local targetPlayer = cmd[2]
+			if myMod.CheckPlayerValidity(pid, targetPlayer) then
+				local targetPlayerName = Players[tonumber(targetPlayer)].name
+
+				if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
+					local skillid
+					local value = tonumber(cmd[4])
+
+					if tonumber(cmd[3]) ~= nil then
+						skillid = tonumber(cmd[3])
+					else
+						skillid = tes3mp.GetSkillId(cmd[3])
+					end
+
+					if skillid ~= -1 then
+						tes3mp.SetSkill(targetPlayer, skillid, value)
+						tes3mp.SendSkills(targetPlayer)
+
+						local message = targetPlayerName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
+						tes3mp.SendMessage(pid, message, 0)
+					end
+				end
+			end
 		elseif cmd[1] == "help" then
 			tes3mp.MessageBox(pid, 1, helptext)
 		elseif cmd[1] == "setext" and admin then
