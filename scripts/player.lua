@@ -217,14 +217,14 @@ end
 
 function Player:UpdateAttributes()
 	for name--[[,value--]] in pairs(self.data.attributes) do
-		self.data.attributes[name] = tes3mp.GetAttribute(self.pid, tes3mp.GetAttributeIdByName(name))
+		self.data.attributes[name] = tes3mp.GetAttribute(self.pid, tes3mp.GetAttributeId(name))
 	end
 end
 
 function Player:LoadAttributes()
 	for name,value in pairs(self.data.attributes) do
 		print(name .. "=="..tostring(value))
-		tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeIdByName(name), value)
+		tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeId(name), value)
 	end
 
 	tes3mp.SendAttributes(self.pid)
@@ -234,7 +234,7 @@ function Player:SetAttribute(attribute, newValue)
 	for name--[[,value--]] in pairs(self.data.attributes) do
 		if name == attribute then
 			self.data.attributes[name] = newValue
-			tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeIdByName(name), newValue)
+			tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeId(name), newValue)
 			break
 		end
 	end
@@ -242,13 +242,13 @@ end
 
 function Player:UpdateSkills()
 	for name--[[,value--]] in pairs(self.data.skills) do
-		self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillIdByName(name))
+		self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillId(name))
 	end
 end
 
 function Player:LoadSkills()
 	for name,value in pairs(self.data.skills) do
-		tes3mp.SetSkill(self.pid, tes3mp.GetSkillIdByName(name), value)
+		tes3mp.SetSkill(self.pid, tes3mp.GetSkillId(name), value)
 	end
 
 	tes3mp.SendSkills(self.pid)
