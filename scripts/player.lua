@@ -240,61 +240,61 @@ function GetSkillIdByName(n)
 	local name = n:lower()
 -- Combat
 	if name == "armorer" then
-        return 0
-	elseif name == "athletics" then
         return 1
+	elseif name == "athletics" then
+        return 8
 	elseif name == "axe" then
-        return 2
+        return 6
 	elseif name == "block" then
-        return 3
+        return 0
 	elseif name == "bluntweapon" then
         return 4
 	elseif name == "heavyarmor" then
-        return 5
+        return 3
 	elseif name == "longblade" then
-        return 6
+        return 5
 	elseif name == "mediumarmor" then
-        return 7
+        return 2
 	elseif name == "spear" then
-        return 8
+        return 7
 -- Magic
 	elseif name == "alchemy" then
-        return 9
-	elseif name == "alteration" then
-        return 10
-	elseif name == "conjuration" then
-        return 11
-	elseif name == "destruction" then
-        return 12
-	elseif name == "enchant" then
-        return 13
-	elseif name == "illusion" then
-        return 14
-	elseif name == "mysticism" then
-        return 15
-	elseif name == "restoration" then
         return 16
+	elseif name == "alteration" then
+        return 11
+	elseif name == "conjuration" then
+        return 13
+	elseif name == "destruction" then
+        return 10
+	elseif name == "enchant" then
+        return 9
+	elseif name == "illusion" then
+        return 12
+	elseif name == "mysticism" then
+        return 14
+	elseif name == "restoration" then
+        return 15
 	elseif name == "unarmored" then
         return 17
 -- Stealth
 	elseif name == "acrobatics" then
-        return 18
-	elseif name == "handtohand" then
-        return 19
-	elseif name == "lightarmor" then
         return 20
-	elseif name == "marksman" then
-        return 21
-	elseif name == "mercantile" then
-        return 22
-	elseif name == "security" then
-        return 23
-	elseif name == "shortblade" then
-        return 24
-	elseif name == "sneak" then
-        return 25
-	elseif name == "speechcraft" then
+	elseif name == "handtohand" then
         return 26
+	elseif name == "lightarmor" then
+        return 21
+	elseif name == "marksman" then
+        return 23
+	elseif name == "mercantile" then
+        return 24
+	elseif name == "security" then
+        return 18
+	elseif name == "shortblade" then
+        return 22
+	elseif name == "sneak" then
+        return 19
+	elseif name == "speechcraft" then
+        return 25
     end
 end
 

@@ -5,7 +5,7 @@ local helptext = "\nCommand list:\
 /list - List all players on the server\
 \
 Moderators only:\
-/superman - Increasce acrobatics and speed\
+/superman - Increase acrobatics, athletics and speed\
 /teleport (<pid>/all) - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /gepos <pid> - Get player position and cell\
@@ -129,8 +129,15 @@ function OnPlayerSendMessage(pid, message)
 				Players[tonumber(targetPlayer)]:Save()
 			end
 		elseif cmd[1] == "superman" and moderator then
-			tes3mp.SetAttribute(pid, 4, 400)
-			tes3mp.SetSkill(pid, 20, 200);
+			-- Set Speed to 100
+			tes3mp.SetAttribute(pid, 4, 100)
+			-- Set Athletics to 100
+			tes3mp.SetSkill(pid, 8, 100)
+			-- Set Acrobatics to 400
+			tes3mp.SetSkill(pid, 20, 400)
+
+			tes3mp.SendAttributes(pid)
+			tes3mp.SendSkills(pid)
 		elseif cmd[1] == "help" then
 			tes3mp.MessageBox(pid, 1, helptext)
 		elseif cmd[1] == "setext" and admin then
