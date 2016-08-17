@@ -215,99 +215,16 @@ function Player:LoadCharacter()
 --	tes3mp.GetClass(self.pid,self.data.character.class)
 end
 
-function GetAttributeIdByName(n)
-    local name = n:lower()
-    if name == "strength" then
-        return 0
-    elseif name == "intelligence" then
-        return 1
-    elseif name == "willpower" then
-        return 2
-    elseif name == "agility" then
-        return 3
-    elseif name == "speed" then
-        return 4
-    elseif name == "endurance" then
-        return 5
-    elseif name == "personality" then
-        return 6
-    elseif name == "luck" then
-        return 7
-    end
-end
-
-function GetSkillIdByName(n)
-	local name = n:lower()
--- Combat
-	if name == "armorer" then
-        return 1
-	elseif name == "athletics" then
-        return 8
-	elseif name == "axe" then
-        return 6
-	elseif name == "block" then
-        return 0
-	elseif name == "bluntweapon" then
-        return 4
-	elseif name == "heavyarmor" then
-        return 3
-	elseif name == "longblade" then
-        return 5
-	elseif name == "mediumarmor" then
-        return 2
-	elseif name == "spear" then
-        return 7
--- Magic
-	elseif name == "alchemy" then
-        return 16
-	elseif name == "alteration" then
-        return 11
-	elseif name == "conjuration" then
-        return 13
-	elseif name == "destruction" then
-        return 10
-	elseif name == "enchant" then
-        return 9
-	elseif name == "illusion" then
-        return 12
-	elseif name == "mysticism" then
-        return 14
-	elseif name == "restoration" then
-        return 15
-	elseif name == "unarmored" then
-        return 17
--- Stealth
-	elseif name == "acrobatics" then
-        return 20
-	elseif name == "handtohand" then
-        return 26
-	elseif name == "lightarmor" then
-        return 21
-	elseif name == "marksman" then
-        return 23
-	elseif name == "mercantile" then
-        return 24
-	elseif name == "security" then
-        return 18
-	elseif name == "shortblade" then
-        return 22
-	elseif name == "sneak" then
-        return 19
-	elseif name == "speechcraft" then
-        return 25
-    end
-end
-
 function Player:UpdateAttributes()
 	for name--[[,value--]] in pairs(self.data.attributes) do
-		self.data.attributes[name] = tes3mp.GetAttribute(self.pid, GetAttributeIdByName(name))
+		self.data.attributes[name] = tes3mp.GetAttribute(self.pid, tes3mp.GetAttributeIdByName(name))
 	end
 end
 
 function Player:LoadAttributes()
 	for name,value in pairs(self.data.attributes) do
 		print(name .. "=="..tostring(value))
-		tes3mp.SetAttribute(self.pid, GetAttributeIdByName(name), value)
+		tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeIdByName(name), value)
 	end
 
 	tes3mp.SendAttributes(self.pid)
@@ -317,7 +234,7 @@ function Player:SetAttribute(attribute, newValue)
 	for name--[[,value--]] in pairs(self.data.attributes) do
 		if name == attribute then
 			self.data.attributes[name] = newValue
-			tes3mp.SetAttribute(self.pid, GetAttributeIdByName(name), newValue)
+			tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeIdByName(name), newValue)
 			break
 		end
 	end
@@ -325,13 +242,13 @@ end
 
 function Player:UpdateSkills()
 	for name--[[,value--]] in pairs(self.data.skills) do
-		self.data.skills[name] = tes3mp.GetSkill(self.pid, GetSkillIdByName(name))
+		self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillIdByName(name))
 	end
 end
 
 function Player:LoadSkills()
 	for name,value in pairs(self.data.skills) do
-		tes3mp.SetSkill(self.pid, GetSkillIdByName(name), value)
+		tes3mp.SetSkill(self.pid, tes3mp.GetSkillIdByName(name), value)
 	end
 
 	tes3mp.SendSkills(self.pid)
