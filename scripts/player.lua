@@ -223,7 +223,6 @@ end
 
 function Player:LoadAttributes()
 	for name,value in pairs(self.data.attributes) do
-		print(name .. "=="..tostring(value))
 		tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeId(name), value)
 	end
 
