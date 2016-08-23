@@ -205,6 +205,14 @@ function OnPlayerSendMessage(pid, message)
 	return 1 -- default behavior, chat messages should not
 end
 
+function OnPlayerChangeAttributes(pid)
+	myMod.OnPlayerChangeAttributes(pid)
+end
+
+function OnPlayerChangeSkills(pid)
+	myMod.OnPlayerChangeSkills(pid)
+end
+
 function OnPlayerEndCharGen(pid)
 	myMod.OnPlayerEndCharGen(pid)
 end

@@ -209,11 +209,17 @@ Methods.AuthCheck = function(pid)
 	Players[pid] = nil
 end
 
-Methods.OnPlayerEndCharGen = function(pid)
-	Players[pid]:UpdateGeneral()
-	Players[pid]:UpdateSkills()
+Methods.OnPlayerChangeAttributes = function(pid)
 	Players[pid]:UpdateAttributes()
+end
+
+Methods.OnPlayerChangeSkills = function(pid)
+	Players[pid]:UpdateSkills()
+end
+
+Methods.OnPlayerEndCharGen = function(pid)
 	Players[pid]:UpdateCharacter()
+	Players[pid]:UpdateGeneral()
 	Players[pid]:CreateAccount()
 end
 
