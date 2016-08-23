@@ -162,7 +162,7 @@ function OnPlayerSendMessage(pid, message)
 
 						local message = targetPlayerName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
 						tes3mp.SendMessage(pid, message, 0)
-						Players[targetPlayer]:UpdateAttributes()
+						Players[tonumber(targetPlayer)]:UpdateAttributes()
 					end
 				end
 			end
@@ -188,7 +188,7 @@ function OnPlayerSendMessage(pid, message)
 
 						local message = targetPlayerName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
 						tes3mp.SendMessage(pid, message, 0)
-						Players[targetPlayer]:UpdateSkills()
+						Players[tonumber(targetPlayer)]:UpdateSkills()
 					end
 				end
 			end
