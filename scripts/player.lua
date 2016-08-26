@@ -23,7 +23,7 @@ function Player.new(pid)
 			head = "",
 			hair = "",
 			sex = false,
---			class = "",
+			class = "",
 		},
 		stats = {
 			level = 1,
@@ -203,16 +203,16 @@ function Player:UpdateCharacter()
 	self.data.character.head = tes3mp.GetHead(self.pid)
 	self.data.character.hair = tes3mp.GetHair(self.pid)
 	self.data.character.sex = tes3mp.GetIsMale(self.pid)
---	self.data.character.class = tes3mp.GetClass(self.pid)
+	self.data.character.class = tes3mp.GetClass(self.pid)
 end
 
 function Player:LoadCharacter()
-	tes3mp.SetRace(self.pid,self.data.character.race)
-	tes3mp.SetHead(self.pid,self.data.character.head)
-	tes3mp.SetHair(self.pid,self.data.character.hair)
-	tes3mp.SetIsMale(self.pid,self.data.character.sex)
+	tes3mp.SetRace(self.pid, self.data.character.race)
+	tes3mp.SetHead(self.pid, self.data.character.head)
+	tes3mp.SetHair(self.pid, self.data.character.hair)
+	tes3mp.SetIsMale(self.pid, self.data.character.sex)
+	tes3mp.SetClass(self.pid, self.data.character.class)
 	tes3mp.SendBaseInfo(self.pid)
---	tes3mp.GetClass(self.pid,self.data.character.class)
 end
 
 function Player:UpdateAttributes()
