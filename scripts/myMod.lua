@@ -218,8 +218,9 @@ Methods.OnPlayerChangeSkills = function(pid)
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
-	Players[pid]:UpdateCharacter()
 	Players[pid]:UpdateGeneral()
+	Players[pid]:UpdateCharacter()
+	Players[pid]:UpdateClass()
 	Players[pid]:CreateAccount()
 end
 

@@ -116,6 +116,7 @@ function Player:LoggedOn()
 	self.loggedOn = true
 	if self.hasAccount ~= false then -- load account
 		self:LoadCharacter()
+		self:LoadClass()
 		self:LoadAttributes()
 		self:LoadSkills()
 	end
@@ -203,7 +204,6 @@ function Player:UpdateCharacter()
 	self.data.character.head = tes3mp.GetHead(self.pid)
 	self.data.character.hair = tes3mp.GetHair(self.pid)
 	self.data.character.sex = tes3mp.GetIsMale(self.pid)
-	self.data.character.class = tes3mp.GetClass(self.pid)
 end
 
 function Player:LoadCharacter()
@@ -211,8 +211,46 @@ function Player:LoadCharacter()
 	tes3mp.SetHead(self.pid, self.data.character.head)
 	tes3mp.SetHair(self.pid, self.data.character.hair)
 	tes3mp.SetIsMale(self.pid, self.data.character.sex)
-	tes3mp.SetClass(self.pid, self.data.character.class)
+
 	tes3mp.SendBaseInfo(self.pid)
+end
+
+function Player:UpdateClass()
+	if tes3mp.IsClassDefault(self.pid) == 1 then
+		self.data.character.class = tes3mp.GetDefaultClass(self.pid)
+	else
+		self.data.character.class = "custom"
+		self.data.customclass = {}
+		self.data.customclass.name = tes3mp.GetClassName(self.pid)
+		self.data.customclass.description = tes3mp.GetClassDesc(self.pid)
+		self.data.customclass.specialization = tes3mp.GetClassSpecialization(self.pid)
+		majorattributes = {}
+		majorskills = {}
+		minorskills = {}
+
+		for i = 0, 1, 1 do
+			majorattributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
+		end
+
+		for i = 0, 4, 1 do
+			majorskills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
+			minorskills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
+		end
+
+		self.data.customclass.majorattributes = table.concat(majorattributes, ", ")
+		self.data.customclass.majorskills = table.concat(majorskills, ", ")
+		self.data.customclass.minorskills = table.concat(minorskills, ", ")
+	end
+end
+
+function Player:LoadClass()
+	if self.data.character.class ~= "custom" then
+		tes3mp.SetClass(self.pid, self.data.character.class)
+	else
+		print("Player had a custom class!")
+	end
+
+	tes3mp.SendClass(self.pid)
 end
 
 function Player:UpdateAttributes()
