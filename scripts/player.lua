@@ -245,7 +245,7 @@ end
 
 function Player:LoadClass()
 	if self.data.character.class ~= "custom" then
-		tes3mp.SetClass(self.pid, self.data.character.class)
+		tes3mp.SetDefaultClass(self.pid, self.data.character.class)
 	else
 		print("Player had a custom class!")
 	end
