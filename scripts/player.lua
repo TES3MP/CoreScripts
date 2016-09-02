@@ -247,7 +247,29 @@ function Player:LoadClass()
 	if self.data.character.class ~= "custom" then
 		tes3mp.SetDefaultClass(self.pid, self.data.character.class)
 	else
-		print("Player had a custom class!")
+		tes3mp.SetClassName(self.pid, self.data.customclass.name)
+		tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
+		tes3mp.SetClassSpecialization(self.pid, self.data.customclass.specialization)
+
+		commaSplitRegex = "([^, ]+)"
+
+		local i = 0
+		for value in string.gmatch(self.data.customclass.majorattributes, commaSplitRegex) do
+			tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
+			i = i + 1
+		end
+
+		i = 0
+		for value in string.gmatch(self.data.customclass.majorskills, commaSplitRegex) do
+			tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
+			i = i + 1
+		end
+
+		i = 0
+		for value in string.gmatch(self.data.customclass.minorskills, commaSplitRegex) do
+			tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
+			i = i + 1
+		end
 	end
 
 	tes3mp.SendClass(self.pid)
