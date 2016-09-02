@@ -222,7 +222,7 @@ function Player:UpdateClass()
 		self.data.character.class = "custom"
 		self.data.customclass = {}
 		self.data.customclass.name = tes3mp.GetClassName(self.pid)
-		self.data.customclass.description = tes3mp.GetClassDesc(self.pid)
+		self.data.customclass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
 		self.data.customclass.specialization = tes3mp.GetClassSpecialization(self.pid)
 		majorattributes = {}
 		majorskills = {}
