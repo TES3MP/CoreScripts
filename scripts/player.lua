@@ -251,8 +251,11 @@ function Player:LoadClass()
 		tes3mp.SetDefaultClass(self.pid, self.data.character.class)
 	else
 		tes3mp.SetClassName(self.pid, self.data.customclass.name)
-		tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
 		tes3mp.SetClassSpecialization(self.pid, self.data.customclass.specialization)
+
+		if self.data.customclass.description ~= nil then
+			tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
+		end
 
 		commaSplitRegex = "([^, ]+)"
 
