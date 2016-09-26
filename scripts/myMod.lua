@@ -217,6 +217,10 @@ Methods.OnPlayerChangeSkills = function(pid)
 	Players[pid]:UpdateSkills()
 end
 
+Methods.OnPlayerChangeLevel = function(pid)
+	Players[pid]:UpdateLevel()
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
 	Players[pid]:UpdateGeneral()
 	Players[pid]:UpdateCharacter()

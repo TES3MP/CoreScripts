@@ -215,6 +215,10 @@ function OnPlayerChangeSkills(pid)
 	myMod.OnPlayerChangeSkills(pid)
 end
 
+function OnPlayerChangeLevel(pid)
+	myMod.OnPlayerChangeLevel(pid)
+end
+
 function OnPlayerEndCharGen(pid)
 	myMod.OnPlayerEndCharGen(pid)
 end

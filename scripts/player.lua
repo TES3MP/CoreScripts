@@ -118,6 +118,7 @@ function Player:LoggedOn()
 	if self.hasAccount ~= false then -- load account
 		self:LoadCharacter()
 		self:LoadClass()
+		self:LoadLevel()
 		self:LoadAttributes()
 		self:LoadSkills()
 	end
@@ -295,16 +296,6 @@ function Player:LoadAttributes()
 	tes3mp.SendAttributes(self.pid)
 end
 
-function Player:SetAttribute(attribute, newValue)
-	for name--[[,value--]] in pairs(self.data.attributes) do
-		if name == attribute then
-			self.data.attributes[name] = newValue
-			tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeId(name), newValue)
-			break
-		end
-	end
-end
-
 function Player:UpdateSkills()
 	for name--[[,value--]] in pairs(self.data.skills) do
 		self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillId(name))
@@ -319,8 +310,13 @@ function Player:LoadSkills()
 	tes3mp.SendSkills(self.pid)
 end
 
-function Player:GetAttribute(attribute)
-	return self.data.attributes[attribute]
+function Player:UpdateLevel()
+	self.data.stats.level = tes3mp.GetLevel(self.pid)
+end
+
+function Player:LoadLevel()
+	tes3mp.SetLevel(self.pid, self.data.stats.level)
+	tes3mp.SendLevel(self.pid)
 end
 
 return Player
