@@ -26,6 +26,15 @@ function Player.new(pid)
 			class = "",
 			birthsign = "",
 		},
+		location = {
+			cell = "",
+			posX = 0,
+			posY = 0,
+			posZ = 0,
+			angleX = 0,
+			angleY = 0,
+			angleZ = 0
+		},
 		stats = {
 			level = 1,
 			healthBase = 1,
@@ -121,6 +130,7 @@ function Player:LoggedOn()
 		self:LoadLevel()
 		self:LoadAttributes()
 		self:LoadSkills()
+		self:LoadCell()
 	end
 end
 
@@ -258,22 +268,22 @@ function Player:LoadClass()
 			tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
 		end
 
-		commaSplitRegex = "([^, ]+)"
+		commaSplitPattern = "([^, ]+)"
 
 		local i = 0
-		for value in string.gmatch(self.data.customclass.majorattributes, commaSplitRegex) do
+		for value in string.gmatch(self.data.customclass.majorattributes, commaSplitPattern) do
 			tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
 			i = i + 1
 		end
 
 		i = 0
-		for value in string.gmatch(self.data.customclass.majorskills, commaSplitRegex) do
+		for value in string.gmatch(self.data.customclass.majorskills, commaSplitPattern) do
 			tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
 			i = i + 1
 		end
 
 		i = 0
-		for value in string.gmatch(self.data.customclass.minorskills, commaSplitRegex) do
+		for value in string.gmatch(self.data.customclass.minorskills, commaSplitPattern) do
 			tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
 			i = i + 1
 		end
@@ -317,6 +327,48 @@ end
 function Player:LoadLevel()
 	tes3mp.SetLevel(self.pid, self.data.stats.level)
 	tes3mp.SendLevel(self.pid)
+end
+
+function Player:UpdateCell()
+	local currentCell = tes3mp.GetCell(self.pid)
+
+	if currentCell == "" then
+		currentCell = tes3mp.GetExteriorX(self.pid) .. "," .. tes3mp.GetExteriorY(self.pid)
+	end
+
+	self.data.location.cell = currentCell
+	self.data.location.posX = tes3mp.GetPosX(self.pid)
+	self.data.location.posY = tes3mp.GetPosY(self.pid)
+	self.data.location.posZ = tes3mp.GetPosZ(self.pid)
+	self.data.location.angleX = tes3mp.GetAngleX(self.pid)
+	self.data.location.angleY = tes3mp.GetAngleY(self.pid)
+	self.data.location.angleZ = tes3mp.GetAngleZ(self.pid)
+end
+
+function Player:LoadCell()
+	local newCell = self.data.location.cell
+
+	exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
+
+	if string.match(newCell, exteriorCellPattern) ~= nil then
+		for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
+			tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
+		end
+	else
+		tes3mp.SetCell(self.pid, newCell)
+	end
+
+	local pos = {0, 0, 0}
+	local angle = {0, 0, 0}
+	pos[0] = tonumber(self.data.location.posX)
+	pos[1] = tonumber(self.data.location.posY)
+	pos[2] = tonumber(self.data.location.posZ)
+	angle[0] = tonumber(self.data.location.angleX)
+	angle[1] = tonumber(self.data.location.angleY)
+	angle[2] = tonumber(self.data.location.angleZ)
+
+	tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+	tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
 end
 
 return Player

@@ -43,6 +43,7 @@ function OnPlayerDisconnect(pid)
 	local pname = tes3mp.GetName(pid)
 	local message = pname.." ("..pid..") ".."left the server.\n"
 	tes3mp.SendMessage(pid, message, 1)
+	myMod.OnPlayerChangeCell(pid)
 	myMod.OnPlayerDisconnect(pid)
 end
 
@@ -54,12 +55,6 @@ function OnPlayerDeath(pid)
 end
 
 function OnPlayerResurrect(pid)
-end
-
-function OnPlayerChangeCell(pid)
-end
-
-function OnPlayerUpdateEquiped(pid)
 end
 
 function OnPlayerSendMessage(pid, message)
@@ -217,6 +212,13 @@ end
 
 function OnPlayerChangeLevel(pid)
 	myMod.OnPlayerChangeLevel(pid)
+end
+
+function OnPlayerChangeCell(pid)
+	myMod.OnPlayerChangeCell(pid)
+end
+
+function OnPlayerUpdateEquiped(pid)
 end
 
 function OnPlayerEndCharGen(pid)

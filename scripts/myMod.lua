@@ -221,6 +221,10 @@ Methods.OnPlayerChangeLevel = function(pid)
 	Players[pid]:UpdateLevel()
 end
 
+Methods.OnPlayerChangeCell = function(pid)
+	Players[pid]:UpdateCell()
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
 	Players[pid]:UpdateGeneral()
 	Players[pid]:UpdateCharacter()
