@@ -44,55 +44,26 @@ function Player.new(pid)
             fatigueBase = 1,
             fatigueCurrent = 1,
         },
-        attributes = {
-            strength = 1,
-            intelligence = 1,
-            willpower = 1,
-            agility = 1,
-            speed = 1,
-            endurance = 1,
-            personality = 1,
-            luck = 1,
-        },
-        skills = {
-            -- Combat
-            armorer = 1,
-            athletics = 1,
-            axe = 1,
-            block = 1,
-            bluntWeapon = 1,
-            heavyArmor = 1,
-            longBlade = 1,
-            mediumArmor = 1,
-            spear = 1,
-            -- Magic
-            alchemy = 1,
-            alteration = 1,
-            conjuration = 1,
-            destruction = 1,
-            enchant = 1,
-            illusion = 1,
-            mysticism = 1,
-            restoration = 1,
-            unarmored = 1,
-            -- Stealth
-            acrobatics = 1,
-            handToHand = 1,
-            lightArmor = 1,
-            marksman = 1,
-            mercantile = 1,
-            security = 1,
-            shortBlade = 1,
-            sneak = 1,
-            speechcraft = 1,
-        },
     };
+
+    self.data.attributes = {}
+
+    for i = 0, (tes3mp.GetAttributeCount() - 1) do
+        self.data.attributes[tes3mp.GetAttributeName(i)] = 1
+    end
+
+    self.data.skills = {}
+    
+    for i = 0, (tes3mp.GetSkillCount() - 1) do
+        self.data.skills[tes3mp.GetSkillName(i)] = 1
+    end
+
     self.accountName = tes3mp.GetName(pid)..".txt"
     self.pid = pid
     self.loggedOn = false
     self.tid_login = nil
     self.admin = 0
-    self.hasAccount = nil -- TODO Check account file exists
+    self.hasAccount = nil -- TODO Check whether account file exists
     return self
 end
 
