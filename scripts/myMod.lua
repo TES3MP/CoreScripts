@@ -213,19 +213,27 @@ Methods.AuthCheck = function(pid)
 end
 
 Methods.OnPlayerChangeAttributes = function(pid)
-    Players[pid]:SaveAttributes()
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        Players[pid]:SaveAttributes()
+    end
 end
 
 Methods.OnPlayerChangeSkills = function(pid)
-    Players[pid]:SaveSkills()
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        Players[pid]:SaveSkills()
+    end
 end
 
 Methods.OnPlayerChangeLevel = function(pid)
-    Players[pid]:SaveLevel()
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        Players[pid]:SaveLevel()
+    end
 end
 
 Methods.OnPlayerChangeCell = function(pid)
-    Players[pid]:SaveCell()
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        Players[pid]:SaveCell()
+    end
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
