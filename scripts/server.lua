@@ -148,7 +148,7 @@ function OnPlayerSendMessage(pid, message)
                         attrid = tes3mp.GetAttributeId(cmd[3])
                     end
 
-                    if skillid ~= -1 then
+                    if attrid ~= -1 and attrid < tes3mp.GetAttributeCount() then
                         tes3mp.SetAttribute(targetPlayer, attrid, value)
                         tes3mp.SendAttributes(targetPlayer)
 
@@ -174,7 +174,7 @@ function OnPlayerSendMessage(pid, message)
                         skillid = tes3mp.GetSkillId(cmd[3])
                     end
 
-                    if skillid ~= -1 then
+                    if skillid ~= -1 and skillid < tes3mp.GetSkillCount() then
                         tes3mp.SetSkill(targetPlayer, skillid, value)
                         tes3mp.SendSkills(targetPlayer)
 
