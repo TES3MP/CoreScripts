@@ -213,25 +213,25 @@ Methods.AuthCheck = function(pid)
 end
 
 Methods.OnPlayerChangeAttributes = function(pid)
-    Players[pid]:UpdateAttributes()
+    Players[pid]:SaveAttributes()
 end
 
 Methods.OnPlayerChangeSkills = function(pid)
-    Players[pid]:UpdateSkills()
+    Players[pid]:SaveSkills()
 end
 
 Methods.OnPlayerChangeLevel = function(pid)
-    Players[pid]:UpdateLevel()
+    Players[pid]:SaveLevel()
 end
 
 Methods.OnPlayerChangeCell = function(pid)
-    Players[pid]:UpdateCell()
+    Players[pid]:SaveCell()
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
-    Players[pid]:UpdateGeneral()
-    Players[pid]:UpdateCharacter()
-    Players[pid]:UpdateClass()
+    Players[pid]:SaveGeneral()
+    Players[pid]:SaveCharacter()
+    Players[pid]:SaveClass()
     Players[pid]:CreateAccount()
 end
 

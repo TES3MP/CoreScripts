@@ -207,11 +207,11 @@ function Player:Load()
     self.data = LIP.load("players/" .. self.accountName)
 end
 
-function Player:UpdateGeneral()
+function Player:SaveGeneral()
     self.data.general.name = tes3mp.GetName(self.pid)
 end
 
-function Player:UpdateCharacter()
+function Player:SaveCharacter()
     self.data.character.race = tes3mp.GetRace(self.pid)
     self.data.character.head = tes3mp.GetHead(self.pid)
     self.data.character.hair = tes3mp.GetHair(self.pid)
@@ -229,7 +229,7 @@ function Player:LoadCharacter()
     tes3mp.SendBaseInfo(self.pid)
 end
 
-function Player:UpdateClass()
+function Player:SaveClass()
     if tes3mp.IsClassDefault(self.pid) == 1 then
         self.data.character.class = tes3mp.GetDefaultClass(self.pid)
     else
@@ -292,7 +292,7 @@ function Player:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
-function Player:UpdateAttributes()
+function Player:SaveAttributes()
     for name--[[,value--]] in pairs(self.data.attributes) do
         self.data.attributes[name] = tes3mp.GetAttribute(self.pid, tes3mp.GetAttributeId(name))
     end
@@ -306,7 +306,7 @@ function Player:LoadAttributes()
     tes3mp.SendAttributes(self.pid)
 end
 
-function Player:UpdateSkills()
+function Player:SaveSkills()
     for name--[[,value--]] in pairs(self.data.skills) do
         self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillId(name))
     end
@@ -320,7 +320,7 @@ function Player:LoadSkills()
     tes3mp.SendSkills(self.pid)
 end
 
-function Player:UpdateLevel()
+function Player:SaveLevel()
     self.data.stats.level = tes3mp.GetLevel(self.pid)
 end
 
@@ -329,7 +329,7 @@ function Player:LoadLevel()
     tes3mp.SendLevel(self.pid)
 end
 
-function Player:UpdateCell()
+function Player:SaveCell()
     local currentCell = ""
 
     if tes3mp.IsInExterior(self.pid) == 1 then
