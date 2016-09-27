@@ -80,11 +80,11 @@ function OnPlayerSendMessage(pid, message)
         elseif cmd[1] == "cheat" and moderator then
             
             for i = 0, (tes3mp.GetAttributeCount() - 1) do
-                tes3mp.SetAttribute(pid, i, 666)
+                tes3mp.SetAttributeBase(pid, i, 666)
             end
 
             for i = 0, (tes3mp.GetSkillCount() - 1) do
-                tes3mp.SetSkill(pid, i, 666);
+                tes3mp.SetSkillBase(pid, i, 666);
             end
 
             tes3mp.SendAttributes(pid)
@@ -137,11 +137,11 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "superman" and moderator then
             -- Set Speed to 100
-            tes3mp.SetAttribute(pid, 4, 100)
+            tes3mp.SetAttributeBase(pid, 4, 100)
             -- Set Athletics to 100
-            tes3mp.SetSkill(pid, 8, 100)
+            tes3mp.SetSkillBase(pid, 8, 100)
             -- Set Acrobatics to 400
-            tes3mp.SetSkill(pid, 20, 400)
+            tes3mp.SetSkillBase(pid, 20, 400)
 
             tes3mp.SendAttributes(pid)
             tes3mp.SendSkills(pid)
@@ -163,7 +163,7 @@ function OnPlayerSendMessage(pid, message)
                     end
 
                     if attrid ~= -1 and attrid < tes3mp.GetAttributeCount() then
-                        tes3mp.SetAttribute(targetPlayer, attrid, value)
+                        tes3mp.SetAttributeBase(targetPlayer, attrid, value)
                         tes3mp.SendAttributes(targetPlayer)
 
                         local message = targetPlayerName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
@@ -190,7 +190,7 @@ function OnPlayerSendMessage(pid, message)
                     end
 
                     if skillid ~= -1 and skillid < tes3mp.GetSkillCount() then
-                        tes3mp.SetSkill(targetPlayer, skillid, value)
+                        tes3mp.SetSkillBase(targetPlayer, skillid, value)
                         tes3mp.SendSkills(targetPlayer)
 
                         local message = targetPlayerName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"

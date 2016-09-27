@@ -271,7 +271,7 @@ end
 
 function Player:LoadAttributes()
     for name,value in pairs(self.data.attributes) do
-        tes3mp.SetAttribute(self.pid, tes3mp.GetAttributeId(name), value)
+        tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
     tes3mp.SendAttributes(self.pid)
@@ -285,7 +285,7 @@ end
 
 function Player:LoadSkills()
     for name,value in pairs(self.data.skills) do
-        tes3mp.SetSkill(self.pid, tes3mp.GetSkillId(name), value)
+        tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value)
     end
 
     tes3mp.SendSkills(self.pid)
