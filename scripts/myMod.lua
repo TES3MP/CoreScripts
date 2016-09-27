@@ -48,6 +48,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 		tes3mp.SendMessage(pid, message, 0)
 		return
 	end
+
 	local originPlayerName = Players[tonumber(originPlayer)].name
 	local targetPlayerName = Players[tonumber(targetPlayer)].name
 	local targetCell = ""
@@ -64,13 +65,15 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 	targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
 	targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
 	targetCell = tes3mp.GetCell(targetPlayer)
-	if targetCell ~= "" then
-		targetCellName = targetCell
-		tes3mp.SetCell(originPlayer, targetCell)
-	else
+
+	if tes3mp.IsInExterior(targetPlayer) == 1 then
 		targetCellName = "Exterior "..targetGrid[0]..", "..targetGrid[1]..""
 		tes3mp.SetExterior(originPlayer, targetGrid[0], targetGrid[1])
+	else
+		targetCellName = targetCell
+		tes3mp.SetCell(originPlayer, targetCell)
 	end
+
 	tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
 	tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
 	local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"

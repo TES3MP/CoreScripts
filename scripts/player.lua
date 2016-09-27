@@ -330,10 +330,12 @@ function Player:LoadLevel()
 end
 
 function Player:UpdateCell()
-	local currentCell = tes3mp.GetCell(self.pid)
+	local currentCell = ""
 
-	if currentCell == "" then
+	if tes3mp.IsInExterior(self.pid) == 1 then
 		currentCell = tes3mp.GetExteriorX(self.pid) .. "," .. tes3mp.GetExteriorY(self.pid)
+	else
+		currentCell = tes3mp.GetCell(self.pid)
 	end
 
 	self.data.location.cell = currentCell
