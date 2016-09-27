@@ -22,7 +22,7 @@ function Player.new(pid)
             race = "",
             head = "",
             hair = "",
-            sex = false,
+            sex = 1,
             class = "",
             birthsign = "",
         },
@@ -125,24 +125,24 @@ function Player:PromoteModerator(other)
     return false
 end
 
-function Player:GetHealth()
-    self.data.stats.healthCurrent = tes3mp.GetHealth(self.pid)
+function Player:GetHealthCurrent()
+    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
     return self.data.stats.healthCurrent
 end
 
-function Player:SetHealth(health)
+function Player:SetHealthCurrent(health)
     self.data.stats.healthCurrent = health
-    tes3mp.SetHealth(self.pid, health)
+    tes3mp.SetHealthCurrent(self.pid, health)
 end
 
-function Player:GetMaxHealth()
-    self.data.stats.healthBase = tes3mp.GetBaseHealth(self.pid)
+function Player:GetHealthBase()
+    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
     return self.data.stats.healthBase
 end
 
-function Player:SetMaxHealth(health)
+function Player:SetHealthBase(health)
     self.data.stats.healthBase = health
-    tes3mp.SetMaxHealth(self.pid, health)
+    tes3mp.SetHealthBase(self.pid, health)
 end
 
 function Player:HasAccount()
