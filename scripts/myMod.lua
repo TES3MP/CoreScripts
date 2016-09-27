@@ -149,13 +149,19 @@ Methods.OnPlayerConnect = function(pid)
     -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
     -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
     Players[pid].name = pname
-    local message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds to register (/reg) or login (/login).\n"
+
+    local message = pname.." ("..pid..") ".."joined the server.\n"
+    tes3mp.SendMessage(pid, message, 1)
+
+    message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds to register (/reg) or login (/login).\n"
     tes3mp.SendMessage(pid, message, 0)
+
     Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
     tes3mp.StartTimer(Players[pid].tid_login);
 end
 
 Methods.OnPlayerDisconnect = function(pid)
+
     if Players[pid] ~= nil then
         Players[pid]:Destroy()
     end
@@ -207,8 +213,11 @@ Methods.AuthCheck = function(pid)
         return
     end
     
-    tes3mp.SendMessage(pid, "You are not authorized!\n", 0)
+    local pname = tes3mp.GetName(pid)
+    local message = pname.." ("..pid..") ".."failed to log in.\n"
+    tes3mp.SendMessage(pid, message, 1)
     Players[pid]:Kick()
+
     Players[pid] = nil
 end
 

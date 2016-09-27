@@ -31,10 +31,7 @@ function OnPlayerConnect(pid)
     return 1 -- accept player (0 deny)
 end
 
-function OnLogin(pid) -- timer-based event see myMod.OnPlayerConnect
-    local pname = tes3mp.GetName(pid)
-    local message = pname.." ("..pid..") ".."joined the server.\n"
-    tes3mp.SendMessage(pid, message, 1)
+function OnLogin(pid) -- timer-based event, see myMod.OnPlayerConnect
     myMod.AuthCheck(pid)
 end
 
