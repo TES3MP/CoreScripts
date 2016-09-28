@@ -236,12 +236,14 @@ end
 Methods.OnPlayerChangeLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveLevel()
+        Players[pid]:SaveDynamicStats()
     end
 end
 
 Methods.OnPlayerChangeCell = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveCell()
+        Players[pid]:SaveDynamicStats()
     end
 end
 
@@ -249,6 +251,7 @@ Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()
     Players[pid]:SaveClass()
+    Players[pid]:SaveDynamicStats()
     Players[pid]:CreateAccount()
 end
 

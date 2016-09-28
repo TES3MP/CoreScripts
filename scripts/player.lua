@@ -101,6 +101,7 @@ function Player:LoggedOn()
         self:LoadLevel()
         self:LoadAttributes()
         self:LoadSkills()
+        self:LoadDynamicStats()
         self:LoadCell()
     end
 end
@@ -263,9 +264,29 @@ function Player:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
+function Player:SaveDynamicStats()
+    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
+    self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
+    self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
+    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
+    self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
+    self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
+end
+
+function Player:LoadDynamicStats()
+    tes3mp.SetHealthBase(self.pid, self.data.stats.healthBase)
+    tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
+    tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
+    tes3mp.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
+    tes3mp.SetMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
+    tes3mp.SetFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
+
+    tes3mp.SendDynamicStats(self.pid)
+end
+
 function Player:SaveAttributes()
     for name--[[,value--]] in pairs(self.data.attributes) do
-        self.data.attributes[name] = tes3mp.GetAttribute(self.pid, tes3mp.GetAttributeId(name))
+        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, tes3mp.GetAttributeId(name))
     end
 end
 
@@ -279,7 +300,7 @@ end
 
 function Player:SaveSkills()
     for name--[[,value--]] in pairs(self.data.skills) do
-        self.data.skills[name] = tes3mp.GetSkill(self.pid, tes3mp.GetSkillId(name))
+        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, tes3mp.GetSkillId(name))
     end
 end
 
