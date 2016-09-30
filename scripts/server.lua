@@ -18,6 +18,13 @@ Admins only:\
 \n"
 
 function OnServerInit()
+    local version = tes3mp.GetServerVersion():split(".") -- for future versions
+
+    if tes3mp.GetServerVersion() ~= "0.0.1c" then
+        print("Server or script is outdated!")
+        tes3mp.StopServer(1)
+    end
+
     myMod.PushPlayerList(Players)
 end
 
