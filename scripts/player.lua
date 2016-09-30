@@ -37,6 +37,7 @@ function Player.new(pid)
         },
         stats = {
             level = 1,
+            levelProgress = 0,
             healthBase = 1,
             healthCurrent = 1,
             magickaBase = 1,
@@ -53,12 +54,12 @@ function Player.new(pid)
     end
 
     self.data.skills = {}
-    self.data.skillprogress = {}
+    self.data.skillProgress = {}
     
     for i = 0, (tes3mp.GetSkillCount() - 1) do
         local skillName = tes3mp.GetSkillName(i)
         self.data.skills[skillName] = 1
-        self.data.skillprogress[skillName] = 0
+        self.data.skillProgress[skillName] = 0
     end
 
     self.accountName = tes3mp.GetName(pid)..".txt"
@@ -305,8 +306,10 @@ function Player:SaveSkills()
     for name in pairs(self.data.skills) do
         local skillId = tes3mp.GetSkillId(name)
         self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
-        self.data.skillprogress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
     end
+
+    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function Player:LoadSkills()
@@ -314,10 +317,11 @@ function Player:LoadSkills()
         tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value)
     end
 
-    for name, value in pairs(self.data.skillprogress) do
+    for name, value in pairs(self.data.skillProgress) do
         tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
     end
 
+    tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
     tes3mp.SendSkills(self.pid)
 end
 
