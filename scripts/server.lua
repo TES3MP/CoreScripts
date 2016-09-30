@@ -239,7 +239,8 @@ function OnPlayerChangeCell(pid)
     myMod.OnPlayerChangeCell(pid)
 end
 
-function OnPlayerUpdateEquiped(pid)
+function OnPlayerChangeEquipment(pid)
+    myMod.OnPlayerChangeEquipment(pid)
 end
 
 function OnPlayerEndCharGen(pid)

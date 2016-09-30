@@ -65,7 +65,9 @@ function Player.new(pid)
         self.data.skillProgress[skillName] = 0
     end
 
-    self.accountName = tes3mp.GetName(pid)..".txt"
+    self.data.equipment = {}
+
+    self.accountName = tes3mp.GetName(pid) .. ".txt"
     self.pid = pid
     self.loggedOn = false
     self.tid_login = nil
@@ -110,6 +112,7 @@ function Player:LoggedOn()
         self:LoadSkills()
         self:LoadDynamicStats()
         self:LoadCell()
+        self:LoadEquipment()
     end
 end
 
@@ -389,6 +392,32 @@ function Player:LoadCell()
 
     tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
     tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
+end
+
+function Player:LoadEquipment()
+
+    for i = 0, 17 do
+        local currentItem = self.data.equipment[i]
+
+        if currentItem == nil then
+            currentItem = ""
+        end
+
+        tes3mp.EquipItem(self.pid, i, currentItem, 1)
+    end
+
+    tes3mp.SendEquipment(self.pid)
+end
+
+function Player:SaveEquipment()
+
+    for i = 0, 17 do
+        local itemId = tes3mp.GetItemSlot(self.pid, i)
+
+        if itemId ~= nil then
+            self.data.equipment[i] = itemId
+        end
+    end
 end
 
 return Player

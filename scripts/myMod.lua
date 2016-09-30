@@ -247,11 +247,18 @@ Methods.OnPlayerChangeCell = function(pid)
     end
 end
 
+Methods.OnPlayerChangeEquipment = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        Players[pid]:SaveEquipment()
+    end
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()
     Players[pid]:SaveClass()
     Players[pid]:SaveDynamicStats()
+    Players[pid]:SaveEquipment()
     Players[pid]:CreateAccount()
 end
 
