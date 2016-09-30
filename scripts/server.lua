@@ -20,7 +20,7 @@ Admins only:\
 function OnServerInit()
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
 
-    if tes3mp.GetServerVersion() ~= "0.0.1c" then
+    if tes3mp.GetServerVersion() ~= "0.2.0" then
         print("Server or script is outdated!")
         tes3mp.StopServer(1)
     end
