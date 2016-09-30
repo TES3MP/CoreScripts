@@ -48,9 +48,12 @@ function Player.new(pid)
     };
 
     self.data.attributes = {}
+    self.data.attributeSkillIncreases = {}
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
-        self.data.attributes[tes3mp.GetAttributeName(i)] = 1
+        local attributeName = tes3mp.GetAttributeName(i)
+        self.data.attributes[attributeName] = 1
+        self.data.attributeSkillIncreases[attributeName] = 0
     end
 
     self.data.skills = {}
@@ -290,7 +293,8 @@ end
 
 function Player:SaveAttributes()
     for name in pairs(self.data.attributes) do
-        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, tes3mp.GetAttributeId(name))
+        local attributeId = tes3mp.GetAttributeId(name)
+        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
     end
 end
 
@@ -309,6 +313,11 @@ function Player:SaveSkills()
         self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
     end
 
+    for name in pairs(self.data.attributeSkillIncreases) do
+        local attributeId = tes3mp.GetAttributeId(name)
+        self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
+    end
+
     self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
@@ -319,6 +328,10 @@ function Player:LoadSkills()
 
     for name, value in pairs(self.data.skillProgress) do
         tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
+    end
+
+    for name, value in pairs(self.data.attributeSkillIncreases) do
+        tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
     tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
