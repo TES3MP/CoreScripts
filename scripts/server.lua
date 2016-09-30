@@ -40,7 +40,10 @@ function OnPlayerDisconnect(pid)
     local pname = tes3mp.GetName(pid)
     local message = pname.." ("..pid..") ".."left the server.\n"
     tes3mp.SendMessage(pid, message, 1)
+
+    -- Trigger any necessary script events useful for saving state
     myMod.OnPlayerChangeCell(pid)
+
     myMod.OnPlayerDisconnect(pid)
 end
 

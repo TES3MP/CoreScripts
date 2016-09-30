@@ -53,9 +53,12 @@ function Player.new(pid)
     end
 
     self.data.skills = {}
+    self.data.skillprogress = {}
     
     for i = 0, (tes3mp.GetSkillCount() - 1) do
-        self.data.skills[tes3mp.GetSkillName(i)] = 1
+        local skillName = tes3mp.GetSkillName(i)
+        self.data.skills[skillName] = 1
+        self.data.skillprogress[skillName] = 0
     end
 
     self.accountName = tes3mp.GetName(pid)..".txt"
@@ -285,13 +288,13 @@ function Player:LoadDynamicStats()
 end
 
 function Player:SaveAttributes()
-    for name--[[,value--]] in pairs(self.data.attributes) do
+    for name in pairs(self.data.attributes) do
         self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, tes3mp.GetAttributeId(name))
     end
 end
 
 function Player:LoadAttributes()
-    for name,value in pairs(self.data.attributes) do
+    for name, value in pairs(self.data.attributes) do
         tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
@@ -299,14 +302,20 @@ function Player:LoadAttributes()
 end
 
 function Player:SaveSkills()
-    for name--[[,value--]] in pairs(self.data.skills) do
-        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, tes3mp.GetSkillId(name))
+    for name in pairs(self.data.skills) do
+        local skillId = tes3mp.GetSkillId(name)
+        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
+        self.data.skillprogress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
     end
 end
 
 function Player:LoadSkills()
-    for name,value in pairs(self.data.skills) do
+    for name, value in pairs(self.data.skills) do
         tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value)
+    end
+
+    for name, value in pairs(self.data.skillprogress) do
+        tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
     end
 
     tes3mp.SendSkills(self.pid)
