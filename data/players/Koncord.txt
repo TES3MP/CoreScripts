@@ -1,59 +1,128 @@
-[skills]
-alchemy=5
-restoration=5
-sneak=5
-conjuration=5
-mediumArmor=20
-lightArmor=5
-block=35
-security=20
-heavyArmor=40
-mercantile=15
-marksman=10
-shortBlade=5
-handToHand=5
-armorer=35
-spear=40
-speechcraft=5
-unarmored=5
-enchant=5
-acrobatics=5
-destruction=5
-athletics=20
-illusion=10
-mysticism=5
-longBlade=20
-alteration=15
-axe=35
-bluntWeapon=20
-
-[attributes]
-strength=50
-agility=40
-personality=30
-luck=40
-endurance=50
-willpower=30
-intelligence=40
-speed=50
-
-[character]
-hair=b_n_dark elf_m_hair_06
-sex=1
-race=Dark Elf
-head=b_n_dark elf_m_head_02
+[stats]
+fatigueCurrent=149.92210388184
+fatigueBase=160
+level=1
+magickaBase=50
+healthCurrent=26.583223342896
+levelProgress=0
+magickaCurrent=50
+healthBase=40
 
 [general]
 password=12345678
 name=Koncord
 admin=0
 
-[stats]
-level=1
-healthCurrent=1
-fatigueBase=1
-magickaCurrent=1
-healthBase=1
-magickaBase=1
-fatigueCurrent=1
+[customclass]
+majorattributes=Intelligence, Willpower
+name=Programmer
+minorskills=Acrobatics, Security, Handtohand, Restoration, Alchemy
+majorskills=Destruction, Illusion, Alteration, Enchant, Bluntweapon
+specialization=1
+description=Computer programmers write, test, debug, and maintain the detailed instructions, called computer programs, that computers must follow to perform their functions.
+
+[attributeSkillIncreases]
+Luck=0
+Agility=0
+Endurance=0
+Personality=0
+Speed=0
+Willpower=0
+Intelligence=0
+Strength=0
+
+[character]
+race=Dark Elf
+head=b_n_dark elf_m_head_02
+birthsign=beggar's nose
+class=custom
+sex=1
+hair=b_n_dark elf_m_hair_06
+
+[attributes]
+Luck=40
+Agility=40
+Endurance=40
+Personality=30
+Speed=50
+Willpower=40
+Intelligence=50
+Strength=40
+
+[location]
+angleZ=-0.034940719604492
+posY=177214.265625
+posX=76202.1171875
+angleY=0
+posZ=344.7301940918
+angleX=0.045322813093662
+cell=9,21
+
+[skills]
+Enchant=35
+Axe=5
+Handtohand=15
+Conjuration=10
+Mediumarmor=5
+Marksman=10
+Armorer=5
+Security=15
+Block=5
+Restoration=20
+Lightarmor=10
+Shortblade=15
+Speechcraft=5
+Athletics=10
+Mysticism=15
+Alchemy=20
+Mercantile=5
+Bluntweapon=30
+Longblade=10
+Unarmored=10
+Acrobatics=15
+Heavyarmor=5
+Destruction=45
+Alteration=35
+Sneak=5
+Spear=5
+Illusion=35
+
+[equipment]
+1=glass_cuirass
+2=ebony_greaves
+3=imperial left pauldron
+4=imperial right pauldron
+5=indoril left gauntlet
+6=indoril right gauntlet
+7=daedric_boots
+16=daedric wakizashi
+
+[skillProgress]
+Enchant=0
+Axe=0
+Handtohand=0
+Conjuration=0
+Mediumarmor=0
+Marksman=0
+Armorer=0
+Security=0
+Block=0
+Restoration=0
+Lightarmor=0
+Shortblade=0
+Speechcraft=0
+Athletics=0.52000004053116
+Mysticism=0
+Alchemy=0
+Mercantile=0
+Bluntweapon=0
+Longblade=0
+Unarmored=0
+Acrobatics=6.4500017166138
+Heavyarmor=0
+Destruction=0
+Alteration=0
+Sneak=0
+Spear=0
+Illusion=0
 
