@@ -250,7 +250,7 @@ function Player:LoadClass()
             tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
         end
 
-        commaSplitPattern = "([^, ]+)"
+        local commaSplitPattern = "([^, ]+)"
 
         local i = 0
         for value in string.gmatch(self.data.customclass.majorattributes, commaSplitPattern) do
@@ -371,7 +371,7 @@ end
 function Player:LoadCell()
     local newCell = self.data.location.cell
 
-    exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
+    local exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
 
     if string.match(newCell, exteriorCellPattern) ~= nil then
         for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
