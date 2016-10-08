@@ -54,9 +54,15 @@ function OnPlayerDisconnect(pid)
     myMod.OnPlayerDisconnect(pid)
 end
 
-function OnPlayerDeath(pid)
+require("reasonsOfDeath")
+
+function OnPlayerDeath(pid, reason, kid)
     local pname = tes3mp.GetName(pid)
-    local message = pname.." ("..pid..") ".."died.\n"
+    local message = ("%s (%d) %s"):format(pname, pid, reasons.GetReasonName(reason))
+    if reason == reasons.killed then
+       message = ("%s by %s (%d)"):format(message, tes3mp.GetName(kid), kid)
+    end
+    message = message .. ".\n"
     tes3mp.SendMessage(pid, message, 1)
     tes3mp.Resurrect(pid)
 end
