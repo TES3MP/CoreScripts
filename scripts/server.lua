@@ -14,7 +14,8 @@ local modhelptext = "Moderators only:\
 /kick <pid> - Kick player"
 
 local adminhelptext = "Admins only:\
-/setmoderator <pid> - Promote player to moderator"
+/addmoderator <pid> - Promote player to moderator\
+/removemoderator <pid> - Demote player from moderator"
 
 
 function OnServerInit()
@@ -148,13 +149,23 @@ function OnPlayerSendMessage(pid, message)
                 Players[tonumber(targetPlayer)]:Kick()
             end
 
-        elseif cmd[1] == "setmoderator" and admin then
+        elseif cmd[1] == "addmoderator" and admin then
             local targetPlayer = cmd[2]
             if myMod.CheckPlayerValidity(pid, targetPlayer) then
                 local targetPlayerName = Players[tonumber(targetPlayer)].name
-                local message = targetPlayerName.." was promoted to Moderator!\n"
+                local message = targetPlayerName .. " was promoted to Moderator!\n"
                 tes3mp.SendMessage(pid, message, 1)
                 Players[tonumber(targetPlayer)].data.general.admin = 1
+                Players[tonumber(targetPlayer)]:Save()
+            end
+        
+        elseif cmd[1] == "removemoderator" and admin then
+            local targetPlayer = cmd[2]
+            if myMod.CheckPlayerValidity(pid, targetPlayer) then
+                local targetPlayerName = Players[tonumber(targetPlayer)].name
+                local message = targetPlayerName .. " was demoted from Moderator!\n"
+                tes3mp.SendMessage(pid, message, 1)
+                Players[tonumber(targetPlayer)].data.general.admin = 0
                 Players[tonumber(targetPlayer)]:Save()
             end
 
