@@ -2,20 +2,20 @@ myMod = require("myMod")
 Player = require("player")
 
 local helptext = "\nCommand list:\
-/list - List all players on the server\
-\
-Moderators only:\
+/list - List all players on the server"
+
+local modhelptext = "Moderators only:\
 /superman - Increase acrobatics, athletics and speed\
 /teleport (<pid>/all) - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /getpos <pid> - Get player position and cell\
 /setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
 /setskill <pid> <skill> <value> - Set a player's skill to a certain value\
-/kick <pid> - Kick player\
-\
-Admins only:\
-/setmoderator <pid> - Promote player to moderator\
-\n"
+/kick <pid> - Kick player"
+
+local adminhelptext = "Admins only:\
+/setmoderator <pid> - Promote player to moderator"
+
 
 function OnServerInit()
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
@@ -91,7 +91,14 @@ function OnPlayerSendMessage(pid, message)
         local cmd = (message:sub(2, #message)):split(" ")
 
         if cmd[1] == "help" then
-            tes3mp.SendMessage(pid, helptext, 0)
+            local text = helptext .. "\n";
+            if moderator then
+                text = text .. modhelptext .. "\n"
+            end
+            if admin then
+                text = text .. adminhelptext .. "\n"
+            end
+            tes3mp.SendMessage(pid, text, 0)
 
         elseif cmd[1] == "cheat" and moderator then
             
