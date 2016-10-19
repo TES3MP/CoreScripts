@@ -82,7 +82,7 @@ function Player:Destroy()
         self.tid_login = nil
     end
     if self.loggedOn and self.hasAccount then
-        print("Saving player...")
+        print("Saving player " .. self.pid)
         self:Save()
     end
     self.loggedOn = false
@@ -371,27 +371,30 @@ end
 function Player:LoadCell()
     local newCell = self.data.location.cell
 
-    local exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
+    if newCell ~= nil then
 
-    if string.match(newCell, exteriorCellPattern) ~= nil then
-        for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
-            tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
+        local exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
+
+        if string.match(newCell, exteriorCellPattern) ~= nil then
+            for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
+                tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
+            end
+        else
+            tes3mp.SetCell(self.pid, newCell)
         end
-    else
-        tes3mp.SetCell(self.pid, newCell)
+
+        local pos = {0, 0, 0}
+        local angle = {0, 0, 0}
+        pos[0] = tonumber(self.data.location.posX)
+        pos[1] = tonumber(self.data.location.posY)
+        pos[2] = tonumber(self.data.location.posZ)
+        angle[0] = tonumber(self.data.location.angleX)
+        angle[1] = tonumber(self.data.location.angleY)
+        angle[2] = tonumber(self.data.location.angleZ)
+
+        tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+        tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
     end
-
-    local pos = {0, 0, 0}
-    local angle = {0, 0, 0}
-    pos[0] = tonumber(self.data.location.posX)
-    pos[1] = tonumber(self.data.location.posY)
-    pos[2] = tonumber(self.data.location.posZ)
-    angle[0] = tonumber(self.data.location.angleX)
-    angle[1] = tonumber(self.data.location.angleY)
-    angle[2] = tonumber(self.data.location.angleZ)
-
-    tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
-    tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
 end
 
 function Player:LoadEquipment()
