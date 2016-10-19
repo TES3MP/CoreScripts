@@ -13,11 +13,11 @@ password=12345678
 name=Koncord
 admin=0
 
-[customclass]
-majorattributes=Intelligence, Willpower
+[customClass]
+majorAttributes=Intelligence, Willpower
 name=Programmer
-minorskills=Acrobatics, Security, Handtohand, Restoration, Alchemy
-majorskills=Destruction, Illusion, Alteration, Enchant, Bluntweapon
+minorSkills=Acrobatics, Security, Handtohand, Restoration, Alchemy
+majorSkills=Destruction, Illusion, Alteration, Enchant, Bluntweapon
 specialization=1
 description=Computer programmers write, test, debug, and maintain the detailed instructions, called computer programs, that computers must follow to perform their functions.
 

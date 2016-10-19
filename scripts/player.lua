@@ -216,56 +216,56 @@ function Player:SaveClass()
         self.data.character.class = tes3mp.GetDefaultClass(self.pid)
     else
         self.data.character.class = "custom"
-        self.data.customclass = {}
-        self.data.customclass.name = tes3mp.GetClassName(self.pid)
-        self.data.customclass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
-        self.data.customclass.specialization = tes3mp.GetClassSpecialization(self.pid)
-        majorattributes = {}
-        majorskills = {}
-        minorskills = {}
+        self.data.customClass = {}
+        self.data.customClass.name = tes3mp.GetClassName(self.pid)
+        self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
+        self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
+        majorAttributes = {}
+        majorSkills = {}
+        minorSkills = {}
 
         for i = 0, 1, 1 do
-            majorattributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
+            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
         end
 
         for i = 0, 4, 1 do
-            majorskills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
-            minorskills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
+            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
+            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
         end
 
-        self.data.customclass.majorattributes = table.concat(majorattributes, ", ")
-        self.data.customclass.majorskills = table.concat(majorskills, ", ")
-        self.data.customclass.minorskills = table.concat(minorskills, ", ")
+        self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
+        self.data.customClass.majorSkills = table.concat(majorSkills, ", ")
+        self.data.customClass.minorSkills = table.concat(minorSkills, ", ")
     end
 end
 
 function Player:LoadClass()
     if self.data.character.class ~= "custom" then
         tes3mp.SetDefaultClass(self.pid, self.data.character.class)
-    else
-        tes3mp.SetClassName(self.pid, self.data.customclass.name)
-        tes3mp.SetClassSpecialization(self.pid, self.data.customclass.specialization)
+    elseif self.data.customClass ~= nil then
+        tes3mp.SetClassName(self.pid, self.data.customClass.name)
+        tes3mp.SetClassSpecialization(self.pid, self.data.customClass.specialization)
 
-        if self.data.customclass.description ~= nil then
-            tes3mp.SetClassDesc(self.pid, self.data.customclass.description)
+        if self.data.customClass.description ~= nil then
+            tes3mp.SetClassDesc(self.pid, self.data.customClass.description)
         end
 
         local commaSplitPattern = "([^, ]+)"
 
         local i = 0
-        for value in string.gmatch(self.data.customclass.majorattributes, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.majorAttributes, commaSplitPattern) do
             tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
             i = i + 1
         end
 
         i = 0
-        for value in string.gmatch(self.data.customclass.majorskills, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.majorSkills, commaSplitPattern) do
             tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
 
         i = 0
-        for value in string.gmatch(self.data.customclass.minorskills, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.minorSkills, commaSplitPattern) do
             tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
