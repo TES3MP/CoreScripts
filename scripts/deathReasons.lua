@@ -1,6 +1,6 @@
 reasons = {}
 
-reasons.unkonwn = 0
+reasons.unknown = 0
 reasons.killed = 1
 reasons.suicide = 2
 -- reasons.drowned = 3

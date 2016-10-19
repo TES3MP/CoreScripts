@@ -55,7 +55,7 @@ function OnPlayerDisconnect(pid)
     myMod.OnPlayerDisconnect(pid)
 end
 
-require("reasonsOfDeath")
+require("deathReasons")
 
 function OnPlayerDeath(pid, reason, kid)
     local pname = tes3mp.GetName(pid)
