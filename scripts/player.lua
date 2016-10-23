@@ -406,7 +406,7 @@ function Player:LoadEquipment()
             currentItem = ""
         end
 
-        tes3mp.EquipItem(self.pid, i, currentItem, 1)
+        tes3mp.EquipItem(self.pid, i, currentItem, 1, -1)
     end
 
     tes3mp.SendEquipment(self.pid)
