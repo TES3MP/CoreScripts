@@ -244,6 +244,8 @@ Methods.OnPlayerChangeCell = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveCell()
         Players[pid]:SaveDynamicStats()
+        print("Saving player " .. pid)
+        Players[pid]:Save()
     end
 end
 

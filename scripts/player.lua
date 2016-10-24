@@ -81,10 +81,7 @@ function Player:Destroy()
         tes3mp.StopTimer(self.tid_login)
         self.tid_login = nil
     end
-    if self.loggedOn and self.hasAccount then
-        print("Saving player " .. self.pid)
-        self:Save()
-    end
+
     self.loggedOn = false
     self.hasAccount = nil
 end
