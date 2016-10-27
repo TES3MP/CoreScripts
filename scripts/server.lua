@@ -21,8 +21,8 @@ local adminhelptext = "Admins only:\
 function OnServerInit()
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
 
-    if tes3mp.GetServerVersion() ~= "0.2.0" then
-        print("Server or script is outdated!")
+    if tes3mp.GetServerVersion() ~= "0.3.0" then
+        print("The server or script is outdated!")
         tes3mp.StopServer(1)
     end
 
