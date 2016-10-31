@@ -13,7 +13,7 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
     local valid = false
     local sendMessage = true
     if pid == nil then
-        local sendMessage = false
+        sendMessage = false
     end
     if targetPlayer ~= nil and type(tonumber(targetPlayer)) == "number" then
         if tonumber(targetPlayer) >=0 and tonumber(targetPlayer) <= #Players then
@@ -197,7 +197,8 @@ Methods.OnPlayerMessage = function(pid, message)
             return 0 
         end
         Players[pid]:Load()
-        if Players[pid].data.general.password ~= cmd[2] then
+        -- Just in case the password from the data file is a number, make sure to turn it into a string
+        if tostring(Players[pid].data.general.password) ~= cmd[2] then
             Players[pid]:Message("Incorrect password!\n")
             return 0
         end
