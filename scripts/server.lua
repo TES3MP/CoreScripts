@@ -185,7 +185,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetPlayerName = Players[targetPlayer].name
                 local message
 
-                if Players[targetPlayer]:IsAdmin() == 2 then
+                if Players[targetPlayer]:IsAdmin() then
                     message = "Cannot demote " .. targetPlayerName .. " because they are an Admin\n"
                     tes3mp.SendMessage(pid, message, 0)
                 elseif Players[targetPlayer]:IsModerator() then
