@@ -74,7 +74,7 @@ end
 function OnPlayerSendMessage(pid, message)
     local pname = tes3mp.GetName(pid)
     print(pname.."("..pid.."): "..message)
-    
+
     if myMod.OnPlayerMessage(pid, message) == 0 then
         return 0
     end
@@ -87,7 +87,7 @@ function OnPlayerSendMessage(pid, message)
     elseif Players[pid]:IsModerator() then
         moderator = true
     end
-    
+
     if message:sub(1,1) == '/' then
         local cmd = (message:sub(2, #message)):split(" ")
 
@@ -102,7 +102,7 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendMessage(pid, text, 0)
 
         elseif cmd[1] == "cheat" and moderator then
-            
+
             for i = 0, (tes3mp.GetAttributeCount() - 1) do
                 tes3mp.SetAttributeBase(pid, i, 666)
             end
@@ -142,14 +142,14 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "kick" and moderator then
             local targetPlayer = cmd[2]
-            if myMod.CheckPlayerValidity(pid, targetPlayer) then           
+            if myMod.CheckPlayerValidity(pid, targetPlayer) then
                 local targetPlayerName = Players[tonumber(targetPlayer)].name
                 local message = targetPlayerName .. " was kicked from the server!\n"
                 if Players[targetPlayer]:IsModerator() and not admin or Players[targetPlayer]:IsAdmin() then
                     message = "You cannot kick admin from the server"
                 else
                     Players[tonumber(targetPlayer)]:Kick()
-                end     
+                end
                 tes3mp.SendMessage(pid, message, 1)
             end
 
@@ -172,7 +172,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[tonumber(targetPlayer)]:Save()
                 end
             end
-        
+
         elseif cmd[1] == "removemoderator" and admin then
             local targetPlayer = cmd[2]
             if myMod.CheckPlayerValidity(pid, targetPlayer) then
@@ -303,5 +303,5 @@ function OnPlayerEndCharGen(pid)
 end
 
 function OnGUIAction(pid, idGui, data)
-    
+
 end

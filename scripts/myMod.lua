@@ -169,9 +169,9 @@ end
 
 Methods.OnPlayerMessage = function(pid, message)
     if message:sub(1,1) ~= '/' then return 1 end
-    
+
     local cmd = (message:sub(2, #message)):split(" ")
-    
+
     if cmd[1] == "register" or cmd[1] == "reg" then
         if Players[pid]:IsLoggedOn() then
             Players[pid]:Message("You are already logged in.\n")
@@ -181,7 +181,7 @@ Methods.OnPlayerMessage = function(pid, message)
             return 0
         elseif cmd[2] == nil then
             Players[pid]:Message("Incorrect password!\n")
-            return 0 
+            return 0
         end
         Players[pid]:Registered(cmd[2])
         return 0
@@ -193,8 +193,8 @@ Methods.OnPlayerMessage = function(pid, message)
             Players[pid]:Message("You do not have an account. Try \"/register password\".\n")
             return 0
         elseif cmd[2] == nil then
-            Players[pid]:Message("Password can not be empty\n")
-            return 0 
+            Players[pid]:Message("Password cannot be empty\n")
+            return 0
         end
         Players[pid]:Load()
         -- Just in case the password from the data file is a number, make sure to turn it into a string
@@ -205,7 +205,7 @@ Methods.OnPlayerMessage = function(pid, message)
         Players[pid]:LoggedOn()
         return 0
     end
-    
+
     return 1
 end
 
@@ -213,7 +213,7 @@ Methods.AuthCheck = function(pid)
     if Players[pid]:IsLoggedOn() then
         return
     end
-    
+
     local pname = tes3mp.GetName(pid)
     local message = pname.." ("..pid..") ".."failed to log in.\n"
     tes3mp.SendMessage(pid, message, 1)

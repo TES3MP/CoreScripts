@@ -58,7 +58,7 @@ function Player.new(pid)
 
     self.data.skills = {}
     self.data.skillProgress = {}
-    
+
     for i = 0, (tes3mp.GetSkillCount() - 1) do
         local skillName = tes3mp.GetSkillName(i)
         self.data.skills[skillName] = 1
