@@ -382,12 +382,12 @@ function Player:LoadCell()
 
         local pos = {0, 0, 0}
         local angle = {0, 0, 0}
-        pos[0] = tonumber(self.data.location.posX)
-        pos[1] = tonumber(self.data.location.posY)
-        pos[2] = tonumber(self.data.location.posZ)
-        angle[0] = tonumber(self.data.location.angleX)
-        angle[1] = tonumber(self.data.location.angleY)
-        angle[2] = tonumber(self.data.location.angleZ)
+        pos[0] = self.data.location.posX
+        pos[1] = self.data.location.posY
+        pos[2] = self.data.location.posZ
+        angle[0] = self.data.location.angleX
+        angle[1] = self.data.location.angleY
+        angle[2] = self.data.location.angleZ
 
         tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
         tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
