@@ -157,20 +157,40 @@ function OnPlayerSendMessage(pid, message)
             local targetPlayer = cmd[2]
             if myMod.CheckPlayerValidity(pid, targetPlayer) then
                 local targetPlayerName = Players[tonumber(targetPlayer)].name
-                local message = targetPlayerName .. " was promoted to Moderator!\n"
-                tes3mp.SendMessage(pid, message, 1)
-                Players[tonumber(targetPlayer)].data.general.admin = 1
-                Players[tonumber(targetPlayer)]:Save()
+                local message
+
+                if Players[tonumber(targetPlayer)].data.general.admin == 2 then
+                    message = targetPlayerName .. " is already an Admin\n"
+                    tes3mp.SendMessage(pid, message, 0)
+                elseif Players[tonumber(targetPlayer)].data.general.admin == 1 then
+                    message = targetPlayerName .. " is already a Moderator\n"
+                    tes3mp.SendMessage(pid, message, 0)
+                else
+                    message = targetPlayerName .. " was promoted to Moderator!\n"
+                    tes3mp.SendMessage(pid, message, 1)
+                    Players[tonumber(targetPlayer)].data.general.admin = 1
+                    Players[tonumber(targetPlayer)]:Save()
+                end
             end
         
         elseif cmd[1] == "removemoderator" and admin then
             local targetPlayer = cmd[2]
             if myMod.CheckPlayerValidity(pid, targetPlayer) then
                 local targetPlayerName = Players[tonumber(targetPlayer)].name
-                local message = targetPlayerName .. " was demoted from Moderator!\n"
-                tes3mp.SendMessage(pid, message, 1)
-                Players[tonumber(targetPlayer)].data.general.admin = 0
-                Players[tonumber(targetPlayer)]:Save()
+                local message
+
+                if Players[tonumber(targetPlayer)].data.general.admin == 2 then
+                    message = "Cannot demote " .. targetPlayerName .. " because they are an Admin\n"
+                    tes3mp.SendMessage(pid, message, 0)
+                elseif Players[tonumber(targetPlayer)].data.general.admin == 1 then
+                    message = targetPlayerName .. " was demoted from Moderator!\n"
+                    tes3mp.SendMessage(pid, message, 1)
+                    Players[tonumber(targetPlayer)].data.general.admin = 0
+                    Players[tonumber(targetPlayer)]:Save()
+                else
+                    message = targetPlayerName .. " is not a Moderator\n"
+                    tes3mp.SendMessage(pid, message, 0)
+                end
             end
 
         elseif cmd[1] == "superman" and moderator then
