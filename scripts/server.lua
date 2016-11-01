@@ -141,13 +141,15 @@ function OnPlayerSendMessage(pid, message)
             myMod.TeleportToPlayer(pid, pid, cmd[2])
 
         elseif cmd[1] == "kick" and moderator then
-            local targetPlayer = cmd[2]
-            if myMod.CheckPlayerValidity(pid, targetPlayer) then
-                local targetPlayerName = Players[tonumber(targetPlayer)].name
-                local message = targetPlayerName .. " was kicked from the server!\n"
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+                local targetPlayer = tonumber(cmd[2])
+                local targetPlayerName = Players[targetPlayer].name
+                local message
+                
                 if Players[targetPlayer]:IsModerator() and not admin or Players[targetPlayer]:IsAdmin() then
-                    message = "You cannot kick admin from the server"
+                    message = "You cannot kick an Admin from the server\n"
                 else
+                    message = targetPlayerName .. " was kicked from the server!\n"
                     Players[tonumber(targetPlayer)]:Kick()
                 end
                 tes3mp.SendMessage(pid, message, 1)
