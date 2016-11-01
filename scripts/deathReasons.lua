@@ -7,13 +7,13 @@ reasons.suicide = 2
 
 reasons.GetReasonName = function(reason)
    if reason == reasons.killed then
-        return "killed"
+        return "was killed"
     elseif reason == reasons.suicide then
-        return "suicide"
+        return "committed suicide"
     -- elseif reason == reasons.drowned then
     --    return "drowned"
     else
-        return "unknown"
+        return "died through unknown means"
     end
 end
 

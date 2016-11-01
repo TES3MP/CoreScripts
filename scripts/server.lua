@@ -57,12 +57,14 @@ end
 
 require("deathReasons")
 
-function OnPlayerDeath(pid, reason, kid)
+function OnPlayerDeath(pid, reason, killerId)
     local pname = tes3mp.GetName(pid)
     local message = ("%s (%d) %s"):format(pname, pid, reasons.GetReasonName(reason))
+
     if reason == reasons.killed then
-       message = ("%s by %s (%d)"):format(message, tes3mp.GetName(kid), kid)
+       message = ("%s by %s (%d)"):format(message, tes3mp.GetName(killerId), killerId)
     end
+
     message = message .. ".\n"
     tes3mp.SendMessage(pid, message, 1)
     tes3mp.Resurrect(pid)
