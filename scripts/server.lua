@@ -1,3 +1,4 @@
+require('gui-ids')
 myMod = require("myMod")
 Player = require("player")
 
@@ -309,5 +310,5 @@ function OnPlayerEndCharGen(pid)
 end
 
 function OnGUIAction(pid, idGui, data)
-
+    if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end

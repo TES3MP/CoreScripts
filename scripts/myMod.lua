@@ -153,7 +153,16 @@ Methods.OnPlayerConnect = function(pid)
     local message = pname.." ("..pid..") ".."joined the server.\n"
     tes3mp.SendMessage(pid, message, 1)
 
-    message = "Welcome "..pname.."\nYou have "..tostring(login_time).." seconds to register (/reg) or login (/login).\n"
+    message = "Welcome " .. pname .. "\nYou have "..tostring(login_time).." seconds to"
+
+    if Players[pid]:HasAccount() then
+        message = message .. " login.\n"
+        GUI.ShowLogin(pid)
+    else
+        message = message .. " register.\n"
+        GUI.ShowRegister(pid)
+    end
+
     tes3mp.SendMessage(pid, message, 0)
 
     Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
@@ -165,6 +174,37 @@ Methods.OnPlayerDisconnect = function(pid)
     if Players[pid] ~= nil then
         Players[pid]:Destroy()
     end
+end
+
+Methods.OnGUIAction = function(pid, idGui, data)
+    data = tostring(data) -- data can be numeric, but we should convert this to string
+    if idGui == GUI.LOGIN then
+        if data == nil then
+            Players[pid]:Message("Incorrect password!\n")
+            GUI.ShowLogin(pid)
+            return true
+        end
+
+        Players[pid]:Load()
+
+        -- Just in case the password from the data file is a number, make sure to turn it into a string
+        if tostring(Players[pid].data.general.password) ~= data then
+            Players[pid]:Message("Incorrect password!\n")
+            GUI.ShowLogin(pid)
+            return true
+        end
+        Players[pid]:LoggedOn()
+    elseif idGui == GUI.REGISTER then
+        if data == nil then
+            Players[pid]:Message("Password can not be empty\n")
+            GUI.ShowRegister(pid)
+            return true
+        end
+        Players[pid]:Registered(data)
+    else
+        return false
+    end
+    return true
 end
 
 Methods.OnPlayerMessage = function(pid, message)
