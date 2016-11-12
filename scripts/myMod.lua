@@ -76,6 +76,10 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 
     tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
     tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
+    
+    tes3mp.SendCell(originPlayer)
+    tes3mp.SendPos(originPlayer)
+
     local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
     tes3mp.SendMessage(originPlayer, originMessage, 0)

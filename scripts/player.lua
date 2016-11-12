@@ -391,6 +391,9 @@ function Player:LoadCell()
 
         tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
         tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
+
+        tes3mp.SendCell(self.pid)
+        tes3mp.SendPos(self.pid)
     end
 end
 
