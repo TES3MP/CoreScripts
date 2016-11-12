@@ -1,4 +1,4 @@
-require('gui-ids')
+require('guiIds')
 myMod = require("myMod")
 Player = require("player")
 
