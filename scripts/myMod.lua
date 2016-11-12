@@ -178,7 +178,7 @@ end
 
 Methods.OnGUIAction = function(pid, idGui, data)
     data = tostring(data) -- data can be numeric, but we should convert this to string
-    if idGui == GUI.LOGIN then
+    if idGui == GUI.ID.LOGIN then
         if data == nil then
             Players[pid]:Message("Incorrect password!\n")
             GUI.ShowLogin(pid)
@@ -194,17 +194,15 @@ Methods.OnGUIAction = function(pid, idGui, data)
             return true
         end
         Players[pid]:LoggedOn()
-    elseif idGui == GUI.REGISTER then
+    elseif idGui == GUI.ID.REGISTER then
         if data == nil then
             Players[pid]:Message("Password can not be empty\n")
             GUI.ShowRegister(pid)
             return true
         end
         Players[pid]:Registered(data)
-    else
-        return false
     end
-    return true
+    return false
 end
 
 Methods.OnPlayerMessage = function(pid, message)

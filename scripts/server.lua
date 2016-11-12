@@ -94,17 +94,7 @@ function OnPlayerSendMessage(pid, message)
     if message:sub(1,1) == '/' then
         local cmd = (message:sub(2, #message)):split(" ")
 
-        if cmd[1] == "help" then
-            local text = helptext .. "\n";
-            if moderator then
-                text = text .. modhelptext .. "\n"
-            end
-            if admin then
-                text = text .. adminhelptext .. "\n"
-            end
-            tes3mp.SendMessage(pid, text, 0)
-
-        elseif cmd[1] == "cheat" and moderator then
+        if cmd[1] == "cheat" and moderator then
 
             for i = 0, (tes3mp.GetAttributeCount() - 1) do
                 tes3mp.SetAttributeBase(pid, i, 666)
@@ -118,14 +108,7 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendSkills(pid)
 
         elseif cmd[1] == "list" then
-            local text
-            if myMod.GetConnectedPlayerNumber() == 1 then
-                text = "player"
-            else
-                text = "players"
-            end
-            local message = myMod.GetConnectedPlayerNumber() .. " connected " .. text .. ": " .. myMod.GetConnectedPlayerList() .. "\n"
-            tes3mp.SendMessage(pid, message, 0)
+            GUI.ShowPlayersList(pid)
 
         elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
             if cmd[2] ~= "all" then
@@ -264,9 +247,15 @@ function OnPlayerSendMessage(pid, message)
                     end
                 end
             end
-
         elseif cmd[1] == "help" then
-            tes3mp.MessageBox(pid, 1, helptext)
+            local text = helptext .. "\n";
+            if moderator then
+                text = text .. modhelptext .. "\n"
+            end
+            if admin then
+                text = text .. adminhelptext .. "\n"
+            end
+            tes3mp.MessageBox(pid, -1, text)
 
         elseif cmd[1] == "setext" and admin then
             tes3mp.SetExterior(pid, cmd[2], cmd[3])
