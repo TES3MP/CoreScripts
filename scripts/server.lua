@@ -294,6 +294,10 @@ function OnPlayerChangeEquipment(pid)
     myMod.OnPlayerChangeEquipment(pid)
 end
 
+function OnPlayerChangeInventory(pid)
+    myMod.OnPlayerChangeInventory(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end
