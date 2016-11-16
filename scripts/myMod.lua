@@ -22,19 +22,19 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
             else
                 if sendMessage then
                     local message = "That player is not logged on!\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.sendMessage(pid, message, 0)
                 end
             end
         else
             if sendMessage then
                 local message = "That player is not logged on!\n"
-                tes3mp.SendMessage(pid, message, 0)
+                tes3mp.sendMessage(pid, message, 0)
             end
         end
     else
         if sendMessage then
             local message = "Please specify the player ID.\n"
-            tes3mp.SendMessage(pid, message, 0)
+            tes3mp.sendMessage(pid, message, 0)
         end
     end
     return valid
@@ -45,7 +45,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
         return
     elseif tonumber(originPlayer) == tonumber(targetPlayer) then
         local message = "You can't teleport to yourself.\n"
-        tes3mp.SendMessage(pid, message, 0)
+        tes3mp.sendMessage(pid, message, 0)
         return
     end
 
@@ -56,34 +56,34 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     local targetPos = {0, 0, 0}
     local targetAngle = {0, 0, 0}
     local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPlayer)
-    targetPos[1] = tes3mp.GetPosY(targetPlayer)
-    targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-    targetAngle[0] = tes3mp.GetAngleX(targetPlayer)
-    targetAngle[1] = tes3mp.GetAngleY(targetPlayer)
-    targetAngle[2] = tes3mp.GetAngleZ(targetPlayer)
-    targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
-    targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
-    targetCell = tes3mp.GetCell(targetPlayer)
+    targetPos[0] = tes3mp.getPosX(targetPlayer)
+    targetPos[1] = tes3mp.getPosY(targetPlayer)
+    targetPos[2] = tes3mp.getPosZ(targetPlayer)
+    targetAngle[0] = tes3mp.getAngleX(targetPlayer)
+    targetAngle[1] = tes3mp.getAngleY(targetPlayer)
+    targetAngle[2] = tes3mp.getAngleZ(targetPlayer)
+    targetGrid[0] = tes3mp.getExteriorX(targetPlayer)
+    targetGrid[1] = tes3mp.getExteriorY(targetPlayer)
+    targetCell = tes3mp.getCell(targetPlayer)
 
-    if tes3mp.IsInExterior(targetPlayer) == 1 then
+    if tes3mp.isInExterior(targetPlayer) == 1 then
         targetCellName = "Exterior "..targetGrid[0]..", "..targetGrid[1]..""
-        tes3mp.SetExterior(originPlayer, targetGrid[0], targetGrid[1])
+        tes3mp.setExterior(originPlayer, targetGrid[0], targetGrid[1])
     else
         targetCellName = targetCell
-        tes3mp.SetCell(originPlayer, targetCell)
+        tes3mp.setCell(originPlayer, targetCell)
     end
 
-    tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
-    tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
+    tes3mp.setPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
+    tes3mp.setAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
     
-    tes3mp.SendCell(originPlayer)
-    tes3mp.SendPos(originPlayer)
+    tes3mp.sendCell(originPlayer)
+    tes3mp.sendPos(originPlayer)
 
     local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-    tes3mp.SendMessage(originPlayer, originMessage, 0)
-    tes3mp.SendMessage(targetPlayer, targetMessage, 0)
+    tes3mp.sendMessage(originPlayer, originMessage, 0)
+    tes3mp.sendMessage(targetPlayer, targetMessage, 0)
 end
 
 Methods.GetConnectedPlayerNumber = function()
@@ -122,19 +122,19 @@ Methods.PrintPlayerPosition = function(pid, targetPlayer)
     local targetCellName = ""
     local targetPos = {0, 0, 0}
     local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPlayer)
-    targetPos[1] = tes3mp.GetPosY(targetPlayer)
-    targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-    targetCell = tes3mp.GetCell(targetPlayer)
+    targetPos[0] = tes3mp.getPosX(targetPlayer)
+    targetPos[1] = tes3mp.getPosY(targetPlayer)
+    targetPos[2] = tes3mp.getPosZ(targetPlayer)
+    targetCell = tes3mp.getCell(targetPlayer)
     if targetCell ~= "" then
         targetCellName = targetCell
     else
-        targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
-        targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
+        targetGrid[0] = tes3mp.getExteriorX(targetPlayer)
+        targetGrid[1] = tes3mp.getExteriorY(targetPlayer)
         targetCellName = "Exterior ("..targetGrid[0]..", "..targetGrid[1]..")"
     end
     message = targetPlayerName.." ("..targetPlayer..") is in "..targetCellName.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
-    tes3mp.SendMessage(pid, message, 0)
+    tes3mp.sendMessage(pid, message, 0)
 end
 
 Methods.PushPlayerList = function(pls)
@@ -146,16 +146,16 @@ Methods.testFunction = function()
       print(Players[0])
 end
 
-Methods.OnPlayerConnect = function(pid)
+Methods.onPlayerConnect = function(pid)
     Players[pid] = Player.new(pid)
     local login_time = 60
-    local pname = tes3mp.GetName(pid)
+    local pname = tes3mp.getName(pid)
     -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
     -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
     Players[pid].name = pname
 
     local message = pname.." ("..pid..") ".."joined the server.\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.sendMessage(pid, message, 1)
 
     message = "Welcome " .. pname .. "\nYou have "..tostring(login_time).." seconds to"
 
@@ -167,20 +167,20 @@ Methods.OnPlayerConnect = function(pid)
         GUI.ShowRegister(pid)
     end
 
-    tes3mp.SendMessage(pid, message, 0)
+    tes3mp.sendMessage(pid, message, 0)
 
-    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
-    tes3mp.StartTimer(Players[pid].tid_login);
+    Players[pid].tid_login = tes3mp.createTimerEx("OnLogin", time.seconds(login_time), "i", pid)
+    tes3mp.startTimer(Players[pid].tid_login);
 end
 
-Methods.OnPlayerDisconnect = function(pid)
+Methods.onPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
         Players[pid]:Destroy()
     end
 end
 
-Methods.OnGUIAction = function(pid, idGui, data)
+Methods.onGuiAction = function(pid, idGui, data)
     data = tostring(data) -- data can be numeric, but we should convert this to string
     if idGui == GUI.ID.LOGIN then
         if data == nil then
@@ -256,34 +256,34 @@ Methods.AuthCheck = function(pid)
         return
     end
 
-    local pname = tes3mp.GetName(pid)
+    local pname = tes3mp.getName(pid)
     local message = pname.." ("..pid..") ".."failed to log in.\n"
-    tes3mp.SendMessage(pid, message, 1)
-    Players[pid]:Kick()
+    tes3mp.sendMessage(pid, message, 1)
+    Players[pid]:kick()
 
     Players[pid] = nil
 end
 
-Methods.OnPlayerChangeAttributes = function(pid)
+Methods.onPlayerChangeAttributes = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveAttributes()
     end
 end
 
-Methods.OnPlayerChangeSkills = function(pid)
+Methods.onPlayerChangeSkills = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveSkills()
     end
 end
 
-Methods.OnPlayerChangeLevel = function(pid)
+Methods.onPlayerChangeLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveLevel()
         Players[pid]:SaveDynamicStats()
     end
 end
 
-Methods.OnPlayerChangeCell = function(pid)
+Methods.onPlayerChangeCell = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveCell()
         Players[pid]:SaveDynamicStats()
@@ -292,19 +292,19 @@ Methods.OnPlayerChangeCell = function(pid)
     end
 end
 
-Methods.OnPlayerChangeEquipment = function(pid)
+Methods.onPlayerChangeEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveEquipment()
     end
 end
 
-Methods.OnPlayerChangeInventory = function(pid)
+Methods.onPlayerChangeInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         print(pid .. " changed inventory")
     end
 end
 
-Methods.OnPlayerEndCharGen = function(pid)
+Methods.onPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()
     Players[pid]:SaveClass()
