@@ -50,8 +50,8 @@ function Player.new(pid)
     self.data.attributes = {}
     self.data.attributeSkillIncreases = {}
 
-    for i = 0, (tes3mp.getAttributeCount() - 1) do
-        local attributeName = tes3mp.getAttributeName(i)
+    for i = 0, (tes3mp.GetAttributeCount() - 1) do
+        local attributeName = tes3mp.GetAttributeName(i)
         self.data.attributes[attributeName] = 1
         self.data.attributeSkillIncreases[attributeName] = 0
     end
@@ -59,15 +59,15 @@ function Player.new(pid)
     self.data.skills = {}
     self.data.skillProgress = {}
 
-    for i = 0, (tes3mp.getSkillCount() - 1) do
-        local skillName = tes3mp.getSkillName(i)
+    for i = 0, (tes3mp.GetSkillCount() - 1) do
+        local skillName = tes3mp.GetSkillName(i)
         self.data.skills[skillName] = 1
         self.data.skillProgress[skillName] = 0
     end
 
     self.data.equipment = {}
 
-    self.accountName = tes3mp.getName(pid) .. ".txt"
+    self.accountName = tes3mp.GetName(pid) .. ".txt"
     self.pid = pid
     self.loggedOn = false
     self.tid_login = nil
@@ -78,7 +78,7 @@ end
 
 function Player:Destroy()
     if self.tid_login ~= nil then
-        tes3mp.stopTimer(self.tid_login)
+        tes3mp.StopTimer(self.tid_login)
         self.tid_login = nil
     end
 
@@ -86,16 +86,16 @@ function Player:Destroy()
     self.hasAccount = nil
 end
 
-function Player:kick()
+function Player:Kick()
     self:Destroy()
-    tes3mp.kick(self.pid)
+    tes3mp.Kick(self.pid)
 end
 
 function Player:Registered(passw)
     self.loggedOn = true
     self.data.general.password = passw
     if self.hasAccount == false then -- create account
-        tes3mp.setCharGenStage(self.pid, 1, 4)
+        tes3mp.SetCharGenStage(self.pid, 1, 4)
     end
 end
 
@@ -133,24 +133,24 @@ function Player:PromoteModerator(other)
     return false
 end
 
-function Player:getHealthCurrent()
-    self.data.stats.healthCurrent = tes3mp.getHealthCurrent(self.pid)
+function Player:GetHealthCurrent()
+    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
     return self.data.stats.healthCurrent
 end
 
-function Player:setHealthCurrent(health)
+function Player:SetHealthCurrent(health)
     self.data.stats.healthCurrent = health
-    tes3mp.setHealthCurrent(self.pid, health)
+    tes3mp.SetHealthCurrent(self.pid, health)
 end
 
-function Player:getHealthBase()
-    self.data.stats.healthBase = tes3mp.getHealthBase(self.pid)
+function Player:GetHealthBase()
+    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
     return self.data.stats.healthBase
 end
 
-function Player:setHealthBase(health)
+function Player:SetHealthBase(health)
     self.data.stats.healthBase = health
-    tes3mp.setHealthBase(self.pid, health)
+    tes3mp.SetHealthBase(self.pid, health)
 end
 
 function Player:HasAccount()
@@ -168,7 +168,7 @@ function Player:HasAccount()
 end
 
 function Player:Message(message)
-    tes3mp.sendMessage(self.pid, message, 0)
+    tes3mp.SendMessage(self.pid, message, 0)
 end
 
 function Player:CreateAccount()
@@ -187,47 +187,47 @@ function Player:Load()
 end
 
 function Player:SaveGeneral()
-    self.data.general.name = tes3mp.getName(self.pid)
+    self.data.general.name = tes3mp.GetName(self.pid)
 end
 
 function Player:SaveCharacter()
-    self.data.character.race = tes3mp.getRace(self.pid)
-    self.data.character.head = tes3mp.getHead(self.pid)
+    self.data.character.race = tes3mp.GetRace(self.pid)
+    self.data.character.head = tes3mp.GetHead(self.pid)
     self.data.character.hair = tes3mp.GetHair(self.pid)
-    self.data.character.sex = tes3mp.getIsMale(self.pid)
-    self.data.character.birthsign = tes3mp.getBirthsign(self.pid)
+    self.data.character.sex = tes3mp.GetIsMale(self.pid)
+    self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
 end
 
 function Player:LoadCharacter()
-    tes3mp.setRace(self.pid, self.data.character.race)
-    tes3mp.setHead(self.pid, self.data.character.head)
+    tes3mp.SetRace(self.pid, self.data.character.race)
+    tes3mp.SetHead(self.pid, self.data.character.head)
     tes3mp.SetHair(self.pid, self.data.character.hair)
-    tes3mp.setIsMale(self.pid, self.data.character.sex)
-    tes3mp.setBirthsign(self.pid, self.data.character.birthsign)
+    tes3mp.SetIsMale(self.pid, self.data.character.sex)
+    tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
 
-    tes3mp.sendBaseInfo(self.pid)
+    tes3mp.SendBaseInfo(self.pid)
 end
 
 function Player:SaveClass()
-    if tes3mp.isClassDefault(self.pid) == 1 then
-        self.data.character.class = tes3mp.getDefaultClass(self.pid)
+    if tes3mp.IsClassDefault(self.pid) == 1 then
+        self.data.character.class = tes3mp.GetDefaultClass(self.pid)
     else
         self.data.character.class = "custom"
         self.data.customClass = {}
-        self.data.customClass.name = tes3mp.getClassName(self.pid)
-        self.data.customClass.description = tes3mp.getClassDesc(self.pid):gsub("\n", "\\n")
-        self.data.customClass.specialization = tes3mp.getClassSpecialization(self.pid)
+        self.data.customClass.name = tes3mp.GetClassName(self.pid)
+        self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
+        self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
         majorAttributes = {}
         majorSkills = {}
         minorSkills = {}
 
         for i = 0, 1, 1 do
-            majorAttributes[i + 1] = tes3mp.getAttributeName(tonumber(tes3mp.getClassMajorAttribute(self.pid, i)))
+            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
         end
 
         for i = 0, 4, 1 do
-            majorSkills[i + 1] = tes3mp.getSkillName(tonumber(tes3mp.getClassMajorSkill(self.pid, i)))
-            minorSkills[i + 1] = tes3mp.getSkillName(tonumber(tes3mp.getClassMinorSkill(self.pid, i)))
+            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
+            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
         end
 
         self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
@@ -238,131 +238,131 @@ end
 
 function Player:LoadClass()
     if self.data.character.class ~= "custom" then
-        tes3mp.setDefaultClass(self.pid, self.data.character.class)
+        tes3mp.SetDefaultClass(self.pid, self.data.character.class)
     elseif self.data.customClass ~= nil then
-        tes3mp.setClassName(self.pid, self.data.customClass.name)
-        tes3mp.setClassSpecialization(self.pid, self.data.customClass.specialization)
+        tes3mp.SetClassName(self.pid, self.data.customClass.name)
+        tes3mp.SetClassSpecialization(self.pid, self.data.customClass.specialization)
 
         if self.data.customClass.description ~= nil then
-            tes3mp.setClassDesc(self.pid, self.data.customClass.description)
+            tes3mp.SetClassDesc(self.pid, self.data.customClass.description)
         end
 
         local commaSplitPattern = "([^, ]+)"
 
         local i = 0
         for value in string.gmatch(self.data.customClass.majorAttributes, commaSplitPattern) do
-            tes3mp.setClassMajorAttribute(self.pid, i, tes3mp.getAttributeId(value))
+            tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
             i = i + 1
         end
 
         i = 0
         for value in string.gmatch(self.data.customClass.majorSkills, commaSplitPattern) do
-            tes3mp.setClassMajorSkill(self.pid, i, tes3mp.getSkillId(value))
+            tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
 
         i = 0
         for value in string.gmatch(self.data.customClass.minorSkills, commaSplitPattern) do
-            tes3mp.setClassMinorSkill(self.pid, i, tes3mp.getSkillId(value))
+            tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
     end
 
-    tes3mp.sendClass(self.pid)
+    tes3mp.SendClass(self.pid)
 end
 
 function Player:SaveDynamicStats()
-    self.data.stats.healthBase = tes3mp.getHealthBase(self.pid)
-    self.data.stats.magickaBase = tes3mp.getMagickaBase(self.pid)
-    self.data.stats.fatigueBase = tes3mp.getFatigueBase(self.pid)
-    self.data.stats.healthCurrent = tes3mp.getHealthCurrent(self.pid)
-    self.data.stats.magickaCurrent = tes3mp.getMagickaCurrent(self.pid)
-    self.data.stats.fatigueCurrent = tes3mp.getFatigueCurrent(self.pid)
+    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
+    self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
+    self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
+    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
+    self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
+    self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
 end
 
 function Player:LoadDynamicStats()
-    tes3mp.setHealthBase(self.pid, self.data.stats.healthBase)
-    tes3mp.setMagickaBase(self.pid, self.data.stats.magickaBase)
-    tes3mp.setFatigueBase(self.pid, self.data.stats.fatigueBase)
-    tes3mp.setHealthCurrent(self.pid, self.data.stats.healthCurrent)
-    tes3mp.setMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
-    tes3mp.setFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
+    tes3mp.SetHealthBase(self.pid, self.data.stats.healthBase)
+    tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
+    tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
+    tes3mp.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
+    tes3mp.SetMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
+    tes3mp.SetFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
 
-    tes3mp.sendDynamicStats(self.pid)
+    tes3mp.SendDynamicStats(self.pid)
 end
 
 function Player:SaveAttributes()
     for name in pairs(self.data.attributes) do
-        local attributeId = tes3mp.getAttributeId(name)
-        self.data.attributes[name] = tes3mp.getAttributeBase(self.pid, attributeId)
+        local attributeId = tes3mp.GetAttributeId(name)
+        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
     end
 end
 
 function Player:LoadAttributes()
     for name, value in pairs(self.data.attributes) do
-        tes3mp.setAttributeBase(self.pid, tes3mp.getAttributeId(name), value)
+        tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
-    tes3mp.sendAttributes(self.pid)
+    tes3mp.SendAttributes(self.pid)
 end
 
 function Player:SaveSkills()
     for name in pairs(self.data.skills) do
-        local skillId = tes3mp.getSkillId(name)
-        self.data.skills[name] = tes3mp.getSkillBase(self.pid, skillId)
-        self.data.skillProgress[name] = tes3mp.getSkillProgress(self.pid, skillId)
+        local skillId = tes3mp.GetSkillId(name)
+        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
+        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
     end
 
     for name in pairs(self.data.attributeSkillIncreases) do
-        local attributeId = tes3mp.getAttributeId(name)
-        self.data.attributeSkillIncreases[name] = tes3mp.getSkillIncrease(self.pid, attributeId)
+        local attributeId = tes3mp.GetAttributeId(name)
+        self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
     end
 
-    self.data.stats.levelProgress = tes3mp.getLevelProgress(self.pid)
+    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function Player:LoadSkills()
     for name, value in pairs(self.data.skills) do
-        tes3mp.setSkillBase(self.pid, tes3mp.getSkillId(name), value)
+        tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value)
     end
 
     for name, value in pairs(self.data.skillProgress) do
-        tes3mp.setSkillProgress(self.pid, tes3mp.getSkillId(name), value)
+        tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
     end
 
     for name, value in pairs(self.data.attributeSkillIncreases) do
-        tes3mp.setSkillIncrease(self.pid, tes3mp.getAttributeId(name), value)
+        tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
-    tes3mp.setLevelProgress(self.pid, self.data.stats.levelProgress)
-    tes3mp.sendSkills(self.pid)
+    tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
+    tes3mp.SendSkills(self.pid)
 end
 
 function Player:SaveLevel()
-    self.data.stats.level = tes3mp.getLevel(self.pid)
+    self.data.stats.level = tes3mp.GetLevel(self.pid)
 end
 
 function Player:LoadLevel()
-    tes3mp.setLevel(self.pid, self.data.stats.level)
-    tes3mp.sendLevel(self.pid)
+    tes3mp.SetLevel(self.pid, self.data.stats.level)
+    tes3mp.SendLevel(self.pid)
 end
 
 function Player:SaveCell()
     local currentCell = ""
 
-    if tes3mp.isInExterior(self.pid) == 1 then
-        currentCell = tes3mp.getExteriorX(self.pid) .. "," .. tes3mp.getExteriorY(self.pid)
+    if tes3mp.IsInExterior(self.pid) == 1 then
+        currentCell = tes3mp.GetExteriorX(self.pid) .. "," .. tes3mp.GetExteriorY(self.pid)
     else
-        currentCell = tes3mp.getCell(self.pid)
+        currentCell = tes3mp.GetCell(self.pid)
     end
 
     self.data.location.cell = currentCell
-    self.data.location.posX = tes3mp.getPosX(self.pid)
-    self.data.location.posY = tes3mp.getPosY(self.pid)
-    self.data.location.posZ = tes3mp.getPosZ(self.pid)
-    self.data.location.angleX = tes3mp.getAngleX(self.pid)
-    self.data.location.angleY = tes3mp.getAngleY(self.pid)
-    self.data.location.angleZ = tes3mp.getAngleZ(self.pid)
+    self.data.location.posX = tes3mp.GetPosX(self.pid)
+    self.data.location.posY = tes3mp.GetPosY(self.pid)
+    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
+    self.data.location.angleX = tes3mp.GetAngleX(self.pid)
+    self.data.location.angleY = tes3mp.GetAngleY(self.pid)
+    self.data.location.angleZ = tes3mp.GetAngleZ(self.pid)
 end
 
 function Player:LoadCell()
@@ -374,10 +374,10 @@ function Player:LoadCell()
 
         if string.match(newCell, exteriorCellPattern) ~= nil then
             for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
-                tes3mp.setExterior(self.pid, tonumber(gridX), tonumber(gridY))
+                tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
             end
         else
-            tes3mp.setCell(self.pid, newCell)
+            tes3mp.SetCell(self.pid, newCell)
         end
 
         local pos = {0, 0, 0}
@@ -389,11 +389,11 @@ function Player:LoadCell()
         angle[1] = self.data.location.angleY
         angle[2] = self.data.location.angleZ
 
-        tes3mp.setPos(self.pid, pos[0], pos[1], pos[2])
-        tes3mp.setAngle(self.pid, angle[0], angle[1], angle[2])
+        tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+        tes3mp.SetAngle(self.pid, angle[0], angle[1], angle[2])
 
-        tes3mp.sendCell(self.pid)
-        tes3mp.sendPos(self.pid)
+        tes3mp.SendCell(self.pid)
+        tes3mp.SendPos(self.pid)
     end
 end
 
@@ -406,16 +406,16 @@ function Player:LoadEquipment()
             currentItem = ""
         end
 
-        tes3mp.equipItem(self.pid, i, currentItem, 1, -1)
+        tes3mp.EquipItem(self.pid, i, currentItem, 1, -1)
     end
 
-    tes3mp.sendEquipment(self.pid)
+    tes3mp.SendEquipment(self.pid)
 end
 
 function Player:SaveEquipment()
 
     for i = 0, 17 do
-        local itemId = tes3mp.getItemSlot(self.pid, i)
+        local itemId = tes3mp.GetItemSlot(self.pid, i)
 
         if itemId ~= nil then
             self.data.equipment[i] = itemId
