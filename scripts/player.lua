@@ -419,6 +419,8 @@ function Player:SaveEquipment()
 
         if itemId ~= "" then
             self.data.equipment[i] = itemId
+        else
+            self.data.equipment[i] = nil
         end
     end
 end
