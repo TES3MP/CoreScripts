@@ -40,6 +40,20 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
     return valid
 end
 
+-- Check if there is already a player with this name on the server
+Methods.IsPlayerNameLoggedIn = function(playerName)
+
+    for i = 0, #Players do
+        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
+            if Players[i].name == playerName then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     if (not Methods.CheckPlayerValidity(pid, originPlayer)) or (not Methods.CheckPlayerValidity(pid, targetPlayer)) then
         return
@@ -87,6 +101,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 end
 
 Methods.GetConnectedPlayerNumber = function()
+
     local playerNumber = 0
     for i=0,#Players do
         if Players[i]:IsLoggedOn() then
@@ -147,6 +162,7 @@ Methods.testFunction = function()
 end
 
 Methods.OnPlayerConnect = function(pid)
+
     Players[pid] = Player.new(pid)
     local login_time = 60
     local pname = tes3mp.GetName(pid)
