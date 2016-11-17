@@ -161,11 +161,10 @@ Methods.testFunction = function()
       print(Players[0])
 end
 
-Methods.OnPlayerConnect = function(pid)
+Methods.OnPlayerConnect = function(pid, pname)
 
     Players[pid] = Player.new(pid)
     local login_time = 60
-    local pname = tes3mp.GetName(pid)
     -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
     -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
     Players[pid].name = pname
@@ -187,6 +186,11 @@ Methods.OnPlayerConnect = function(pid)
 
     Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
     tes3mp.StartTimer(Players[pid].tid_login);
+end
+
+Methods.OnPlayerDeny = function(pid, pname)
+    local message = pname.." ("..pid..") " .. "joined and tried to use an existing player's name.\n"
+    tes3mp.SendMessage(pid, message, 1)
 end
 
 Methods.OnPlayerDisconnect = function(pid)

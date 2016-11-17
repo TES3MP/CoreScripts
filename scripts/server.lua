@@ -37,7 +37,10 @@ end
 
 function OnPlayerConnect(pid)
 
-    if myMod.IsPlayerNameLoggedIn(tes3mp.GetName(pid)) then
+    local pname = tes3mp.GetName(pid)
+
+    if myMod.IsPlayerNameLoggedIn(pname) then
+        myMod.OnPlayerDeny(pid, pname)
         return 0 -- deny player
     else
         print("New player with pid("..pid..") connected!")
