@@ -44,7 +44,7 @@ function OnPlayerConnect(pid)
         return 0 -- deny player
     else
         print("New player with pid("..pid..") connected!")
-        myMod.OnPlayerConnect(pid)
+        myMod.OnPlayerConnect(pid, pname)
         return 1 -- accept player
     end
 end
