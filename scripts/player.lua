@@ -417,7 +417,7 @@ function Player:SaveEquipment()
     for i = 0, 17 do
         local itemId = tes3mp.GetItemSlot(self.pid, i)
 
-        if itemId ~= nil then
+        if itemId ~= "" then
             self.data.equipment[i] = itemId
         end
     end
