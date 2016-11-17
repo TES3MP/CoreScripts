@@ -399,7 +399,7 @@ end
 
 function Player:LoadEquipment()
 
-    for i = 0, tes3mp.GetEquipmentSlotCount() - 1 do
+    for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local currentItem = self.data.equipment[i]
 
         if currentItem == nil then
@@ -414,7 +414,7 @@ end
 
 function Player:SaveEquipment()
 
-    for i = 0, tes3mp.GetEquipmentSlotCount() - 1 do
+    for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local itemId = tes3mp.GetItemSlot(self.pid, i)
 
         if itemId ~= "" then
