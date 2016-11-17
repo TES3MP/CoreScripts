@@ -407,11 +407,10 @@ function Player:LoadEquipment()
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
             for itemId, itemCount, itemHealth in string.gmatch(currentItem, itemPattern) do
-                print("TEST: " .. itemId .. ", " .. itemCount .. ", " .. itemHealth)
                 tes3mp.EquipItem(self.pid, i, itemId, itemCount, itemHealth)
             end
         else
-            tes3mp.EquipItem(self.pid, i, "", 1, -1)
+            tes3mp.UnequipItem(self.pid, i)
         end
     end
 
