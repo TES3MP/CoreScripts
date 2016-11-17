@@ -20,6 +20,7 @@ local adminhelptext = "Admins only:\
 
 
 function OnServerInit()
+
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
 
     if tes3mp.GetServerVersion() ~= "0.3.0" then
@@ -35,9 +36,14 @@ function OnServerExit(err)
 end
 
 function OnPlayerConnect(pid)
-    print("New player with pid("..pid..") connected!")
-    myMod.OnPlayerConnect(pid)
-    return 1 -- accept player (0 deny)
+
+    if myMod.IsPlayerNameLoggedIn(tes3mp.GetName(pid)) then
+        return 0 -- deny player
+    else
+        print("New player with pid("..pid..") connected!")
+        myMod.OnPlayerConnect(pid)
+        return 1 -- accept player
+    end
 end
 
 function OnLogin(pid) -- timer-based event, see myMod.OnPlayerConnect
