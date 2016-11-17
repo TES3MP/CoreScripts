@@ -399,14 +399,20 @@ end
 
 function Player:LoadEquipment()
 
+    local itemPattern = "(.+), (%d+), (%-?%d+)$"
+
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
+
         local currentItem = self.data.equipment[i]
 
-        if currentItem == nil then
-            currentItem = ""
+        if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
+            for itemId, itemCount, itemHealth in string.gmatch(currentItem, itemPattern) do
+                print("TEST: " .. itemId .. ", " .. itemCount .. ", " .. itemHealth)
+                tes3mp.EquipItem(self.pid, i, itemId, itemCount, itemHealth)
+            end
+        else
+            tes3mp.EquipItem(self.pid, i, "", 1, -1)
         end
-
-        tes3mp.EquipItem(self.pid, i, currentItem, 1, -1)
     end
 
     tes3mp.SendEquipment(self.pid)
@@ -415,10 +421,12 @@ end
 function Player:SaveEquipment()
 
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
-        local itemId = tes3mp.GetItemSlot(self.pid, i)
+        local itemId = tes3mp.GetEquipmentItemId(self.pid, i)
 
         if itemId ~= "" then
-            self.data.equipment[i] = itemId
+            local itemCount = tes3mp.GetEquipmentItemCount(self.pid, i)
+            local itemHealth = tes3mp.GetEquipmentItemHealth(self.pid, i)
+            self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
         else
             self.data.equipment[i] = nil
         end
