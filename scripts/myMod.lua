@@ -320,7 +320,7 @@ end
 
 Methods.OnPlayerChangeInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
-        print(pid .. " changed inventory")
+        Players[pid]:SaveInventory()
     end
 end
 

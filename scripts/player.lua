@@ -66,6 +66,7 @@ function Player.new(pid)
     end
 
     self.data.equipment = {}
+    self.data.inventory = {}
 
     self.accountName = tes3mp.GetName(pid) .. ".txt"
     self.pid = pid
@@ -419,6 +420,8 @@ end
 
 function Player:SaveEquipment()
 
+    self.data.equipment = {}
+
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local itemId = tes3mp.GetEquipmentItemId(self.pid, i)
 
@@ -426,8 +429,21 @@ function Player:SaveEquipment()
             local itemCount = tes3mp.GetEquipmentItemCount(self.pid, i)
             local itemHealth = tes3mp.GetEquipmentItemHealth(self.pid, i)
             self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
-        else
-            self.data.equipment[i] = nil
+        end
+    end
+end
+
+function Player:SaveInventory()
+
+    self.data.inventory = {}
+
+    for i = 0, tes3mp.GetInventorySize(self.pid) - 1 do
+        local itemId = tes3mp.GetInventoryItemId(self.pid, i)
+
+        if itemId ~= "" then
+            local itemCount = tes3mp.GetInventoryItemCount(self.pid, i)
+            local itemHealth = tes3mp.GetInventoryItemHealth(self.pid, i)
+            self.data.inventory[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
         end
     end
 end
