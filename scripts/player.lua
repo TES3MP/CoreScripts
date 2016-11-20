@@ -449,7 +449,7 @@ function Player:LoadInventory()
     tes3mp.ClearInventory(self.pid)
     tes3mp.SendInventory(self.pid)
 
-    for i = 0, table.getn(self.data.inventory) - 1 do
+    for i = 0, table.getn(self.data.inventory) do
 
         local currentItem = self.data.inventory[i]
 
