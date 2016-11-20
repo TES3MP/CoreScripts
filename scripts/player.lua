@@ -438,6 +438,12 @@ function Player:LoadInventory()
 
     local itemPattern = "(.+), (%d+), (%-?%d+)$"
 
+    -- Keep this around to update everyone to the new player file format
+    -- instead of crashing the server
+    if self.data.inventory == nil then
+        self.data.inventory = {}
+    end
+
     -- Clear whatever items the player may have so we can completely
     -- replace them
     tes3mp.ClearInventory(self.pid)
