@@ -438,6 +438,11 @@ function Player:LoadInventory()
 
     local itemPattern = "(.+), (%d+), (%-?%d+)$"
 
+    -- Clear whatever items the player may have so we can completely
+    -- replace them
+    tes3mp.ClearInventory(self.pid)
+    tes3mp.SendInventory(self.pid)
+
     for i = 0, table.getn(self.data.inventory) - 1 do
 
         local currentItem = self.data.inventory[i]
