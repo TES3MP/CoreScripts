@@ -110,6 +110,7 @@ function Player:LoggedOn()
         self:LoadSkills()
         self:LoadDynamicStats()
         self:LoadCell()
+        self:LoadInventory()
         self:LoadEquipment()
     end
 end
@@ -431,6 +432,24 @@ function Player:SaveEquipment()
             self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
         end
     end
+end
+
+function Player:LoadInventory()
+
+    local itemPattern = "(.+), (%d+), (%-?%d+)$"
+
+    for i = 0, table.getn(self.data.inventory) - 1 do
+
+        local currentItem = self.data.inventory[i]
+
+        if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
+            for itemId, itemCount, itemHealth in string.gmatch(currentItem, itemPattern) do
+                tes3mp.AddItem(self.pid, itemId, itemCount, itemHealth)
+            end
+        end
+    end
+
+    tes3mp.SendInventory(self.pid)
 end
 
 function Player:SaveInventory()
