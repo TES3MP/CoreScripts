@@ -307,6 +307,10 @@ function OnPlayerChangeInventory(pid)
     myMod.OnPlayerChangeInventory(pid)
 end
 
+function OnPlayerChangeSpellbook(pid)
+    myMod.OnPlayerChangeSpellbook(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

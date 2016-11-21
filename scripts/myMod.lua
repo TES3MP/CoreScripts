@@ -324,6 +324,12 @@ Methods.OnPlayerChangeInventory = function(pid)
     end
 end
 
+Methods.OnPlayerChangeSpellbook = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        print(pid .. " changed spellbook")
+    end
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()
