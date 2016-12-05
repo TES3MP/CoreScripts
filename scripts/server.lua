@@ -1,3 +1,5 @@
+require('utils')
+require('config')
 require('guiIds')
 myMod = require("myMod")
 Player = require("player")
