@@ -5,7 +5,15 @@ class = require('classy')
 require('guiIds')
 myMod = require("myMod")
 
+Player = nil
+if (config.dbtype ~= nil or config.dbtype ~="file") and isModuleExists("luasql."..config.dbtype) then
+    dbdriver = require("luasql." .. config.dbtype)
+    print(dbdriver._VERSION)
+    Player = require("player.sql")
+else
     Player = require("player.file")
+end
+
 local helptext = "\nCommand list:\
 /list - List all players on the server"
 
