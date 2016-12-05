@@ -1,9 +1,11 @@
 require('utils')
 require('config')
+class = require('classy')
+
 require('guiIds')
 myMod = require("myMod")
-Player = require("player")
 
+    Player = require("player.file")
 local helptext = "\nCommand list:\
 /list - List all players on the server"
 

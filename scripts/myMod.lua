@@ -156,8 +156,7 @@ Methods.testFunction = function()
 end
 
 Methods.OnPlayerConnect = function(pid, pname)
-
-    Players[pid] = Player.new(pid)
+    Players[pid] = Player(pid)
     local login_time = 60
     -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
     -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
