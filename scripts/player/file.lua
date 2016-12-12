@@ -4,7 +4,7 @@ local BasePlayer = require "player.base"
 local Player = class ("Player", BasePlayer)
 
 function Player:__init(pid)
-    BasePlayer:__init(pid)
+    BasePlayer.__init(self, pid)
 
     self.accountFile = self.accountName .. ".txt"
     if self.hasAccount == nil then
