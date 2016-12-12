@@ -157,7 +157,6 @@ end
 
 Methods.OnPlayerConnect = function(pid, pname)
     Players[pid] = Player(pid)
-    local login_time = 60
     -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
     -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
     Players[pid].name = pname
@@ -165,7 +164,7 @@ Methods.OnPlayerConnect = function(pid, pname)
     local message = pname.." ("..pid..") ".."joined the server.\n"
     tes3mp.SendMessage(pid, message, 1)
 
-    message = "Welcome " .. pname .. "\nYou have "..tostring(login_time).." seconds to"
+    message = "Welcome " .. pname .. "\nYou have "..tostring(config.loginTime).." seconds to"
 
     if Players[pid]:HasAccount() then
         message = message .. " login.\n"
@@ -177,7 +176,7 @@ Methods.OnPlayerConnect = function(pid, pname)
 
     tes3mp.SendMessage(pid, message, 0)
 
-    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(login_time), "i", pid)
+    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(config.loginTime), "i", pid)
     tes3mp.StartTimer(Players[pid].tid_login);
 end
 
@@ -190,6 +189,7 @@ Methods.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
         Players[pid]:Destroy()
+        Players[pid] = nil
     end
 end
 
