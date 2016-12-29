@@ -317,9 +317,21 @@ Methods.OnPlayerChangeInventory = function(pid)
     end
 end
 
-Methods.OnPlayerChangeSpellbook = function(pid)
+Methods.OnPlayerChangeSpellbook = function(pid, action, spells)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
-        print(pid .. " changed spellbook")
+        print(("%d changed spellbook with action %d"):format(pid, action))
+        local book = spells:split(";")
+        if action == 1 then
+            for _,spell in pairs(book) do
+                print(("Spell %s added"):format(spell))
+                
+            end
+        elseif action == 2 then
+            for _,spell in pairs(book) do
+                print(("Spell %s removed"):format(spell))
+            end
+        end
+        Players[pid]:SaveSpellbook()
     end
 end
 

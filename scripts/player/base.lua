@@ -56,6 +56,7 @@ function BasePlayer:__init(pid)
 
     self.data.equipment = {}
     self.data.inventory = {}
+    self.data.spellbook = {}
 
     self.accountName = tes3mp.GetName(pid)
     self.pid = pid
@@ -100,6 +101,7 @@ function BasePlayer:LoggedOn()
         self:LoadCell()
         self:LoadInventory()
         self:LoadEquipment()
+        self:LoadSpellbook()
     end
 end
 
@@ -424,7 +426,7 @@ function BasePlayer:LoadInventory()
     tes3mp.ClearInventory(self.pid)
     tes3mp.SendInventory(self.pid)
 
-    for i = 0, table.getn(self.data.inventory) do
+    for i = 0, #self.data.inventory do
 
         local currentItem = self.data.inventory[i]
 
@@ -450,6 +452,36 @@ function BasePlayer:SaveInventory()
             local itemHealth = tes3mp.GetInventoryItemHealth(self.pid, i)
             self.data.inventory[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
         end
+    end
+end
+
+function BasePlayer:LoadSpellbook()
+
+    -- Keep this around to update everyone to the new BasePlayer file format
+    -- instead of crashing the server
+    if self.data.spellbook == nil then
+        self.data.spellbook = {}
+    end
+
+    tes3mp.ClearInventory(self.pid)
+
+    for i = 0, #self.data.spellbook do
+        local curSpell = self.data.spellbook[i]
+        if curSpell ~= nil then
+            tes3mp.AddSpell(self.pid, curSpell)
+        end
+    end
+
+    tes3mp.SendSpellbook(self.pid)
+end
+
+function BasePlayer:SaveSpellbook()
+
+    self.data.spellbook = {}
+
+    for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
+        local spellId = tes3mp.GetSpellId(self.pid, i)
+        self.data.spellbook[i] = spellId
     end
 end
 

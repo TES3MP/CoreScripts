@@ -319,8 +319,8 @@ function OnPlayerChangeInventory(pid)
     myMod.OnPlayerChangeInventory(pid)
 end
 
-function OnPlayerChangeSpellbook(pid)
-    myMod.OnPlayerChangeSpellbook(pid)
+function OnPlayerChangeSpellbook(pid, action, spells)
+    myMod.OnPlayerChangeSpellbook(pid, action, spells)
 end
 
 function OnPlayerEndCharGen(pid)
