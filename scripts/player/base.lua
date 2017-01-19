@@ -424,7 +424,7 @@ function BasePlayer:LoadInventory()
     -- Clear whatever items the BasePlayer may have so we can completely
     -- replace them
     tes3mp.ClearInventory(self.pid)
-    tes3mp.SendInventory(self.pid)
+    tes3mp.SendItems(self.pid)
 
     for i = 0, #self.data.inventory do
 
@@ -437,7 +437,7 @@ function BasePlayer:LoadInventory()
         end
     end
 
-    tes3mp.SendInventory(self.pid)
+    tes3mp.SendItems(self.pid)
 end
 
 function BasePlayer:SaveInventory()
@@ -463,7 +463,8 @@ function BasePlayer:LoadSpellbook()
         self.data.spellbook = {}
     end
 
-    tes3mp.ClearInventory(self.pid)
+    tes3mp.ClearSpellbook(self.pid)
+    tes3mp.SendSpells(self.pid)
 
     for i = 0, #self.data.spellbook do
         local curSpell = self.data.spellbook[i]
@@ -472,7 +473,7 @@ function BasePlayer:LoadSpellbook()
         end
     end
 
-    tes3mp.SendSpellbook(self.pid)
+    tes3mp.SendSpells(self.pid)
 end
 
 function BasePlayer:SaveSpellbook()
