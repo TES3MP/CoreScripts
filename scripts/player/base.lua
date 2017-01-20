@@ -468,9 +468,10 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpells(self.pid)
 
     for i = 0, #self.data.spellbook do
-        local curSpell = self.data.spellbook[i]
-        if curSpell ~= nil then
-            tes3mp.AddSpell(self.pid, curSpell)
+        local currentSpell = self.data.spellbook[i]
+
+        if currentSpell ~= nil then
+            tes3mp.AddSpell(self.pid, currentSpell)
         end
     end
 
@@ -478,7 +479,7 @@ function BasePlayer:LoadSpellbook()
 end
 
 function BasePlayer:AddSpells()
-    
+
     for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
@@ -505,7 +506,7 @@ end
 function BasePlayer:SetSpells()
     
     self.data.spellbook = {}
-    self.AddSpells()
+    self:AddSpells()
 end
 
 return BasePlayer
