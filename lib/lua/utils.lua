@@ -5,7 +5,7 @@ function string:split(sep)
     return fields
 end
 
-function isModuleExists(name)
+function doesModuleExist(name)
     if package.loaded[name] then
         return true
     else
