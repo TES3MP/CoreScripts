@@ -1,3 +1,4 @@
+require('utils')
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid)
@@ -476,14 +477,35 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpells(self.pid)
 end
 
-function BasePlayer:SaveSpellbook()
+function BasePlayer:AddSpells()
+    
+    for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
+        local spellId = tes3mp.GetSpellId(self.pid, i)
 
-    self.data.spellbook = {}
+        -- Only add new spell if we don't already have it
+        if table.contains(self.data.spellbook, spellId) == false then
+            print("Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
+            table.insert(self.data.spellbook, spellId)
+        end
+    end
+end
+
+function BasePlayer:RemoveSpells()
 
     for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, i)
-        self.data.spellbook[i] = spellId
+
+        if table.contains(self.data.spellbook, spellId) == true then
+            print("Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
+            table.removeValue(self.data.spellbook, spellId)
+        end
     end
+end
+
+function BasePlayer:SetSpells()
+    
+    self.data.spellbook = {}
+    self.AddSpells()
 end
 
 return BasePlayer
