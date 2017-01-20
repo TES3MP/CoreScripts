@@ -20,3 +20,19 @@ function doesModuleExist(name)
     end
 end
 
+function table.contains(table, valueToFind)
+    for key, value in pairs(table) do
+        if value == valueToFind then
+            return true
+        end
+    end
+    return false
+end
+
+function table.removeValue(table, valueToFind)
+    for key, value in pairs(table) do
+        if value == valueToFind then
+            table[key] = nil
+        end
+    end
+end
