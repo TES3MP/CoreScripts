@@ -8,7 +8,7 @@ function Player:__init(pid)
 
     self.accountFile = self.accountName .. ".txt"
     if self.hasAccount == nil then
-        local home = os.getenv("MOD_DIR").."/players/"
+        local home = os.getenv("MOD_DIR").."/player/"
         local file = io.open(home .. self.accountFile, "r")
         if file ~= nil then
             io.close()
@@ -20,18 +20,18 @@ function Player:__init(pid)
 end
 
 function Player:CreateAccount()
-    LIP.save("players/" .. self.accountFile, self.data)
+    LIP.save("player/" .. self.accountFile, self.data)
     self.hasAccount = true
 end
 
 function Player:Save()
     if self.hasAccount and self.loggedOn then
-        LIP.save("players/" .. self.accountFile, self.data)
+        LIP.save("player/" .. self.accountFile, self.data)
     end
 end
 
 function Player:Load()
-    self.data = LIP.load("players/" .. self.accountFile)
+    self.data = LIP.load("player/" .. self.accountFile)
 end
 
 return Player
