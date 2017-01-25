@@ -152,7 +152,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetPlayer = tonumber(cmd[2])
                 local targetPlayerName = Players[targetPlayer].name
                 local message
-                
+
                 if Players[targetPlayer]:IsAdmin() then
                     message = "You cannot kick an Admin from the server\n"
                     tes3mp.SendMessage(pid, message, 0)

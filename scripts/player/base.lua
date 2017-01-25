@@ -425,7 +425,7 @@ function BasePlayer:LoadInventory()
     -- Clear whatever items the BasePlayer may have so we can completely
     -- replace them
     tes3mp.ClearInventory(self.pid)
-    tes3mp.SendItems(self.pid)
+    tes3mp.SendInventoryChanges(self.pid)
 
     for i = 0, #self.data.inventory do
 
@@ -438,14 +438,14 @@ function BasePlayer:LoadInventory()
         end
     end
 
-    tes3mp.SendItems(self.pid)
+    tes3mp.SendInventoryChanges(self.pid)
 end
 
 function BasePlayer:SaveInventory()
 
     self.data.inventory = {}
 
-    for i = 0, tes3mp.GetInventorySize(self.pid) - 1 do
+    for i = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
         local itemId = tes3mp.GetInventoryItemId(self.pid, i)
 
         if itemId ~= "" then
@@ -465,7 +465,7 @@ function BasePlayer:LoadSpellbook()
     end
 
     tes3mp.ClearSpellbook(self.pid)
-    tes3mp.SendSpells(self.pid)
+    tes3mp.SendSpellbookChanges(self.pid)
 
     for i = 0, #self.data.spellbook do
         local currentSpell = self.data.spellbook[i]
@@ -475,12 +475,12 @@ function BasePlayer:LoadSpellbook()
         end
     end
 
-    tes3mp.SendSpells(self.pid)
+    tes3mp.SendSpellbookChanges(self.pid)
 end
 
 function BasePlayer:AddSpells()
 
-    for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
+    for i = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
         -- Only add new spell if we don't already have it
@@ -493,7 +493,7 @@ end
 
 function BasePlayer:RemoveSpells()
 
-    for i = 0, tes3mp.GetSpellbookSize(self.pid) - 1 do
+    for i = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
         if table.contains(self.data.spellbook, spellId) == true then
@@ -504,7 +504,7 @@ function BasePlayer:RemoveSpells()
 end
 
 function BasePlayer:SetSpells()
-    
+
     self.data.spellbook = {}
     self:AddSpells()
 end

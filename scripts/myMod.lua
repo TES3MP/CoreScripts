@@ -84,7 +84,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 
     tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
     tes3mp.SetAngle(originPlayer, targetAngle[0], targetAngle[1], targetAngle[2])
-    
+
     tes3mp.SendCell(originPlayer)
     tes3mp.SendPos(originPlayer)
 
