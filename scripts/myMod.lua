@@ -278,26 +278,26 @@ Methods.AuthCheck = function(pid)
     Players[pid] = nil
 end
 
-Methods.OnPlayerChangeAttributes = function(pid)
+Methods.OnPlayerAttributesChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveAttributes()
     end
 end
 
-Methods.OnPlayerChangeSkills = function(pid)
+Methods.OnPlayerSkillsChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveSkills()
     end
 end
 
-Methods.OnPlayerChangeLevel = function(pid)
+Methods.OnPlayerLevelChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveLevel()
         Players[pid]:SaveDynamicStats()
     end
 end
 
-Methods.OnPlayerChangeCell = function(pid)
+Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveCell()
         Players[pid]:SaveDynamicStats()
@@ -306,19 +306,19 @@ Methods.OnPlayerChangeCell = function(pid)
     end
 end
 
-Methods.OnPlayerChangeEquipment = function(pid)
+Methods.OnPlayerEquipmentChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveEquipment()
     end
 end
 
-Methods.OnPlayerChangeInventory = function(pid)
+Methods.OnPlayerInventoryChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveInventory()
     end
 end
 
-Methods.OnPlayerChangeSpellbook = function(pid, action)
+Methods.OnPlayerSpellbookChange = function(pid, action)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         if action == 1 then
             Players[pid]:AddSpells()

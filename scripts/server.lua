@@ -76,7 +76,7 @@ function OnPlayerDisconnect(pid)
     tes3mp.SendMessage(pid, message, 1)
 
     -- Trigger any necessary script events useful for saving state
-    myMod.OnPlayerChangeCell(pid)
+    myMod.OnPlayerCellChange(pid)
 
     myMod.OnPlayerDisconnect(pid)
 end
@@ -299,32 +299,32 @@ function OnPlayerSendMessage(pid, message)
     return 1 -- default behavior, chat messages should not
 end
 
-function OnPlayerChangeAttributes(pid)
-    myMod.OnPlayerChangeAttributes(pid)
+function OnPlayerAttributesChange(pid)
+    myMod.OnPlayerAttributesChange(pid)
 end
 
-function OnPlayerChangeSkills(pid)
-    myMod.OnPlayerChangeSkills(pid)
+function OnPlayerSkillsChange(pid)
+    myMod.OnPlayerSkillsChange(pid)
 end
 
-function OnPlayerChangeLevel(pid)
-    myMod.OnPlayerChangeLevel(pid)
+function OnPlayerLevelChange(pid)
+    myMod.OnPlayerLevelChange(pid)
 end
 
-function OnPlayerChangeCell(pid)
-    myMod.OnPlayerChangeCell(pid)
+function OnPlayerCellChange(pid)
+    myMod.OnPlayerCellChange(pid)
 end
 
-function OnPlayerChangeEquipment(pid)
-    myMod.OnPlayerChangeEquipment(pid)
+function OnPlayerEquipmentChange(pid)
+    myMod.OnPlayerEquipmentChange(pid)
 end
 
-function OnPlayerChangeInventory(pid)
-    myMod.OnPlayerChangeInventory(pid)
+function OnPlayerInventoryChange(pid)
+    myMod.OnPlayerInventoryChange(pid)
 end
 
-function OnPlayerChangeSpellbook(pid, action, spells)
-    myMod.OnPlayerChangeSpellbook(pid, action, spells)
+function OnPlayerSpellbookChange(pid, action, spells)
+    myMod.OnPlayerSpellbookChange(pid, action, spells)
 end
 
 function OnPlayerEndCharGen(pid)
