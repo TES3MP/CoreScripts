@@ -6,12 +6,16 @@ require('guiIds')
 myMod = require("myMod")
 
 Player = nil
+Cell = nil
+
 if (config.dbtype ~= nil or config.dbtype ~="file") and doesModuleExist("luasql."..config.dbtype) then
     dbdriver = require("luasql." .. config.dbtype)
     print(dbdriver._VERSION)
     Player = require("player.sql")
+    Cell = require("cell.sql")
 else
     Player = require("player.file")
+    Cell = require("cell.file")
 end
 
 local helptext = "\nCommand list:\
@@ -325,6 +329,14 @@ end
 
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
+end
+
+function OnObjectPlace(pid, refId, refNum, cell)
+    myMod.OnObjectPlace(pid, refId, refNum, cell)
+end
+
+function OnObjectDelete(pid, refId, refNum, cell)
+    myMod.OnObjectDelete(pid, refId, refNum, cell)
 end
 
 function OnGUIAction(pid, idGui, data)

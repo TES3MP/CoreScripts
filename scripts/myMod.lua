@@ -2,6 +2,7 @@ local time =require('time')
 local Methods = {}
 
 Players = {}
+LoadedCells = {}
 
 Methods.CheckPlayerValidity = function(pid, targetPlayer)
     local valid = false
@@ -327,6 +328,14 @@ Methods.OnPlayerChangeSpellbook = function(pid, action)
             Players[pid]:SetSpells()
         end
     end
+end
+
+Methods.OnObjectPlace = function(pid, refId, refNum, cell)
+    print("Object placed in " .. cell)
+end
+
+Methods.OnObjectDelete = function(pid, refId, refNum, cell)
+    print("Object deleted in " .. cell)
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
