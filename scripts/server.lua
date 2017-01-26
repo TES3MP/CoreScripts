@@ -315,6 +315,10 @@ function OnPlayerCellChange(pid)
     myMod.OnPlayerCellChange(pid)
 end
 
+function OnPlayerCellState(pid, action)
+    myMod.OnPlayerCellState(pid, action)
+end
+
 function OnPlayerEquipmentChange(pid)
     myMod.OnPlayerEquipmentChange(pid)
 end
@@ -323,8 +327,8 @@ function OnPlayerInventoryChange(pid)
     myMod.OnPlayerInventoryChange(pid)
 end
 
-function OnPlayerSpellbookChange(pid, action, spells)
-    myMod.OnPlayerSpellbookChange(pid, action, spells)
+function OnPlayerSpellbookChange(pid, action)
+    myMod.OnPlayerSpellbookChange(pid, action)
 end
 
 function OnPlayerEndCharGen(pid)

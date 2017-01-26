@@ -306,6 +306,16 @@ Methods.OnPlayerCellChange = function(pid)
     end
 end
 
+Methods.OnPlayerCellState = function(pid, action)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        if action == 0 then
+            print("Loading cell " .. tes3mp.GetCellStateDescription(pid, 0))
+        elseif action == 1 then
+            print("Unloading cell " .. tes3mp.GetCellStateDescription(pid, 0))
+        end
+    end
+end
+
 Methods.OnPlayerEquipmentChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
         Players[pid]:SaveEquipment()
