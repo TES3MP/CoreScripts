@@ -390,7 +390,7 @@ end
 Methods.OnObjectPlace = function(pid, refId, refNum, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:PlaceObject(refId, refNum)
+        LoadedCells[cellDescription]:SaveObjectPlaced(refId, refNum)
     else
         print("Undefined behavior: trying to place object in unloaded " .. cellDescription)
     end
@@ -400,7 +400,7 @@ end
 Methods.OnObjectDelete = function(pid, refId, refNum, cellDescription)
     
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:DeleteObject(refId, refNum)
+        LoadedCells[cellDescription]:SaveObjectDeleted(refId, refNum)
     else
         print("Undefined behavior: trying to delete object in unloaded " .. cellDescription)
     end

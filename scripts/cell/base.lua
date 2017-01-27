@@ -30,12 +30,12 @@ function BaseCell:RemoveVisitor(pid)
     table.removeValue(self.visitors, pid)
 end
 
-function BaseCell:PlaceObject(refId, refNum)
+function BaseCell:SaveObjectPlaced(refId, refNum)
 
     self.data.objectsPlaced[refNum] = refId
 end
 
-function BaseCell:DeleteObject(refId, refNum)
+function BaseCell:SaveObjectDeleted(refId, refNum)
 
     self.data.objectsDeleted[refNum] = refId
 end
