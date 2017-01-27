@@ -315,18 +315,24 @@ end
 
 Methods.LoadCell = function(pid, cellDescription)
 
+    -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
         print("Loaded " .. cellDescription)
 
         LoadedCells[cellDescription] = Cell(cellDescription)
         LoadedCells[cellDescription].description = cellDescription
 
+        -- If this cell has a data file, load it
         if LoadedCells[cellDescription]:HasFile() then
             LoadedCells[cellDescription]:Load()
+        -- Otherwise, create a data file for it
         else
             LoadedCells[cellDescription]:CreateFile()
         end
     end
+
+    -- Record that this player has the cell loaded
+    LoadedCells[cellDescription]:AddVisitor(pid)
 end
 
 Methods.UnloadCell = function(pid, cellDescription)
