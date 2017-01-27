@@ -337,6 +337,11 @@ end
 
 Methods.UnloadCell = function(pid, cellDescription)
     print("Unloaded " .. cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        -- No longer record that this player has the cell loaded
+        LoadedCells[cellDescription]:RemoveVisitor(pid)
+    end
 end
 
 Methods.OnPlayerCellState = function(pid, action)

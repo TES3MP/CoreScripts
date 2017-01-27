@@ -24,4 +24,9 @@ function BaseCell:AddVisitor(pid)
     end
 end
 
+function BaseCell:RemoveVisitor(pid)
+
+    table.removeValue(self.visitors, pid)
+end
+
 return BaseCell
