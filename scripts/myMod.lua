@@ -341,6 +341,8 @@ Methods.UnloadCell = function(pid, cellDescription)
         
         -- No longer record that this player has the cell loaded
         LoadedCells[cellDescription]:RemoveVisitor(pid)
+        LoadedCells[cellDescription]:SaveLastVisit(tes3mp.GetName(pid))
+        LoadedCells[cellDescription]:Save()
 
         -- If there are no visitors left, delete the cell
         if #LoadedCells[cellDescription].visitors == 0 then

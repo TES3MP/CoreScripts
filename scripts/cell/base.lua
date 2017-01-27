@@ -8,6 +8,7 @@ function BaseCell:__init(cellDescription)
     self.data.general.description = cellDescription
     self.data.objectsPlaced = {}
     self.data.objectsDeleted = {}
+    self.data.lastVisitTimestamps = {}
 
     self.visitors = {}
 end
@@ -27,6 +28,11 @@ end
 function BaseCell:RemoveVisitor(pid)
 
     table.removeValue(self.visitors, pid)
+end
+
+function BaseCell:SaveLastVisit(playerName)
+
+    self.data.lastVisitTimestamps[playerName] = os.time()
 end
 
 return BaseCell
