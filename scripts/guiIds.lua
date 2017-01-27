@@ -12,6 +12,7 @@ GUI.ID = enum {
     "LOGIN",
     "REGISTER",
     "PLAYERSLIST",
+    "CELLSLIST"
 }
 
 GUI.ShowLogin = function(pid)
