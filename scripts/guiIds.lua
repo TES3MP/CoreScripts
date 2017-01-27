@@ -83,7 +83,7 @@ GUI.ShowCellList = function(pid)
     else
         label = label .. "cells"
     end
-    tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetLoadedCellList())
+    tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedCellList())
 end
 
 return GUI
