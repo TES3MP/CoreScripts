@@ -30,6 +30,16 @@ function BaseCell:RemoveVisitor(pid)
     table.removeValue(self.visitors, pid)
 end
 
+function BaseCell:PlaceObject(refId, refNum)
+
+    self.data.objectsPlaced[refNum] = refId
+end
+
+function BaseCell:DeleteObject(refId, refNum)
+
+    self.data.objectsDeleted[refNum] = refId
+end
+
 function BaseCell:SaveLastVisit(playerName)
 
     self.data.lastVisitTimestamps[playerName] = os.time()

@@ -387,12 +387,23 @@ Methods.OnPlayerSpellbookChange = function(pid, action)
     end
 end
 
-Methods.OnObjectPlace = function(pid, refId, refNum, cell)
-    print("Object placed in " .. cell)
+Methods.OnObjectPlace = function(pid, refId, refNum, cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:PlaceObject(refId, refNum)
+    else
+        print("Undefined behavior: trying to place object in unloaded " .. cellDescription)
+    end
+
 end
 
-Methods.OnObjectDelete = function(pid, refId, refNum, cell)
-    print("Object deleted in " .. cell)
+Methods.OnObjectDelete = function(pid, refId, refNum, cellDescription)
+    
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:DeleteObject(refId, refNum)
+    else
+        print("Undefined behavior: trying to delete object in unloaded " .. cellDescription)
+    end
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
