@@ -95,15 +95,15 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     tes3mp.SendMessage(targetPlayer, targetMessage, 0)
 end
 
-Methods.GetConnectedPlayerNumber = function()
+Methods.GetConnectedPlayerCount = function()
 
-    local playerNumber = 0
+    local playerCount = 0
     for i=0,#Players do
         if Players[i]:IsLoggedOn() then
-            playerNumber = playerNumber + 1
+            playerCount = playerCount + 1
         end
     end
-    return playerNumber
+    return playerCount
 end
 
 Methods.GetConnectedPlayerList = function()
@@ -120,6 +120,13 @@ Methods.GetConnectedPlayerList = function()
         end
     end
     return list
+end
+
+Methods.GetLoadedCellCount = function()
+
+    local cellCount = 0
+    for cell in pairs(LoadedCells) do cellCount = cellCount + 1 end
+    return cellCount
 end
 
 Methods.PrintPlayerPosition = function(pid, targetPlayer)

@@ -132,8 +132,11 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendAttributes(pid)
             tes3mp.SendSkills(pid)
 
-        elseif cmd[1] == "list" then
-            GUI.ShowPlayersList(pid)
+        elseif cmd[1] == "players" or cmd[1] == "list" then
+            GUI.ShowPlayerList(pid)
+
+        elseif cmd[1] == "cells" then
+            GUI.ShowCellList(pid)
 
         elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
             if cmd[2] ~= "all" then

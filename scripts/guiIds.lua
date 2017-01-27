@@ -41,15 +41,49 @@ local GetConnectedPlayerList = function()
     return list
 end
 
-GUI.ShowPlayersList = function(pid)
-    -- myMod.GetConnectedPlayerList()
-    local label = myMod.GetConnectedPlayerNumber() .. " connected "
-    if myMod.GetConnectedPlayerNumber() == 1 then
+local GetLoadedCellList = function()
+    local list = ""
+    local divider = ""
+
+    local cellCount = myMod.GetLoadedCellCount()
+    local cellIndex = 0
+
+    for key, value in pairs(LoadedCells) do
+        cellIndex = cellIndex + 1
+
+        if cellIndex == cellCount then
+            divider = ""
+        else
+            divider = "\n"
+        end
+        list = list .. key
+        list = list .. divider
+    end
+    return list
+end
+
+GUI.ShowPlayerList = function(pid)
+    
+    local playerCount = myMod.GetConnectedPlayerCount()
+    local label = playerCount .. " connected "
+    if playerCount == 1 then
         label = label .. "player"
     else
         label = label .. "players"
     end
     tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetConnectedPlayerList())
+end
+
+GUI.ShowCellList = function(pid)
+
+    local cellCount = myMod.GetLoadedCellCount()
+    local label = cellCount .. " loaded "
+    if cellCount == 1 then
+        label = label .. "cell"
+    else
+        label = label .. "cells"
+    end
+    tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetLoadedCellList())
 end
 
 return GUI
