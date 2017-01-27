@@ -307,10 +307,19 @@ Methods.OnPlayerCellChange = function(pid)
 end
 
 Methods.LoadCell = function(pid, cellDescription)
-    print("Loaded " .. cellDescription)
 
-    LoadedCells[cellDescription] = Cell(cellDescription)
-    LoadedCells[cellDescription].description = cellDescription
+    if LoadedCells[cellDescription] == nil then
+        print("Loaded " .. cellDescription)
+
+        LoadedCells[cellDescription] = Cell(cellDescription)
+        LoadedCells[cellDescription].description = cellDescription
+
+        if LoadedCells[cellDescription]:HasFile() then
+            LoadedCells[cellDescription]:Load()
+        else
+            LoadedCells[cellDescription]:CreateFile()
+        end
+    end
 end
 
 Methods.UnloadCell = function(pid, cellDescription)

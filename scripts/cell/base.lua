@@ -10,4 +10,8 @@ function BaseCell:__init(cellDescription)
     self.data.objectsDeleted = {}
 end
 
+function BaseCell:HasFile()
+    return self.hasFile
+end
+
 return BaseCell
