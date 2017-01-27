@@ -1,8 +1,11 @@
 require('utils')
 local BaseCell = class("BaseCell")
 
-function BaseCell:__init(cellName)
+function BaseCell:__init(cellDescription)
 
+    self.data = {}
+    self.data.general = {}
+    self.data.general.description = cellDescription
     self.data.objectsPlaced = {}
     self.data.objectsDeleted = {}
 end

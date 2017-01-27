@@ -306,12 +306,24 @@ Methods.OnPlayerCellChange = function(pid)
     end
 end
 
+Methods.LoadCell = function(pid, cellDescription)
+    print("Loaded " .. cellDescription)
+
+    LoadedCells[cellDescription] = Cell(cellDescription)
+    LoadedCells[cellDescription].description = cellDescription
+end
+
+Methods.UnloadCell = function(pid, cellDescription)
+    print("Unloaded " .. cellDescription)
+end
+
 Methods.OnPlayerCellState = function(pid, action)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+        local cellDescription = tes3mp.GetCellStateDescription(pid, 0)
         if action == 0 then
-            print("Loading cell " .. tes3mp.GetCellStateDescription(pid, 0))
+            Methods.LoadCell(pid, cellDescription)
         elseif action == 1 then
-            print("Unloading cell " .. tes3mp.GetCellStateDescription(pid, 0))
+            Methods.UnloadCell(pid, cellDescription)
         end
     end
 end

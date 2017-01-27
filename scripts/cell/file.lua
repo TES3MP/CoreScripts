@@ -3,10 +3,14 @@ local BaseCell = require "cell.base"
 
 local Cell = class ("Cell", BaseCell)
 
-function Cell:__init(pid)
-    BaseCell.__init(self, pid)
+function Cell:__init(cellDescription)
+    BaseCell.__init(self, cellDescription)
 
-    self.cellFile = self.cellName .. ".txt"
+    -- Replace characters not allowed in filenames
+    self.cellFile = cellDescription
+    self.cellFile = string.gsub(self.cellFile, ":", ";")
+    self.cellFile = self.cellFile .. ".txt"
+
     if self.hasFile == nil then
         local home = os.getenv("MOD_DIR").."/cell/"
         local file = io.open(home .. self.cellFile, "r")
