@@ -394,7 +394,6 @@ Methods.OnObjectPlace = function(pid, refId, refNum, cellDescription)
     else
         print("Undefined behavior: trying to place object in unloaded " .. cellDescription)
     end
-
 end
 
 Methods.OnObjectDelete = function(pid, refId, refNum, cellDescription)

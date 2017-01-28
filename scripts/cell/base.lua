@@ -22,6 +22,9 @@ function BaseCell:AddVisitor(pid)
     -- Only add new visitor if we don't already have them
     if table.contains(self.visitors, pid) == false then
         table.insert(self.visitors, pid)
+
+        -- Send information about this cell to the visitor
+        self:SendCellData(pid)
     end
 end
 
@@ -43,6 +46,28 @@ end
 function BaseCell:SaveLastVisit(playerName)
 
     self.data.lastVisitTimestamps[playerName] = os.time()
+end
+
+function BaseCell:SendCellData(pid)
+    
+    local objectIndex = 0
+
+    tes3mp.CreateWorldEvent(pid)
+    tes3mp.SetWorldEventCell(self.description)
+
+    -- Objects deleted
+    for refNum, value in pairs(self.data.objectsDeleted) do
+
+        tes3mp.AddWorldObject()
+        tes3mp.SetObjectRefId(objectIndex, value)
+        tes3mp.SetObjectRefNumIndex(objectIndex, refNum)
+
+        objectIndex = objectIndex + 1
+    end
+
+    if objectIndex > 0 then
+        tes3mp.SendObjectDelete()
+    end
 end
 
 return BaseCell
