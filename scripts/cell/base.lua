@@ -92,18 +92,18 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisitTimestamps[playerName] = os.time()
 end
 
-function BaseCell:SendCellData(pid)
-    
+function BaseCell:SendObjectsDeleted(pid)
+
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
     -- Objects deleted
-    for refNum, value in pairs(self.data.objectsDeleted) do
+    for refNum, refId in pairs(self.data.objectsDeleted) do
 
         tes3mp.AddWorldObject()
-        tes3mp.SetObjectRefId(objectIndex, value)
+        tes3mp.SetObjectRefId(objectIndex, refId)
         tes3mp.SetObjectRefNumIndex(objectIndex, refNum)
 
         objectIndex = objectIndex + 1
@@ -112,6 +112,42 @@ function BaseCell:SendCellData(pid)
     if objectIndex > 0 then
         tes3mp.SendObjectDelete()
     end
+end
+
+function BaseCell:SendObjectsPlaced(pid)
+
+    local objectPlacedPattern = "(.+), (%d+), (%d+), (%-?%d+%.%d+), (%-?%d+%.%d+), (%-?%d+%.%d+)$"
+
+    local objectIndex = 0
+
+    tes3mp.CreateWorldEvent(pid)
+    tes3mp.SetWorldEventCell(self.description)
+
+    for refNum, value in pairs(self.data.objectsPlaced) do
+        if string.match(value, objectPlacedPattern) ~= nil then
+            for refId, count, goldValue, posX, posY, posZ in string.gmatch(value, objectPlacedPattern) do
+                
+                tes3mp.AddWorldObject()
+                tes3mp.SetObjectRefId(objectIndex, refId)
+                tes3mp.SetObjectRefNumIndex(objectIndex, refNum)
+                tes3mp.SetObjectCount(objectIndex, count)
+                tes3mp.SetObjectGoldValue(objectIndex, goldValue)
+                tes3mp.SetObjectPosition(objectIndex, posX, posY, posZ)
+            end
+        end
+
+        objectIndex = objectIndex + 1
+    end
+
+    if objectIndex > 0 then
+        tes3mp.SendObjectPlace()
+    end
+end
+
+function BaseCell:SendCellData(pid)
+    
+    self:SendObjectsDeleted(pid)
+    self:SendObjectsPlaced(pid)
 end
 
 return BaseCell
