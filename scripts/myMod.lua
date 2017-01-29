@@ -195,12 +195,12 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 
-    -- Remove the player as a visitor from all of their loaded cells
+    -- Unload every cell for this player
     for i = 0, #Players[pid].cellsLoaded do
         if Players[pid].cellsLoaded[i] ~= nil then
 
             local cellDescription = Players[pid].cellsLoaded[i]
-            LoadedCells[cellDescription]:RemoveVisitor(pid)
+            Methods.UnloadCell(pid, cellDescription)
         else
             print("Players[pid].cellsLoaded[" .. i .. "] was nil")
         end
