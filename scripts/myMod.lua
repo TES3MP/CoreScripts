@@ -401,19 +401,19 @@ Methods.OnPlayerSpellbookChange = function(pid, action)
     end
 end
 
-Methods.OnObjectPlace = function(pid, refId, refNum, cellDescription)
+Methods.OnObjectPlace = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectPlaced(refId, refNum)
+        LoadedCells[cellDescription]:SaveObjectsPlaced()
     else
         print("Undefined behavior: trying to place object in unloaded " .. cellDescription)
     end
 end
 
-Methods.OnObjectDelete = function(pid, refId, refNum, cellDescription)
-    
+Methods.OnObjectDelete = function(pid, cellDescription)
+
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectDeleted(refId, refNum)
+        LoadedCells[cellDescription]:SaveObjectsDeleted()
     else
         print("Undefined behavior: trying to delete object in unloaded " .. cellDescription)
     end

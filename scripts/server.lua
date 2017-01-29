@@ -338,12 +338,12 @@ function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end
 
-function OnObjectPlace(pid, refId, refNum, cell)
-    myMod.OnObjectPlace(pid, refId, refNum, cell)
+function OnObjectPlace(pid, cellDescription)
+    myMod.OnObjectPlace(pid, cellDescription)
 end
 
-function OnObjectDelete(pid, refId, refNum, cell)
-    myMod.OnObjectDelete(pid, refId, refNum, cell)
+function OnObjectDelete(pid, cellDescription)
+    myMod.OnObjectDelete(pid, cellDescription)
 end
 
 function OnGUIAction(pid, idGui, data)

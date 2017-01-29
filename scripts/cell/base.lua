@@ -49,21 +49,35 @@ function BaseCell:RemoveVisitor(pid)
     end
 end
 
-function BaseCell:SaveObjectPlaced(refId, refNum)
+function BaseCell:SaveObjectsPlaced()
 
-    self.data.objectsPlaced[refNum] = refId
+    local refNumIndex
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
+        self.data.objectsPlaced[refNumIndex] = tes3mp.GetObjectRefId(i)
+    end
 end
 
-function BaseCell:SaveObjectDeleted(refId, refNum)
+function BaseCell:SaveObjectsDeleted()
 
-    -- If this is an object that did not originally exist in the cell,
-    -- remove it from objectsPlaced
-    if self.data.objectsPlaced[refNum] ~= nil then
-        self.data.objectsPlaced[refNum] = nil
-    -- Otherwise, add it to objectsDeleted
-    else
-        self.data.objectsDeleted[refNum] = refId
+    local refNumIndex
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
+
+        -- If this is an object that did not originally exist in the cell,
+        -- remove it from objectsPlaced
+        if self.data.objectsPlaced[refNumIndex] ~= nil then
+            self.data.objectsPlaced[refNumIndex] = nil
+        -- Otherwise, add it to objectsDeleted
+        else
+            self.data.objectsDeleted[refNumIndex] = tes3mp.GetObjectRefId(i)
+        end
     end
+
 end
 
 function BaseCell:SaveLastVisit(playerName)
