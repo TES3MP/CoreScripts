@@ -52,11 +52,18 @@ end
 function BaseCell:SaveObjectsPlaced()
 
     local refNumIndex
+    local value
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        self.data.objectsPlaced[refNumIndex] = tes3mp.GetObjectRefId(i)
+        value = tes3mp.GetObjectRefId(i)
+        value = value .. ", " .. tes3mp.GetObjectCount(i)
+        value = value .. ", " .. tes3mp.GetObjectGoldValue(i)
+        value = value .. ", " .. tes3mp.GetObjectPosX(i)
+        value = value .. ", " .. tes3mp.GetObjectPosY(i)
+        value = value .. ", " .. tes3mp.GetObjectPosZ(i)
+        self.data.objectsPlaced[refNumIndex] = value
     end
 end
 
