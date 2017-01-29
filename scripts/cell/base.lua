@@ -73,6 +73,9 @@ function BaseCell:SaveObjectsPlaced()
         value = value .. ", " .. tes3mp.GetObjectPosX(i)
         value = value .. ", " .. tes3mp.GetObjectPosY(i)
         value = value .. ", " .. tes3mp.GetObjectPosZ(i)
+        value = value .. ", " .. tes3mp.GetObjectRotX(i)
+        value = value .. ", " .. tes3mp.GetObjectRotY(i)
+        value = value .. ", " .. tes3mp.GetObjectRotZ(i)
         self.data.objectsPlaced[refNumIndex] = value
     end
 end
@@ -126,7 +129,12 @@ end
 
 function BaseCell:SendObjectsPlaced(pid)
 
-    local objectPlacedPattern = "(.+), (%d+), (%d+), (%-?%d+%.%d+), (%-?%d+%.%d+), (%-?%d+%.%d+)$"
+    -- RefId, count, goldValue
+    local objectPlacedPattern = "(.+), (%d+), (%d+)"
+    -- X, Y and Z positions
+    objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)"
+    -- X, Y and Z rotations
+    objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
 
     local objectIndex = 0
 
@@ -135,7 +143,7 @@ function BaseCell:SendObjectsPlaced(pid)
 
     for refNum, value in pairs(self.data.objectsPlaced) do
         if string.match(value, objectPlacedPattern) ~= nil then
-            for refId, count, goldValue, posX, posY, posZ in string.gmatch(value, objectPlacedPattern) do
+            for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
                 
                 tes3mp.AddWorldObject()
                 tes3mp.SetObjectRefId(objectIndex, refId)
@@ -143,6 +151,7 @@ function BaseCell:SendObjectsPlaced(pid)
                 tes3mp.SetObjectCount(objectIndex, count)
                 tes3mp.SetObjectGoldValue(objectIndex, goldValue)
                 tes3mp.SetObjectPosition(objectIndex, posX, posY, posZ)
+                tes3mp.SetObjectRotation(objectIndex, rotX, rotY, rotZ)
             end
         end
 
