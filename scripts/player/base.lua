@@ -67,6 +67,8 @@ function BasePlayer:__init(pid)
     self.tid_login = nil
     self.admin = 0
     self.hasAccount = nil -- TODO Check whether account file exists
+
+    self.cellsLoaded = {}
 end
 
 function BasePlayer:Destroy()
@@ -498,6 +500,7 @@ function BasePlayer:RemoveSpells()
     for i = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
+        -- Only print spell removal if the spell actually exists
         if table.contains(self.data.spellbook, spellId) == true then
             print("Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
             table.removeValue(self.data.spellbook, spellId)
@@ -509,6 +512,20 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:AddCellLoaded(cellDescription)
+
+    -- Only add new loaded cell if we don't already have it
+    if table.contains(self.cellsLoaded, cellDescription) == false then
+        table.insert(self.cellsLoaded, cellDescription)
+    end
+
+end
+
+function BasePlayer:RemoveCellLoaded(cellDescription)
+
+    table.removeValue(self.cellsLoaded, cellDescription)
 end
 
 return BasePlayer

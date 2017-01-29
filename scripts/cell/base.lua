@@ -23,6 +23,9 @@ function BaseCell:AddVisitor(pid)
     if table.contains(self.visitors, pid) == false then
         table.insert(self.visitors, pid)
 
+        -- Also add a record to the player's list of loaded cells
+        Players[pid]:AddCellLoaded(self.description)
+
         -- Send information about this cell to the visitor, but only
         -- if they haven't visited since last connecting to the server
         if Players[pid].initTimestamp > self.data.lastVisitTimestamps[Players[pid].accountName] then
@@ -34,10 +37,16 @@ end
 
 function BaseCell:RemoveVisitor(pid)
 
-    table.removeValue(self.visitors, pid)
+    -- Only remove visitor if they are actually recorded as one
+    if table.contains(self.visitors, pid) == true then
+        table.removeValue(self.visitors, pid)
 
-    -- Remember when this visitor left
-    self:SaveLastVisit(Players[pid].accountName)
+        -- Also remove the record from the player's list of loaded cells
+        Players[pid]:RemoveCellLoaded(self.description)
+
+        -- Remember when this visitor left
+        self:SaveLastVisit(Players[pid].accountName)
+    end
 end
 
 function BaseCell:SaveObjectPlaced(refId, refNum)

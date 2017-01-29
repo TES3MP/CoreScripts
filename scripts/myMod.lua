@@ -195,6 +195,17 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 
+    -- Remove the player as a visitor from all of their loaded cells
+    for i = 0, #Players[pid].cellsLoaded do
+        if Players[pid].cellsLoaded[i] ~= nil then
+
+            local cellDescription = Players[pid].cellsLoaded[i]
+            LoadedCells[cellDescription]:RemoveVisitor(pid)
+        else
+            print("Players[pid].cellsLoaded[" .. i .. "] was nil")
+        end
+    end
+
     if Players[pid] ~= nil then
         Players[pid]:Destroy()
         Players[pid] = nil
@@ -341,7 +352,6 @@ Methods.UnloadCell = function(pid, cellDescription)
         
         -- No longer record that this player has the cell loaded
         LoadedCells[cellDescription]:RemoveVisitor(pid)
-        LoadedCells[cellDescription]:SaveLastVisit(tes3mp.GetName(pid))
         LoadedCells[cellDescription]:Save()
 
         -- If there are no visitors left, delete the cell
