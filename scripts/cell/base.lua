@@ -47,7 +47,14 @@ end
 
 function BaseCell:SaveObjectDeleted(refId, refNum)
 
-    self.data.objectsDeleted[refNum] = refId
+    -- If this is an object that did not originally exist in the cell,
+    -- remove it from objectsPlaced
+    if self.data.objectsPlaced[refNum] ~= nil then
+        self.data.objectsPlaced[refNum] = nil
+    -- Otherwise, add it to objectsDeleted
+    else
+        self.data.objectsDeleted[refNum] = refId
+    end
 end
 
 function BaseCell:SaveLastVisit(playerName)
