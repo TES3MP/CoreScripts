@@ -26,10 +26,20 @@ function BaseCell:AddVisitor(pid)
         -- Also add a record to the player's list of loaded cells
         Players[pid]:AddCellLoaded(self.description)
 
-        -- Send information about this cell to the visitor, but only
-        -- if they haven't visited since last connecting to the server
-        if Players[pid].initTimestamp > self.data.lastVisitTimestamps[Players[pid].accountName] then
+        local shouldSendInfo = false
+        local lastVisitTimestamp = self.data.lastVisitTimestamps[Players[pid].accountName]
 
+        -- If this player has never been in this cell, they should be
+        -- sent its cell data
+        if lastVisitTimestamp == nil then
+            shouldSendInfo = true
+        -- Otherwise, send them the cell data only if they haven't
+        -- visited since last connecting to the server
+        elseif Players[pid].initTimestamp > lastVisitTimestamp then
+            shouldSendInfo = true
+        end
+
+        if shouldSendInfo == true then
             self:SendCellData(pid)
         end
     end
