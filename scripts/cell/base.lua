@@ -23,14 +23,21 @@ function BaseCell:AddVisitor(pid)
     if table.contains(self.visitors, pid) == false then
         table.insert(self.visitors, pid)
 
-        -- Send information about this cell to the visitor
-        self:SendCellData(pid)
+        -- Send information about this cell to the visitor, but only
+        -- if they haven't visited since last connecting to the server
+        if Players[pid].initTimestamp > self.data.lastVisitTimestamps[Players[pid].accountName] then
+
+            self:SendCellData(pid)
+        end
     end
 end
 
 function BaseCell:RemoveVisitor(pid)
 
     table.removeValue(self.visitors, pid)
+
+    -- Remember when this visitor left
+    self:SaveLastVisit(Players[pid].accountName)
 end
 
 function BaseCell:SaveObjectPlaced(refId, refNum)

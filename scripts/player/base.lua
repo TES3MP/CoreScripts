@@ -59,6 +59,8 @@ function BasePlayer:__init(pid)
     self.data.inventory = {}
     self.data.spellbook = {}
 
+    self.initTimestamp = os.time()
+
     self.accountName = tes3mp.GetName(pid)
     self.pid = pid
     self.loggedOn = false
