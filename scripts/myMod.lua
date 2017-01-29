@@ -354,11 +354,15 @@ end
 
 Methods.OnPlayerCellState = function(pid, action)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
-        local cellDescription = tes3mp.GetCellStateDescription(pid, 0)
-        if action == 0 then
-            Methods.LoadCell(pid, cellDescription)
-        elseif action == 1 then
-            Methods.UnloadCell(pid, cellDescription)
+
+        for i = 0, tes3mp.GetCellStateChangesSize(pid) - 1 do
+            
+            local cellDescription = tes3mp.GetCellStateDescription(pid, i)
+            if action == 0 then
+                Methods.LoadCell(pid, cellDescription)
+            elseif action == 1 then
+                Methods.UnloadCell(pid, cellDescription)
+            end
         end
     end
 end
