@@ -98,8 +98,8 @@ end
 Methods.GetConnectedPlayerCount = function()
 
     local playerCount = 0
-    for i=0,#Players do
-        if Players[i]:IsLoggedOn() then
+    for i = 0, #Players do
+        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
             playerCount = playerCount + 1
         end
     end
@@ -109,13 +109,13 @@ end
 Methods.GetConnectedPlayerList = function()
     local list = ""
     local divider = ""
-    for i=0,#Players do
+    for i = 0, #Players do
         if i == #Players then
             divider = ""
         else
             divider = ", "
         end
-        if Players[i]:IsLoggedOn() then
+        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
             list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
         end
     end

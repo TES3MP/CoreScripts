@@ -32,7 +32,7 @@ local GetConnectedPlayerList = function()
         else
             divider = "\n"
         end
-        if Players[i]:IsLoggedOn() then
+        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
             list = list .. tostring(Players[i].name)
             list = list .. " (ID: " .. tostring(Players[i].pid)
             list = list .. ", Ping: " .. tostring(tes3mp.GetAvgPing(Players[i].pid)) .. ")"
