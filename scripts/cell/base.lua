@@ -115,9 +115,9 @@ function BaseCell:SendObjectsDeleted(pid)
     -- Objects deleted
     for refNum, refId in pairs(self.data.objectsDeleted) do
 
-        tes3mp.AddWorldObject()
         tes3mp.SetObjectRefId(objectIndex, refId)
         tes3mp.SetObjectRefNumIndex(objectIndex, refNum)
+        tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
     end
@@ -145,13 +145,13 @@ function BaseCell:SendObjectsPlaced(pid)
         if string.match(value, objectPlacedPattern) ~= nil then
             for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
                 
-                tes3mp.AddWorldObject()
                 tes3mp.SetObjectRefId(objectIndex, refId)
                 tes3mp.SetObjectRefNumIndex(objectIndex, refNum)
                 tes3mp.SetObjectCount(objectIndex, count)
                 tes3mp.SetObjectGoldValue(objectIndex, goldValue)
                 tes3mp.SetObjectPosition(objectIndex, posX, posY, posZ)
                 tes3mp.SetObjectRotation(objectIndex, rotX, rotY, rotZ)
+                tes3mp.AddWorldObject()
             end
         end
 
