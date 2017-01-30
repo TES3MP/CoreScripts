@@ -201,9 +201,9 @@ function BasePlayer:SaveClass()
         self.data.customClass.name = tes3mp.GetClassName(self.pid)
         self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
         self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
-        majorAttributes = {}
-        majorSkills = {}
-        minorSkills = {}
+        local majorAttributes = {}
+        local majorSkills = {}
+        local minorSkills = {}
 
         for i = 0, 1, 1 do
             majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
