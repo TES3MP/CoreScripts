@@ -10,7 +10,7 @@ healthBase=40
 
 [general]
 password=12345678
-name=Koncord
+name=ExamplePlayer
 admin=0
 
 [customClass]
