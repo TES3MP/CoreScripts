@@ -59,11 +59,11 @@ function OnPlayerConnect(pid)
 
     if myMod.IsPlayerNameLoggedIn(pname) then
         myMod.OnPlayerDeny(pid, pname)
-        return 0 -- deny player
+        return false -- deny player
     else
         print("New player with pid("..pid..") connected!")
         myMod.OnPlayerConnect(pid, pname)
-        return 1 -- accept player
+        return true -- accept player
     end
 end
 
@@ -105,8 +105,8 @@ function OnPlayerSendMessage(pid, message)
     local pname = tes3mp.GetName(pid)
     print(pname.."("..pid.."): "..message)
 
-    if myMod.OnPlayerMessage(pid, message) == 0 then
-        return 0
+    if myMod.OnPlayerMessage(pid, message) == false then
+        return false
     end
 
     local admin = false
@@ -300,7 +300,7 @@ function OnPlayerSendMessage(pid, message)
 
             if Players[targetPlayer] == nil then
                 tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPlayer) .. " not found.\n", 0)
-                return 0
+                return false
             elseif cmd[3] == "on" then
                 Players[targetPlayer]:SetConsole(true)
                 state = " enabled.\n"
@@ -309,7 +309,7 @@ function OnPlayerSendMessage(pid, message)
                 state = " disabled.\n"
             else
                  tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off>.\n", 0)
-                 return 0
+                 return false
             end
 
             tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, 0)
@@ -322,10 +322,10 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendMessage(pid, message, 0)
         end
 
-        return 0 -- commands should be hidden
+        return false -- commands should be hidden
     end
 
-    return 1 -- default behavior, chat messages should not
+    return true -- default behavior, chat messages should not
 end
 
 function OnPlayerAttributesChange(pid)

@@ -249,38 +249,38 @@ Methods.OnPlayerMessage = function(pid, message)
     if cmd[1] == "register" or cmd[1] == "reg" then
         if Players[pid]:IsLoggedOn() then
             Players[pid]:Message("You are already logged in.\n")
-            return 0
+            return false
         elseif Players[pid]:HasAccount() then
             Players[pid]:Message("You already have an account. Try \"/login password\".\n")
-            return 0
+            return false
         elseif cmd[2] == nil then
             Players[pid]:Message("Incorrect password!\n")
-            return 0
+            return false
         end
         Players[pid]:Registered(cmd[2])
-        return 0
+        return false
     elseif cmd[1] == "login" then
         if Players[pid]:IsLoggedOn() then
             Players[pid]:Message("You are already logged in.\n")
-            return 0
+            return false
         elseif not Players[pid]:HasAccount() then
             Players[pid]:Message("You do not have an account. Try \"/register password\".\n")
             return 0
         elseif cmd[2] == nil then
             Players[pid]:Message("Password cannot be empty\n")
-            return 0
+            return false
         end
         Players[pid]:Load()
         -- Just in case the password from the data file is a number, make sure to turn it into a string
         if tostring(Players[pid].data.general.password) ~= cmd[2] then
             Players[pid]:Message("Incorrect password!\n")
-            return 0
+            return false
         end
         Players[pid]:LoggedOn()
-        return 0
+        return false
     end
 
-    return 1
+    return true
 end
 
 Methods.AuthCheck = function(pid)
