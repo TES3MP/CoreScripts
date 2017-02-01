@@ -419,6 +419,15 @@ Methods.OnObjectDelete = function(pid, cellDescription)
     end
 end
 
+Methods.OnObjectScale = function(pid, cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectsScaled()
+    else
+        print("Undefined behavior: trying to scale object in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()

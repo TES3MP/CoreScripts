@@ -422,13 +422,13 @@ end
 
 function BasePlayer:LoadInventory()
 
-    local itemPattern = "(.+), (%d+), (%-?%d+)$"
-
     -- Keep this around to update everyone to the new BasePlayer file format
     -- instead of crashing the server
     if self.data.inventory == nil then
         self.data.inventory = {}
     end
+
+    local itemPattern = "(.+), (%d+), (%-?%d+)$"
 
     -- Clear whatever items the BasePlayer may have so we can completely
     -- replace them

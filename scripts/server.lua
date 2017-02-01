@@ -372,6 +372,10 @@ function OnObjectDelete(pid, cellDescription)
     myMod.OnObjectDelete(pid, cellDescription)
 end
 
+function OnObjectScale(pid, cellDescription)
+    myMod.OnObjectScale(pid, cellDescription)
+end
+
 function OnGUIAction(pid, idGui, data)
     if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end
