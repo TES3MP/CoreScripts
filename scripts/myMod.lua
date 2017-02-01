@@ -195,18 +195,19 @@ end
 
 Methods.OnPlayerDisconnect = function(pid)
 
-    -- Unload every cell for this player
-    for i = 0, #Players[pid].cellsLoaded do
-        if Players[pid].cellsLoaded[i] ~= nil then
-
-            local cellDescription = Players[pid].cellsLoaded[i]
-            Methods.UnloadCell(pid, cellDescription)
-        else
-            print("Players[pid].cellsLoaded[" .. i .. "] was nil")
-        end
-    end
-
     if Players[pid] ~= nil then
+
+        -- Unload every cell for this player
+        for i = 0, #Players[pid].cellsLoaded do
+            if Players[pid].cellsLoaded[i] ~= nil then
+
+                local cellDescription = Players[pid].cellsLoaded[i]
+                Methods.UnloadCell(pid, cellDescription)
+            else
+                print("Players[pid].cellsLoaded[" .. i .. "] was nil")
+            end
+        end
+
         Players[pid]:Destroy()
         Players[pid] = nil
     end
