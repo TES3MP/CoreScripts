@@ -75,7 +75,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
     targetCell = tes3mp.GetCell(targetPlayer)
 
-    if tes3mp.IsInExterior(targetPlayer) == 1 then
+    if tes3mp.IsInExterior(targetPlayer) == true then
         targetCellName = "Exterior "..targetGrid[0]..", "..targetGrid[1]..""
         tes3mp.SetExterior(originPlayer, targetGrid[0], targetGrid[1])
     else

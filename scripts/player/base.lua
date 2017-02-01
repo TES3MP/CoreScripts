@@ -338,7 +338,7 @@ end
 function BasePlayer:SaveCell()
     local currentCell = ""
 
-    if tes3mp.IsInExterior(self.pid) == 1 then
+    if tes3mp.IsInExterior(self.pid) == true then
         currentCell = tes3mp.GetExteriorX(self.pid) .. "," .. tes3mp.GetExteriorY(self.pid)
     else
         currentCell = tes3mp.GetCell(self.pid)
