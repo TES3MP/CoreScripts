@@ -32,7 +32,8 @@ local modhelptext = "Moderators only:\
 
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
-/removemoderator <pid> - Demote player from moderator"
+/removemoderator <pid> - Demote player from moderator\
+/console <pid> <on/off> - Enable/dissable in-game console for player"
 
 
 function OnServerInit()
@@ -291,6 +292,30 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "getpos" and moderator then
             myMod.PrintPlayerPosition(pid, cmd[2])
+
+        elseif cmd[1] == "console" and admin then
+            local targetPlayer = tonumber(cmd[2])
+            local targetPlayerName = ""
+            local state = ""
+
+            if Players[targetPlayer] == nil then
+                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPlayer) .. " not found.\n", 0)
+                return 0
+            elseif cmd[3] == "on" then
+                Players[targetPlayer]:SetConsole(true)
+                state = " enabled.\n"
+            elseif cmd[3] == "off" then
+                Players[targetPlayer]:SetConsole(false)
+                state = " disabled.\n"
+            else
+                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off>.\n", 0)
+                 return 0
+            end
+
+            tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, 0)
+            if targetPlayer ~= pid then
+                tes3mp.SendMessage(targetPlayer, "Console" .. state, 0)
+            end
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
