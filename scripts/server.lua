@@ -52,6 +52,7 @@ function OnServerExit(err)
 end
 
 function OnPlayerConnect(pid)
+    tes3mp.SetConsoleAllow(pid, config.allowConsole)
 
     local pname = tes3mp.GetName(pid)
 
