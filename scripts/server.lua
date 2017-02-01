@@ -379,6 +379,18 @@ function OnObjectScale(pid, cellDescription)
     myMod.OnObjectScale(pid, cellDescription)
 end
 
+function OnObjectLock(pid, cellDescription)
+    myMod.OnObjectLock(pid, cellDescription)
+end
+
+function OnObjectUnlock(pid, cellDescription)
+    myMod.OnObjectUnlock(pid, cellDescription)
+end
+
+function OnDoorState(pid, cellDescription)
+    myMod.OnDoorState(pid, cellDescription)
+end
+
 function OnGUIAction(pid, idGui, data)
     if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end

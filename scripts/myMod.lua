@@ -428,6 +428,33 @@ Methods.OnObjectScale = function(pid, cellDescription)
     end
 end
 
+Methods.OnObjectLock = function(pid, cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectsLocked()
+    else
+        print("Undefined behavior: trying to lock object in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnObjectUnlock = function(pid, cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectsUnlocked()
+    else
+        print("Undefined behavior: trying to unlock object in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnDoorState = function(pid, cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveDoorStates()
+    else
+        print("Undefined behavior: trying to set door state in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveGeneral()
     Players[pid]:SaveCharacter()
