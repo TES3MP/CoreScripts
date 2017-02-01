@@ -246,7 +246,7 @@ function BaseCell:SendObjectsScaled(pid)
     end
 
     -- RefId, scale
-    local objectScaledPattern = "(.+), (%d+)"
+    local objectScaledPattern = "(.+), (%d+%.?%d*)"
 
     local objectIndex = 0
 
