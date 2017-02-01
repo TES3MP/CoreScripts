@@ -1,9 +1,0 @@
-[objectsPlaced]
-
-[lastVisitTimestamps]
-
-[general]
-description=ToddTest
-
-[objectsDeleted]
-
