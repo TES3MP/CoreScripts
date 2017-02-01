@@ -1,4 +1,5 @@
 require('utils')
+require('config')
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid)
@@ -8,6 +9,7 @@ function BasePlayer:__init(pid)
             name = "",
             password = "",
             admin = 0,
+            consoleAllowed = config.allowConsole,
         },
         character = {
             race = "",
@@ -89,6 +91,7 @@ end
 function BasePlayer:Registered(passw)
     self.loggedOn = true
     self.data.general.password = passw
+    self.data.general.consoleAllowed = "default"
     if self.hasAccount == false then -- create account
         tes3mp.SetCharGenStage(self.pid, 1, 4)
     end
@@ -107,6 +110,7 @@ function BasePlayer:LoggedOn()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
+        self:SetConsole(self.data.general.consoleAllowed)
     end
 end
 
@@ -512,6 +516,20 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:SetConsole(state)
+    if state == nil or state == "default" then
+        state = config.allowConsole
+         self.data.general.consoleAllowed = "default"
+    else
+        self.data.general.consoleAllowed = state
+    end
+    tes3mp.SetConsoleAllow(self.pid, state)
+end
+
+function BasePlayer:GetConsole(state)
+    return self.data.general.consoleAllowed
 end
 
 function BasePlayer:AddCellLoaded(cellDescription)
