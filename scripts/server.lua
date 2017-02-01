@@ -33,7 +33,7 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
-/console <pid> <on/off> - Enable/dissable in-game console for player"
+/console <pid> <on/off> - Enable/disable in-game console for player"
 
 
 function OnServerInit()

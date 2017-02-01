@@ -174,10 +174,10 @@ function BaseCell:SendObjectsPlaced(pid)
                 tes3mp.SetObjectPosition(posX, posY, posZ)
                 tes3mp.SetObjectRotation(rotX, rotY, rotZ)
                 tes3mp.AddWorldObject()
+
+                objectIndex = objectIndex + 1
             end
         end
-
-        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
@@ -209,10 +209,10 @@ function BaseCell:SendObjectsScaled(pid)
                 tes3mp.SetObjectRefNumIndex(refNum)
                 tes3mp.SetObjectScale(scale)
                 tes3mp.AddWorldObject()
+
+                objectIndex = objectIndex + 1
             end
         end
-
-        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
