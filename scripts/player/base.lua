@@ -521,7 +521,7 @@ end
 function BasePlayer:SetConsole(state)
     if state == nil or state == "default" then
         state = config.allowConsole
-         self.data.general.consoleAllowed = "default"
+        self.data.general.consoleAllowed = "default"
     else
         self.data.general.consoleAllowed = state
     end

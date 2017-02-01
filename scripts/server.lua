@@ -33,7 +33,7 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
-/console <pid> <on/off> - Enable/disable in-game console for player"
+/console <pid> <on/off/default> - Enable/disable in-game console for player"
 
 
 function OnServerInit()
@@ -307,8 +307,11 @@ function OnPlayerSendMessage(pid, message)
             elseif cmd[3] == "off" then
                 Players[targetPlayer]:SetConsole(false)
                 state = " disabled.\n"
+            elseif cmd[3] == "default" then
+                Players[targetPlayer]:SetConsole("default")
+                state = " reseted to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off>.\n", 0)
+                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", 0)
                  return false
             end
 
