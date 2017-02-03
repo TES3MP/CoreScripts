@@ -347,8 +347,8 @@ function OnPlayerCellChange(pid)
     myMod.OnPlayerCellChange(pid)
 end
 
-function OnPlayerCellState(pid, action)
-    myMod.OnPlayerCellState(pid, action)
+function OnPlayerCellState(pid)
+    myMod.OnPlayerCellState(pid)
 end
 
 function OnPlayerEquipmentChange(pid)
