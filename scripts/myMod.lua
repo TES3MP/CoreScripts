@@ -337,6 +337,13 @@ Methods.LoadCell = function(pid, cellDescription)
         -- If this cell has a data file, load it
         if LoadedCells[cellDescription]:HasFile() then
             LoadedCells[cellDescription]:Load()
+
+            -- It's possible this file uses an older cell structure,
+            -- so update to the current one
+            if LoadedCells[cellDescription]:HasCurrentStructure() == false then
+                LoadedCells[cellDescription]:UpdateStructure()
+            end
+
         -- Otherwise, create a data file for it
         else
             LoadedCells[cellDescription]:CreateFile()

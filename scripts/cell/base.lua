@@ -6,6 +6,7 @@ function BaseCell:__init(cellDescription)
     self.data = {}
     self.data.general = {}
     self.data.general.description = cellDescription
+    self.data.general.version = tes3mp.GetServerVersion()
 
     self.data.refIdDelete = {}
     self.data.refIdPlace = {}
@@ -20,7 +21,7 @@ function BaseCell:__init(cellDescription)
     self.data.rotation = {}
     self.data.scale = {}
     self.data.lockLevel = {}
-    self.data.doorState = {}
+    self.data.state = {}
 
     self.data.lastVisit = {}
 
@@ -29,6 +30,15 @@ end
 
 function BaseCell:HasFile()
     return self.hasFile
+end
+
+function BaseCell:HasCurrentStructure()
+    
+    if self.data.general.version == nil or self.data.general.version ~= tes3mp.GetServerVersion() then
+        return false
+    end
+
+    return true
 end
 
 function BaseCell:AddVisitor(pid)
@@ -96,7 +106,7 @@ function BaseCell:SaveObjectsDeleted()
             self.data.rotation[refNum] = nil
             self.data.scale[refNum] = nil
             self.data.lockLevel[refNum] = nil
-            self.data.doorState[refNum] = nil
+            self.data.state[refNum] = nil
         -- Otherwise, add it to refIdDelete
         else
             self.data.refIdDelete[refNum] = tes3mp.GetObjectRefId(i)
@@ -171,7 +181,7 @@ function BaseCell:SaveDoorStates()
 
         refNum = tes3mp.GetObjectRefNumIndex(i)
         self.data.refIdDoorState[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.doorState[refNum] = tes3mp.GetObjectState(i)
+        self.data.state[refNum] = tes3mp.GetObjectState(i)
     end
 end
 
@@ -311,7 +321,7 @@ function BaseCell:SendDoorStates(pid)
         
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectState(self.data.doorState[refNum])
+        tes3mp.SetObjectState(self.data.state[refNum])
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -330,6 +340,142 @@ function BaseCell:SendCellData(pid)
     self:SendObjectsLocked(pid)
     self:SendObjectsUnlocked(pid)
     self:SendDoorStates(pid)
+end
+
+function BaseCell:UpdateStructure()
+
+    -- This data file has the original cell data experiment structure
+    if self.data.general.version == nil then
+
+        self.data.refIdDelete = {}
+        self.data.refIdPlace = {}
+        self.data.refIdScale = {}
+        self.data.refIdLock = {}
+        self.data.refIdUnlock = {}
+        self.data.refIdDoorState = {}
+
+        self.data.count = {}
+        self.data.goldValue = {}
+        self.data.position = {}
+        self.data.rotation = {}
+        self.data.scale = {}
+        self.data.lockLevel = {}
+        self.data.state = {}
+
+        self.data.lastVisit = {}
+
+        if self.data.objectsPlaced ~= nil then
+
+            -- RefId, count, goldValue
+            local objectPlacedPattern = "(.+), (%d+), (%d+)"
+            -- X, Y and Z positions
+            objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)"
+            -- X, Y and Z rotations
+            objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
+
+            for refNum, value in pairs(self.data.objectsPlaced) do
+                if string.match(value, objectPlacedPattern) ~= nil then
+                    for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
+                        
+                        self.data.refIdPlace[refNum] = refId
+                        self.data.count[refNum] = count
+                        self.data.goldValue[refNum] = goldValue
+                        self.data.position[refNum] = posX .. ", " .. posY .. ", " .. posZ
+                        self.data.rotation[refNum] = rotX .. ", " .. rotY .. ", " .. rotZ
+                    end
+                end
+            end
+
+            self.data.objectsPlaced = nil
+        end
+
+        if self.data.objectsDeleted ~= nil then
+
+            for refNum, refId in pairs(self.data.objectsDeleted) do
+                self.data.refIdDelete[refNum] = refId
+            end
+
+            self.data.objectsDeleted = nil
+        end
+
+        if self.data.objectsScaled ~= nil then
+
+            -- RefId, scale
+            local objectScaledPattern = "(.+), (%d+%.?%d*)"
+
+            for refNum, value in pairs(self.data.objectsScaled) do
+                if string.match(value, objectScaledPattern) ~= nil then
+                    for refId, scale in string.gmatch(value, objectScaledPattern) do
+                        
+                        self.data.refIdScale[refNum] = refId
+                        self.data.scale[refNum] = scale
+                    end
+                end
+            end
+
+            self.data.objectsScaled = nil
+        end
+
+        if self.data.objectsLocked ~= nil then
+
+            -- RefId, lockLevel
+            local objectLockedPattern = "(.+), (%d+)"
+
+            for refNum, value in pairs(self.data.objectsLocked) do
+                if string.match(value, objectLockedPattern) ~= nil then
+                    for refId, lockLevel in string.gmatch(value, objectLockedPattern) do
+                        
+                        self.data.refIdLock[refNum] = refId
+                        self.data.lockLevel[refNum] = lockLevel
+                    end
+                end
+            end
+
+            self.data.objectsLocked = nil
+        end
+
+        if self.data.objectsUnlocked ~= nil then
+
+            for refNum, refId in pairs(self.data.objectsUnlocked) do
+                self.data.refIdUnlock[refNum] = refId
+            end
+
+            self.data.objectsUnlocked = nil
+        end
+
+        if self.data.doorStates ~= nil then
+
+            -- RefId, state
+            local doorStatePattern = "(.+), (%d+)"
+
+            for refNum, value in pairs(self.data.doorStates) do
+                if string.match(value, doorStatePattern) ~= nil then
+                    for refId, state in string.gmatch(value, doorStatePattern) do
+                        
+                        self.data.refIdDoorState[refNum] = refId
+                        self.data.state[refNum] = state
+                    end
+                end
+            end
+
+            self.data.doorStates = nil
+        end
+
+        if self.data.lastVisitTimestamps ~= nil then
+
+            self.data.lastVisit = {}
+
+            for player, timestamp in pairs(self.data.lastVisitTimestamps) do
+
+                self.data.lastVisit[player] = timestamp
+            end
+
+            self.data.lastVisitTimestamps = nil
+        end
+    end
+
+    self.data.general.version = tes3mp.GetServerVersion()
+    self:Save()
 end
 
 return BaseCell
