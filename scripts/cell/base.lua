@@ -123,8 +123,19 @@ function BaseCell:SaveObjectsPlaced()
 
         refNum = tes3mp.GetObjectRefNumIndex(i)
         self.data.refIdPlace[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.count[refNum] = tes3mp.GetObjectCount(i)
-        self.data.goldValue[refNum] = tes3mp.GetObjectGoldValue(i)
+
+        local count = tes3mp.GetObjectCount(i)
+        local goldValue = tes3mp.GetObjectGoldValue(i)
+        
+        -- Only save count if it isn't the default value of 1
+        if count ~= 1 then
+            self.data.count[refNum] = count
+        end
+
+        -- Only save goldValue if it isn't the default value of 1
+        if goldValue ~=1 then
+            self.data.goldValue[refNum] = goldValue
+        end
         
         tempValue = tes3mp.GetObjectPosX(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectPosY(i)
@@ -224,8 +235,22 @@ function BaseCell:SendObjectsPlaced(pid)
 
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectCount(self.data.count[refNum])
-        tes3mp.SetObjectGoldValue(self.data.goldValue[refNum])
+
+        local count = self.data.count[refNum]
+        local goldValue = self.data.goldValue[refNum]
+
+        -- Use default count of 1 when the value is missing
+        if count == nil then
+            count = 1
+        end
+
+        -- Use default goldValue of 1 when the value is missing
+        if goldValue == nil then
+            goldValue = 1
+        end
+
+        tes3mp.SetObjectCount(count)
+        tes3mp.SetObjectGoldValue(goldValue)
 
         for posX, posY, posZ in string.gmatch(self.data.position[refNum], coordinatesPattern) do
             tes3mp.SetObjectPosition(posX, posY, posZ)
@@ -378,8 +403,15 @@ function BaseCell:UpdateStructure()
                     for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
                         
                         self.data.refIdPlace[refNum] = refId
-                        self.data.count[refNum] = count
-                        self.data.goldValue[refNum] = goldValue
+
+                        if tonumber(count) ~= 1 then
+                            self.data.count[refNum] = count
+                        end
+
+                        if tonumber(goldValue) ~= 1 then
+                            self.data.goldValue[refNum] = goldValue
+                        end
+
                         self.data.position[refNum] = posX .. ", " .. posY .. ", " .. posZ
                         self.data.rotation[refNum] = rotX .. ", " .. rotY .. ", " .. rotZ
                     end
