@@ -15,6 +15,7 @@ function BaseCell:__init(cellDescription)
     self.data.refIdUnlock = {}
     self.data.refIdDoorState = {}
 
+    self.data.charge = {}
     self.data.count = {}
     self.data.goldValue = {}
     self.data.position = {}
@@ -100,6 +101,7 @@ function BaseCell:SaveObjectsDeleted()
             self.data.refIdUnlock[refNum] = nil
             self.data.refIdDoorState[refNum] = nil
 
+            self.data.charge[refNum] = nil
             self.data.count[refNum] = nil
             self.data.goldValue[refNum] = nil
             self.data.position[refNum] = nil
@@ -124,9 +126,15 @@ function BaseCell:SaveObjectsPlaced()
         refNum = tes3mp.GetObjectRefNumIndex(i)
         self.data.refIdPlace[refNum] = tes3mp.GetObjectRefId(i)
 
+        local charge = tes3mp.GetObjectCharge(i)
         local count = tes3mp.GetObjectCount(i)
         local goldValue = tes3mp.GetObjectGoldValue(i)
         
+        -- Only save charge if it isn't the default value of -1
+        if charge ~= -1 then
+            self.data.charge[refNum] = charge
+        end
+
         -- Only save count if it isn't the default value of 1
         if count ~= 1 then
             self.data.count[refNum] = count
@@ -236,8 +244,14 @@ function BaseCell:SendObjectsPlaced(pid)
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
 
+        local charge = self.data.charge[refNum]
         local count = self.data.count[refNum]
         local goldValue = self.data.goldValue[refNum]
+
+        -- Use default charge of -1 when the value is missing
+        if charge == nil then
+            charge = -1
+        end
 
         -- Use default count of 1 when the value is missing
         if count == nil then
@@ -249,6 +263,7 @@ function BaseCell:SendObjectsPlaced(pid)
             goldValue = 1
         end
 
+        tes3mp.SetObjectCharge(charge)
         tes3mp.SetObjectCount(count)
         tes3mp.SetObjectGoldValue(goldValue)
 
@@ -379,6 +394,7 @@ function BaseCell:UpdateStructure()
         self.data.refIdUnlock = {}
         self.data.refIdDoorState = {}
 
+        self.data.charge = {}
         self.data.count = {}
         self.data.goldValue = {}
         self.data.position = {}
