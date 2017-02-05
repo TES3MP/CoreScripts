@@ -6,13 +6,23 @@ function BaseCell:__init(cellDescription)
     self.data = {}
     self.data.general = {}
     self.data.general.description = cellDescription
-    self.data.objectsPlaced = {}
-    self.data.objectsDeleted = {}
-    self.data.objectsScaled = {}
-    self.data.objectsLocked = {}
-    self.data.objectsUnlocked = {}
-    self.data.doorStates = {}
-    self.data.lastVisitTimestamps = {}
+
+    self.data.refIdDelete = {}
+    self.data.refIdPlace = {}
+    self.data.refIdScale = {}
+    self.data.refIdLock = {}
+    self.data.refIdUnlock = {}
+    self.data.refIdDoorState = {}
+
+    self.data.count = {}
+    self.data.goldValue = {}
+    self.data.position = {}
+    self.data.rotation = {}
+    self.data.scale = {}
+    self.data.lockLevel = {}
+    self.data.doorState = {}
+
+    self.data.lastVisit = {}
 
     self.visitors = {}
 end
@@ -31,7 +41,7 @@ function BaseCell:AddVisitor(pid)
         Players[pid]:AddCellLoaded(self.description)
 
         local shouldSendInfo = false
-        local lastVisitTimestamp = self.data.lastVisitTimestamps[Players[pid].accountName]
+        local lastVisitTimestamp = self.data.lastVisit[Players[pid].accountName]
 
         -- If this player has never been in this cell, they should be
         -- sent its cell data
@@ -65,118 +75,109 @@ end
 
 function BaseCell:SaveObjectsDeleted()
 
-    local refNumIndex
+    local refNum
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-
-        -- If any other attributes have been set for this object, they
-        -- can now be safely removed
-        if self.data.objectsScaled[refNumIndex] ~= nil then
-            self.data.objectsScaled[refNumIndex] = nil
-        end
-
-        if self.data.objectsLocked[refNumIndex] ~= nil then
-            self.data.objectsLocked[refNumIndex] = nil
-        end
-
-        if self.data.objectsUnlocked[refNumIndex] ~= nil then
-            self.data.objectsUnlocked[refNumIndex] = nil
-        end
-
-        if self.data.doorStates[refNumIndex] ~= nil then
-            self.data.doorStates[refNumIndex] = nil
-        end
+        refNum = tes3mp.GetObjectRefNumIndex(i)
 
         -- If this is an object that did not originally exist in the cell,
-        -- remove it from objectsPlaced
-        if self.data.objectsPlaced[refNumIndex] ~= nil then
-            self.data.objectsPlaced[refNumIndex] = nil
-        -- Otherwise, add it to objectsDeleted
+        -- remove it from refIdPlace and all other tables
+        if self.data.refIdPlace[refNum] ~= nil then
+            self.data.refIdPlace[refNum] = nil
+            self.data.refIdScale[refNum] = nil
+            self.data.refIdLock[refNum] = nil
+            self.data.refIdUnlock[refNum] = nil
+            self.data.refIdDoorState[refNum] = nil
+
+            self.data.count[refNum] = nil
+            self.data.goldValue[refNum] = nil
+            self.data.position[refNum] = nil
+            self.data.rotation[refNum] = nil
+            self.data.scale[refNum] = nil
+            self.data.lockLevel[refNum] = nil
+            self.data.doorState[refNum] = nil
+        -- Otherwise, add it to refIdDelete
         else
-            self.data.objectsDeleted[refNumIndex] = tes3mp.GetObjectRefId(i)
+            self.data.refIdDelete[refNum] = tes3mp.GetObjectRefId(i)
         end
     end
 end
 
 function BaseCell:SaveObjectsPlaced()
 
-    local refNumIndex
-    local value
+    local refNum
+    local tempValue
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        value = tes3mp.GetObjectRefId(i)
-        value = value .. ", " .. tes3mp.GetObjectCount(i)
-        value = value .. ", " .. tes3mp.GetObjectGoldValue(i)
-        value = value .. ", " .. tes3mp.GetObjectPosX(i)
-        value = value .. ", " .. tes3mp.GetObjectPosY(i)
-        value = value .. ", " .. tes3mp.GetObjectPosZ(i)
-        value = value .. ", " .. tes3mp.GetObjectRotX(i)
-        value = value .. ", " .. tes3mp.GetObjectRotY(i)
-        value = value .. ", " .. tes3mp.GetObjectRotZ(i)
-        self.data.objectsPlaced[refNumIndex] = value
+        refNum = tes3mp.GetObjectRefNumIndex(i)
+        self.data.refIdPlace[refNum] = tes3mp.GetObjectRefId(i)
+        self.data.count[refNum] = tes3mp.GetObjectCount(i)
+        self.data.goldValue[refNum] = tes3mp.GetObjectGoldValue(i)
+        
+        tempValue = tes3mp.GetObjectPosX(i)
+        tempValue = tempValue .. ", " .. tes3mp.GetObjectPosY(i)
+        tempValue = tempValue .. ", " .. tes3mp.GetObjectPosZ(i)
+        self.data.position[refNum] = tempValue
+
+        tempValue = tes3mp.GetObjectRotX(i)
+        tempValue = tempValue .. ", " .. tes3mp.GetObjectRotY(i)
+        tempValue = tempValue .. ", " .. tes3mp.GetObjectRotZ(i)
+        self.data.rotation[refNum] = tempValue
     end
 end
 
 function BaseCell:SaveObjectsScaled()
 
-    local refNumIndex
-    local value
+    local refNum
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        value = tes3mp.GetObjectRefId(i)
-        value = value .. ", " .. tes3mp.GetObjectScale(i)
-        self.data.objectsScaled[refNumIndex] = value
+        refNum = tes3mp.GetObjectRefNumIndex(i)
+        self.data.refIdScale[refNum] = tes3mp.GetObjectRefId(i)
+        self.data.scale[refNum] = tes3mp.GetObjectScale(i)
     end
 end
 
 function BaseCell:SaveObjectsLocked()
 
-    local refNumIndex
-    local value
+    local refNum
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        value = tes3mp.GetObjectRefId(i)
-        value = value .. ", " .. tes3mp.GetObjectLockLevel(i)
-        self.data.objectsLocked[refNumIndex] = value
+        refNum = tes3mp.GetObjectRefNumIndex(i)
+        self.data.refIdLock[refNum] = tes3mp.GetObjectRefId(i)
+        self.data.lockLevel[refNum] = tes3mp.GetObjectLockLevel(i)
     end
 end
 
 function BaseCell:SaveObjectsUnlocked()
 
-    local refNumIndex
+    local refNum
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        self.data.objectsUnlocked[refNumIndex] = tes3mp.GetObjectRefId(i)
+        refNum = tes3mp.GetObjectRefNumIndex(i)
+        self.data.refIdUnlock[refNum] = tes3mp.GetObjectRefId(i)
     end
 end
 
 function BaseCell:SaveDoorStates()
 
-    local refNumIndex
-    local value
+    local refNum
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNumIndex = tes3mp.GetObjectRefNumIndex(i)
-        value = tes3mp.GetObjectRefId(i)
-        value = value .. ", " .. tes3mp.GetObjectState(i)
-        self.data.doorStates[refNumIndex] = value
+        refNum = tes3mp.GetObjectRefNumIndex(i)
+        self.data.refIdDoorState[refNum] = tes3mp.GetObjectRefId(i)
+        self.data.doorState[refNum] = tes3mp.GetObjectState(i)
     end
 end
 
 function BaseCell:SaveLastVisit(playerName)
 
-    self.data.lastVisitTimestamps[playerName] = os.time()
+    self.data.lastVisit[playerName] = os.time()
 end
 
 function BaseCell:SendObjectsDeleted(pid)
@@ -187,10 +188,10 @@ function BaseCell:SendObjectsDeleted(pid)
     tes3mp.SetWorldEventCell(self.description)
 
     -- Objects deleted
-    for refNum, refId in pairs(self.data.objectsDeleted) do
+    for refNum, refId in pairs(self.data.refIdDelete) do
 
-        tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNumIndex(refNum)
+        tes3mp.SetObjectRefId(refId)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -203,33 +204,30 @@ end
 
 function BaseCell:SendObjectsPlaced(pid)
 
-    -- RefId, count, goldValue
-    local objectPlacedPattern = "(.+), (%d+), (%d+)"
-    -- X, Y and Z positions
-    objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)"
-    -- X, Y and Z rotations
-    objectPlacedPattern = objectPlacedPattern .. ", (%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
-
+    local coordinatesPattern = "(%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
-    for refNum, value in pairs(self.data.objectsPlaced) do
-        if string.match(value, objectPlacedPattern) ~= nil then
-            for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
-                
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNumIndex(refNum)
-                tes3mp.SetObjectCount(count)
-                tes3mp.SetObjectGoldValue(goldValue)
-                tes3mp.SetObjectPosition(posX, posY, posZ)
-                tes3mp.SetObjectRotation(rotX, rotY, rotZ)
-                tes3mp.AddWorldObject()
+    for refNum, refId in pairs(self.data.refIdPlace) do
 
-                objectIndex = objectIndex + 1
-            end
+        tes3mp.SetObjectRefNumIndex(refNum)
+        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectCount(self.data.count[refNum])
+        tes3mp.SetObjectGoldValue(self.data.goldValue[refNum])
+
+        for posX, posY, posZ in string.gmatch(self.data.position[refNum], coordinatesPattern) do
+            tes3mp.SetObjectPosition(posX, posY, posZ)
         end
+
+        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refNum], coordinatesPattern) do
+            tes3mp.SetObjectRotation(rotX, rotY, rotZ)
+        end
+
+        tes3mp.AddWorldObject()
+
+        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
@@ -239,32 +237,19 @@ end
 
 function BaseCell:SendObjectsScaled(pid)
 
-    -- Keep this around to update everyone to the new BaseCell file format
-    -- instead of crashing the server
-    if self.data.objectsScaled == nil then
-        self.data.objectsScaled = {}
-    end
-
-    -- RefId, scale
-    local objectScaledPattern = "(.+), (%d+%.?%d*)"
-
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
-    for refNum, value in pairs(self.data.objectsScaled) do
-        if string.match(value, objectScaledPattern) ~= nil then
-            for refId, scale in string.gmatch(value, objectScaledPattern) do
-                
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNumIndex(refNum)
-                tes3mp.SetObjectScale(scale)
-                tes3mp.AddWorldObject()
+    for refNum, refId in pairs(self.data.refIdScale) do
 
-                objectIndex = objectIndex + 1
-            end
-        end
+        tes3mp.SetObjectRefNumIndex(refNum)                
+        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectScale(self.data.scale[refNum])
+        tes3mp.AddWorldObject()
+
+        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
@@ -274,32 +259,19 @@ end
 
 function BaseCell:SendObjectsLocked(pid)
 
-    -- Keep this around to update everyone to the new BaseCell file format
-    -- instead of crashing the server
-    if self.data.objectsLocked == nil then
-        self.data.objectsLocked = {}
-    end
-
-    -- RefId, lockLevel
-    local objectLockedPattern = "(.+), (%d+)"
-
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
-    for refNum, value in pairs(self.data.objectsLocked) do
-        if string.match(value, objectLockedPattern) ~= nil then
-            for refId, lockLevel in string.gmatch(value, objectLockedPattern) do
+    for refNum, refId in pairs(self.data.refIdLock) do
                 
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNumIndex(refNum)
-                tes3mp.SetObjectLockLevel(lockLevel)
-                tes3mp.AddWorldObject()
+        tes3mp.SetObjectRefNumIndex(refNum)
+        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectLockLevel(self.data.lockLevel[refNum])
+        tes3mp.AddWorldObject()
 
-                objectIndex = objectIndex + 1
-            end
-        end
+        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
@@ -309,22 +281,15 @@ end
 
 function BaseCell:SendObjectsUnlocked(pid)
 
-    -- Keep this around to update everyone to the new BaseCell file format
-    -- instead of crashing the server
-    if self.data.objectsUnlocked == nil then
-        self.data.objectsUnlocked = {}
-    end
-
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
-    -- Objects deleted
-    for refNum, refId in pairs(self.data.objectsUnlocked) do
+    for refNum, refId in pairs(self.data.refIdUnlock) do
 
-        tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNumIndex(refNum)
+        tes3mp.SetObjectRefId(refId)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -337,32 +302,19 @@ end
 
 function BaseCell:SendDoorStates(pid)
 
-    -- Keep this around to update everyone to the new BaseCell file format
-    -- instead of crashing the server
-    if self.data.doorStates == nil then
-        self.data.doorStates = {}
-    end
-
-    -- RefId, lockLevel
-    local doorStatePattern = "(.+), (%d+)"
-
     local objectIndex = 0
 
     tes3mp.CreateWorldEvent(pid)
     tes3mp.SetWorldEventCell(self.description)
 
-    for refNum, value in pairs(self.data.doorStates) do
-        if string.match(value, doorStatePattern) ~= nil then
-            for refId, state in string.gmatch(value, doorStatePattern) do
-                
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNumIndex(refNum)
-                tes3mp.SetObjectState(state)
-                tes3mp.AddWorldObject()
+    for refNum, refId in pairs(self.data.refIdDoorState) do
+        
+        tes3mp.SetObjectRefNumIndex(refNum)
+        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectState(self.data.doorState[refNum])
+        tes3mp.AddWorldObject()
 
-                objectIndex = objectIndex + 1
-            end
-        end
+        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
