@@ -394,8 +394,8 @@ function BasePlayer:LoadEquipment()
         local currentItem = self.data.equipment[i]
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for itemId, itemCount, itemHealth in string.gmatch(currentItem, itemPattern) do
-                tes3mp.EquipItem(self.pid, i, itemId, itemCount, itemHealth)
+            for itemId, itemCount, itemCharge in string.gmatch(currentItem, itemPattern) do
+                tes3mp.EquipItem(self.pid, i, itemId, itemCount, itemCharge)
             end
         else
             tes3mp.UnequipItem(self.pid, i)
@@ -414,8 +414,8 @@ function BasePlayer:SaveEquipment()
 
         if itemId ~= "" then
             local itemCount = tes3mp.GetEquipmentItemCount(self.pid, i)
-            local itemHealth = tes3mp.GetEquipmentItemHealth(self.pid, i)
-            self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
+            local itemCharge = tes3mp.GetEquipmentItemCharge(self.pid, i)
+            self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemCharge
         end
     end
 end
@@ -440,8 +440,8 @@ function BasePlayer:LoadInventory()
         local currentItem = self.data.inventory[i]
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for itemId, itemCount, itemHealth in string.gmatch(currentItem, itemPattern) do
-                tes3mp.AddItem(self.pid, itemId, itemCount, itemHealth)
+            for itemId, itemCount, itemCharge in string.gmatch(currentItem, itemPattern) do
+                tes3mp.AddItem(self.pid, itemId, itemCount, itemCharge)
             end
         end
     end
@@ -458,8 +458,8 @@ function BasePlayer:SaveInventory()
 
         if itemId ~= "" then
             local itemCount = tes3mp.GetInventoryItemCount(self.pid, i)
-            local itemHealth = tes3mp.GetInventoryItemHealth(self.pid, i)
-            self.data.inventory[i] = itemId .. ", " .. itemCount .. ", " .. itemHealth
+            local itemCharge = tes3mp.GetInventoryItemCharge(self.pid, i)
+            self.data.inventory[i] = itemId .. ", " .. itemCount .. ", " .. itemCharge
         end
     end
 end
