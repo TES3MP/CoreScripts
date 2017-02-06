@@ -22,7 +22,7 @@ function BaseCell:__init(cellDescription)
     self.data.rotation = {}
     self.data.scale = {}
     self.data.lockLevel = {}
-    self.data.state = {}
+    self.data.doorState = {}
 
     self.data.lastVisit = {}
 
@@ -108,7 +108,7 @@ function BaseCell:SaveObjectsDeleted()
             self.data.rotation[refNum] = nil
             self.data.scale[refNum] = nil
             self.data.lockLevel[refNum] = nil
-            self.data.state[refNum] = nil
+            self.data.doorState[refNum] = nil
         -- Otherwise, add it to refIdDelete
         else
             self.data.refIdDelete[refNum] = tes3mp.GetObjectRefId(i)
@@ -200,7 +200,7 @@ function BaseCell:SaveDoorStates()
 
         refNum = tes3mp.GetObjectRefNumIndex(i)
         self.data.refIdDoorState[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.state[refNum] = tes3mp.GetObjectState(i)
+        self.data.doorState[refNum] = tes3mp.GetObjectDoorState(i)
     end
 end
 
@@ -361,7 +361,7 @@ function BaseCell:SendDoorStates(pid)
         
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectState(self.data.state[refNum])
+        tes3mp.SetObjectDoorState(self.data.doorState[refNum])
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -384,8 +384,23 @@ end
 
 function BaseCell:UpdateStructure()
 
+    if self.data.general.version == "0.4.1" then
+
+        if self.data.doorState == nil then
+            self.data.doorState = {}
+        end
+
+        if self.data.state ~= nil then
+
+            for refNum, doorState in pairs(self.data.state) do
+                self.data.doorState[refNum] = doorState
+            end
+
+            self.data.state = nil
+        end
+
     -- This data file has the original cell data experiment structure
-    if self.data.general.version == nil then
+    elseif self.data.general.version == nil then
 
         self.data.refIdDelete = {}
         self.data.refIdPlace = {}
@@ -401,7 +416,7 @@ function BaseCell:UpdateStructure()
         self.data.rotation = {}
         self.data.scale = {}
         self.data.lockLevel = {}
-        self.data.state = {}
+        self.data.doorState = {}
 
         self.data.lastVisit = {}
 
@@ -498,10 +513,10 @@ function BaseCell:UpdateStructure()
 
             for refNum, value in pairs(self.data.doorStates) do
                 if string.match(value, doorStatePattern) ~= nil then
-                    for refId, state in string.gmatch(value, doorStatePattern) do
+                    for refId, doorState in string.gmatch(value, doorStatePattern) do
                         
                         self.data.refIdDoorState[refNum] = refId
-                        self.data.state[refNum] = state
+                        self.data.doorState[refNum] = doorState
                     end
                 end
             end
