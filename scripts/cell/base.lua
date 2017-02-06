@@ -213,8 +213,8 @@ function BaseCell:SendObjectsDeleted(pid)
 
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     -- Objects deleted
     for refNum, refId in pairs(self.data.refIdDelete) do
@@ -236,8 +236,8 @@ function BaseCell:SendObjectsPlaced(pid)
     local coordinatesPattern = "(%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdPlace) do
 
@@ -289,8 +289,8 @@ function BaseCell:SendObjectsScaled(pid)
 
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdScale) do
 
@@ -311,8 +311,8 @@ function BaseCell:SendObjectsLocked(pid)
 
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdLock) do
                 
@@ -333,8 +333,8 @@ function BaseCell:SendObjectsUnlocked(pid)
 
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdUnlock) do
 
@@ -354,8 +354,8 @@ function BaseCell:SendDoorStates(pid)
 
     local objectIndex = 0
 
-    tes3mp.CreateWorldEvent(pid)
-    tes3mp.SetWorldEventCell(self.description)
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdDoorState) do
         

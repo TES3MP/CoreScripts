@@ -329,7 +329,6 @@ Methods.LoadCell = function(pid, cellDescription)
 
     -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
-        print("Loaded " .. cellDescription)
 
         LoadedCells[cellDescription] = Cell(cellDescription)
         LoadedCells[cellDescription].description = cellDescription
@@ -364,7 +363,6 @@ Methods.UnloadCell = function(pid, cellDescription)
 
         -- If there are no visitors left, delete the cell
         if #LoadedCells[cellDescription].visitors == 0 then
-            print("Unloaded " .. cellDescription)
             LoadedCells[cellDescription] = nil
         end
     end
