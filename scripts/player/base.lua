@@ -394,8 +394,8 @@ function BasePlayer:LoadEquipment()
         local currentItem = self.data.equipment[i]
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for itemId, itemCount, itemCharge in string.gmatch(currentItem, itemPattern) do
-                tes3mp.EquipItem(self.pid, i, itemId, itemCount, itemCharge)
+            for refId, count, charge in string.gmatch(currentItem, itemPattern) do
+                tes3mp.EquipItem(self.pid, i, refId, count, charge)
             end
         else
             tes3mp.UnequipItem(self.pid, i)
@@ -410,12 +410,12 @@ function BasePlayer:SaveEquipment()
     self.data.equipment = {}
 
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
-        local itemId = tes3mp.GetEquipmentItemId(self.pid, i)
+        local refId = tes3mp.GetEquipmentItemRefId(self.pid, i)
 
         if itemId ~= "" then
-            local itemCount = tes3mp.GetEquipmentItemCount(self.pid, i)
-            local itemCharge = tes3mp.GetEquipmentItemCharge(self.pid, i)
-            self.data.equipment[i] = itemId .. ", " .. itemCount .. ", " .. itemCharge
+            local count = tes3mp.GetEquipmentItemCount(self.pid, i)
+            local charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
+            self.data.equipment[i] = refId .. ", " .. count .. ", " .. charge
         end
     end
 end
@@ -440,8 +440,8 @@ function BasePlayer:LoadInventory()
         local currentItem = self.data.inventory[i]
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for itemId, itemCount, itemCharge in string.gmatch(currentItem, itemPattern) do
-                tes3mp.AddItem(self.pid, itemId, itemCount, itemCharge)
+            for refId, count, charge in string.gmatch(currentItem, itemPattern) do
+                tes3mp.AddItem(self.pid, refId, count, charge)
             end
         end
     end
@@ -454,12 +454,12 @@ function BasePlayer:SaveInventory()
     self.data.inventory = {}
 
     for i = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
-        local itemId = tes3mp.GetInventoryItemId(self.pid, i)
+        local refId = tes3mp.GetInventoryItemRefId(self.pid, i)
 
         if itemId ~= "" then
-            local itemCount = tes3mp.GetInventoryItemCount(self.pid, i)
-            local itemCharge = tes3mp.GetInventoryItemCharge(self.pid, i)
-            self.data.inventory[i] = itemId .. ", " .. itemCount .. ", " .. itemCharge
+            local count = tes3mp.GetInventoryItemCount(self.pid, i)
+            local charge = tes3mp.GetInventoryItemCharge(self.pid, i)
+            self.data.inventory[i] = refId .. ", " .. count .. ", " .. charge
         end
     end
 end
