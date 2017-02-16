@@ -102,23 +102,26 @@ function BaseCell:SaveObjectsDeleted()
 
         refNum = tes3mp.GetObjectRefNumIndex(i)
 
+        -- With this object being deleted, we no longer need to store
+        -- any special information about it
+        self.data.refIdScale[refNum] = nil
+        self.data.refIdLock[refNum] = nil
+        self.data.refIdUnlock[refNum] = nil
+        self.data.refIdDoorState[refNum] = nil
+
+        self.data.charge[refNum] = nil
+        self.data.count[refNum] = nil
+        self.data.goldValue[refNum] = nil
+        self.data.position[refNum] = nil
+        self.data.rotation[refNum] = nil
+        self.data.scale[refNum] = nil
+        self.data.lockLevel[refNum] = nil
+        self.data.doorState[refNum] = nil
+
         -- If this is an object that did not originally exist in the cell,
-        -- remove it from refIdPlace and all other tables
+        -- remove it from refIdPlace
         if self.data.refIdPlace[refNum] ~= nil then
             self.data.refIdPlace[refNum] = nil
-            self.data.refIdScale[refNum] = nil
-            self.data.refIdLock[refNum] = nil
-            self.data.refIdUnlock[refNum] = nil
-            self.data.refIdDoorState[refNum] = nil
-
-            self.data.charge[refNum] = nil
-            self.data.count[refNum] = nil
-            self.data.goldValue[refNum] = nil
-            self.data.position[refNum] = nil
-            self.data.rotation[refNum] = nil
-            self.data.scale[refNum] = nil
-            self.data.lockLevel[refNum] = nil
-            self.data.doorState[refNum] = nil
         -- Otherwise, add it to refIdDelete
         else
             self.data.refIdDelete[refNum] = tes3mp.GetObjectRefId(i)
