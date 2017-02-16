@@ -397,8 +397,11 @@ Methods.OnPlayerInventoryChange = function(pid)
     end
 end
 
-Methods.OnPlayerSpellbookChange = function(pid, action)
+Methods.OnPlayerSpellbookChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+
+        local action = tes3mp.GetSpellbookAction(pid)
+
         if action == 1 then
             Players[pid]:AddSpells()
         elseif action == 2 then
