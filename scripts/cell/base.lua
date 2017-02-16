@@ -15,6 +15,8 @@ function BaseCell:__init(cellDescription)
     self.data.refIdUnlock = {}
     self.data.refIdDoorState = {}
 
+    self.data.refIdContainer = {}
+
     self.data.charge = {}
     self.data.count = {}
     self.data.goldValue = {}
@@ -82,6 +84,14 @@ function BaseCell:RemoveVisitor(pid)
         -- Remember when this visitor left
         self:SaveLastVisit(Players[pid].accountName)
     end
+end
+
+function BaseCell:HasContainerData()
+    if self.data.refIdContainer ~= nil then
+        return true
+    end
+
+    return false
 end
 
 function BaseCell:SaveObjectsDeleted()
@@ -372,6 +382,17 @@ function BaseCell:SendDoorStates(pid)
     end
 end
 
+function BaseCell:RequestContainerData(pid)
+
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
+
+    -- Set the action to REQUEST
+    tes3mp.SetBaseEventAction(3)
+
+    tes3mp.SendContainer()
+end
+
 function BaseCell:SendCellData(pid)
     
     self:SendObjectsDeleted(pid)
@@ -380,6 +401,12 @@ function BaseCell:SendCellData(pid)
     self:SendObjectsLocked(pid)
     self:SendObjectsUnlocked(pid)
     self:SendDoorStates(pid)
+
+    if self:HasContainerData() then
+        print("This cell contains container data")
+    else
+        self:RequestContainerData(pid)
+    end
 end
 
 function BaseCell:UpdateStructure()
@@ -408,6 +435,8 @@ function BaseCell:UpdateStructure()
         self.data.refIdLock = {}
         self.data.refIdUnlock = {}
         self.data.refIdDoorState = {}
+
+        self.data.refIdContainer = {}
 
         self.data.charge = {}
         self.data.count = {}
