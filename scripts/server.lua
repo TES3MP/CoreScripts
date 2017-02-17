@@ -391,6 +391,10 @@ function OnDoorState(pid, cellDescription)
     myMod.OnDoorState(pid, cellDescription)
 end
 
+function OnContainer(pid, cellDescription)
+    myMod.OnContainer(pid, cellDescription)
+end
+
 function OnGUIAction(pid, idGui, data)
     if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end

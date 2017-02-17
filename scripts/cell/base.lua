@@ -15,8 +15,6 @@ function BaseCell:__init(cellDescription)
     self.data.refIdUnlock = {}
     self.data.refIdDoorState = {}
 
-    self.data.refIdContainer = {}
-
     self.data.charge = {}
     self.data.count = {}
     self.data.goldValue = {}
@@ -117,6 +115,15 @@ function BaseCell:SaveObjectsDeleted()
         self.data.scale[refNum] = nil
         self.data.lockLevel[refNum] = nil
         self.data.doorState[refNum] = nil
+
+        -- If this is a container, make sure we remove its table
+        if self.data.refIdContainer[refNum] ~= nil then
+
+            local containerName = self.data.refIdContainer[refNum] .. refNum
+
+            self.data[containerName] = nil
+            self.data.refIdContainer[refNum] = nil
+        end
 
         -- If this is an object that did not originally exist in the cell,
         -- remove it from refIdPlace
@@ -220,6 +227,44 @@ end
 function BaseCell:SaveLastVisit(playerName)
 
     self.data.lastVisit[playerName] = os.time()
+end
+
+function BaseCell:AddContainerItems()
+
+end
+
+function BaseCell:RemoveContainerItems()
+
+end
+
+function BaseCell:SetContainers()
+
+    if self.data.refIdContainer == nil then
+        self.data.refIdContainer = {}
+    end
+
+    local containerRefNum
+
+    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
+        self.data.refIdContainer[containerRefNum] = tes3mp.GetObjectRefId(objectIndex)
+
+        local containerTableName = "container-" .. self.data.refIdContainer[containerRefNum] .. "-" .. containerRefNum
+        self.data[containerTableName] = {}
+
+        for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
+
+            local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
+            local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
+            local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
+            local itemGoldValue = tes3mp.GetContainerItemGoldValue(objectIndex, itemIndex)
+
+            local containerItemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
+            containerItemData = containerItemData .. ", " .. itemGoldValue
+            table.insert(self.data[containerTableName], containerItemData)
+        end
+    end
 end
 
 function BaseCell:SendObjectsDeleted(pid)
@@ -438,8 +483,6 @@ function BaseCell:UpdateStructure()
         self.data.refIdLock = {}
         self.data.refIdUnlock = {}
         self.data.refIdDoorState = {}
-
-        self.data.refIdContainer = {}
 
         self.data.charge = {}
         self.data.count = {}

@@ -402,18 +402,17 @@ Methods.OnPlayerSpellbookChange = function(pid)
 
         local action = tes3mp.GetSpellbookAction(pid)
 
-        if action == 1 then
+        if action == 0 then
+            Players[pid]:SetSpells()
+        elseif action == 1 then
             Players[pid]:AddSpells()
         elseif action == 2 then
             Players[pid]:RemoveSpells()
-        else
-            Players[pid]:SetSpells()
         end
     end
 end
 
 Methods.OnObjectPlace = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsPlaced()
     else
@@ -422,7 +421,6 @@ Methods.OnObjectPlace = function(pid, cellDescription)
 end
 
 Methods.OnObjectDelete = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsDeleted()
     else
@@ -431,7 +429,6 @@ Methods.OnObjectDelete = function(pid, cellDescription)
 end
 
 Methods.OnObjectScale = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsScaled()
     else
@@ -440,7 +437,6 @@ Methods.OnObjectScale = function(pid, cellDescription)
 end
 
 Methods.OnObjectLock = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsLocked()
     else
@@ -449,7 +445,6 @@ Methods.OnObjectLock = function(pid, cellDescription)
 end
 
 Methods.OnObjectUnlock = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsUnlocked()
     else
@@ -458,11 +453,27 @@ Methods.OnObjectUnlock = function(pid, cellDescription)
 end
 
 Methods.OnDoorState = function(pid, cellDescription)
-
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveDoorStates()
     else
         print("Undefined behavior: trying to set door state in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnContainer = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+
+        local action = tes3mp.GetBaseEventAction(pid)
+
+        if action == 0 then
+            LoadedCells[cellDescription]:SetContainers()
+        elseif action == 1 then
+            LoadedCells[cellDescription]:AddContainerItems()
+        elseif action == 2 then
+            LoadedCells[cellDescription]:RemoveContainerItems()
+        end
+    else
+        print("Undefined behavior: trying to set containers in unloaded " .. cellDescription)
     end
 end
 
