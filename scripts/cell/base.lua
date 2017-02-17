@@ -15,8 +15,8 @@ function BaseCell:__init(cellDescription)
     self.data.refIdUnlock = {}
     self.data.refIdDoorState = {}
 
-    self.data.charge = {}
     self.data.count = {}
+    self.data.charge = {}
     self.data.goldValue = {}
     self.data.position = {}
     self.data.rotation = {}
@@ -107,8 +107,8 @@ function BaseCell:SaveObjectsDeleted()
         self.data.refIdUnlock[refNum] = nil
         self.data.refIdDoorState[refNum] = nil
 
-        self.data.charge[refNum] = nil
         self.data.count[refNum] = nil
+        self.data.charge[refNum] = nil
         self.data.goldValue[refNum] = nil
         self.data.position[refNum] = nil
         self.data.rotation[refNum] = nil
@@ -146,18 +146,18 @@ function BaseCell:SaveObjectsPlaced()
         refNum = tes3mp.GetObjectRefNumIndex(i)
         self.data.refIdPlace[refNum] = tes3mp.GetObjectRefId(i)
 
-        local charge = tes3mp.GetObjectCharge(i)
         local count = tes3mp.GetObjectCount(i)
+        local charge = tes3mp.GetObjectCharge(i)
         local goldValue = tes3mp.GetObjectGoldValue(i)
         
-        -- Only save charge if it isn't the default value of -1
-        if charge ~= -1 then
-            self.data.charge[refNum] = charge
-        end
-
         -- Only save count if it isn't the default value of 1
         if count ~= 1 then
             self.data.count[refNum] = count
+        end
+
+        -- Only save charge if it isn't the default value of -1
+        if charge ~= -1 then
+            self.data.charge[refNum] = charge
         end
 
         -- Only save goldValue if it isn't the default value of 1
@@ -243,14 +243,13 @@ function BaseCell:SetContainers()
         self.data.refIdContainer = {}
     end
 
-    local containerRefNum
-
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
-        self.data.refIdContainer[containerRefNum] = tes3mp.GetObjectRefId(objectIndex)
+        local containerRefId = tes3mp.GetObjectRefId(objectIndex)
+        local containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
+        self.data.refIdContainer[containerRefNum] = containerRefId
 
-        local containerTableName = "container-" .. self.data.refIdContainer[containerRefNum] .. "-" .. containerRefNum
+        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
         self.data[containerTableName] = {}
 
         for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
@@ -258,11 +257,9 @@ function BaseCell:SetContainers()
             local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
             local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
-            local itemGoldValue = tes3mp.GetContainerItemGoldValue(objectIndex, itemIndex)
 
-            local containerItemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
-            containerItemData = containerItemData .. ", " .. itemGoldValue
-            table.insert(self.data[containerTableName], containerItemData)
+            local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
+            table.insert(self.data[containerTableName], itemData)
         end
     end
 end
@@ -302,18 +299,18 @@ function BaseCell:SendObjectsPlaced(pid)
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
 
-        local charge = self.data.charge[refNum]
         local count = self.data.count[refNum]
+        local charge = self.data.charge[refNum]
         local goldValue = self.data.goldValue[refNum]
-
-        -- Use default charge of -1 when the value is missing
-        if charge == nil then
-            charge = -1
-        end
 
         -- Use default count of 1 when the value is missing
         if count == nil then
             count = 1
+        end
+
+        -- Use default charge of -1 when the value is missing
+        if charge == nil then
+            charge = -1
         end
 
         -- Use default goldValue of 1 when the value is missing
@@ -430,7 +427,49 @@ function BaseCell:SendDoorStates(pid)
     end
 end
 
-function BaseCell:RequestContainerData(pid)
+function BaseCell:SendContainers(pid)
+
+    local objectIndex = 0
+    local itemPattern = "(.+), (%d+), (%-?%d+)$"
+
+    tes3mp.CreateBaseEvent(pid)
+    tes3mp.SetBaseEventCell(self.description)
+
+    for containerRefNum, containerRefId in pairs(self.data.refIdContainer) do
+
+        tes3mp.SetObjectRefNumIndex(containerRefNum)
+        tes3mp.SetObjectRefId(containerRefId)
+
+        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
+
+        for itemIndex, value in pairs(self.data[containerTableName]) do
+            if string.match(value, itemPattern) ~= nil then
+                for itemRefId, itemCount, itemCharge in string.gmatch(value, itemPattern) do
+
+                    tes3mp.SetContainerItemRefId(itemRefId)
+                    tes3mp.SetContainerItemCount(itemCount)
+                    tes3mp.SetContainerItemCharge(itemCharge)
+
+                    tes3mp.AddContainerItem()
+                end
+            end
+        end
+
+        tes3mp.AddWorldObject()
+
+        objectIndex = objectIndex + 1
+    end
+
+    if objectIndex > 0 then
+
+        -- Set the action to SET
+        tes3mp.SetBaseEventAction(0)
+
+        tes3mp.SendContainer()
+    end
+end
+
+function BaseCell:RequestContainers(pid)
 
     tes3mp.CreateBaseEvent(pid)
     tes3mp.SetBaseEventCell(self.description)
@@ -451,9 +490,9 @@ function BaseCell:SendCellData(pid)
     self:SendDoorStates(pid)
 
     if self:HasContainerData() then
-        print("This cell contains container data")
+        self:SendContainers(pid)
     else
-        self:RequestContainerData(pid)
+        self:RequestContainers(pid)
     end
 end
 
@@ -484,8 +523,8 @@ function BaseCell:UpdateStructure()
         self.data.refIdUnlock = {}
         self.data.refIdDoorState = {}
 
-        self.data.charge = {}
         self.data.count = {}
+        self.data.charge = {}
         self.data.goldValue = {}
         self.data.position = {}
         self.data.rotation = {}
