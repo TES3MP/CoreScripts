@@ -462,16 +462,7 @@ end
 
 Methods.OnContainer = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-
-        local action = tes3mp.GetBaseEventAction(pid)
-
-        if action == 0 then
-            LoadedCells[cellDescription]:SetContainers()
-        elseif action == 1 then
-            LoadedCells[cellDescription]:AddContainerItems()
-        elseif action == 2 then
-            LoadedCells[cellDescription]:RemoveContainerItems()
-        end
+        LoadedCells[cellDescription]:SaveContainers()
     else
         print("Undefined behavior: trying to set containers in unloaded " .. cellDescription)
     end

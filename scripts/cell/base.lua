@@ -229,7 +229,10 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
-function BaseCell:AddContainerItems()
+function BaseCell:SaveContainers()
+
+    local containerActions = { SET = 0, ADD = 1, REMOVE = 2}
+    local action = tes3mp.GetBaseEventAction(pid)
 
     if self.data.refIdContainer == nil then
         self.data.refIdContainer = {}
@@ -249,29 +252,56 @@ function BaseCell:AddContainerItems()
             local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
 
-            -- Put together a pattern based on this item's refId and charge
-            local currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
+            local itemIndex, currentItemPattern = nil
 
-            -- Because both - and % are special characters, escape them with another % each
-            currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
-
-            -- Check if an item matching the pattern already exists in the container
-            local itemIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
-
-            -- If itemIndex was nil, that means a similar item did not exist,
-            -- so just insert this one
-            if itemIndex == nil then
-                local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
-                table.insert(self.data[containerTableName], itemData)
+            -- If this is a SET action, clear the container's data
+            if action == containerActions.SET then
+                self.data[containerTableName] = {}
+            -- Otherwise, put together a pattern based on this item's refId and charge
             else
-                for oldCount in string.gmatch(self.data[containerTableName][itemIndex], currentItemPattern) do
 
-                    local newCount = tonumber(oldCount) + itemCount
-                    self.data[containerTableName][itemIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+                currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
+
+                -- Because both - and % are special characters, escape them with another % each
+                currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
+
+                -- Check if an item matching the pattern already exists in the container
+                itemIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
+            end
+
+            -- If itemIndex is nil, it can mean a number of things
+            if itemIndex == nil then
+                -- Tell the client that they are attempting to REMOVE a non-existent item
+                -- (To be added later)
+                if action == containerActions.REMOVE then
+                    print("Attempt to remove non-existent item")
+                -- If we have received ADD for a previously non-existent item, or we are
+                -- just using SET, simply insert the item
+                else
+                    local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
+                    table.insert(self.data[containerTableName], itemData)
+                end
+            -- A similar item was found in the container's data
+            else
+                -- If the action was ADD, then sum up the counts
+                if action == containerActions.ADD then
+                    for oldCount in string.gmatch(self.data[containerTableName][itemIndex], currentItemPattern) do
+
+                        local newCount = tonumber(oldCount) + itemCount
+                        self.data[containerTableName][itemIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+                    end
+                -- If the action was REMOVE, make sure we're not removing more than possible
+                elseif action == containerActions.REMOVE then
+                    print("Removing existing item")
                 end
             end
         end
     end
+end
+
+function BaseCell:AddContainerItems()
+
+
 end
 
 function BaseCell:RemoveContainerItems()
