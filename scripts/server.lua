@@ -146,7 +146,7 @@ function OnPlayerSendMessage(pid, message)
             else
                 for i=0,#Players do
                     if i ~= pid then
-                        if Players[i]:IsLoggedOn() then
+                        if Players[i]:IsLoggedIn() then
                             myMod.TeleportToPlayer(pid, i, pid)
                         end
                     end

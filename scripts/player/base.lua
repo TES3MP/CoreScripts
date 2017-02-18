@@ -65,7 +65,7 @@ function BasePlayer:__init(pid)
 
     self.accountName = tes3mp.GetName(pid)
     self.pid = pid
-    self.loggedOn = false
+    self.loggedIn = false
     self.tid_login = nil
     self.admin = 0
     self.hasAccount = nil -- TODO Check whether account file exists
@@ -79,7 +79,7 @@ function BasePlayer:Destroy()
         self.tid_login = nil
     end
 
-    self.loggedOn = false
+    self.loggedIn = false
     self.hasAccount = nil
 end
 
@@ -89,7 +89,7 @@ function BasePlayer:Kick()
 end
 
 function BasePlayer:Registered(passw)
-    self.loggedOn = true
+    self.loggedIn = true
     self.data.general.password = passw
     self.data.general.consoleAllowed = "default"
     if self.hasAccount == false then -- create account
@@ -97,8 +97,8 @@ function BasePlayer:Registered(passw)
     end
 end
 
-function BasePlayer:LoggedOn()
-    self.loggedOn = true
+function BasePlayer:FinishLogin()
+    self.loggedIn = true
     if self.hasAccount ~= false then -- load account
         self:LoadCharacter()
         self:LoadClass()
@@ -114,8 +114,8 @@ function BasePlayer:LoggedOn()
     end
 end
 
-function BasePlayer:IsLoggedOn()
-    return self.loggedOn
+function BasePlayer:IsLoggedIn()
+    return self.loggedIn
 end
 
 function BasePlayer:IsAdmin()

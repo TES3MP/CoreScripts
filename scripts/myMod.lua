@@ -12,17 +12,17 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
     end
     if targetPlayer ~= nil and type(tonumber(targetPlayer)) == "number" then
         if tonumber(targetPlayer) >=0 and tonumber(targetPlayer) <= #Players then
-            if Players[tonumber(targetPlayer)]:IsLoggedOn() then
+            if Players[tonumber(targetPlayer)]:IsLoggedIn() then
                 valid = true
             else
                 if sendMessage then
-                    local message = "That player is not logged on!\n"
+                    local message = "That player is not logged in!\n"
                     tes3mp.SendMessage(pid, message, 0)
                 end
             end
         else
             if sendMessage then
-                local message = "That player is not logged on!\n"
+                local message = "That player is not logged in!\n"
                 tes3mp.SendMessage(pid, message, 0)
             end
         end
@@ -39,7 +39,7 @@ end
 Methods.IsPlayerNameLoggedIn = function(playerName)
 
     for i = 0, #Players do
-        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
+        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
             if Players[i].name == playerName then
                 return true
             end
@@ -99,7 +99,7 @@ Methods.GetConnectedPlayerCount = function()
 
     local playerCount = 0
     for i = 0, #Players do
-        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
+        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
             playerCount = playerCount + 1
         end
     end
@@ -115,7 +115,7 @@ Methods.GetConnectedPlayerList = function()
         else
             divider = ", "
         end
-        if Players[i] ~= nil and Players[i]:IsLoggedOn() then
+        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
             list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
         end
     end
@@ -230,7 +230,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
             GUI.ShowLogin(pid)
             return true
         end
-        Players[pid]:LoggedOn()
+        Players[pid]:FinishLogin()
         Players[pid]:Message("You have successfully logged in.\nUse Y by default to chat or change it from your client config.\n")
     elseif idGui == GUI.ID.REGISTER then
         if data == nil then
@@ -249,7 +249,7 @@ Methods.OnPlayerMessage = function(pid, message)
     local cmd = (message:sub(2, #message)):split(" ")
 
     if cmd[1] == "register" or cmd[1] == "reg" then
-        if Players[pid]:IsLoggedOn() then
+        if Players[pid]:IsLoggedIn() then
             Players[pid]:Message("You are already logged in.\n")
             return false
         elseif Players[pid]:HasAccount() then
@@ -262,7 +262,7 @@ Methods.OnPlayerMessage = function(pid, message)
         Players[pid]:Registered(cmd[2])
         return false
     elseif cmd[1] == "login" then
-        if Players[pid]:IsLoggedOn() then
+        if Players[pid]:IsLoggedIn() then
             Players[pid]:Message("You are already logged in.\n")
             return false
         elseif not Players[pid]:HasAccount() then
@@ -278,7 +278,7 @@ Methods.OnPlayerMessage = function(pid, message)
             Players[pid]:Message("Incorrect password!\n")
             return false
         end
-        Players[pid]:LoggedOn()
+        Players[pid]:FinishLogin()
         return false
     end
 
@@ -286,7 +286,7 @@ Methods.OnPlayerMessage = function(pid, message)
 end
 
 Methods.AuthCheck = function(pid)
-    if Players[pid]:IsLoggedOn() then
+    if Players[pid]:IsLoggedIn() then
         return
     end
 
@@ -299,26 +299,26 @@ Methods.AuthCheck = function(pid)
 end
 
 Methods.OnPlayerAttributesChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveAttributes()
     end
 end
 
 Methods.OnPlayerSkillsChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveSkills()
     end
 end
 
 Methods.OnPlayerLevelChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveLevel()
         Players[pid]:SaveDynamicStats()
     end
 end
 
 Methods.OnPlayerCellChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveCell()
         Players[pid]:SaveDynamicStats()
         print("Saving player " .. pid)
@@ -370,7 +370,7 @@ Methods.UnloadCell = function(pid, cellDescription)
 end
 
 Methods.OnPlayerCellState = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         for i = 0, tes3mp.GetCellStateChangesSize(pid) - 1 do
 
@@ -387,19 +387,19 @@ Methods.OnPlayerCellState = function(pid)
 end
 
 Methods.OnPlayerEquipmentChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveEquipment()
     end
 end
 
 Methods.OnPlayerInventoryChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveInventory()
     end
 end
 
 Methods.OnPlayerSpellbookChange = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedOn() then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         local action = tes3mp.GetSpellbookAction(pid)
 

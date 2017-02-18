@@ -24,7 +24,7 @@ function Player:CreateAccount()
 end
 
 function Player:Save()
-    if self.hasAccount and self.loggedOn then
+    if self.hasAccount and self.loggedIn then
         LIP.save("players/" .. self.accountFile, self.data)
     end
 end
