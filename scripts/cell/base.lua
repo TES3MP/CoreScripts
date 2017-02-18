@@ -292,7 +292,6 @@ function BaseCell:SaveContainers()
                         self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
 
                     -- If the action was REMOVE, make sure we're not removing more than possible
-
                     elseif action == containerActions.REMOVE then
 
                         local newCount = tonumber(oldCount) - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
