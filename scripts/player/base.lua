@@ -412,7 +412,7 @@ function BasePlayer:SaveEquipment()
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local refId = tes3mp.GetEquipmentItemRefId(self.pid, i)
 
-        if itemId ~= "" then
+        if refId ~= "" then
             local count = tes3mp.GetEquipmentItemCount(self.pid, i)
             local charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
             self.data.equipment[i] = refId .. ", " .. count .. ", " .. charge
@@ -456,7 +456,7 @@ function BasePlayer:SaveInventory()
     for i = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
         local refId = tes3mp.GetInventoryItemRefId(self.pid, i)
 
-        if itemId ~= "" then
+        if refId ~= "" then
             local count = tes3mp.GetInventoryItemCount(self.pid, i)
             local charge = tes3mp.GetInventoryItemCharge(self.pid, i)
             self.data.inventory[i] = refId .. ", " .. count .. ", " .. charge
