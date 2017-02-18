@@ -231,6 +231,50 @@ end
 
 function BaseCell:AddContainerItems()
 
+    if self.data.refIdContainer == nil then
+        self.data.refIdContainer = {}
+    end
+
+    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local containerRefId = tes3mp.GetObjectRefId(objectIndex)
+        local containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
+        self.data.refIdContainer[containerRefNum] = containerRefId
+
+        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
+
+        for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
+
+            local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
+            local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
+            local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
+
+            -- Put together a pattern based on this item's refId and charge
+            local currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
+
+            -- Because both - and % are special characters, escape them with another % each
+            currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
+
+            print("currentItemPattern was " .. currentItemPattern)
+
+            -- Check if an item matching the pattern already exists in the container
+            local itemIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
+
+            -- If itemIndex was nil, that means a similar item did not exist,
+            -- so just insert this one
+            if itemIndex == nil then
+                local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
+                table.insert(self.data[containerTableName], itemData)
+            else
+                for oldCount in string.gmatch(self.data[containerTableName][itemIndex], currentItemPattern) do
+
+                    local newCount = tonumber(oldCount) + itemCount
+                    self.data[containerTableName][itemIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+                end
+            end
+        end
+    end    
+
 end
 
 function BaseCell:RemoveContainerItems()
