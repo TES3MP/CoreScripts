@@ -299,42 +299,6 @@ function BaseCell:SaveContainers()
     end
 end
 
-function BaseCell:AddContainerItems()
-
-
-end
-
-function BaseCell:RemoveContainerItems()
-
-end
-
-function BaseCell:SetContainers()
-
-    if self.data.refIdContainer == nil then
-        self.data.refIdContainer = {}
-    end
-
-    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
-
-        local containerRefId = tes3mp.GetObjectRefId(objectIndex)
-        local containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
-        self.data.refIdContainer[containerRefNum] = containerRefId
-
-        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
-        self.data[containerTableName] = {}
-
-        for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
-
-            local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
-            local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
-            local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
-
-            local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
-            table.insert(self.data[containerTableName], itemData)
-        end
-    end
-end
-
 function BaseCell:SendObjectsDeleted(pid)
 
     local objectIndex = 0
