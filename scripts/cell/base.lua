@@ -255,8 +255,6 @@ function BaseCell:AddContainerItems()
             -- Because both - and % are special characters, escape them with another % each
             currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
 
-            print("currentItemPattern was " .. currentItemPattern)
-
             -- Check if an item matching the pattern already exists in the container
             local itemIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
 
