@@ -29,6 +29,18 @@ function table.contains(table, valueToFind)
     return false
 end
 
+function table.getIndexByPattern(table, patternToFind)
+    for key, value in pairs(table) do
+        if string.match(value, patternToFind) ~= nil then
+            print(value .. " matches " .. patternToFind)
+            return key
+        else
+            print(value .. " does not match " .. patternToFind)
+        end
+    end
+    return nil
+end
+
 function table.removeValue(table, valueToFind)
     for key, value in pairs(table) do
         if value == valueToFind then
