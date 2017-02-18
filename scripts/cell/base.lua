@@ -34,7 +34,7 @@ function BaseCell:HasFile()
 end
 
 function BaseCell:HasCurrentStructure()
-    
+
     if self.data.general.version == nil or self.data.general.version ~= tes3mp.GetServerVersion() then
         return false
     end
@@ -149,7 +149,7 @@ function BaseCell:SaveObjectsPlaced()
         local count = tes3mp.GetObjectCount(i)
         local charge = tes3mp.GetObjectCharge(i)
         local goldValue = tes3mp.GetObjectGoldValue(i)
-        
+
         -- Only save count if it isn't the default value of 1
         if count ~= 1 then
             self.data.count[refNum] = count
@@ -164,7 +164,7 @@ function BaseCell:SaveObjectsPlaced()
         if goldValue ~=1 then
             self.data.goldValue[refNum] = goldValue
         end
-        
+
         tempValue = tes3mp.GetObjectPosX(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectPosY(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectPosZ(i)
@@ -271,8 +271,7 @@ function BaseCell:AddContainerItems()
                 end
             end
         end
-    end    
-
+    end
 end
 
 function BaseCell:RemoveContainerItems()
@@ -391,7 +390,7 @@ function BaseCell:SendObjectsScaled(pid)
 
     for refNum, refId in pairs(self.data.refIdScale) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)                
+        tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectScale(self.data.scale[refNum])
         tes3mp.AddWorldObject()
@@ -412,7 +411,7 @@ function BaseCell:SendObjectsLocked(pid)
     tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdLock) do
-                
+
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectLockLevel(self.data.lockLevel[refNum])
@@ -455,7 +454,7 @@ function BaseCell:SendDoorStates(pid)
     tes3mp.SetBaseEventCell(self.description)
 
     for refNum, refId in pairs(self.data.refIdDoorState) do
-        
+
         tes3mp.SetObjectRefNumIndex(refNum)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectDoorState(self.data.doorState[refNum])
@@ -523,7 +522,7 @@ function BaseCell:RequestContainers(pid)
 end
 
 function BaseCell:SendCellData(pid)
-    
+
     self:SendObjectsDeleted(pid)
     self:SendObjectsPlaced(pid)
     self:SendObjectsScaled(pid)
@@ -588,7 +587,7 @@ function BaseCell:UpdateStructure()
             for refNum, value in pairs(self.data.objectsPlaced) do
                 if string.match(value, objectPlacedPattern) ~= nil then
                     for refId, count, goldValue, posX, posY, posZ, rotX, rotY, rotZ in string.gmatch(value, objectPlacedPattern) do
-                        
+
                         self.data.refIdPlace[refNum] = refId
 
                         if tonumber(count) ~= 1 then
@@ -625,7 +624,7 @@ function BaseCell:UpdateStructure()
             for refNum, value in pairs(self.data.objectsScaled) do
                 if string.match(value, objectScaledPattern) ~= nil then
                     for refId, scale in string.gmatch(value, objectScaledPattern) do
-                        
+
                         self.data.refIdScale[refNum] = refId
                         self.data.scale[refNum] = scale
                     end
@@ -643,7 +642,7 @@ function BaseCell:UpdateStructure()
             for refNum, value in pairs(self.data.objectsLocked) do
                 if string.match(value, objectLockedPattern) ~= nil then
                     for refId, lockLevel in string.gmatch(value, objectLockedPattern) do
-                        
+
                         self.data.refIdLock[refNum] = refId
                         self.data.lockLevel[refNum] = lockLevel
                     end
@@ -670,7 +669,7 @@ function BaseCell:UpdateStructure()
             for refNum, value in pairs(self.data.doorStates) do
                 if string.match(value, doorStatePattern) ~= nil then
                     for refId, doorState in string.gmatch(value, doorStatePattern) do
-                        
+
                         self.data.refIdDoorState[refNum] = refId
                         self.data.doorState[refNum] = doorState
                     end

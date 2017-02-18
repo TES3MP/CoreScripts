@@ -356,7 +356,7 @@ end
 Methods.UnloadCell = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
-        
+
         -- No longer record that this player has the cell loaded
         LoadedCells[cellDescription]:RemoveVisitor(pid)
         LoadedCells[cellDescription]:Save()

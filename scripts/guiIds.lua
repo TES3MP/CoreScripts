@@ -65,7 +65,7 @@ local GetLoadedCellList = function()
 end
 
 GUI.ShowPlayerList = function(pid)
-    
+
     local playerCount = myMod.GetConnectedPlayerCount()
     local label = playerCount .. " connected "
     if playerCount == 1 then
