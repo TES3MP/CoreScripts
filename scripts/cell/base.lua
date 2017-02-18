@@ -252,7 +252,7 @@ function BaseCell:SaveContainers()
             local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
 
-            local itemIndex, currentItemPattern = nil
+            local storedIndex, currentItemPattern = nil
 
             -- If this is a SET action, clear the container's data
             if action == containerActions.SET then
@@ -266,13 +266,14 @@ function BaseCell:SaveContainers()
                 currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
 
                 -- Check if an item matching the pattern already exists in the container
-                itemIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
+                storedIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
             end
 
-            -- If itemIndex is nil, it can mean a number of things
-            if itemIndex == nil then
-                -- Tell the client that they are attempting to REMOVE a non-existent item
-                -- (To be added later)
+            -- If storedIndex is nil, it can mean a number of things
+            if storedIndex == nil then
+                -- Tell the client that they are attempting to REMOVE a non-existent item,
+                -- indicative of a data race situation
+                -- (to be implemented later)
                 if action == containerActions.REMOVE then
                     print("Attempt to remove non-existent item")
                 -- If we have received ADD for a previously non-existent item, or we are
@@ -283,16 +284,32 @@ function BaseCell:SaveContainers()
                 end
             -- A similar item was found in the container's data
             else
-                -- If the action was ADD, then sum up the counts
-                if action == containerActions.ADD then
-                    for oldCount in string.gmatch(self.data[containerTableName][itemIndex], currentItemPattern) do
+                for oldCount in string.gmatch(self.data[containerTableName][storedIndex], currentItemPattern) do
+                    -- If the action was ADD, then sum up the counts
+                    if action == containerActions.ADD then
 
                         local newCount = tonumber(oldCount) + itemCount
-                        self.data[containerTableName][itemIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+                        self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+
+                    -- If the action was REMOVE, make sure we're not removing more than possible
+
+                    elseif action == containerActions.REMOVE then
+
+                        local newCount = tonumber(oldCount) - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
+                        
+                        -- The item will still exist in the container with a lower count
+                        if newCount > 0 then
+                            self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
+                        -- The item is to be completely removed
+                        elseif newCount == 0 then
+                            self.data[containerTableName][storedIndex] = nil
+                        -- Tell the client that they are attempting to REMOVE more of an item
+                        -- than is possible, indicative of a data race situation
+                        -- (to be implemented later)
+                        else
+                            print("Attempt to remove more than possible from item")
+                        end
                     end
-                -- If the action was REMOVE, make sure we're not removing more than possible
-                elseif action == containerActions.REMOVE then
-                    print("Removing existing item")
                 end
             end
         end
