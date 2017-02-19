@@ -246,6 +246,12 @@ function BaseCell:SaveContainers()
 
         local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
 
+        -- If this table doesn't exist, initialize it
+        -- If it exists and the action is SET, empty it
+        if self.data[containerTableName] == nil or action == containerActions.SET then
+            self.data[containerTableName] = {}
+        end
+
         for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
 
             local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
@@ -254,11 +260,8 @@ function BaseCell:SaveContainers()
 
             local storedIndex, currentItemPattern = nil
 
-            -- If this is a SET action, clear the container's data
-            if action == containerActions.SET then
-                self.data[containerTableName] = {}
-            -- Otherwise, put together a pattern based on this item's refId and charge
-            else
+            -- If this isn't a SET action, put together a pattern based on this item's refId and charge
+            if action ~= containerActions.SET then
 
                 currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
 
