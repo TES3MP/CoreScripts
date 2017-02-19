@@ -159,7 +159,7 @@ function BasePlayer:HasAccount()
 end
 
 function BasePlayer:Message(message)
-    tes3mp.SendMessage(self.pid, message, 0)
+    tes3mp.SendMessage(self.pid, message, false)
 end
 
 function BasePlayer:CreateAccount()

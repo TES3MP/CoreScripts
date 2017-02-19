@@ -17,19 +17,19 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
             else
                 if sendMessage then
                     local message = "That player is not logged in!\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 end
             end
         else
             if sendMessage then
                 local message = "That player is not logged in!\n"
-                tes3mp.SendMessage(pid, message, 0)
+                tes3mp.SendMessage(pid, message, false)
             end
         end
     else
         if sendMessage then
             local message = "Please specify the player ID.\n"
-            tes3mp.SendMessage(pid, message, 0)
+            tes3mp.SendMessage(pid, message, false)
         end
     end
     return valid
@@ -54,7 +54,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
         return
     elseif tonumber(originPlayer) == tonumber(targetPlayer) then
         local message = "You can't teleport to yourself.\n"
-        tes3mp.SendMessage(pid, message, 0)
+        tes3mp.SendMessage(pid, message, false)
         return
     end
 
@@ -91,8 +91,8 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
 
     local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCellName .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-    tes3mp.SendMessage(originPlayer, originMessage, 0)
-    tes3mp.SendMessage(targetPlayer, targetMessage, 0)
+    tes3mp.SendMessage(originPlayer, originMessage, false)
+    tes3mp.SendMessage(targetPlayer, targetMessage, false)
 end
 
 Methods.GetConnectedPlayerCount = function()
@@ -151,7 +151,7 @@ Methods.PrintPlayerPosition = function(pid, targetPlayer)
         targetCellName = "Exterior ("..targetGrid[0]..", "..targetGrid[1]..")"
     end
     message = targetPlayerName.." ("..targetPlayer..") is in "..targetCellName.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
-    tes3mp.SendMessage(pid, message, 0)
+    tes3mp.SendMessage(pid, message, false)
 end
 
 Methods.PushPlayerList = function(pls)
@@ -170,7 +170,7 @@ Methods.OnPlayerConnect = function(pid, pname)
     Players[pid].name = pname
 
     local message = pname.." ("..pid..") ".."joined the server.\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.SendMessage(pid, message, true)
 
     message = "Welcome " .. pname .. "\nYou have "..tostring(config.loginTime).." seconds to"
 
@@ -182,7 +182,7 @@ Methods.OnPlayerConnect = function(pid, pname)
         GUI.ShowRegister(pid)
     end
 
-    tes3mp.SendMessage(pid, message, 0)
+    tes3mp.SendMessage(pid, message, false)
 
     Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(config.loginTime), "i", pid)
     tes3mp.StartTimer(Players[pid].tid_login);
@@ -190,7 +190,7 @@ end
 
 Methods.OnPlayerDeny = function(pid, pname)
     local message = pname.." ("..pid..") " .. "joined and tried to use an existing player's name.\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.SendMessage(pid, message, true)
 end
 
 Methods.OnPlayerDisconnect = function(pid)
@@ -292,7 +292,7 @@ Methods.AuthCheck = function(pid)
 
     local pname = tes3mp.GetName(pid)
     local message = pname.." ("..pid..") ".."failed to log in.\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.SendMessage(pid, message, true)
     Players[pid]:Kick()
 
     Players[pid] = nil

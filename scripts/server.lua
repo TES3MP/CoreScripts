@@ -75,7 +75,7 @@ function OnPlayerDisconnect(pid)
     print("Player with pid("..pid..") disconnected.")
     local pname = tes3mp.GetName(pid)
     local message = pname.." ("..pid..") ".."left the server.\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.SendMessage(pid, message, true)
 
     -- Trigger any necessary script events useful for saving state
     myMod.OnPlayerCellChange(pid)
@@ -94,7 +94,7 @@ function OnPlayerDeath(pid, reason, killerId)
     end
 
     message = message .. ".\n"
-    tes3mp.SendMessage(pid, message, 1)
+    tes3mp.SendMessage(pid, message, true)
     tes3mp.Resurrect(pid)
 end
 
@@ -164,13 +164,13 @@ function OnPlayerSendMessage(pid, message)
 
                 if Players[targetPlayer]:IsAdmin() then
                     message = "You cannot kick an Admin from the server\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 elseif Players[targetPlayer]:IsModerator() and not admin then
                     message = "You cannot kick a fellow Moderator from the server\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 else
                     message = targetPlayerName .. " was kicked from the server by " .. pname .. "!\n"
-                    tes3mp.SendMessage(pid, message, 1)
+                    tes3mp.SendMessage(pid, message, true)
                     Players[targetPlayer]:Kick()
                 end
             end
@@ -183,13 +183,13 @@ function OnPlayerSendMessage(pid, message)
 
                 if Players[targetPlayer]:IsAdmin() then
                     message = targetPlayerName .. " is already an Admin\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 elseif Players[targetPlayer]:IsModerator() then
                     message = targetPlayerName .. " is already a Moderator\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 else
                     message = targetPlayerName .. " was promoted to Moderator!\n"
-                    tes3mp.SendMessage(pid, message, 1)
+                    tes3mp.SendMessage(pid, message, true)
                     Players[targetPlayer].data.general.admin = 1
                     Players[targetPlayer]:Save()
                 end
@@ -203,15 +203,15 @@ function OnPlayerSendMessage(pid, message)
 
                 if Players[targetPlayer]:IsAdmin() then
                     message = "Cannot demote " .. targetPlayerName .. " because they are an Admin\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 elseif Players[targetPlayer]:IsModerator() then
                     message = targetPlayerName .. " was demoted from Moderator!\n"
-                    tes3mp.SendMessage(pid, message, 1)
+                    tes3mp.SendMessage(pid, message, true)
                     Players[targetPlayer].data.general.admin = 0
                     Players[targetPlayer]:Save()
                 else
                     message = targetPlayerName .. " is not a Moderator\n"
-                    tes3mp.SendMessage(pid, message, 0)
+                    tes3mp.SendMessage(pid, message, false)
                 end
             end
 
@@ -246,7 +246,7 @@ function OnPlayerSendMessage(pid, message)
                         tes3mp.SendAttributes(targetPlayer)
 
                         local message = targetPlayerName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
-                        tes3mp.SendMessage(pid, message, 1)
+                        tes3mp.SendMessage(pid, message, true)
                         Players[targetPlayer]:SaveAttributes()
                     end
                 end
@@ -272,7 +272,7 @@ function OnPlayerSendMessage(pid, message)
                         tes3mp.SendSkills(targetPlayer)
 
                         local message = targetPlayerName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
-                        tes3mp.SendMessage(pid, message, 1)
+                        tes3mp.SendMessage(pid, message, true)
                         Players[targetPlayer]:SaveSkills()
                     end
                 end
@@ -299,7 +299,7 @@ function OnPlayerSendMessage(pid, message)
             local state = ""
 
             if Players[targetPlayer] == nil then
-                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPlayer) .. " not found.\n", 0)
+                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPlayer) .. " not found.\n", false)
                 return false
             elseif cmd[3] == "on" then
                 Players[targetPlayer]:SetConsole(true)
@@ -311,18 +311,18 @@ function OnPlayerSendMessage(pid, message)
                 Players[targetPlayer]:SetConsole("default")
                 state = " reseted to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", 0)
+                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
                  return false
             end
 
-            tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, 0)
+            tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, false)
             if targetPlayer ~= pid then
-                tes3mp.SendMessage(targetPlayer, "Console" .. state, 0)
+                tes3mp.SendMessage(targetPlayer, "Console" .. state, false)
             end
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
-            tes3mp.SendMessage(pid, message, 0)
+            tes3mp.SendMessage(pid, message, false)
         end
 
         return false -- commands should be hidden
