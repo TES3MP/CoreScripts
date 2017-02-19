@@ -496,22 +496,27 @@ function BaseCell:SendContainers(pid)
 
         local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
 
-        for itemIndex, value in pairs(self.data[containerTableName]) do
-            if string.match(value, itemPattern) ~= nil then
-                for itemRefId, itemCount, itemCharge in string.gmatch(value, itemPattern) do
+        -- If someone has (for whatever reason) removed a container table, ensure
+        -- that the server doesn't crash because of it
+        if self.data[containerTableName] ~= nil then
 
-                    tes3mp.SetContainerItemRefId(itemRefId)
-                    tes3mp.SetContainerItemCount(itemCount)
-                    tes3mp.SetContainerItemCharge(itemCharge)
+            for itemIndex, value in pairs(self.data[containerTableName]) do
+                if string.match(value, itemPattern) ~= nil then
+                    for itemRefId, itemCount, itemCharge in string.gmatch(value, itemPattern) do
 
-                    tes3mp.AddContainerItem()
+                        tes3mp.SetContainerItemRefId(itemRefId)
+                        tes3mp.SetContainerItemCount(itemCount)
+                        tes3mp.SetContainerItemCharge(itemCharge)
+
+                        tes3mp.AddContainerItem()
+                    end
                 end
             end
+
+            tes3mp.AddWorldObject()
+
+            objectIndex = objectIndex + 1
         end
-
-        tes3mp.AddWorldObject()
-
-        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
