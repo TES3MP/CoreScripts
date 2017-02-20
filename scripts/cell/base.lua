@@ -117,7 +117,7 @@ function BaseCell:SaveObjectsDeleted()
         self.data.doorState[refNum] = nil
 
         -- If this is a container, make sure we remove its table
-        if self.data.refIdContainer[refNum] ~= nil then
+        if self.data.refIdContainer ~= nil and self.data.refIdContainer[refNum] ~= nil then
 
             local containerName = self.data.refIdContainer[refNum] .. refNum
 
