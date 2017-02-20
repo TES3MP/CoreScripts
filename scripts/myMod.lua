@@ -175,7 +175,7 @@ Methods.OnPlayerConnect = function(pid, pname)
     message = "Welcome " .. pname .. "\nYou have "..tostring(config.loginTime).." seconds to"
 
     if Players[pid]:HasAccount() then
-        message = message .. " login.\n"
+        message = message .. " log in.\n"
         GUI.ShowLogin(pid)
     else
         message = message .. " register.\n"
