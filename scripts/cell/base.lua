@@ -571,6 +571,7 @@ function BaseCell:UpdateStructure()
 
             self.data.state = nil
         end
+    end
 
     self.data.general.version = tes3mp.GetServerVersion()
     self:Save()
