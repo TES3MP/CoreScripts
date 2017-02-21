@@ -232,7 +232,7 @@ end
 function BaseCell:SaveContainers()
 
     local containerActions = { SET = 0, ADD = 1, REMOVE = 2}
-    local action = tes3mp.GetBaseEventAction(pid)
+    local action = tes3mp.GetBaseEventAction()
 
     if self.data.refIdContainer == nil then
         self.data.refIdContainer = {}
