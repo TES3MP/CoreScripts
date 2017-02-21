@@ -231,7 +231,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
             return true
         end
         Players[pid]:FinishLogin()
-        Players[pid]:Message("You have successfully logged in.\nUse Y by default to chat or change it from your client config.\n")
+        Players[pid]:Message("You have successfully logged in.\n")
     elseif idGui == GUI.ID.REGISTER then
         if data == nil then
             Players[pid]:Message("Password can not be empty\n")
@@ -239,6 +239,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
             return true
         end
         Players[pid]:Registered(data)
+        Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
     end
     return false
 end
