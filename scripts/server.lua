@@ -144,10 +144,10 @@ function OnPlayerSendMessage(pid, message)
             if cmd[2] ~= "all" then
                 myMod.TeleportToPlayer(pid, cmd[2], pid)
             else
-                for i=0,#Players do
-                    if i ~= pid then
-                        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
-                            myMod.TeleportToPlayer(pid, i, pid)
+                for iteratorPid, player in pairs(Players) do
+                    if iteratorPid ~= pid then
+                        if player:IsLoggedIn() then
+                            myMod.TeleportToPlayer(pid, iteratorPid, pid)
                         end
                     end
                 end

@@ -24,10 +24,13 @@ GUI.ShowRegister = function(pid)
 end
 
 local GetConnectedPlayerList = function()
+
+    local lastPid = tes3mp.GetLastPlayerId()
     local list = ""
     local divider = ""
-    for i=0,#Players do
-        if i == #Players then
+
+    for i = 0, lastPid do
+        if i == lastPid then
             divider = ""
         else
             divider = "\n"
@@ -39,6 +42,7 @@ local GetConnectedPlayerList = function()
             list = list .. divider
         end
     end
+
     return list
 end
 

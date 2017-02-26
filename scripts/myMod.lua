@@ -40,11 +40,11 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
 end
 
 -- Check if there is already a player with this name on the server
-Methods.IsPlayerNameLoggedIn = function(playerName)
+Methods.IsPlayerNameLoggedIn = function(newName)
 
-    for i = 0, #Players do
-        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
-            if Players[i].name == playerName then
+    for pid, player in pairs(Players) do
+        if player:IsLoggedIn() then
+            if player.name == newName then
                 return true
             end
         end
@@ -102,28 +102,14 @@ end
 Methods.GetConnectedPlayerCount = function()
 
     local playerCount = 0
-    for i = 0, #Players do
-        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
+    
+    for pid, player in pairs(Players) do
+        if player:IsLoggedIn() then
             playerCount = playerCount + 1
         end
     end
-    return playerCount
-end
 
-Methods.GetConnectedPlayerList = function()
-    local list = ""
-    local divider = ""
-    for i = 0, #Players do
-        if i == #Players then
-            divider = ""
-        else
-            divider = ", "
-        end
-        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
-            list = list .. tostring(Players[i].name) .. " (" .. tostring(Players[i].pid) .. ")" .. divider
-        end
-    end
-    return list
+    return playerCount
 end
 
 Methods.GetLoadedCellCount = function()
@@ -202,14 +188,9 @@ Methods.OnPlayerDisconnect = function(pid)
     if Players[pid] ~= nil then
 
         -- Unload every cell for this player
-        for i = 0, #Players[pid].cellsLoaded do
-            if Players[pid].cellsLoaded[i] ~= nil then
+        for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
 
-                local cellDescription = Players[pid].cellsLoaded[i]
-                Methods.UnloadCell(pid, cellDescription)
-            else
-                print("Players[pid].cellsLoaded[" .. i .. "] was nil")
-            end
+            Methods.UnloadCell(pid, loadedCellDescription)
         end
 
         Players[pid]:Destroy()

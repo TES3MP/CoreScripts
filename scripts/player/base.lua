@@ -435,9 +435,7 @@ function BasePlayer:LoadInventory()
     tes3mp.ClearInventory(self.pid)
     tes3mp.SendInventoryChanges(self.pid)
 
-    for i = 0, #self.data.inventory do
-
-        local currentItem = self.data.inventory[i]
+    for index, currentItem in pairs(self.data.inventory) do
 
         if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
             for refId, count, charge in string.gmatch(currentItem, itemPattern) do
@@ -475,8 +473,7 @@ function BasePlayer:LoadSpellbook()
     tes3mp.ClearSpellbook(self.pid)
     tes3mp.SendSpellbookChanges(self.pid)
 
-    for i = 0, #self.data.spellbook do
-        local currentSpell = self.data.spellbook[i]
+    for index, currentSpell in pairs(self.data.spellbook) do
 
         if currentSpell ~= nil then
             tes3mp.AddSpell(self.pid, currentSpell)
