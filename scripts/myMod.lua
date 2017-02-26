@@ -5,33 +5,37 @@ Players = {}
 LoadedCells = {}
 
 Methods.CheckPlayerValidity = function(pid, targetPlayer)
+
     local valid = false
     local sendMessage = true
+
     if pid == nil then
         sendMessage = false
     end
-    if targetPlayer ~= nil and type(tonumber(targetPlayer)) == "number" then
-        if tonumber(targetPlayer) >=0 and tonumber(targetPlayer) <= #Players then
-            if Players[tonumber(targetPlayer)]:IsLoggedIn() then
-                valid = true
-            else
-                if sendMessage then
-                    local message = "That player is not logged in!\n"
-                    tes3mp.SendMessage(pid, message, false)
-                end
-            end
-        else
-            if sendMessage then
-                local message = "That player is not logged in!\n"
-                tes3mp.SendMessage(pid, message, false)
-            end
-        end
-    else
+
+    if targetPlayer == nil or type(tonumber(targetPlayer)) ~= "number" then
+
         if sendMessage then
             local message = "Please specify the player ID.\n"
             tes3mp.SendMessage(pid, message, false)
         end
+
+        return false
     end
+
+    targetPlayer = tonumber(targetPlayer)
+
+    if targetPlayer >= 0 and Players[targetPlayer] ~= nil and Players[targetPlayer]:IsLoggedIn() then
+        valid = true
+    end
+
+    if valid == false then
+        if sendMessage then
+            local message = "That player is not logged in!\n"
+            tes3mp.SendMessage(pid, message, false)
+        end
+    end
+    
     return valid
 end
 
