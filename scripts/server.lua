@@ -86,6 +86,7 @@ end
 require("deathReasons")
 
 function OnPlayerDeath(pid, reason, killerId)
+
     local pname = tes3mp.GetName(pid)
     local message = ("%s (%d) %s"):format(pname, pid, reasons.GetReasonName(reason))
 
@@ -95,6 +96,13 @@ function OnPlayerDeath(pid, reason, killerId)
 
     message = message .. ".\n"
     tes3mp.SendMessage(pid, message, true)
+
+    Players[pid].tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", pid)
+    tes3mp.StartTimer(Players[pid].tid_resurrect);
+end
+
+function OnDeathTimeExpiration(pid)
+
     tes3mp.Resurrect(pid)
 end
 
