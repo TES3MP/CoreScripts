@@ -174,7 +174,7 @@ Methods.OnPlayerConnect = function(pid, pname)
 
     tes3mp.SendMessage(pid, message, false)
 
-    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLogin", time.seconds(config.loginTime), "i", pid)
+    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLoginTimeExpiration", time.seconds(config.loginTime), "i", pid)
     tes3mp.StartTimer(Players[pid].tid_login);
 end
 

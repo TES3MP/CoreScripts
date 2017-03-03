@@ -67,7 +67,7 @@ function OnPlayerConnect(pid)
     end
 end
 
-function OnLogin(pid) -- timer-based event, see myMod.OnPlayerConnect
+function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConnect
     myMod.AuthCheck(pid)
 end
 
