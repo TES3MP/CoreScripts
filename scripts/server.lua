@@ -121,20 +121,7 @@ function OnPlayerSendMessage(pid, message)
     if message:sub(1,1) == '/' then
         local cmd = (message:sub(2, #message)):split(" ")
 
-        if cmd[1] == "cheat" and moderator then
-
-            for i = 0, (tes3mp.GetAttributeCount() - 1) do
-                tes3mp.SetAttributeBase(pid, i, 666)
-            end
-
-            for i = 0, (tes3mp.GetSkillCount() - 1) do
-                tes3mp.SetSkillBase(pid, i, 666);
-            end
-
-            tes3mp.SendAttributes(pid)
-            tes3mp.SendSkills(pid)
-
-        elseif cmd[1] == "players" or cmd[1] == "list" then
+        if cmd[1] == "players" or cmd[1] == "list" then
             GUI.ShowPlayerList(pid)
 
         elseif cmd[1] == "cells" then
@@ -309,7 +296,7 @@ function OnPlayerSendMessage(pid, message)
                 state = " disabled.\n"
             elseif cmd[3] == "default" then
                 Players[targetPlayer]:SetConsole("default")
-                state = " reseted to default.\n"
+                state = " reset to default.\n"
             else
                  tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
                  return false
