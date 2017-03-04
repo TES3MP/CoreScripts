@@ -104,7 +104,10 @@ end
 function OnDeathTimeExpiration(pid)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
         tes3mp.Resurrect(pid)
+        tes3mp.SetCell(pid, config.defaultRespawnCell)
+        tes3mp.SendCell(pid)
     end
 end
 
