@@ -103,7 +103,9 @@ end
 
 function OnDeathTimeExpiration(pid)
 
-    tes3mp.Resurrect(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        tes3mp.Resurrect(pid)
+    end
 end
 
 function OnPlayerResurrect(pid)
