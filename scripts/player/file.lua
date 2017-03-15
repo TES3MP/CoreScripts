@@ -1,4 +1,5 @@
-local LIP = require 'LIP';
+require('patterns')
+local LIP = require 'LIP'
 local BasePlayer = require "player.base"
 
 local Player = class ("Player", BasePlayer)
@@ -8,7 +9,7 @@ function Player:__init(pid)
 
     -- Replace characters not allowed in filenames
     self.accountFile = self.accountName
-    self.accountFile = string.gsub(self.accountFile, '[<>:"/\\|*?]', "_")
+    self.accountFile = string.gsub(self.accountFile, patterns.invalidFileCharacters, "_")
     self.accountFile = self.accountFile .. ".txt"
 
 

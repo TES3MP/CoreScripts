@@ -1,5 +1,6 @@
 require('utils')
 require('config')
+require('patterns')
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid)
@@ -235,22 +236,20 @@ function BasePlayer:LoadClass()
             tes3mp.SetClassDesc(self.pid, self.data.customClass.description)
         end
 
-        local commaSplitPattern = "([^, ]+)"
-
         local i = 0
-        for value in string.gmatch(self.data.customClass.majorAttributes, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.majorAttributes, patterns.commaSplit) do
             tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
             i = i + 1
         end
 
         i = 0
-        for value in string.gmatch(self.data.customClass.majorSkills, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.majorSkills, patterns.commaSplit) do
             tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
 
         i = 0
-        for value in string.gmatch(self.data.customClass.minorSkills, commaSplitPattern) do
+        for value in string.gmatch(self.data.customClass.minorSkills, patterns.commaSplit) do
             tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
             i = i + 1
         end
@@ -358,10 +357,8 @@ function BasePlayer:LoadCell()
 
     if newCell ~= nil then
 
-        local exteriorCellPattern = "(%-?%d+),(%-?%d+)$"
-
-        if string.match(newCell, exteriorCellPattern) ~= nil then
-            for gridX, gridY in string.gmatch(newCell, exteriorCellPattern) do
+        if string.match(newCell, patterns.exteriorCell) ~= nil then
+            for gridX, gridY in string.gmatch(newCell, patterns.exteriorCell) do
                 tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
             end
         else
@@ -387,14 +384,12 @@ end
 
 function BasePlayer:LoadEquipment()
 
-    local itemPattern = "(.+), (%d+), (%-?%d+)$"
-
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
 
         local currentItem = self.data.equipment[i]
 
-        if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for refId, count, charge in string.gmatch(currentItem, itemPattern) do
+        if currentItem ~= nil and string.match(currentItem, patterns.item) ~= nil then
+            for refId, count, charge in string.gmatch(currentItem, patterns.item) do
                 tes3mp.EquipItem(self.pid, i, refId, count, charge)
             end
         else
@@ -428,8 +423,6 @@ function BasePlayer:LoadInventory()
         self.data.inventory = {}
     end
 
-    local itemPattern = "(.+), (%d+), (%-?%d+)$"
-
     -- Clear whatever items the BasePlayer may have so we can completely
     -- replace them
     tes3mp.ClearInventory(self.pid)
@@ -437,8 +430,8 @@ function BasePlayer:LoadInventory()
 
     for index, currentItem in pairs(self.data.inventory) do
 
-        if currentItem ~= nil and string.match(currentItem, itemPattern) ~= nil then
-            for refId, count, charge in string.gmatch(currentItem, itemPattern) do
+        if currentItem ~= nil and string.match(currentItem, patterns.item) ~= nil then
+            for refId, count, charge in string.gmatch(currentItem, patterns.item) do
                 tes3mp.AddItem(self.pid, refId, count, charge)
             end
         end

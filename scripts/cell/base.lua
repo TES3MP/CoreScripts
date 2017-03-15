@@ -1,3 +1,4 @@
+require('patterns')
 require('utils')
 local BaseCell = class("BaseCell")
 
@@ -342,7 +343,6 @@ end
 
 function BaseCell:SendObjectsPlaced(pid)
 
-    local coordinatesPattern = "(%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)$"
     local objectIndex = 0
 
     tes3mp.InitScriptEvent(pid)
@@ -376,11 +376,11 @@ function BaseCell:SendObjectsPlaced(pid)
         tes3mp.SetObjectCount(count)
         tes3mp.SetObjectGoldValue(goldValue)
 
-        for posX, posY, posZ in string.gmatch(self.data.position[refNum], coordinatesPattern) do
+        for posX, posY, posZ in string.gmatch(self.data.position[refNum], patterns.coordinates) do
             tes3mp.SetObjectPosition(posX, posY, posZ)
         end
 
-        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refNum], coordinatesPattern) do
+        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refNum], patterns.coordinates) do
             tes3mp.SetObjectRotation(rotX, rotY, rotZ)
         end
 
@@ -484,7 +484,6 @@ end
 function BaseCell:SendContainers(pid)
 
     local objectIndex = 0
-    local itemPattern = "(.+), (%d+), (%-?%d+)$"
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -501,8 +500,8 @@ function BaseCell:SendContainers(pid)
         if self.data[containerTableName] ~= nil then
 
             for itemIndex, value in pairs(self.data[containerTableName]) do
-                if string.match(value, itemPattern) ~= nil then
-                    for itemRefId, itemCount, itemCharge in string.gmatch(value, itemPattern) do
+                if string.match(value, patterns.item) ~= nil then
+                    for itemRefId, itemCount, itemCharge in string.gmatch(value, patterns.item) do
 
                         tes3mp.SetContainerItemRefId(itemRefId)
                         tes3mp.SetContainerItemCount(itemCount)
