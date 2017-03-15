@@ -10,7 +10,7 @@ Cell = nil
 
 if (config.dbtype ~= nil or config.dbtype ~="file") and doesModuleExist("luasql."..config.dbtype) then
     dbdriver = require("luasql." .. config.dbtype)
-    print(dbdriver._VERSION)
+    print("Using " .. dbdriver._VERSION .. " with " .. config.dbtype .. " driver")
     Player = require("player.sql")
     Cell = require("cell.sql")
 else
