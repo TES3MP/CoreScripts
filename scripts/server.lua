@@ -16,6 +16,7 @@ if (config.dbtype ~= nil and config.dbtype ~= "file") and doesModuleExist("luasq
     print("Using " .. Database.driver._VERSION .. " with " .. config.dbtype .. " driver")
     
     Database:Connect(config.dbpath)
+    Database:CreatePlayerTables()
     Player = require("player.sql")
     Cell = require("cell.sql")
 else
