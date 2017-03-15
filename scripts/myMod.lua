@@ -1,4 +1,4 @@
-local time =require('time')
+local time = require('time')
 local Methods = {}
 
 Players = {}

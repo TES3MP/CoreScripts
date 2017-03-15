@@ -1,16 +1,21 @@
 require('utils')
 require('config')
 class = require('classy')
-
 require('guiIds')
-myMod = require("myMod")
+myMod = require('myMod')
 
+Database = nil
 Player = nil
 Cell = nil
 
-if (config.dbtype ~= nil or config.dbtype ~="file") and doesModuleExist("luasql."..config.dbtype) then
-    dbdriver = require("luasql." .. config.dbtype)
-    print("Using " .. dbdriver._VERSION .. " with " .. config.dbtype .. " driver")
+if (config.dbtype ~= nil and config.dbtype ~= "file") and doesModuleExist("luasql." .. config.dbtype) then
+
+    Database = require('database')
+    Database:LoadDriver(config.dbtype)
+    
+    print("Using " .. Database.driver._VERSION .. " with " .. config.dbtype .. " driver")
+    
+    Database:Connect(config.dbpath)
     Player = require("player.sql")
     Cell = require("cell.sql")
 else
