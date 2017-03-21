@@ -77,13 +77,13 @@ function Database:CreateDefaultTables()
         {name = "TEXT"},
         {password = "TEXT"},
         {admin = "INTEGER"},
-        {consoleAllowed = "BOOLEAN NOT NULL CHECK (consoleAllowed IN (0,1))"}
+        {consoleAllowed = "TEXT NOT NULL CHECK (consoleAllowed IN ('true', 'false', 'default'))"}
     }
 
     self:CreateTable("player_general", columnList)
 
     valueTable = {
-        name = "David", password = "test", admin = 2, consoleAllowed = 0
+        name = "David", password = "test", admin = 2, consoleAllowed = "true"
     }
 
     self:InsertRow("player_general", valueTable)
