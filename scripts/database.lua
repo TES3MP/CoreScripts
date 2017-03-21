@@ -73,16 +73,17 @@ end
 function Database:CreateDefaultTables()
 
     columnList = {
-        {name = "VARCHAR(255)"},
-        {password = "VARCHAR(255)"},
-        {admin = "INT"},
-        {consoleAllowed = "BOOLEAN"}
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {name = "TEXT"},
+        {password = "TEXT"},
+        {admin = "INTEGER"},
+        {consoleAllowed = "BOOLEAN NOT NULL CHECK (consoleAllowed IN (0,1))"}
     }
 
     self:CreateTable("player_general", columnList)
 
     valueTable = {
-        name = "David", password = "test", admin = 2, consoleAllowed = true
+        name = "David", password = "test", admin = 2, consoleAllowed = 0
     }
 
     self:InsertRow("player_general", valueTable)
