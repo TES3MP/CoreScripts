@@ -1,7 +1,5 @@
 local Database = class("Database")
 
-print("Creating Database")
-
 function Database:LoadDriver(driver)
 
     self.driver = require("luasql." .. driver)
@@ -53,9 +51,12 @@ function Database:InsertRow(tableName, valueTable)
     local query = string.format("INSERT INTO %s", tableName)
     local queryColumns = ""
     local queryValues = ""
-    local count = 1
+    local count = 0
 
     for column, value in pairs(valueTable) do
+
+        count = count + 1
+
         if count > 1 then
             queryColumns = queryColumns .. ", "
             queryValues = queryValues .. ", "
@@ -63,14 +64,25 @@ function Database:InsertRow(tableName, valueTable)
 
         queryColumns = queryColumns .. tostring(column)
         queryValues = queryValues .. '\'' .. tostring(value) .. '\''
-        count = count + 1
     end
 
-    query = query .. string.format("(%s) VALUES(%s)", queryColumns, queryValues)
-    self:Execute(query)
+    if count > 0 then
+
+        query = query .. string.format("(%s) VALUES(%s)", queryColumns, queryValues)
+        self:Execute(query)
+    end
+end
+
+function Database:SavePlayer(data)
+
+    for category, categoryTable in pairs(data) do
+        self:InsertRow("player_" .. category, data[category])
+    end
 end
 
 function Database:CreateDefaultTables()
+
+    local columnList, valueTable
 
     columnList = {
         {dbPid = "INTEGER PRIMARY KEY ASC"},
