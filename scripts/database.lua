@@ -86,13 +86,25 @@ function Database:CreateDefaultTables()
 
     columnList = {
         {dbPid = "INTEGER PRIMARY KEY ASC"},
-        {name = "TEXT"},
+        {name = "TEXT UNIQUE"},
         {password = "TEXT"},
         {admin = "INTEGER"},
         {consoleAllowed = "TEXT NOT NULL CHECK (consoleAllowed IN ('true', 'false', 'default'))"}
     }
 
     self:CreateTable("player_general", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {race = "TEXT"},
+        {head = "TEXT"},
+        {hair = "TEXT"},
+        {gender = "BOOLEAN NOT NULL CHECK (gender IN (0, 1))"},
+        {class = "TEXT"},
+        {birthsign = "TEXT"}
+    }
+
+    self:CreateTable("player_character", columnList)
 
     valueTable = {
         name = "David", password = "test", admin = 2, consoleAllowed = "true"

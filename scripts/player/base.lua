@@ -4,6 +4,8 @@ require('patterns')
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid)
+    self.dbPid = nil
+
     self.data =
     {
         general = {
@@ -16,7 +18,7 @@ function BasePlayer:__init(pid)
             race = "",
             head = "",
             hair = "",
-            sex = 1,
+            gender = 1,
             class = "",
             birthsign = "",
         },
@@ -183,7 +185,7 @@ function BasePlayer:SaveCharacter()
     self.data.character.race = tes3mp.GetRace(self.pid)
     self.data.character.head = tes3mp.GetHead(self.pid)
     self.data.character.hair = tes3mp.GetHair(self.pid)
-    self.data.character.sex = tes3mp.GetIsMale(self.pid)
+    self.data.character.gender = tes3mp.GetIsMale(self.pid)
     self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
 end
 
@@ -191,7 +193,7 @@ function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)
     tes3mp.SetHair(self.pid, self.data.character.hair)
-    tes3mp.SetIsMale(self.pid, self.data.character.sex)
+    tes3mp.SetIsMale(self.pid, self.data.character.gender)
     tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
 
     tes3mp.SendBaseInfo(self.pid)
