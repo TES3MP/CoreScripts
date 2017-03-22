@@ -20,8 +20,8 @@ function doesModuleExist(name)
     end
 end
 
-function table.contains(table, valueToFind)
-    for key, value in pairs(table) do
+function table.contains(t, valueToFind)
+    for key, value in pairs(t) do
         if value == valueToFind then
             return true
         end
@@ -29,8 +29,8 @@ function table.contains(table, valueToFind)
     return false
 end
 
-function table.getIndexByPattern(table, patternToFind)
-    for key, value in pairs(table) do
+function table.getIndexByPattern(t, patternToFind)
+    for key, value in pairs(t) do
         if string.match(value, patternToFind) ~= nil then
             return key
         end
@@ -38,10 +38,10 @@ function table.getIndexByPattern(table, patternToFind)
     return nil
 end
 
-function table.removeValue(table, valueToFind)
-    for key, value in pairs(table) do
+function table.removeValue(t, valueToFind)
+    for key, value in pairs(t) do
         if value == valueToFind then
-            table[key] = nil
+            t[key] = nil
         end
     end
 end
