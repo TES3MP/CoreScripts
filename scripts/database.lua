@@ -19,7 +19,8 @@ end
 
 function Database:Execute(query)
 
-    res = assert(self.connection:execute(query))
+    local response = assert(self.connection:execute(query))
+    return response
 end
 
 --- Create a table if it does not already exist
@@ -73,6 +74,14 @@ function Database:InsertRow(tableName, valueTable)
     end
 end
 
+function Database:GetSingleValue(tableName, column, condition)
+
+    local query = string.format("SELECT %s from %s %s", column, tableName, condition)
+    local cursor = self:Execute(query)
+    local row = cursor:fetch({}, "a")
+    return row[column]
+end
+
 function Database:SavePlayer(data)
 
     for category, categoryTable in pairs(data) do
@@ -111,6 +120,8 @@ function Database:CreateDefaultTables()
     }
 
     self:InsertRow("player_general", valueTable)
+
+    local dbPid = self:GetSingleValue("player_general", "dbPid", "WHERE name = 'David'")
 end
 
 return Database
