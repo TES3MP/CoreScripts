@@ -45,3 +45,28 @@ function table.removeValue(t, valueToFind)
         end
     end
 end
+
+-- Based on http://stackoverflow.com/a/13398936
+function table.print(t, indentLevel)
+    local str = ""
+    local indentStr = "#"
+
+    if (indentLevel == nil) then
+        print(table.print(t, 0))
+        return
+    end
+
+    for i = 0, indentLevel do
+        indentStr = indentStr .. "\t"
+    end
+
+    for index, value in pairs(t) do
+        if type(value) == "table" then
+            str = str .. indentStr .. index .. ": \n" .. table.print(value, (indentLevel + 1))
+        else
+            str = str .. indentStr .. index .. ": " .. value.."\n"
+        end
+    end
+
+    return str
+end
