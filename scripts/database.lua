@@ -79,7 +79,12 @@ function Database:GetSingleValue(tableName, column, condition)
     local query = string.format("SELECT %s from %s %s", column, tableName, condition)
     local cursor = self:Execute(query)
     local row = cursor:fetch({}, "a")
-    return row[column]
+
+    if row == nil or row[column] == nil then
+        return -1
+    else
+        return row[column]
+    end
 end
 
 function Database:SavePlayer(data)
