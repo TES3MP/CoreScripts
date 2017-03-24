@@ -1,3 +1,4 @@
+require('utils')
 local Database = class("Database")
 
 function Database:LoadDriver(driver)
@@ -31,12 +32,17 @@ function Database:CreateTable(tableName, columnArray)
     local query = string.format("CREATE TABLE IF NOT EXISTS %s(", tableName)
     
     for index, column in pairs(columnArray) do
-        for name, datatype in pairs(column) do
+        for name, definition in pairs(column) do
             if index > 1 then
                 query = query .. ", "
             end
 
-            query = query .. string.format("%s %s", name, datatype)
+            -- If this is a constraint, only add its definition to the query
+            if name == "constraint" then
+                query = query .. definition
+            else
+                query = query .. string.format("%s %s", name, definition)
+            end
         end
     end
 
@@ -87,10 +93,16 @@ function Database:GetSingleValue(tableName, column, condition)
     end
 end
 
-function Database:SavePlayer(data)
+function Database:SavePlayer(dbPid, data)
+
+    local validCategories = { "character" }
 
     for category, categoryTable in pairs(data) do
-        self:InsertRow("player_" .. category, data[category])
+        if table.contains(validCategories, category) then
+            print("Saving category " .. category)
+            categoryTable.dbPid = dbPid
+            self:InsertRow("player_" .. category, data[category])
+        end
     end
 end
 
@@ -115,7 +127,8 @@ function Database:CreateDefaultTables()
         {hair = "TEXT"},
         {gender = "BOOLEAN NOT NULL CHECK (gender IN (0, 1))"},
         {class = "TEXT"},
-        {birthsign = "TEXT"}
+        {birthsign = "TEXT"},
+        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
     }
 
     self:CreateTable("player_character", columnList)
