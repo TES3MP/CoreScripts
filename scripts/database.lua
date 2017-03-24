@@ -60,7 +60,7 @@ end
 --@param valueTable A key/value table where the keys are the names of columns. [table]
 function Database:InsertRow(tableName, valueTable)
 
-    local query = string.format("INSERT INTO %s", tableName)
+    local query = string.format("INSERT OR REPLACE INTO %s", tableName)
     local queryColumns = ""
     local queryValues = ""
     local count = 0
@@ -112,7 +112,7 @@ function Database:SavePlayer(dbPid, data)
         if table.contains(validCategories, category) then
             print("Saving category " .. category)
             categoryTable.dbPid = dbPid
-            self:InsertRow("player_" .. category, data[category])
+            self:InsertRow("player_" .. category, categoryTable)
         end
     end
 end
