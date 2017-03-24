@@ -20,7 +20,12 @@ end
 
 function Database:Execute(query)
 
-    local response = assert(self.connection:execute(query))
+    local response = self.connection:execute(query)
+
+    if response == nil then
+        print("Could not execute query: " .. query)
+    end
+
     return response
 end
 
@@ -78,6 +83,12 @@ function Database:InsertRow(tableName, valueTable)
         query = query .. string.format("(%s) VALUES(%s)", queryColumns, queryValues)
         self:Execute(query)
     end
+end
+
+function Database:DeleteRows(tableName, condition)
+
+    local query = string.format("DELETE FROM %s %s", tableName, condition)
+    self:Execute(query)
 end
 
 function Database:GetSingleValue(tableName, column, condition)
