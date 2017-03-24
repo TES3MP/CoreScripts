@@ -29,6 +29,12 @@ function Database:Execute(query)
     return response
 end
 
+function Database:Escape(string)
+
+    string = self.connection:escape(string)
+    return string
+end
+
 --- Create a table if it does not already exist
 --@param tableName The name of the table. [string]
 --@param columnArray An array (to keep column ordering) of key/value pairs. [table]
@@ -75,7 +81,7 @@ function Database:InsertRow(tableName, valueTable)
         end
 
         queryColumns = queryColumns .. tostring(column)
-        queryValues = queryValues .. '\'' .. tostring(value) .. '\''
+        queryValues = queryValues .. '\'' .. self:Escape(tostring(value)) .. '\''
     end
 
     if count > 0 then
