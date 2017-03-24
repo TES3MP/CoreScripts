@@ -106,7 +106,7 @@ end
 
 function Database:SavePlayer(dbPid, data)
 
-    local validCategories = { "character" }
+    local validCategories = { "character", "location" }
 
     for category, categoryTable in pairs(data) do
         if table.contains(validCategories, category) then
@@ -143,6 +143,20 @@ function Database:CreateDefaultTables()
     }
 
     self:CreateTable("player_character", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {cell = "TEXT"},
+        {posX = "NUMERIC"},
+        {posY = "NUMERIC"},
+        {posZ = "NUMERIC"},
+        {rotX = "NUMERIC"},
+        {rotY = "NUMERIC"},
+        {rotZ = "NUMERIC"},
+        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+    }
+
+    self:CreateTable("player_location", columnList)
 
     valueTable = {
         name = "David", password = "test", admin = 2, consoleAllowed = "true"
