@@ -117,8 +117,9 @@ function Database:SavePlayer(dbPid, data)
     for category, categoryTable in pairs(data) do
         if table.contains(validCategories, category) then
             print("Saving category " .. category)
-            categoryTable.dbPid = dbPid
-            self:InsertRow("player_" .. category, categoryTable)
+            local tempTable = table.shallowcopy(categoryTable)
+            tempTable.dbPid = dbPid
+            self:InsertRow("player_" .. category, tempTable)
         end
     end
 end
