@@ -193,7 +193,15 @@ function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)
     tes3mp.SetHair(self.pid, self.data.character.hair)
-    tes3mp.SetIsMale(self.pid, self.data.character.gender)
+
+    -- Temporary: "sex" has been renamed into "gender", but maintain backwards
+    -- compatibility for a while
+    if self.data.character.gender == nil then
+        tes3mp.SetIsMale(self.pid, self.data.character.sex)
+    else
+        tes3mp.SetIsMale(self.pid, self.data.character.gender)
+    end
+
     tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
 
     tes3mp.SendBaseInfo(self.pid)
@@ -377,7 +385,12 @@ function BasePlayer:LoadCell()
         rot[2] = self.data.location.rotZ
 
         tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
-        tes3mp.SetAngle(self.pid, rot[0], rot[1], rot[2])
+
+        -- Temporary: "angle" has been renamed into "rot", so keep this check for
+        -- backwards compatibility
+        if rot[0] ~= nil and rot[1] ~= nil and rot[2] ~= nil then
+            tes3mp.SetAngle(self.pid, rot[0], rot[1], rot[2])
+        end
 
         tes3mp.SendCell(self.pid)
         tes3mp.SendPos(self.pid)
