@@ -201,7 +201,7 @@ function OnPlayerSendMessage(pid, message)
                 else
                     message = targetPlayerName .. " was promoted to Moderator!\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPlayer].data.general.admin = 1
+                    Players[targetPlayer].data.settings.admin = 1
                     Players[targetPlayer]:Save()
                 end
             end
@@ -218,7 +218,7 @@ function OnPlayerSendMessage(pid, message)
                 elseif Players[targetPlayer]:IsModerator() then
                     message = targetPlayerName .. " was demoted from Moderator!\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPlayer].data.general.admin = 0
+                    Players[targetPlayer].data.settings.admin = 0
                     Players[targetPlayer]:Save()
                 else
                     message = targetPlayerName .. " is not a Moderator\n"

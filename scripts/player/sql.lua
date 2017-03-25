@@ -27,12 +27,12 @@ end
 
 function Player:CreateAccount()
     LIP.save("player/" .. self.accountFile, self.data)
-    Database:InsertRow("player_general", self.data.general)
+    Database:InsertRow("player_login", self.data.login)
     self.dbPid = self:GetDatabaseId()
     Database:SavePlayer(self.dbPid, self.data)
     self.hasAccount = true
 
-    print(self.data.general.name .. " has dbPid of " .. self.dbPid)
+    print(self.data.login.name .. " has dbPid of " .. self.dbPid)
 end
 
 function Player:Save()
@@ -48,8 +48,8 @@ function Player:Load()
 end
 
 function Player:GetDatabaseId()
-    local escapedName = Database:Escape(self.data.general.name)
-    return Database:GetSingleValue("player_general", "dbPid", string.format("WHERE name = '%s'", escapedName))
+    local escapedName = Database:Escape(self.data.login.name)
+    return Database:GetSingleValue("player_login", "dbPid", string.format("WHERE name = '%s'", escapedName))
 end
 
 return Player

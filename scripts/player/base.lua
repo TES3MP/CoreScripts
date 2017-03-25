@@ -8,9 +8,11 @@ function BasePlayer:__init(pid)
 
     self.data =
     {
-        general = {
+        login = {
             name = "",
             password = "",
+        },
+        settings = {
             admin = 0,
             consoleAllowed = config.allowConsole,
         },
@@ -93,8 +95,8 @@ end
 
 function BasePlayer:Registered(passw)
     self.loggedIn = true
-    self.data.general.password = passw
-    self.data.general.consoleAllowed = "default"
+    self.data.login.password = passw
+    self.data.settings.consoleAllowed = "default"
     if self.hasAccount == false then -- create account
         tes3mp.SetCharGenStage(self.pid, 1, 4)
     end
@@ -113,7 +115,7 @@ function BasePlayer:FinishLogin()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
-        self:SetConsole(self.data.general.consoleAllowed)
+        self:SetConsole(self.data.settings.consoleAllowed)
     end
 end
 
@@ -122,16 +124,16 @@ function BasePlayer:IsLoggedIn()
 end
 
 function BasePlayer:IsAdmin()
-    return self.data.general.admin == 2
+    return self.data.settings.admin == 2
 end
 
 function BasePlayer:IsModerator()
-    return self.data.general.admin == 1
+    return self.data.settings.admin == 1
 end
 
 function BasePlayer:PromoteModerator(other)
     if self.IsAdmin() then
-        other.data.general.admin = 1
+        other.data.settings.admin = 1
         return true
     end
     return false
@@ -177,8 +179,8 @@ function BasePlayer:Load()
     error("Not implemented")
 end
 
-function BasePlayer:SaveGeneral()
-    self.data.general.name = tes3mp.GetName(self.pid)
+function BasePlayer:SaveLogin()
+    self.data.login.name = tes3mp.GetName(self.pid)
 end
 
 function BasePlayer:SaveCharacter()
@@ -526,15 +528,15 @@ end
 function BasePlayer:SetConsole(state)
     if state == nil or state == "default" then
         state = config.allowConsole
-        self.data.general.consoleAllowed = "default"
+        self.data.settings.consoleAllowed = "default"
     else
-        self.data.general.consoleAllowed = state
+        self.data.settings.consoleAllowed = state
     end
     tes3mp.SetConsoleAllow(self.pid, state)
 end
 
 function BasePlayer:GetConsole(state)
-    return self.data.general.consoleAllowed
+    return self.data.settings.consoleAllowed
 end
 
 function BasePlayer:AddCellLoaded(cellDescription)

@@ -112,7 +112,7 @@ end
 
 function Database:SavePlayer(dbPid, data)
 
-    local validCategories = { "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
+    local validCategories = { "settings", "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
 
     for category, categoryTable in pairs(data) do
         if table.contains(validCategories, category) then
@@ -129,17 +129,24 @@ function Database:CreateDefaultTables()
     local columnList, valueTable
 
     local dbPidRow = {dbPid = "INTEGER PRIMARY KEY ASC"}
-    local constraintRow = {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+    local constraintRow = {constraint = "FOREIGN KEY(dbPid) REFERENCES player_login(dbPid)" }
 
     columnList = {
         dbPidRow,
         {name = "TEXT UNIQUE"},
-        {password = "TEXT"},
-        {admin = "INTEGER"},
-        {consoleAllowed = "TEXT NOT NULL CHECK (consoleAllowed IN ('true', 'false', 'default'))"}
+        {password = "TEXT"}
     }
 
-    self:CreateTable("player_general", columnList)
+    self:CreateTable("player_login", columnList)
+
+    columnList = {
+        dbPidRow,
+        {admin = "INTEGER"},
+        {consoleAllowed = "TEXT NOT NULL CHECK (consoleAllowed IN ('true', 'false', 'default'))"},
+        constraintRow
+    }
+
+    self:CreateTable("player_settings", columnList)
 
     columnList = {
         dbPidRow,

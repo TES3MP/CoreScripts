@@ -210,7 +210,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
         Players[pid]:Load()
 
         -- Just in case the password from the data file is a number, make sure to turn it into a string
-        if tostring(Players[pid].data.general.password) ~= data then
+        if tostring(Players[pid].data.login.password) ~= data then
             Players[pid]:Message("Incorrect password!\n")
             GUI.ShowLogin(pid)
             return true
@@ -260,7 +260,7 @@ Methods.OnPlayerMessage = function(pid, message)
         end
         Players[pid]:Load()
         -- Just in case the password from the data file is a number, make sure to turn it into a string
-        if tostring(Players[pid].data.general.password) ~= cmd[2] then
+        if tostring(Players[pid].data.login.password) ~= cmd[2] then
             Players[pid]:Message("Incorrect password!\n")
             return false
         end
@@ -456,7 +456,7 @@ Methods.OnContainer = function(pid, cellDescription)
 end
 
 Methods.OnPlayerEndCharGen = function(pid)
-    Players[pid]:SaveGeneral()
+    Players[pid]:SaveLogin()
     Players[pid]:SaveCharacter()
     Players[pid]:SaveClass()
     Players[pid]:SaveDynamicStats()
