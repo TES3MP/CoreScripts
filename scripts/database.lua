@@ -210,8 +210,6 @@ function Database:CreateDefaultTables()
     table.replaceValue(columnList, "INTEGER", "NUMERIC")
 
     self:CreateTable("player_skillProgress", columnList)
-
-    local dbPid = self:GetSingleValue("player_general", "dbPid", "WHERE name = 'David'")
 end
 
 return Database
