@@ -112,7 +112,7 @@ end
 
 function Database:SavePlayer(dbPid, data)
 
-    local validCategories = { "character", "location" }
+    local validCategories = { "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
 
     for category, categoryTable in pairs(data) do
         if table.contains(validCategories, category) then
@@ -164,6 +164,51 @@ function Database:CreateDefaultTables()
     }
 
     self:CreateTable("player_location", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {level = "INTEGER"},
+        {levelProgress = "INTEGER"},
+        {healthBase = "NUMERIC"},
+        {healthCurrent = "NUMERIC"},
+        {magickaBase = "NUMERIC"},
+        {magickaCurrent = "NUMERIC"},
+        {fatigueBase = "NUMERIC"},
+        {fatigueCurrent = "NUMERIC"},
+        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+    }
+
+    self:CreateTable("player_stats", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"}
+    }
+
+    for i = 0, (tes3mp.GetAttributeCount() - 1) do
+        local attributePair = {}
+        attributePair[tes3mp.GetAttributeName(i)] = "INTEGER"
+        table.insert(columnList, attributePair)
+    end
+
+    self:CreateTable("player_attributes", columnList)
+    self:CreateTable("player_attributeSkillIncreases", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"}
+    }
+
+    for i = 0, (tes3mp.GetSkillCount() - 1) do
+        local skillPair = {}
+        skillPair[tes3mp.GetSkillName(i)] = "INTEGER"
+        table.insert(columnList, skillPair)
+    end
+
+    self:CreateTable("player_skills", columnList)
+
+    -- Turn INTEGER into NUMERIC for skillProgress
+    table.replaceValue(columnList, "INTEGER", "NUMERIC")
+
+    self:CreateTable("player_skillProgress", columnList)
 
     valueTable = {
         name = "David", password = "test", admin = 2, consoleAllowed = "true"
