@@ -16,6 +16,10 @@ if (config.dbtype ~= nil and config.dbtype ~= "file") and doesModuleExist("luasq
     print("Using " .. Database.driver._VERSION .. " with " .. config.dbtype .. " driver")
     
     Database:Connect(config.dbpath)
+
+    -- Make sure we enable foreign keys
+    Database:Execute("PRAGMA foreign_keys = ON;")
+
     Database:CreateDefaultTables()
 
     Player = require("player.sql")

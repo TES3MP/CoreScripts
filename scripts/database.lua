@@ -1,6 +1,5 @@
+require('utils')
 local Database = class("Database")
-
-print("Creating Database")
 
 function Database:LoadDriver(driver)
 
@@ -21,7 +20,19 @@ end
 
 function Database:Execute(query)
 
-    res = assert(self.connection:execute(query))
+    local response = self.connection:execute(query)
+
+    if response == nil then
+        print("Could not execute query: " .. query)
+    end
+
+    return response
+end
+
+function Database:Escape(string)
+
+    string = self.connection:escape(string)
+    return string
 end
 
 --- Create a table if it does not already exist
@@ -32,12 +43,17 @@ function Database:CreateTable(tableName, columnArray)
     local query = string.format("CREATE TABLE IF NOT EXISTS %s(", tableName)
     
     for index, column in pairs(columnArray) do
-        for name, datatype in pairs(column) do
+        for name, definition in pairs(column) do
             if index > 1 then
                 query = query .. ", "
             end
 
-            query = query .. string.format("%s %s", name, datatype)
+            -- If this is a constraint, only add its definition to the query
+            if name == "constraint" then
+                query = query .. definition
+            else
+                query = query .. string.format("%s %s", name, definition)
+            end
         end
     end
 
@@ -50,42 +66,111 @@ end
 --@param valueTable A key/value table where the keys are the names of columns. [table]
 function Database:InsertRow(tableName, valueTable)
 
-    local query = string.format("INSERT INTO %s", tableName)
+    local query = string.format("INSERT OR REPLACE INTO %s", tableName)
     local queryColumns = ""
     local queryValues = ""
-    local count = 1
+    local count = 0
 
     for column, value in pairs(valueTable) do
+
+        count = count + 1
+
         if count > 1 then
             queryColumns = queryColumns .. ", "
             queryValues = queryValues .. ", "
         end
 
         queryColumns = queryColumns .. tostring(column)
-        queryValues = queryValues .. '\'' .. tostring(value) .. '\''
-        count = count + 1
+        queryValues = queryValues .. '\'' .. self:Escape(tostring(value)) .. '\''
     end
 
-    query = query .. string.format("(%s) VALUES(%s)", queryColumns, queryValues)
+    if count > 0 then
+
+        query = query .. string.format("(%s) VALUES(%s)", queryColumns, queryValues)
+        self:Execute(query)
+    end
+end
+
+function Database:DeleteRows(tableName, condition)
+
+    local query = string.format("DELETE FROM %s %s", tableName, condition)
     self:Execute(query)
+end
+
+function Database:GetSingleValue(tableName, column, condition)
+
+    local query = string.format("SELECT %s from %s %s", column, tableName, condition)
+    local cursor = self:Execute(query)
+    local row = cursor:fetch({}, "a")
+
+    if row == nil or row[column] == nil then
+        return -1
+    else
+        return row[column]
+    end
+end
+
+function Database:SavePlayer(dbPid, data)
+
+    local validCategories = { "character", "location" }
+
+    for category, categoryTable in pairs(data) do
+        if table.contains(validCategories, category) then
+            print("Saving category " .. category)
+            categoryTable.dbPid = dbPid
+            self:InsertRow("player_" .. category, categoryTable)
+        end
+    end
 end
 
 function Database:CreateDefaultTables()
 
+    local columnList, valueTable
+
     columnList = {
-        {name = "VARCHAR(255)"},
-        {password = "VARCHAR(255)"},
-        {admin = "INT"},
-        {consoleAllowed = "BOOLEAN"}
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {name = "TEXT UNIQUE"},
+        {password = "TEXT"},
+        {admin = "INTEGER"},
+        {consoleAllowed = "TEXT NOT NULL CHECK (consoleAllowed IN ('true', 'false', 'default'))"}
     }
 
     self:CreateTable("player_general", columnList)
 
-    valueTable = {
-        name = "David", password = "test", admin = 2, consoleAllowed = true
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {race = "TEXT"},
+        {head = "TEXT"},
+        {hair = "TEXT"},
+        {gender = "BOOLEAN NOT NULL CHECK (gender IN (0, 1))"},
+        {class = "TEXT"},
+        {birthsign = "TEXT"},
+        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
     }
 
-    --self:InsertRow("player_general", valueTable)
+    self:CreateTable("player_character", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        {cell = "TEXT"},
+        {posX = "NUMERIC"},
+        {posY = "NUMERIC"},
+        {posZ = "NUMERIC"},
+        {rotX = "NUMERIC"},
+        {rotY = "NUMERIC"},
+        {rotZ = "NUMERIC"},
+        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+    }
+
+    self:CreateTable("player_location", columnList)
+
+    valueTable = {
+        name = "David", password = "test", admin = 2, consoleAllowed = "true"
+    }
+
+    self:InsertRow("player_general", valueTable)
+
+    local dbPid = self:GetSingleValue("player_general", "dbPid", "WHERE name = 'David'")
 end
 
 return Database
