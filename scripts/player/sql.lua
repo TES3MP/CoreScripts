@@ -48,7 +48,8 @@ function Player:Load()
 end
 
 function Player:GetDatabaseId()
-    return Database:GetSingleValue("player_general", "dbPid", string.format("WHERE name = '%s'", self.data.general.name))
+    local escapedName = Database:Escape(self.data.general.name)
+    return Database:GetSingleValue("player_general", "dbPid", string.format("WHERE name = '%s'", escapedName))
 end
 
 return Player
