@@ -40,19 +40,17 @@ end
 
 function table.removeValue(t, valueToFind)
 
-    return table.replaceValue(t, valueToFind, nil)
+    table.replaceValue(t, valueToFind, nil)
 end
 
 function table.replaceValue(t, valueToFind, newValue)
     for key, value in pairs(t) do
         if type(value) == "table" then
-            t[key] = table.replaceValue(value, valueToFind, newValue)
+            table.replaceValue(value, valueToFind, newValue)
         elseif value == valueToFind then
             t[key] = newValue
         end
     end
-
-    return t
 end
 
 -- Based on http://stackoverflow.com/a/13398936

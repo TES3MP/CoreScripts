@@ -499,7 +499,7 @@ function BasePlayer:RemoveSpells()
         -- Only print spell removal if the spell actually exists
         if table.contains(self.data.spellbook, spellId) == true then
             print("Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
-            self.data.spellbook = table.removeValue(self.data.spellbook, spellId)
+            table.removeValue(self.data.spellbook, spellId)
         end
     end
 end
@@ -535,7 +535,7 @@ end
 
 function BasePlayer:RemoveCellLoaded(cellDescription)
 
-    self.cellsLoaded = table.removeValue(self.cellsLoaded, cellDescription)
+    table.removeValue(self.cellsLoaded, cellDescription)
 end
 
 return BasePlayer

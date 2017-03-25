@@ -76,7 +76,7 @@ function BaseCell:RemoveVisitor(pid)
     -- Only remove visitor if they are actually recorded as one
     if table.contains(self.visitors, pid) == true then
 
-        self.visitors = table.removeValue(self.visitors, pid)
+        table.removeValue(self.visitors, pid)
 
         -- Also remove the record from the player's list of loaded cells
         Players[pid]:RemoveCellLoaded(self.description)
