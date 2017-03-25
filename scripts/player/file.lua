@@ -38,6 +38,18 @@ end
 
 function Player:Load()
     self.data = LIP.load("player/" .. self.accountFile)
+
+    -- Temporary: data.general has been split off into data.login and data.settings,
+    -- but maintain backwards compatibility for a while
+    if self.data.login == nil then
+        self.data.login = {}
+        self.data.login.password = self.data.general.password
+        self.data.login.name = self.data.general.name
+        self.data.settings = {}
+        self.data.settings.admin = self.data.general.admin
+        self.data.settings.consoleAllowed = self.data.general.consoleAllowed
+        self.data.general = nil
+    end
 end
 
 return Player
