@@ -85,7 +85,7 @@ function Database:CreateDefaultTables()
         name = "David", password = "test", admin = 2, consoleAllowed = true
     }
 
-    self:InsertRow("player_general", valueTable)
+    --self:InsertRow("player_general", valueTable)
 end
 
 return Database
