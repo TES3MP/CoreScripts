@@ -128,8 +128,11 @@ function Database:CreateDefaultTables()
 
     local columnList, valueTable
 
+    local dbPidRow = {dbPid = "INTEGER PRIMARY KEY ASC"}
+    local constraintRow = {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+
     columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        dbPidRow,
         {name = "TEXT UNIQUE"},
         {password = "TEXT"},
         {admin = "INTEGER"},
@@ -139,20 +142,20 @@ function Database:CreateDefaultTables()
     self:CreateTable("player_general", columnList)
 
     columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        dbPidRow,
         {race = "TEXT"},
         {head = "TEXT"},
         {hair = "TEXT"},
         {gender = "BOOLEAN NOT NULL CHECK (gender IN (0, 1))"},
         {class = "TEXT"},
         {birthsign = "TEXT"},
-        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+        constraintRow
     }
 
     self:CreateTable("player_character", columnList)
 
     columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        dbPidRow,
         {cell = "TEXT"},
         {posX = "NUMERIC"},
         {posY = "NUMERIC"},
@@ -160,13 +163,13 @@ function Database:CreateDefaultTables()
         {rotX = "NUMERIC"},
         {rotY = "NUMERIC"},
         {rotZ = "NUMERIC"},
-        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+        constraintRow
     }
 
     self:CreateTable("player_location", columnList)
 
     columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"},
+        dbPidRow,
         {level = "INTEGER"},
         {levelProgress = "INTEGER"},
         {healthBase = "NUMERIC"},
@@ -175,14 +178,12 @@ function Database:CreateDefaultTables()
         {magickaCurrent = "NUMERIC"},
         {fatigueBase = "NUMERIC"},
         {fatigueCurrent = "NUMERIC"},
-        {constraint = "FOREIGN KEY(dbPid) REFERENCES player_general(dbPid)" }
+        constraintRow
     }
 
     self:CreateTable("player_stats", columnList)
 
-    columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"}
-    }
+    columnList = { dbPidRow }
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
         local attributePair = {}
@@ -190,12 +191,11 @@ function Database:CreateDefaultTables()
         table.insert(columnList, attributePair)
     end
 
+    table.insert(columnList, constraintRow)
     self:CreateTable("player_attributes", columnList)
     self:CreateTable("player_attributeSkillIncreases", columnList)
 
-    columnList = {
-        {dbPid = "INTEGER PRIMARY KEY ASC"}
-    }
+    columnList = { dbPidRow }
 
     for i = 0, (tes3mp.GetSkillCount() - 1) do
         local skillPair = {}
@@ -203,18 +203,13 @@ function Database:CreateDefaultTables()
         table.insert(columnList, skillPair)
     end
 
+    table.insert(columnList, constraintRow)
     self:CreateTable("player_skills", columnList)
 
     -- Turn INTEGER into NUMERIC for skillProgress
     table.replaceValue(columnList, "INTEGER", "NUMERIC")
 
     self:CreateTable("player_skillProgress", columnList)
-
-    valueTable = {
-        name = "David", password = "test", admin = 2, consoleAllowed = "true"
-    }
-
-    self:InsertRow("player_general", valueTable)
 
     local dbPid = self:GetSingleValue("player_general", "dbPid", "WHERE name = 'David'")
 end
