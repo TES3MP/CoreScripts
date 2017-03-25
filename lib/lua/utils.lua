@@ -85,6 +85,14 @@ function table.print(t, indentLevel)
     for index, value in pairs(t) do
         str = str .. indentStr .. index
 
+        if type(value) == "boolean" then
+            if value == true then
+                value = "true"
+            else
+                value = "false"
+            end
+        end
+
         if type(value) == "table" then
             str = str .. ": \n" .. table.print(value, (indentLevel + 1))
         else
