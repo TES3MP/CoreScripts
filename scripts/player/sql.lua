@@ -8,16 +8,11 @@ local Player = class ("Player", BasePlayer)
 function Player:__init(pid)
     BasePlayer.__init(self, pid)
 
-    -- Replace characters not allowed in filenames
-    self.accountFile = self.accountName
-    self.accountFile = string.gsub(self.accountFile, patterns.invalidFileCharacters, "_")
-    self.accountFile = self.accountFile .. ".txt"
-
     if self.hasAccount == nil then
-        local home = os.getenv("MOD_DIR").."/player/"
-        local file = io.open(home .. self.accountFile, "r")
-        if file ~= nil then
-            io.close()
+        
+        self.dbPid = self:GetDatabaseId()
+
+        if self.dbPid ~= nil then
             self.hasAccount = true
         else
             self.hasAccount = false
@@ -44,7 +39,6 @@ end
 
 function Player:Load()
     self.data = LIP.load("player/" .. self.accountFile)
-    self.dbPid = self:GetDatabaseId()
 end
 
 function Player:GetDatabaseId()
