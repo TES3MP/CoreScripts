@@ -21,7 +21,6 @@ function Player:__init(pid)
 end
 
 function Player:CreateAccount()
-    LIP.save("player/" .. self.accountFile, self.data)
     Database:InsertRow("player_login", self.data.login)
     self.dbPid = self:GetDatabaseId()
     Database:SavePlayer(self.dbPid, self.data)
@@ -32,17 +31,16 @@ end
 
 function Player:Save()
     if self.hasAccount and self.loggedIn then
-        LIP.save("player/" .. self.accountFile, self.data)
         Database:SavePlayer(self.dbPid, self.data)
     end
 end
 
 function Player:Load()
-    self.data = LIP.load("player/" .. self.accountFile)
+    Database:LoadPlayer(self.dbPid)
 end
 
 function Player:GetDatabaseId()
-    local escapedName = Database:Escape(self.data.login.name)
+    local escapedName = Database:Escape(self.accountName)
     return Database:GetSingleValue("player_login", "dbPid", string.format("WHERE name = '%s'", escapedName))
 end
 
