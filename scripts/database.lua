@@ -99,12 +99,12 @@ end
 
 function Database:GetSingleValue(tableName, column, condition)
 
-    local query = string.format("SELECT %s from %s %s", column, tableName, condition)
+    local query = string.format("SELECT %s FROM %s %s", column, tableName, condition)
     local cursor = self:Execute(query)
     local row = cursor:fetch({}, "a")
 
     if row == nil or row[column] == nil then
-        return -1
+        return nil
     else
         return row[column]
     end
