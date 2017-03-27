@@ -61,6 +61,12 @@ function Database:CreateTable(tableName, columnArray)
     self:Execute(query)
 end
 
+function Database:DeleteRows(tableName, condition)
+
+    local query = string.format("DELETE FROM %s %s", tableName, condition)
+    self:Execute(query)
+end
+
 --- Insert a row into a table
 --@param tableName The name of the table. [string]
 --@param valueTable A key/value table where the keys are the names of columns. [table]
@@ -91,10 +97,13 @@ function Database:InsertRow(tableName, valueTable)
     end
 end
 
-function Database:DeleteRows(tableName, condition)
+function Database:SelectRow(tableName, condition)
 
-    local query = string.format("DELETE FROM %s %s", tableName, condition)
-    self:Execute(query)
+    local query = string.format("SELECT * FROM %s %s", tableName, condition)
+    local cursor = self:Execute(query)
+    local row = cursor:fetch({}, "a")
+
+    return row
 end
 
 function Database:GetSingleValue(tableName, column, condition)
@@ -122,6 +131,23 @@ function Database:SavePlayer(dbPid, data)
             self:InsertRow("player_" .. category, tempTable)
         end
     end
+end
+
+function Database:LoadPlayer(dbPid)
+
+    local validCategories = { "login", "settings", "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
+    local data = {}
+
+    for index, category in pairs(validCategories) do
+        data[category] = self:SelectRow("player_" .. category, string.format("WHERE dbPid = '%s'", dbPid))
+
+        -- Set dbPid to nil just in case we want to save the data again to a different format
+        data[category].dbPid = nil
+    end
+
+    table.print(data)
+
+    return data
 end
 
 function Database:CreateDefaultTables()
