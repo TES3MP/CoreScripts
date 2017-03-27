@@ -145,8 +145,6 @@ function Database:LoadPlayer(dbPid)
         data[category].dbPid = nil
     end
 
-    table.print(data)
-
     return data
 end
 

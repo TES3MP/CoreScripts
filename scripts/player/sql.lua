@@ -25,8 +25,6 @@ function Player:CreateAccount()
     self.dbPid = self:GetDatabaseId()
     Database:SavePlayer(self.dbPid, self.data)
     self.hasAccount = true
-
-    print(self.data.login.name .. " has dbPid of " .. self.dbPid)
 end
 
 function Player:Save()
@@ -36,7 +34,9 @@ function Player:Save()
 end
 
 function Player:Load()
-    Database:LoadPlayer(self.dbPid)
+    self.data = Database:LoadPlayer(self.dbPid)
+
+    self.data.equipment = {}
 end
 
 function Player:GetDatabaseId()
