@@ -53,8 +53,18 @@ function table.replaceValue(t, valueToFind, newValue)
     end
 end
 
+-- Based on http://stackoverflow.com/a/6080274
+function table.isArray(t)
+    local i = 0
+    for _ in pairs(t) do
+        i = i + 1
+        if t[i] == nil then return false end
+    end
+    return true
+end
+
 -- Based on http://lua-users.org/wiki/CopyTable
-function table.shallowcopy(orig)
+function table.shallowCopy(orig)
     local orig_type = type(orig)
     local copy
     if orig_type == 'table' then
