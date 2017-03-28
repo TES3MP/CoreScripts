@@ -53,6 +53,18 @@ function table.replaceValue(t, valueToFind, newValue)
     end
 end
 
+-- Checks whether the table contains string keys
+function table.usesNumericalKeys(t)
+    for key, value in pairs(t) do
+        if type(key) ~= "number" then
+            return false
+        end
+    end
+    return true
+end
+
+-- Checks whether the table is an array with only consecutive numerical keys,
+-- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
 function table.isArray(t)
     local i = 0
