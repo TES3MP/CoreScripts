@@ -241,6 +241,27 @@ function Database:CreateDefaultTables()
     table.replaceValue(columnList, "INTEGER", "NUMERIC")
 
     self:CreateTable("player_skillProgress", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER"},
+        {slot = "INTEGER"},
+        {refId = "TEXT"},
+        {refNum = "INTEGER"},
+        {health = "INTEGER"},
+        constraintRow
+    }
+
+    self:CreateTable("player_slots_equipment", columnList)
+    self:CreateTable("player_slots_inventory", columnList)
+
+    columnList = {
+        {dbPid = "INTEGER"},
+        {slot = "INTEGER"},
+        {spellId = "TEXT"},
+        constraintRow
+    }
+
+    self:CreateTable("player_slots_spellbook", columnList)
 end
 
 return Database
