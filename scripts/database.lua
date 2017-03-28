@@ -121,12 +121,12 @@ end
 
 function Database:SavePlayer(dbPid, data)
 
-    local validCategories = { "settings", "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
-
     for category, categoryTable in pairs(data) do
-        if table.contains(validCategories, category) then
+        if table.usesNumericalKeys(categoryTable) then
+            print(category .. " was array!")
+        elseif category ~= "login" then
             print("Saving category " .. category)
-            local tempTable = table.shallowcopy(categoryTable)
+            local tempTable = table.shallowCopy(categoryTable)
             tempTable.dbPid = dbPid
             self:InsertRow("player_" .. category, tempTable)
         end
