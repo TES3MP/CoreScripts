@@ -8,7 +8,7 @@ Database = nil
 Player = nil
 Cell = nil
 
-if (config.dbtype ~= nil and config.dbtype ~= "file") and doesModuleExist("luasql." .. config.dbtype) then
+if (config.dbtype ~= nil and config.dbtype ~= "json") and doesModuleExist("luasql." .. config.dbtype) then
 
     Database = require('database')
     Database:LoadDriver(config.dbtype)
@@ -25,8 +25,8 @@ if (config.dbtype ~= nil and config.dbtype ~= "file") and doesModuleExist("luasq
     Player = require("player.sql")
     Cell = require("cell.sql")
 else
-    Player = require("player.file")
-    Cell = require("cell.file")
+    Player = require("player.json")
+    Cell = require("cell.json")
 end
 
 local helptext = "\nCommand list:\
