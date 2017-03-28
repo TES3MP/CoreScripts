@@ -1,5 +1,4 @@
 require('patterns')
-local LIP = require('LIP')
 local Database = require('database')
 local BasePlayer = require('player.base')
 

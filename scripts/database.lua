@@ -247,7 +247,7 @@ function Database:CreateDefaultTables()
         {slot = "INTEGER"},
         {refId = "TEXT"},
         {refNum = "INTEGER"},
-        {health = "INTEGER"},
+        {charge = "INTEGER"},
         constraintRow
     }
 
