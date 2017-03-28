@@ -53,7 +53,44 @@ function table.replaceValue(t, valueToFind, newValue)
     end
 end
 
--- Checks whether the table contains string keys
+-- Add a 2nd table's key/value pairs to the 1st table
+--
+-- Based on http://stackoverflow.com/a/1283608
+function table.merge(t1, t2)
+    for key, value in pairs(t2) do
+        if type(value) == "table" then
+            if type(t1[key] or false) == "table" then
+                table.merge(t1[key] or {}, t2[key] or {})
+            else
+                t1[key] = value
+            end
+        else
+            t1[key] = value
+        end
+    end
+end
+
+-- Converts string keys containing numbers into numerical keys,
+-- useful for JSON tables
+function table.fixNumericalKeys(t)
+
+    local newTable = {}
+
+    for key, value in pairs(t) do
+
+        if type(value) == "table" then
+            table.fixNumericalKeys(value)
+        elseif type(key) ~= "number" and type(tonumber(key)) == "number" then
+            newTable[tonumber(key)] = value
+            t[key] = nil
+        end
+    end
+
+    table.merge(t, newTable)
+end
+
+-- Checks whether the table contains only numerical keys, though they
+-- don't have to be consecutive
 function table.usesNumericalKeys(t)
     for key, value in pairs(t) do
         if type(key) ~= "number" then
