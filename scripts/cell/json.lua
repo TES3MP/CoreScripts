@@ -36,6 +36,10 @@ end
 
 function Cell:Load()
     self.data = jsonInterface.load("cell/" .. self.cellFile)
+
+    -- JSON doesn't allow numerical keys, but we use them, so convert
+    -- all string number keys into numerical keys
+    table.fixNumericalKeys(self.data)
 end
 
 return Cell

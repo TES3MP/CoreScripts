@@ -37,6 +37,10 @@ end
 
 function Player:Load()
     self.data = jsonInterface.load("player/" .. self.accountFile)
+
+    -- JSON doesn't allow numerical keys, but we use them, so convert
+    -- all string number keys into numerical keys
+    table.fixNumericalKeys(self.data)
 end
 
 return Player
