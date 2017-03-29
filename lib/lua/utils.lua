@@ -80,7 +80,9 @@ function table.fixNumericalKeys(t)
 
         if type(value) == "table" then
             table.fixNumericalKeys(value)
-        elseif type(key) ~= "number" and type(tonumber(key)) == "number" then
+        end
+        
+        if type(key) ~= "number" and type(tonumber(key)) == "number" then
             newTable[tonumber(key)] = value
             t[key] = nil
         end
@@ -131,6 +133,10 @@ end
 function table.print(t, indentLevel)
     local str = ""
     local indentStr = "#"
+
+    if (t == nil) then
+        return
+    end
 
     if (indentLevel == nil) then
         print(table.print(t, 0))
