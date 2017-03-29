@@ -405,10 +405,8 @@ function BasePlayer:LoadEquipment()
 
         local currentItem = self.data.equipment[i]
 
-        if currentItem ~= nil and string.match(currentItem, patterns.item) ~= nil then
-            for refId, count, charge in string.gmatch(currentItem, patterns.item) do
-                tes3mp.EquipItem(self.pid, i, refId, count, charge)
-            end
+        if currentItem ~= nil then
+            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge)
         else
             tes3mp.UnequipItem(self.pid, i)
         end
@@ -425,9 +423,10 @@ function BasePlayer:SaveEquipment()
         local refId = tes3mp.GetEquipmentItemRefId(self.pid, i)
 
         if refId ~= "" then
-            local count = tes3mp.GetEquipmentItemCount(self.pid, i)
-            local charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
-            self.data.equipment[i] = refId .. ", " .. count .. ", " .. charge
+            self.data.equipment[i] = {}
+            self.data.equipment[i].refId = refId
+            self.data.equipment[i].count = tes3mp.GetEquipmentItemCount(self.pid, i)
+            self.data.equipment[i].charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
         end
     end
 end
@@ -447,10 +446,8 @@ function BasePlayer:LoadInventory()
 
     for index, currentItem in pairs(self.data.inventory) do
 
-        if currentItem ~= nil and string.match(currentItem, patterns.item) ~= nil then
-            for refId, count, charge in string.gmatch(currentItem, patterns.item) do
-                tes3mp.AddItem(self.pid, refId, count, charge)
-            end
+        if currentItem ~= nil then
+            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge)
         end
     end
 
@@ -465,9 +462,10 @@ function BasePlayer:SaveInventory()
         local refId = tes3mp.GetInventoryItemRefId(self.pid, i)
 
         if refId ~= "" then
-            local count = tes3mp.GetInventoryItemCount(self.pid, i)
-            local charge = tes3mp.GetInventoryItemCharge(self.pid, i)
-            self.data.inventory[i] = refId .. ", " .. count .. ", " .. charge
+            self.data.inventory[i] = {}
+            self.data.inventory[i].refId = refId
+            self.data.inventory[i].count = tes3mp.GetInventoryItemCount(self.pid, i)
+            self.data.inventory[i].charge = tes3mp.GetInventoryItemCharge(self.pid, i)
         end
     end
 end
