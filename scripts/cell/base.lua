@@ -46,7 +46,7 @@ end
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them
-    if table.contains(self.visitors, pid) == false then
+    if table.containsValue(self.visitors, pid) == false then
         table.insert(self.visitors, pid)
 
         -- Also add a record to the player's list of loaded cells
@@ -74,7 +74,7 @@ end
 function BaseCell:RemoveVisitor(pid)
 
     -- Only remove visitor if they are actually recorded as one
-    if table.contains(self.visitors, pid) == true then
+    if table.containsValue(self.visitors, pid) == true then
 
         table.removeValue(self.visitors, pid)
 

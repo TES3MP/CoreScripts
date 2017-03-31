@@ -20,9 +20,14 @@ function doesModuleExist(name)
     end
 end
 
-function table.contains(t, valueToFind)
+-- Check whether a table contains a certain value, including in nested tables
+function table.containsValue(t, valueToFind, checkNestedTables)
     for key, value in pairs(t) do
-        if value == valueToFind then
+        if checkNestedTables == true and type(value) == "table" then
+            if table.containsValue(value, valueToFind, true) == true then
+                return true
+            end
+        elseif value == valueToFind then
             return true
         end
     end
