@@ -11,7 +11,7 @@ function doesModuleExist(name)
     else
         for _, searcher in ipairs(package.searchers or package.loaders) do
             local loader = searcher(name)
-            if type(loader) == 'function' then
+            if type(loader) == "function" then
                 package.preload[name] = loader
                 return true
             end
@@ -20,7 +20,25 @@ function doesModuleExist(name)
     end
 end
 
--- Check whether a table contains a certain value, including in nested tables
+-- Check whether a table contains a key/value pair, optionally checking inside
+-- nested tables
+function table.containsKeyValue(t, keyToFind, valueToFind, checkNestedTables)
+    if t[keyToFind] ~= nil then
+        if t[keyToFind] == valueToFind then
+            return true
+        end
+    elseif checkNestedTables == true then
+        for key, value in pairs(t) do
+            if type(value) == "table" and table.containsKeyValue(value, keyToFind, valueToFind, true) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+-- Check whether a table contains a certain value, optionally checking inside
+-- nested tables
 function table.containsValue(t, valueToFind, checkNestedTables)
     for key, value in pairs(t) do
         if checkNestedTables == true and type(value) == "table" then
