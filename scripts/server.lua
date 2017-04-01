@@ -8,14 +8,14 @@ Database = nil
 Player = nil
 Cell = nil
 
-if (config.dbtype ~= nil and config.dbtype ~= "json") and doesModuleExist("luasql." .. config.dbtype) then
+if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
     Database = require('database')
-    Database:LoadDriver(config.dbtype)
+    Database:LoadDriver(config.databaseType)
     
-    print("Using " .. Database.driver._VERSION .. " with " .. config.dbtype .. " driver")
+    print("Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")
     
-    Database:Connect(config.dbpath)
+    Database:Connect(config.databasePath)
 
     -- Make sure we enable foreign keys
     Database:Execute("PRAGMA foreign_keys = ON;")

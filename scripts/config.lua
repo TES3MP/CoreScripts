@@ -1,6 +1,6 @@
 config = {}
-config.dbtype = "json" -- json, sqlite3
-config.dbpath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
+config.databaseType = "json" -- json, sqlite3
+config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 config.loginTime = 60 -- Time to login
 config.allowConsole = true -- enable or disable in-game "~" console
 
