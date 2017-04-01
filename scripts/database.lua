@@ -123,12 +123,25 @@ function Database:SavePlayer(dbPid, data)
 
     for category, categoryTable in pairs(data) do
         if table.usesNumericalKeys(categoryTable) then
-            print(category .. " was array!")
+
+            local tableName = "player_slots_" .. category
+            
+            -- Delete the current slots before repopulating them
+            self:DeleteRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
+
+            for slot, slotObject in pairs(categoryTable) do
+                local tempTable = table.shallowCopy(slotObject)
+                tempTable.dbPid = dbPid
+                tempTable.slot = slot
+                self:InsertRow(tableName, tempTable)
+            end
         elseif category ~= "login" then
+
+            local tableName = "player_" .. category
             print("Saving category " .. category)
             local tempTable = table.shallowCopy(categoryTable)
             tempTable.dbPid = dbPid
-            self:InsertRow("player_" .. category, tempTable)
+            self:InsertRow(tableName, tempTable)
         end
     end
 end
@@ -246,7 +259,7 @@ function Database:CreateDefaultTables()
         {dbPid = "INTEGER"},
         {slot = "INTEGER"},
         {refId = "TEXT"},
-        {refNum = "INTEGER"},
+        {count = "INTEGER"},
         {charge = "INTEGER"},
         constraintRow
     }
