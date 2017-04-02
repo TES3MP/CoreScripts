@@ -99,11 +99,23 @@ end
 
 function Database:SelectRow(tableName, condition)
 
+    local rows = self:SelectRows(tableName, condition)
+    return rows[1]
+end
+
+function Database:SelectRows(tableName, condition)
+
     local query = string.format("SELECT * FROM %s %s", tableName, condition)
     local cursor = self:Execute(query)
-    local row = cursor:fetch({}, "a")
+    local rows = {}
+    local currentRow = cursor:fetch({}, "a")
 
-    return row
+    while currentRow do
+        table.insert(rows, currentRow)
+        currentRow = cursor:fetch({}, "a")
+    end
+
+    return rows
 end
 
 function Database:GetSingleValue(tableName, column, condition)
