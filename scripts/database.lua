@@ -158,16 +158,35 @@ function Database:SavePlayer(dbPid, data)
     end
 end
 
-function Database:LoadPlayer(dbPid)
+function Database:LoadPlayer(dbPid, data)
 
-    local validCategories = { "login", "settings", "character", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress" }
-    local data = {}
+    local slotTables = { "equipment", "inventory", "spellbook" }
 
-    for index, category in pairs(validCategories) do
-        data[category] = self:SelectRow("player_" .. category, string.format("WHERE dbPid = '%s'", dbPid))
+    for category, categoryTable in pairs(data) do
+            
+        if table.containsValue(slotTables, category) then
+            local tableName = "player_slots_" .. category
 
-        -- Set dbPid to nil just in case we want to save the data again to a different format
-        data[category].dbPid = nil
+            local rows = self:SelectRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
+            
+            for index, row in pairs(rows) do
+                local slot = row.slot
+
+                -- Remove database-only columns in case we want to save the data again to a different format
+                row.dbPid = nil
+                row.slot = nil
+
+                data[category][slot] = row
+            end
+        else
+            local tableName = "player_" .. category
+            local row = self:SelectRow(tableName, string.format("WHERE dbPid = '%s'", dbPid))
+
+            -- Remove database-only indexes in case we want to save the data again to a different format
+            row.dbPid = nil
+
+            data[category] = row
+        end
     end
 
     return data
