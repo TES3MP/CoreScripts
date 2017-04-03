@@ -148,9 +148,9 @@ Methods.PushPlayerList = function(pls)
     Players = pls
 end
 
-Methods.testFunction = function()
-      print("testFunction: Test function called")
-      print(Players[0])
+Methods.TestFunction = function()
+      tes3mp.LogMessage(2, "TestFunction: Test function called")
+      tes3mp.LogMessage(2, Players[0])
 end
 
 Methods.OnPlayerConnect = function(pid, pname)
@@ -307,7 +307,7 @@ Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveCell()
         Players[pid]:SaveDynamicStats()
-        print("Saving player " .. pid)
+        tes3mp.LogMessage(1, "Saving player " .. pid)
         Players[pid]:Save()
     end
 end
@@ -403,7 +403,7 @@ Methods.OnObjectPlace = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsPlaced()
     else
-        print("Undefined behavior: trying to place object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to place object in unloaded " .. cellDescription)
     end
 end
 
@@ -411,7 +411,7 @@ Methods.OnObjectDelete = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsDeleted()
     else
-        print("Undefined behavior: trying to delete object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to delete object in unloaded " .. cellDescription)
     end
 end
 
@@ -419,7 +419,7 @@ Methods.OnObjectScale = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsScaled()
     else
-        print("Undefined behavior: trying to scale object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to scale object in unloaded " .. cellDescription)
     end
 end
 
@@ -427,7 +427,7 @@ Methods.OnObjectLock = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsLocked()
     else
-        print("Undefined behavior: trying to lock object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to lock object in unloaded " .. cellDescription)
     end
 end
 
@@ -435,7 +435,7 @@ Methods.OnObjectUnlock = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsUnlocked()
     else
-        print("Undefined behavior: trying to unlock object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to unlock object in unloaded " .. cellDescription)
     end
 end
 
@@ -443,7 +443,7 @@ Methods.OnDoorState = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveDoorStates()
     else
-        print("Undefined behavior: trying to set door state in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set door state in unloaded " .. cellDescription)
     end
 end
 
@@ -451,7 +451,7 @@ Methods.OnContainer = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveContainers()
     else
-        print("Undefined behavior: trying to set containers in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set containers in unloaded " .. cellDescription)
     end
 end
 

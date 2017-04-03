@@ -14,7 +14,7 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
     Database = require("database")
     Database:LoadDriver(config.databaseType)
     
-    print("Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")
+    tes3mp.LogMessage(1, "Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")
     
     Database:Connect(config.databasePath)
 
@@ -53,15 +53,15 @@ function OnServerInit()
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
 
     if tes3mp.GetServerVersion() ~= "0.5.2" then
-        print("The server or script is outdated!")
+        tes3mp.LogMessage(3, "The server or script is outdated!")
         tes3mp.StopServer(1)
     end
 
     myMod.PushPlayerList(Players)
 end
 
-function OnServerExit(err)
-    print(err)
+function OnServerExit(error)
+    tes3mp.LogMessage(3, error)
 end
 
 function OnPlayerConnect(pid)
@@ -73,7 +73,7 @@ function OnPlayerConnect(pid)
         myMod.OnPlayerDeny(pid, pname)
         return false -- deny player
     else
-        print("New player with pid("..pid..") connected!")
+        tes3mp.LogMessage(1, "New player with pid("..pid..") connected!")
         myMod.OnPlayerConnect(pid, pname)
         return true -- accept player
     end
@@ -84,7 +84,7 @@ function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConn
 end
 
 function OnPlayerDisconnect(pid)
-    print("Player with pid("..pid..") disconnected.")
+    tes3mp.LogMessage(1, "Player with pid("..pid..") disconnected.")
     local pname = tes3mp.GetName(pid)
     local message = pname.." ("..pid..") ".."left the server.\n"
     tes3mp.SendMessage(pid, message, true)
@@ -128,7 +128,7 @@ end
 
 function OnPlayerSendMessage(pid, message)
     local pname = tes3mp.GetName(pid)
-    print(pname.."("..pid.."): "..message)
+    tes3mp.LogMessage(1, pname.."("..pid.."): "..message)
 
     if myMod.OnPlayerMessage(pid, message) == false then
         return false

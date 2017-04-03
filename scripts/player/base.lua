@@ -498,7 +498,7 @@ function BasePlayer:AddSpells()
 
         -- Only add new spell if we don't already have it
         if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == false then
-            print("Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
+            tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
             local newSpell = {}
             newSpell.spellId = spellId
             table.insert(self.data.spellbook, newSpell)
@@ -513,7 +513,7 @@ function BasePlayer:RemoveSpells()
 
         -- Only print spell removal if the spell actually exists
         if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
-            print("Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
+            tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
             table.removeValue(self.data.spellbook, spellId)
         end
     end

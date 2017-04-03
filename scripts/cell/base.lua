@@ -280,7 +280,7 @@ function BaseCell:SaveContainers()
                 -- indicative of a data race situation
                 -- (to be implemented later)
                 if action == containerActions.REMOVE then
-                    print("Attempt to remove non-existent item")
+                    tes3mp.LogMessage(2, "Attempt to remove non-existent item")
                 -- If we have received ADD for a previously non-existent item, or we are
                 -- just using SET, simply insert the item
                 else
@@ -311,7 +311,7 @@ function BaseCell:SaveContainers()
                         -- than is possible, indicative of a data race situation
                         -- (to be implemented later)
                         else
-                            print("Attempt to remove more than possible from item")
+                            tes3mp.LogMessage(2, "Attempt to remove more than possible from item")
                         end
                     end
                 end
