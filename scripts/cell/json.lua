@@ -2,7 +2,7 @@ jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 local BaseCell = require("cell.base")
 
-local Cell = class ("Cell", BaseCell)
+local Cell = class("Cell", BaseCell)
 
 function Cell:__init(cellDescription)
     BaseCell.__init(self, cellDescription)
