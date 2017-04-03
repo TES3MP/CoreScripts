@@ -321,7 +321,7 @@ Methods.LoadCell = function(pid, cellDescription)
         LoadedCells[cellDescription].description = cellDescription
 
         -- If this cell has a data file, load it
-        if LoadedCells[cellDescription]:HasFile() then
+        if LoadedCells[cellDescription]:HasEntry() then
             LoadedCells[cellDescription]:Load()
 
             -- It's possible this file uses an older cell structure,

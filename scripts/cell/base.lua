@@ -30,8 +30,8 @@ function BaseCell:__init(cellDescription)
     self.visitors = {}
 end
 
-function BaseCell:HasFile()
-    return self.hasFile
+function BaseCell:HasEntry()
+    return self.hasEntry
 end
 
 function BaseCell:HasCurrentStructure()

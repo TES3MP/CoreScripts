@@ -12,25 +12,25 @@ function Cell:__init(cellDescription)
     self.cellFile = string.gsub(self.cellFile, ":", ";")
     self.cellFile = self.cellFile .. ".json"
 
-    if self.hasFile == nil then
+    if self.hasEntry == nil then
         local home = os.getenv("MOD_DIR").."/cell/"
         local file = io.open(home .. self.cellFile, "r")
         if file ~= nil then
             io.close()
-            self.hasFile = true
+            self.hasEntry = true
         else
-            self.hasFile = false
+            self.hasEntry = false
         end
     end
 end
 
 function Cell:CreateFile()
     jsonInterface.save("cell/" .. self.cellFile, self.data)
-    self.hasFile = true
+    self.hasEntry = true
 end
 
 function Cell:Save()
-    if self.hasFile then
+    if self.hasEntry then
         jsonInterface.save("cell/" .. self.cellFile, self.data)
     end
 end
