@@ -33,9 +33,7 @@ function Player:Save()
 end
 
 function Player:Load()
-    self.data = Database:LoadPlayer(self.dbPid)
-
-    self.data.equipment = {}
+    self.data = Database:LoadPlayer(self.dbPid, self.data)
 end
 
 function Player:GetDatabaseId()
