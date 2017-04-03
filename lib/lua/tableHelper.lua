@@ -97,11 +97,22 @@ end
 -- Checks whether the table contains only numerical keys, though they
 -- don't have to be consecutive
 function tableHelper.usesNumericalKeys(t)
+
+    local tableSize = 0
+
     for key, value in pairs(t) do
+
+        tableSize = tableSize + 1
+
         if type(key) ~= "number" then
             return false
         end
     end
+
+    if tableSize == 0 then
+        return false
+    end
+
     return true
 end
 
