@@ -231,6 +231,19 @@ function Database:CreateDefaultTables()
 
     columnList = {
         dbPidRow,
+        {name = "TEXT"},
+        {description = "TEXT"},
+        {specialization = "INTEGER"},
+        {majorAttributes = "TEXT"},
+        {majorSkills = "TEXT"},
+        {minorSkills = "TEXT"},
+        constraintRow
+    }
+
+    self:CreateTable("player_customClass", columnList)
+
+    columnList = {
+        dbPidRow,
         {cell = "TEXT"},
         {posX = "NUMERIC"},
         {posY = "NUMERIC"},

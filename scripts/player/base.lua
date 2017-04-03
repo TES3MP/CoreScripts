@@ -44,6 +44,7 @@ function BasePlayer:__init(pid)
             fatigueCurrent = 1,
         },
     };
+    self.data.customClass = {}
     self.data.attributes = {}
     self.data.attributeSkillIncreases = {}
 
@@ -214,7 +215,6 @@ function BasePlayer:SaveClass()
         self.data.character.class = tes3mp.GetDefaultClass(self.pid)
     else
         self.data.character.class = "custom"
-        self.data.customClass = {}
         self.data.customClass.name = tes3mp.GetClassName(self.pid)
         self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
         self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
