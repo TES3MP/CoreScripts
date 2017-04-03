@@ -1,5 +1,5 @@
-require('utils')
-local Database = class("Database")
+tableHelper = require("tableHelper")
+Database = class("Database")
 
 function Database:LoadDriver(driver)
 
@@ -134,7 +134,7 @@ end
 function Database:SavePlayer(dbPid, data)
 
     for category, categoryTable in pairs(data) do
-        if table.usesNumericalKeys(categoryTable) then
+        if tableHelper.usesNumericalKeys(categoryTable) then
 
             local tableName = "player_slots_" .. category
             
@@ -142,7 +142,7 @@ function Database:SavePlayer(dbPid, data)
             self:DeleteRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
 
             for slot, slotObject in pairs(categoryTable) do
-                local tempTable = table.shallowCopy(slotObject)
+                local tempTable = tableHelper.shallowCopy(slotObject)
                 tempTable.dbPid = dbPid
                 tempTable.slot = slot
                 self:InsertRow(tableName, tempTable)
@@ -151,7 +151,7 @@ function Database:SavePlayer(dbPid, data)
 
             local tableName = "player_" .. category
             print("Saving category " .. category)
-            local tempTable = table.shallowCopy(categoryTable)
+            local tempTable = tableHelper.shallowCopy(categoryTable)
             tempTable.dbPid = dbPid
             self:InsertRow(tableName, tempTable)
         end
@@ -164,7 +164,7 @@ function Database:LoadPlayer(dbPid, data)
 
     for category, categoryTable in pairs(data) do
             
-        if table.containsValue(slotTables, category) then
+        if tableHelper.containsValue(slotTables, category) then
             local tableName = "player_slots_" .. category
 
             local rows = self:SelectRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
@@ -282,7 +282,7 @@ function Database:CreateDefaultTables()
     self:CreateTable("player_skills", columnList)
 
     -- Turn INTEGER into NUMERIC for skillProgress
-    table.replaceValue(columnList, "INTEGER", "NUMERIC")
+    tableHelper.replaceValue(columnList, "INTEGER", "NUMERIC")
 
     self:CreateTable("player_skillProgress", columnList)
 

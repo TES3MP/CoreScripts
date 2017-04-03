@@ -1,5 +1,6 @@
-local jsonInterface = require "jsonInterface"
-local BaseCell = require "cell.base"
+jsonInterface = require("jsonInterface")
+tableHelper = require("tableHelper")
+local BaseCell = require("cell.base")
 
 local Cell = class ("Cell", BaseCell)
 
@@ -39,7 +40,7 @@ function Cell:Load()
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
-    table.fixNumericalKeys(self.data)
+    tableHelper.fixNumericalKeys(self.data)
 end
 
 return Cell

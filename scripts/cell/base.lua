@@ -1,5 +1,5 @@
-require('patterns')
-require('utils')
+require("patterns")
+tableHelper = require("tableHelper")
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
@@ -46,7 +46,7 @@ end
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them
-    if table.containsValue(self.visitors, pid) == false then
+    if tableHelper.containsValue(self.visitors, pid) == false then
         table.insert(self.visitors, pid)
 
         -- Also add a record to the player's list of loaded cells
@@ -74,9 +74,9 @@ end
 function BaseCell:RemoveVisitor(pid)
 
     -- Only remove visitor if they are actually recorded as one
-    if table.containsValue(self.visitors, pid) == true then
+    if tableHelper.containsValue(self.visitors, pid) == true then
 
-        table.removeValue(self.visitors, pid)
+        tableHelper.removeValue(self.visitors, pid)
 
         -- Also remove the record from the player's list of loaded cells
         Players[pid]:RemoveCellLoaded(self.description)
@@ -271,7 +271,7 @@ function BaseCell:SaveContainers()
                 currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
 
                 -- Check if an item matching the pattern already exists in the container
-                storedIndex = table.getIndexByPattern(self.data[containerTableName], currentItemPattern)
+                storedIndex = tableHelper.getIndexByPattern(self.data[containerTableName], currentItemPattern)
             end
 
             -- If storedIndex is nil, it can mean a number of things

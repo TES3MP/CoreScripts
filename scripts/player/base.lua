@@ -1,6 +1,6 @@
-require('utils')
-require('config')
-require('patterns')
+require("config")
+require("patterns")
+tableHelper = require("tableHelper")
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid)
@@ -497,7 +497,7 @@ function BasePlayer:AddSpells()
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
         -- Only add new spell if we don't already have it
-        if table.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == false then
+        if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == false then
             print("Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
             local newSpell = {}
             newSpell.spellId = spellId
@@ -512,7 +512,7 @@ function BasePlayer:RemoveSpells()
         local spellId = tes3mp.GetSpellId(self.pid, i)
 
         -- Only print spell removal if the spell actually exists
-        if table.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
+        if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
             print("Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
             table.removeValue(self.data.spellbook, spellId)
         end
@@ -542,7 +542,7 @@ end
 function BasePlayer:AddCellLoaded(cellDescription)
 
     -- Only add new loaded cell if we don't already have it
-    if table.containsValue(self.cellsLoaded, cellDescription) == false then
+    if tableHelper.containsValue(self.cellsLoaded, cellDescription) == false then
         table.insert(self.cellsLoaded, cellDescription)
     end
 
@@ -550,7 +550,7 @@ end
 
 function BasePlayer:RemoveCellLoaded(cellDescription)
 
-    table.removeValue(self.cellsLoaded, cellDescription)
+    tableHelper.removeValue(self.cellsLoaded, cellDescription)
 end
 
 return BasePlayer

@@ -1,6 +1,6 @@
-require('patterns')
-local Database = require('database')
-local BasePlayer = require('player.base')
+require("patterns")
+Database = require("database")
+local BasePlayer = require("player.base")
 
 local Player = class ("Player", BasePlayer)
 

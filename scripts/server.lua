@@ -1,8 +1,9 @@
-require('utils')
-require('config')
-class = require('classy')
-require('guiIds')
-myMod = require('myMod')
+require("config")
+class = require("classy")
+tableHelper = require("tableHelper")
+require("utils")
+require("guiIds")
+myMod = require("myMod")
 
 Database = nil
 Player = nil
@@ -10,7 +11,7 @@ Cell = nil
 
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
-    Database = require('database')
+    Database = require("database")
     Database:LoadDriver(config.databaseType)
     
     print("Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")

@@ -1,6 +1,7 @@
-require('patterns')
-local jsonInterface = require "jsonInterface"
-local BasePlayer = require "player.base"
+require("patterns")
+local jsonInterface = require("jsonInterface")
+tableHelper = require("tableHelper")
+local BasePlayer = require("player.base")
 
 local Player = class ("Player", BasePlayer)
 
@@ -40,7 +41,7 @@ function Player:Load()
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
-    table.fixNumericalKeys(self.data)
+    tableHelper.fixNumericalKeys(self.data)
 end
 
 return Player
