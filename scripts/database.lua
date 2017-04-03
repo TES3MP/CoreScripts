@@ -182,10 +182,13 @@ function Database:LoadPlayer(dbPid, data)
             local tableName = "player_" .. category
             local row = self:SelectRow(tableName, string.format("WHERE dbPid = '%s'", dbPid))
 
-            -- Remove database-only indexes in case we want to save the data again to a different format
-            row.dbPid = nil
+            if row ~= nil then
 
-            data[category] = row
+                -- Remove database-only indexes in case we want to save the data again to a different format
+                row.dbPid = nil
+
+                data[category] = row
+            end
         end
     end
 

@@ -1,4 +1,3 @@
-require("patterns")
 Database = require("database")
 local BasePlayer = require("player.base")
 
