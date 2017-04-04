@@ -9,6 +9,7 @@ myMod = require("myMod")
 Database = nil
 Player = nil
 Cell = nil
+World = nil
 
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
@@ -26,9 +27,11 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
 
     Player = require("player.sql")
     Cell = require("cell.sql")
+    World = require("world.sql")
 else
     Player = require("player.json")
     Cell = require("cell.json")
+    World = require("world.json")
 end
 
 local helptext = "\nCommand list:\
@@ -58,6 +61,7 @@ function OnServerInit()
         tes3mp.StopServer(1)
     end
 
+    myMod.InitializeWorld()
     myMod.PushPlayerList(Players)
 end
 

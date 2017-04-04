@@ -2,6 +2,7 @@ data/*
 lib/*
 !/data/cell/.gitkeep
 !/data/player/.gitkeep
+!/data/world/.gitkeep
 !/lib/lua
 !lib/.gitkeep
 

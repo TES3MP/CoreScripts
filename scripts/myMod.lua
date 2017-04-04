@@ -3,6 +3,20 @@ local Methods = {}
 
 Players = {}
 LoadedCells = {}
+WorldInstance = nil
+
+Methods.InitializeWorld = function()
+    WorldInstance = World()
+
+    -- If the world has a data entry, load it
+    if WorldInstance:HasEntry() then
+        WorldInstance:Load()
+    -- Otherwise, create a data file for it
+    else
+        WorldInstance:CreateEntry()
+    end
+
+end
 
 Methods.CheckPlayerValidity = function(pid, targetPlayer)
 
