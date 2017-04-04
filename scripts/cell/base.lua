@@ -7,7 +7,6 @@ function BaseCell:__init(cellDescription)
     self.data = {}
     self.data.entry = {}
     self.data.entry.description = cellDescription
-    self.data.entry.version = tes3mp.GetServerVersion()
 
     self.data.refIdDelete = {}
     self.data.refIdPlace = {}
@@ -32,15 +31,6 @@ end
 
 function BaseCell:HasEntry()
     return self.hasEntry
-end
-
-function BaseCell:HasCurrentStructure()
-
-    if self.data.entry.version == nil or self.data.entry.version ~= tes3mp.GetServerVersion() then
-        return false
-    end
-
-    return true
 end
 
 function BaseCell:AddVisitor(pid)
@@ -553,28 +543,6 @@ function BaseCell:SendCellData(pid)
     else
         self:RequestContainers(pid)
     end
-end
-
-function BaseCell:UpdateStructure()
-
-    if self.data.entry.version == "0.4.1" then
-
-        if self.data.doorState == nil then
-            self.data.doorState = {}
-        end
-
-        if self.data.state ~= nil then
-
-            for refNum, doorState in pairs(self.data.state) do
-                self.data.doorState[refNum] = doorState
-            end
-
-            self.data.state = nil
-        end
-    end
-
-    self.data.entry.version = tes3mp.GetServerVersion()
-    self:Save()
 end
 
 return BaseCell

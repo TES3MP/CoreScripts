@@ -320,16 +320,9 @@ Methods.LoadCell = function(pid, cellDescription)
         LoadedCells[cellDescription] = Cell(cellDescription)
         LoadedCells[cellDescription].description = cellDescription
 
-        -- If this cell has a data file, load it
+        -- If this cell has a data entry, load it
         if LoadedCells[cellDescription]:HasEntry() then
             LoadedCells[cellDescription]:Load()
-
-            -- It's possible this file uses an older cell structure,
-            -- so update to the current one
-            if LoadedCells[cellDescription]:HasCurrentStructure() == false then
-                LoadedCells[cellDescription]:UpdateStructure()
-            end
-
         -- Otherwise, create a data file for it
         else
             LoadedCells[cellDescription]:CreateFile()
