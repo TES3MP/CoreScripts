@@ -195,10 +195,27 @@ function Database:LoadPlayer(dbPid, data)
     return data
 end
 
-function Database:CreateDefaultTables()
+function Database:CreateCellTables()
 
     local columnList, valueTable
 
+    -- Frequently reused rows related to database cell IDs
+    local dbCidRow = {dbCid = "INTEGER PRIMARY KEY ASC"}
+    local constraintRow = {constraint = "FOREIGN KEY(dbCid) REFERENCES cell_entry(dbCid)" }
+
+    columnList = {
+        dbCidRow,
+        {description = "TEXT UNIQUE"}
+    }
+
+    self:CreateTable("cell_entry", columnList)
+end
+
+function Database:CreatePlayerTables()
+
+    local columnList, valueTable
+
+    -- Frequently reused rows related to database player IDs
     local dbPidRow = {dbPid = "INTEGER PRIMARY KEY ASC"}
     local constraintRow = {constraint = "FOREIGN KEY(dbPid) REFERENCES player_login(dbPid)" }
 

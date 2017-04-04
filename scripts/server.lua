@@ -3,6 +3,7 @@ class = require("classy")
 tableHelper = require("tableHelper")
 require("utils")
 require("guiIds")
+require("deathReasons")
 myMod = require("myMod")
 
 Database = nil
@@ -21,7 +22,7 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
     -- Make sure we enable foreign keys
     Database:Execute("PRAGMA foreign_keys = ON;")
 
-    Database:CreateDefaultTables()
+    Database:CreatePlayerTables()
 
     Player = require("player.sql")
     Cell = require("cell.sql")
@@ -94,8 +95,6 @@ function OnPlayerDisconnect(pid)
 
     myMod.OnPlayerDisconnect(pid)
 end
-
-require("deathReasons")
 
 function OnPlayerDeath(pid, reason, killerId)
 
