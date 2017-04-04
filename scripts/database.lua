@@ -195,6 +195,32 @@ function Database:LoadPlayer(dbPid, data)
     return data
 end
 
+function Database:SaveWorld(data)
+
+    for category, categoryTable in pairs(data) do
+
+        local tableName = "world_" .. category
+        local tempTable = tableHelper.shallowCopy(categoryTable)
+        tempTable.rowid = 0
+        self:InsertRow(tableName, tempTable)
+    end
+end
+
+function Database:LoadWorld(data)
+
+    for category, categoryTable in pairs(data) do
+
+        local tableName = "world_" .. category
+        local row = self:SelectRow(tableName, "WHERE rowid = 0")
+
+        if row ~= nil then
+            data[category] = row
+        end
+    end
+
+    return data
+end
+
 function Database:CreateCellTables()
 
     local columnList, valueTable
@@ -209,6 +235,17 @@ function Database:CreateCellTables()
     }
 
     self:CreateTable("cell_entry", columnList)
+end
+
+function Database:CreateWorldTables()
+
+    local columnList
+
+    columnList = {
+        {currentMpNum = "INTEGER"}
+    }
+
+    self:CreateTable("world_general", columnList)
 end
 
 function Database:CreatePlayerTables()

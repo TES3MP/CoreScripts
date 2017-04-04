@@ -24,6 +24,7 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
     Database:Execute("PRAGMA foreign_keys = ON;")
 
     Database:CreatePlayerTables()
+    Database:CreateWorldTables()
 
     Player = require("player.sql")
     Cell = require("cell.sql")
