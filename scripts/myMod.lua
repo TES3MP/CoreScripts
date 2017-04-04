@@ -11,11 +11,14 @@ Methods.InitializeWorld = function()
     -- If the world has a data entry, load it
     if WorldInstance:HasEntry() then
         WorldInstance:Load()
+
+        -- Get the current mpNum from the loaded world
+        tes3mp.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
+
     -- Otherwise, create a data file for it
     else
         WorldInstance:CreateEntry()
     end
-
 end
 
 Methods.CheckPlayerValidity = function(pid, targetPlayer)
@@ -469,6 +472,10 @@ Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveDynamicStats()
     Players[pid]:SaveEquipment()
     Players[pid]:CreateAccount()
+end
+
+Methods.OnMpNumIncrement = function(currentMpNum)
+    WorldInstance:SetCurrentMpNum(currentMpNum)
 end
 
 return Methods

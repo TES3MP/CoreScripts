@@ -413,3 +413,7 @@ end
 function OnGUIAction(pid, idGui, data)
     if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end
+
+function OnMpNumIncrement(currentMpNum)
+    myMod.OnMpNumIncrement(currentMpNum)
+end

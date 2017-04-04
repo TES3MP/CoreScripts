@@ -10,6 +10,15 @@ function BaseWorld:__init(test)
     };
 end
 
+function BaseWorld:GetCurrentMpNum()
+    return self.data.general.currentMpNum
+end
+
+function BaseWorld:SetCurrentMpNum(currentMpNum)
+    self.data.general.currentMpNum = currentMpNum
+    self:Save()
+end
+
 function BaseWorld:HasEntry()
     return self.hasEntry
 end
