@@ -5,9 +5,9 @@ local BaseCell = class("BaseCell")
 function BaseCell:__init(cellDescription)
 
     self.data = {}
-    self.data.general = {}
-    self.data.general.description = cellDescription
-    self.data.general.version = tes3mp.GetServerVersion()
+    self.data.entry = {}
+    self.data.entry.description = cellDescription
+    self.data.entry.version = tes3mp.GetServerVersion()
 
     self.data.refIdDelete = {}
     self.data.refIdPlace = {}
@@ -36,7 +36,7 @@ end
 
 function BaseCell:HasCurrentStructure()
 
-    if self.data.general.version == nil or self.data.general.version ~= tes3mp.GetServerVersion() then
+    if self.data.entry.version == nil or self.data.entry.version ~= tes3mp.GetServerVersion() then
         return false
     end
 
@@ -557,7 +557,7 @@ end
 
 function BaseCell:UpdateStructure()
 
-    if self.data.general.version == "0.4.1" then
+    if self.data.entry.version == "0.4.1" then
 
         if self.data.doorState == nil then
             self.data.doorState = {}
@@ -573,7 +573,7 @@ function BaseCell:UpdateStructure()
         end
     end
 
-    self.data.general.version = tes3mp.GetServerVersion()
+    self.data.entry.version = tes3mp.GetServerVersion()
     self:Save()
 end
 
