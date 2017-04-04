@@ -24,7 +24,7 @@ function Cell:__init(cellDescription)
     end
 end
 
-function Cell:CreateFile()
+function Cell:CreateEntry()
     jsonInterface.save("cell/" .. self.cellFile, self.data)
     self.hasEntry = true
 end

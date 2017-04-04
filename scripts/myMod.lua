@@ -325,7 +325,7 @@ Methods.LoadCell = function(pid, cellDescription)
             LoadedCells[cellDescription]:Load()
         -- Otherwise, create a data file for it
         else
-            LoadedCells[cellDescription]:CreateFile()
+            LoadedCells[cellDescription]:CreateEntry()
         end
     end
 
