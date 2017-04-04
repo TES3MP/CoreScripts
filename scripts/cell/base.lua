@@ -1,5 +1,6 @@
 require("patterns")
 tableHelper = require("tableHelper")
+require("utils")
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
@@ -86,57 +87,57 @@ end
 
 function BaseCell:SaveObjectsDeleted()
 
-    local refNum
+    local refIndex
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
         -- With this object being deleted, we no longer need to store
         -- any special information about it
-        self.data.refIdScale[refNum] = nil
-        self.data.refIdLock[refNum] = nil
-        self.data.refIdUnlock[refNum] = nil
-        self.data.refIdDoorState[refNum] = nil
+        self.data.refIdScale[refIndex] = nil
+        self.data.refIdLock[refIndex] = nil
+        self.data.refIdUnlock[refIndex] = nil
+        self.data.refIdDoorState[refIndex] = nil
 
-        self.data.count[refNum] = nil
-        self.data.charge[refNum] = nil
-        self.data.goldValue[refNum] = nil
-        self.data.position[refNum] = nil
-        self.data.rotation[refNum] = nil
-        self.data.scale[refNum] = nil
-        self.data.lockLevel[refNum] = nil
-        self.data.doorState[refNum] = nil
+        self.data.count[refIndex] = nil
+        self.data.charge[refIndex] = nil
+        self.data.goldValue[refIndex] = nil
+        self.data.position[refIndex] = nil
+        self.data.rotation[refIndex] = nil
+        self.data.scale[refIndex] = nil
+        self.data.lockLevel[refIndex] = nil
+        self.data.doorState[refIndex] = nil
 
         -- If this is a container, make sure we remove its table
-        if self.data.refIdContainer ~= nil and self.data.refIdContainer[refNum] ~= nil then
+        if self.data.refIdContainer ~= nil and self.data.refIdContainer[refIndex] ~= nil then
 
-            local containerName = self.data.refIdContainer[refNum] .. refNum
+            local containerName = self.data.refIdContainer[refIndex] .. refIndex
 
             self.data[containerName] = nil
-            self.data.refIdContainer[refNum] = nil
+            self.data.refIdContainer[refIndex] = nil
         end
 
         -- If this is an object that did not originally exist in the cell,
         -- remove it from refIdPlace
-        if self.data.refIdPlace[refNum] ~= nil then
-            self.data.refIdPlace[refNum] = nil
+        if self.data.refIdPlace[refIndex] ~= nil then
+            self.data.refIdPlace[refIndex] = nil
         -- Otherwise, add it to refIdDelete
         else
-            self.data.refIdDelete[refNum] = tes3mp.GetObjectRefId(i)
+            self.data.refIdDelete[refIndex] = tes3mp.GetObjectRefId(i)
         end
     end
 end
 
 function BaseCell:SaveObjectsPlaced()
 
-    local refNum
+    local refIndex
     local tempValue
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
-        self.data.refIdPlace[refNum] = tes3mp.GetObjectRefId(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        self.data.refIdPlace[refIndex] = tes3mp.GetObjectRefId(i)
 
         local count = tes3mp.GetObjectCount(i)
         local charge = tes3mp.GetObjectCharge(i)
@@ -144,75 +145,75 @@ function BaseCell:SaveObjectsPlaced()
 
         -- Only save count if it isn't the default value of 1
         if count ~= 1 then
-            self.data.count[refNum] = count
+            self.data.count[refIndex] = count
         end
 
         -- Only save charge if it isn't the default value of -1
         if charge ~= -1 then
-            self.data.charge[refNum] = charge
+            self.data.charge[refIndex] = charge
         end
 
         -- Only save goldValue if it isn't the default value of 1
         if goldValue ~=1 then
-            self.data.goldValue[refNum] = goldValue
+            self.data.goldValue[refIndex] = goldValue
         end
 
         tempValue = tes3mp.GetObjectPosX(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectPosY(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectPosZ(i)
-        self.data.position[refNum] = tempValue
+        self.data.position[refIndex] = tempValue
 
         tempValue = tes3mp.GetObjectRotX(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectRotY(i)
         tempValue = tempValue .. ", " .. tes3mp.GetObjectRotZ(i)
-        self.data.rotation[refNum] = tempValue
+        self.data.rotation[refIndex] = tempValue
     end
 end
 
 function BaseCell:SaveObjectsScaled()
 
-    local refNum
+    local refIndex
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
-        self.data.refIdScale[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.scale[refNum] = tes3mp.GetObjectScale(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        self.data.refIdScale[refIndex] = tes3mp.GetObjectRefId(i)
+        self.data.scale[refIndex] = tes3mp.GetObjectScale(i)
     end
 end
 
 function BaseCell:SaveObjectsLocked()
 
-    local refNum
+    local refIndex
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
-        self.data.refIdLock[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.lockLevel[refNum] = tes3mp.GetObjectLockLevel(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        self.data.refIdLock[refIndex] = tes3mp.GetObjectRefId(i)
+        self.data.lockLevel[refIndex] = tes3mp.GetObjectLockLevel(i)
     end
 end
 
 function BaseCell:SaveObjectsUnlocked()
 
-    local refNum
+    local refIndex
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
-        self.data.refIdUnlock[refNum] = tes3mp.GetObjectRefId(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        self.data.refIdUnlock[refIndex] = tes3mp.GetObjectRefId(i)
     end
 end
 
 function BaseCell:SaveDoorStates()
 
-    local refNum
+    local refIndex
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refNum = tes3mp.GetObjectRefNumIndex(i)
-        self.data.refIdDoorState[refNum] = tes3mp.GetObjectRefId(i)
-        self.data.doorState[refNum] = tes3mp.GetObjectDoorState(i)
+        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        self.data.refIdDoorState[refIndex] = tes3mp.GetObjectRefId(i)
+        self.data.doorState[refIndex] = tes3mp.GetObjectDoorState(i)
     end
 end
 
@@ -233,10 +234,10 @@ function BaseCell:SaveContainers()
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local containerRefId = tes3mp.GetObjectRefId(objectIndex)
-        local containerRefNum = tes3mp.GetObjectRefNumIndex(objectIndex)
-        self.data.refIdContainer[containerRefNum] = containerRefId
+        local containerRefIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        self.data.refIdContainer[containerRefIndex] = containerRefId
 
-        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
+        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefIndex
 
         -- If this table doesn't exist, initialize it
         -- If it exists and the action is SET, empty it
@@ -318,9 +319,11 @@ function BaseCell:SendObjectsDeleted(pid)
     tes3mp.SetScriptEventCell(self.description)
 
     -- Objects deleted
-    for refNum, refId in pairs(self.data.refIdDelete) do
+    for refIndex, refId in pairs(self.data.refIdDelete) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
         tes3mp.AddWorldObject()
 
@@ -339,14 +342,16 @@ function BaseCell:SendObjectsPlaced(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refNum, refId in pairs(self.data.refIdPlace) do
+    for refIndex, refId in pairs(self.data.refIdPlace) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
 
-        local count = self.data.count[refNum]
-        local charge = self.data.charge[refNum]
-        local goldValue = self.data.goldValue[refNum]
+        local count = self.data.count[refIndex]
+        local charge = self.data.charge[refIndex]
+        local goldValue = self.data.goldValue[refIndex]
 
         -- Use default count of 1 when the value is missing
         if count == nil then
@@ -367,11 +372,11 @@ function BaseCell:SendObjectsPlaced(pid)
         tes3mp.SetObjectCount(count)
         tes3mp.SetObjectGoldValue(goldValue)
 
-        for posX, posY, posZ in string.gmatch(self.data.position[refNum], patterns.coordinates) do
+        for posX, posY, posZ in string.gmatch(self.data.position[refIndex], patterns.coordinates) do
             tes3mp.SetObjectPosition(posX, posY, posZ)
         end
 
-        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refNum], patterns.coordinates) do
+        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refIndex], patterns.coordinates) do
             tes3mp.SetObjectRotation(rotX, rotY, rotZ)
         end
 
@@ -392,11 +397,13 @@ function BaseCell:SendObjectsScaled(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refNum, refId in pairs(self.data.refIdScale) do
+    for refIndex, refId in pairs(self.data.refIdScale) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectScale(self.data.scale[refNum])
+        tes3mp.SetObjectScale(self.data.scale[refIndex])
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -414,11 +421,13 @@ function BaseCell:SendObjectsLocked(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refNum, refId in pairs(self.data.refIdLock) do
+    for refIndex, refId in pairs(self.data.refIdLock) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectLockLevel(self.data.lockLevel[refNum])
+        tes3mp.SetObjectLockLevel(self.data.lockLevel[refIndex])
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -436,9 +445,11 @@ function BaseCell:SendObjectsUnlocked(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refNum, refId in pairs(self.data.refIdUnlock) do
+    for refIndex, refId in pairs(self.data.refIdUnlock) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
         tes3mp.AddWorldObject()
 
@@ -457,11 +468,13 @@ function BaseCell:SendDoorStates(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refNum, refId in pairs(self.data.refIdDoorState) do
+    for refIndex, refId in pairs(self.data.refIdDoorState) do
 
-        tes3mp.SetObjectRefNumIndex(refNum)
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectDoorState(self.data.doorState[refNum])
+        tes3mp.SetObjectDoorState(self.data.doorState[refIndex])
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -479,12 +492,14 @@ function BaseCell:SendContainers(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for containerRefNum, containerRefId in pairs(self.data.refIdContainer) do
+    for containerRefIndex, containerRefId in pairs(self.data.refIdContainer) do
 
-        tes3mp.SetObjectRefNumIndex(containerRefNum)
+        local splitIndex = containerRefIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(containerRefId)
 
-        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefNum
+        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefIndex
 
         -- If someone has (for whatever reason) removed a container table, ensure
         -- that the server doesn't crash because of it
