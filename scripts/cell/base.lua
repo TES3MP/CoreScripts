@@ -92,6 +92,8 @@ end
 function BaseCell:SetAuthority(pid)
     self.authority = pid
     tes3mp.LogMessage(1, "Authority of " .. self.data.entry.description .. " is now player " .. pid)
+
+    self:SendActorAuthority(pid)
 end
 
 function BaseCell:HasContainerData()
@@ -616,6 +618,14 @@ function BaseCell:SendActorList(pid)
 
         tes3mp.SendActorList()
     end
+end
+
+function BaseCell:SendActorAuthority(pid)
+
+    tes3mp.InitScriptEvent(pid)
+    tes3mp.SetScriptEventCell(self.description)
+
+    tes3mp.SendActorAuthority()
 end
 
 function BaseCell:RequestContainers(pid)
