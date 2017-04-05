@@ -465,6 +465,14 @@ Methods.OnContainer = function(pid, cellDescription)
     end
 end
 
+Methods.OnActorList = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorList()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveLogin()
     Players[pid]:SaveCharacter()

@@ -85,6 +85,14 @@ function BaseCell:HasContainerData()
     return false
 end
 
+function BaseCell:HasActorData()
+    if self.data.refIdActor ~= nil then
+        return true
+    end
+
+    return false
+end
+
 function BaseCell:SaveObjectsDeleted()
 
     local refIndex
@@ -224,7 +232,7 @@ end
 
 function BaseCell:SaveContainers()
 
-    local containerActions = { SET = 0, ADD = 1, REMOVE = 2}
+    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
     local action = tes3mp.GetLastEventAction()
 
     if self.data.refIdContainer == nil then
@@ -241,7 +249,7 @@ function BaseCell:SaveContainers()
 
         -- If this table doesn't exist, initialize it
         -- If it exists and the action is SET, empty it
-        if self.data[containerTableName] == nil or action == containerActions.SET then
+        if self.data[containerTableName] == nil or action == actionTypes.SET then
             self.data[containerTableName] = {}
         end
 
@@ -254,7 +262,7 @@ function BaseCell:SaveContainers()
             local storedIndex, currentItemPattern = nil
 
             -- If this isn't a SET action, put together a pattern based on this item's refId and charge
-            if action ~= containerActions.SET then
+            if action ~= actionTypes.SET then
 
                 currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
 
@@ -270,7 +278,7 @@ function BaseCell:SaveContainers()
                 -- Tell the client that they are attempting to REMOVE a non-existent item,
                 -- indicative of a data race situation
                 -- (to be implemented later)
-                if action == containerActions.REMOVE then
+                if action == actionTypes.REMOVE then
                     tes3mp.LogMessage(2, "Attempt to remove non-existent item")
                 -- If we have received ADD for a previously non-existent item, or we are
                 -- just using SET, simply insert the item
@@ -282,13 +290,13 @@ function BaseCell:SaveContainers()
             else
                 for oldCount in string.gmatch(self.data[containerTableName][storedIndex], currentItemPattern) do
                     -- If the action was ADD, then sum up the counts
-                    if action == containerActions.ADD then
+                    if action == actionTypes.ADD then
 
                         local newCount = tonumber(oldCount) + itemCount
                         self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
 
                     -- If the action was REMOVE, make sure we're not removing more than possible
-                    elseif action == containerActions.REMOVE then
+                    elseif action == actionTypes.REMOVE then
 
                         local newCount = tonumber(oldCount) - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
                         
@@ -308,6 +316,33 @@ function BaseCell:SaveContainers()
                 end
             end
         end
+    end
+end
+
+function BaseCell:SaveActorList()
+
+    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
+    local action = tes3mp.GetLastEventAction()
+
+    if self.data.refIdActor == nil then
+        self.data.refIdActor = {}
+    end
+
+    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        self.data.refIdActor[refIndex] = refId
+
+        print("Found actor " .. refId .. "-" .. refIndex)
+
+        local actorTableName = "actor-" .. refId .. "-" .. refIndex
+
+        -- If this table doesn't exist, initialize it
+        -- If it exists and the action is SET, empty it
+        --if self.data[actorTableName] == nil or action == actionTypes.SET then
+        --    self.data[containerTableName] = {}
+        --end
     end
 end
 
@@ -533,6 +568,10 @@ function BaseCell:SendContainers(pid)
     end
 end
 
+function BaseCell:SendActorList(pid)
+    print("Inside SendActorList")
+end
+
 function BaseCell:RequestContainers(pid)
 
     tes3mp.InitScriptEvent(pid)
@@ -542,6 +581,17 @@ function BaseCell:RequestContainers(pid)
     tes3mp.SetScriptEventAction(3)
 
     tes3mp.SendContainer()
+end
+
+function BaseCell:RequestActorList(pid)
+
+    tes3mp.InitScriptEvent(pid)
+    tes3mp.SetScriptEventCell(self.description)
+
+    -- Set the action to REQUEST
+    tes3mp.SetScriptEventAction(3)
+
+    tes3mp.SendActorList()
 end
 
 function BaseCell:SendCellData(pid)
@@ -557,6 +607,12 @@ function BaseCell:SendCellData(pid)
         self:SendContainers(pid)
     else
         self:RequestContainers(pid)
+    end
+
+    if self:HasActorData() then
+        self:SendActorList(pid)
+    else
+        self:RequestActorList(pid)
     end
 end
 
