@@ -34,6 +34,13 @@ function BaseCell:HasEntry()
     return self.hasEntry
 end
 
+function BaseCell:GetVisitorCount()
+
+    local visitorCount = 0
+    for visitor in pairs(self.visitors) do visitorCount = visitorCount + 1 end
+    return visitorCount
+end
+
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them

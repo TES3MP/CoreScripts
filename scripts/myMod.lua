@@ -359,7 +359,7 @@ Methods.UnloadCell = function(pid, cellDescription)
         LoadedCells[cellDescription]:Save()
 
         -- If there are no visitors left, delete the cell
-        if #LoadedCells[cellDescription].visitors == 0 then
+        if LoadedCells[cellDescription]:GetVisitorCount() == 0 then
             LoadedCells[cellDescription] = nil
         end
     end

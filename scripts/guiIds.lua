@@ -62,7 +62,7 @@ local GetLoadedCellList = function()
             divider = "\n"
         end
         list = list .. key
-        list = list .. " (by " .. #LoadedCells[key].visitors .. ")"
+        list = list .. " (by " .. LoadedCells[key]:GetVisitorCount() .. ")"
         list = list .. divider
     end
     return list
