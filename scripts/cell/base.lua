@@ -334,15 +334,13 @@ function BaseCell:SaveActorList()
         local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         self.data.refIdActor[refIndex] = refId
 
-        print("Found actor " .. refId .. "-" .. refIndex)
-
         local actorTableName = "actor-" .. refId .. "-" .. refIndex
 
         -- If this table doesn't exist, initialize it
         -- If it exists and the action is SET, empty it
-        --if self.data[actorTableName] == nil or action == actionTypes.SET then
-        --    self.data[containerTableName] = {}
-        --end
+        if self.data[actorTableName] == nil or action == actionTypes.SET then
+            self.data[actorTableName] = {}
+        end
     end
 end
 
@@ -569,7 +567,38 @@ function BaseCell:SendContainers(pid)
 end
 
 function BaseCell:SendActorList(pid)
-    print("Inside SendActorList")
+
+    local objectIndex = 0
+
+    tes3mp.InitScriptEvent(pid)
+    tes3mp.SetScriptEventCell(self.description)
+
+    for refIndex, refId in pairs(self.data.refIdActor) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
+        tes3mp.SetObjectRefId(refId)
+
+        local actorTableName = "actor-" .. refId .. "-" .. refIndex
+
+        -- If someone has (for whatever reason) removed an actor table, ensure
+        -- that the server doesn't crash because of it
+        if self.data[actorTableName] ~= nil then
+
+            tes3mp.AddWorldObject()
+
+            objectIndex = objectIndex + 1
+        end
+    end
+
+    if objectIndex > 0 then
+
+        -- Set the action to SET
+        tes3mp.SetScriptEventAction(0)
+
+        tes3mp.SendActorList()
+    end
 end
 
 function BaseCell:RequestContainers(pid)
