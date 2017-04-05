@@ -348,6 +348,11 @@ Methods.LoadCell = function(pid, cellDescription)
 
     -- Record that this player has the cell loaded
     LoadedCells[cellDescription]:AddVisitor(pid)
+
+    -- If the cell's authority is nil, set this player as the authority
+    if LoadedCells[cellDescription]:GetAuthority() == nil then
+        LoadedCells[cellDescription]:SetAuthority(pid)
+    end
 end
 
 Methods.UnloadCell = function(pid, cellDescription)
@@ -361,6 +366,11 @@ Methods.UnloadCell = function(pid, cellDescription)
         -- If there are no visitors left, delete the cell
         if LoadedCells[cellDescription]:GetVisitorCount() == 0 then
             LoadedCells[cellDescription] = nil
+        elseif LoadedCells[cellDescription]:GetAuthority() == pid then
+            for key, otherPid in pairs(LoadedCells[cellDescription].visitors) do
+                LoadedCells[cellDescription]:SetAuthority(otherPid)
+                break
+            end
         end
     end
 end

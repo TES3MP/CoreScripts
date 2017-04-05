@@ -28,6 +28,7 @@ function BaseCell:__init(cellDescription)
     self.data.lastVisit = {}
 
     self.visitors = {}
+    self.authority = nil
 end
 
 function BaseCell:HasEntry()
@@ -82,6 +83,15 @@ function BaseCell:RemoveVisitor(pid)
         -- Remember when this visitor left
         self:SaveLastVisit(Players[pid].accountName)
     end
+end
+
+function BaseCell:GetAuthority()
+    return self.authority
+end
+
+function BaseCell:SetAuthority(pid)
+    self.authority = pid
+    tes3mp.LogMessage(1, "Authority of " .. self.data.entry.description .. " is now player " .. pid)
 end
 
 function BaseCell:HasContainerData()
