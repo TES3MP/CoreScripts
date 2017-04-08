@@ -67,7 +67,7 @@ function OnServerInit()
 end
 
 function OnServerExit(error)
-    tes3mp.LogMessage(3, error)
+    tes3mp.LogMessage(3, tostring(error))
 end
 
 function OnPlayerConnect(pid)
