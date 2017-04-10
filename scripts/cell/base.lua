@@ -341,16 +341,16 @@ end
 function BaseCell:SaveActorList()
 
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
-    local action = tes3mp.GetLastEventAction()
+    local action = tes3mp.GetLastActorListAction()
 
     if self.data.refIdActor == nil then
         self.data.refIdActor = {}
     end
 
-    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
-        local refId = tes3mp.GetObjectRefId(objectIndex)
-        local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetActorRefId(actorIndex)
+        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         self.data.refIdActor[refIndex] = refId
 
         local actorTableName = "actor-" .. refId .. "-" .. refIndex
@@ -587,17 +587,17 @@ end
 
 function BaseCell:SendActorList(pid)
 
-    local objectIndex = 0
+    local actorIndex = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitScriptActorList(pid)
+    tes3mp.SetScriptActorListCell(self.description)
 
     for refIndex, refId in pairs(self.data.refIdActor) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+        tes3mp.SetActorRefId(refId)
 
         local actorTableName = "actor-" .. refId .. "-" .. refIndex
 
@@ -605,16 +605,16 @@ function BaseCell:SendActorList(pid)
         -- that the server doesn't crash because of it
         if self.data[actorTableName] ~= nil then
 
-            tes3mp.AddWorldObject()
+            tes3mp.AddActor()
 
-            objectIndex = objectIndex + 1
+            actorIndex = actorIndex + 1
         end
     end
 
-    if objectIndex > 0 then
+    if actorIndex > 0 then
 
         -- Set the action to SET
-        tes3mp.SetScriptEventAction(0)
+        tes3mp.SetScriptActorListAction(0)
 
         tes3mp.SendActorList()
     end
@@ -622,8 +622,8 @@ end
 
 function BaseCell:SendActorAuthority(pid)
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitScriptActorList(pid)
+    tes3mp.SetScriptActorListCell(self.description)
 
     tes3mp.SendActorAuthority()
 end
@@ -641,11 +641,11 @@ end
 
 function BaseCell:RequestActorList(pid)
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitScriptActorList(pid)
+    tes3mp.SetScriptActorListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetScriptEventAction(3)
+    tes3mp.SetScriptActorListAction(3)
 
     tes3mp.SendActorList()
 end
