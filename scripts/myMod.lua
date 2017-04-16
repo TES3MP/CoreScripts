@@ -316,14 +316,14 @@ end
 Methods.OnPlayerLevelChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveLevel()
-        Players[pid]:SaveDynamicStats()
+        Players[pid]:SaveStatsDynamic()
     end
 end
 
 Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveCell()
-        Players[pid]:SaveDynamicStats()
+        Players[pid]:SaveStatsDynamic()
         tes3mp.LogMessage(1, "Saving player " .. pid)
         Players[pid]:Save()
     end
@@ -487,7 +487,7 @@ Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveLogin()
     Players[pid]:SaveCharacter()
     Players[pid]:SaveClass()
-    Players[pid]:SaveDynamicStats()
+    Players[pid]:SaveStatsDynamic()
     Players[pid]:SaveEquipment()
     Players[pid]:CreateAccount()
 end

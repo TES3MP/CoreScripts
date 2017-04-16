@@ -111,7 +111,7 @@ function BasePlayer:FinishLogin()
         self:LoadLevel()
         self:LoadAttributes()
         self:LoadSkills()
-        self:LoadDynamicStats()
+        self:LoadStatsDynamic()
         self:LoadCell()
         self:LoadInventory()
         self:LoadEquipment()
@@ -270,7 +270,7 @@ function BasePlayer:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
-function BasePlayer:SaveDynamicStats()
+function BasePlayer:SaveStatsDynamic()
     self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
     self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
     self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
@@ -279,7 +279,7 @@ function BasePlayer:SaveDynamicStats()
     self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
 end
 
-function BasePlayer:LoadDynamicStats()
+function BasePlayer:LoadStatsDynamic()
     tes3mp.SetHealthBase(self.pid, self.data.stats.healthBase)
     tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
     tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
@@ -287,7 +287,7 @@ function BasePlayer:LoadDynamicStats()
     tes3mp.SetMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
     tes3mp.SetFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
 
-    tes3mp.SendDynamicStats(self.pid)
+    tes3mp.SendStatsDynamic(self.pid)
 end
 
 function BasePlayer:SaveAttributes()
