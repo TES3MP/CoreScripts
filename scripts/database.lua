@@ -133,6 +133,9 @@ end
 
 function Database:SavePlayer(dbPid, data)
 
+    -- Put all of these INSERT statements into a single transaction to avoid freezes
+    self:Execute("BEGIN TRANSACTION;")
+
     for category, categoryTable in pairs(data) do
         if tableHelper.usesNumericalKeys(categoryTable) then
 
@@ -156,6 +159,8 @@ function Database:SavePlayer(dbPid, data)
             self:InsertRow(tableName, tempTable)
         end
     end
+
+    self:Execute("END TRANSACTION;")
 end
 
 function Database:LoadPlayer(dbPid, data)
