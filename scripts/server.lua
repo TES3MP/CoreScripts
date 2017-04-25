@@ -387,6 +387,14 @@ function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end
 
+function OnActorList(pid, cellDescription)
+    myMod.OnActorList(pid, cellDescription)
+end
+
+function OnActorCellChange(pid, cellDescription)
+    myMod.OnActorCellChange(pid, cellDescription)
+end
+
 function OnObjectPlace(pid, cellDescription)
     myMod.OnObjectPlace(pid, cellDescription)
 end
@@ -413,10 +421,6 @@ end
 
 function OnContainer(pid, cellDescription)
     myMod.OnContainer(pid, cellDescription)
-end
-
-function OnActorList(pid, cellDescription)
-    myMod.OnActorList(pid, cellDescription)
 end
 
 function OnGUIAction(pid, idGui, data)

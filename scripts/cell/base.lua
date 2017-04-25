@@ -363,6 +363,17 @@ function BaseCell:SaveActorList()
     end
 end
 
+function BaseCell:SaveActorCellChange()
+
+    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
+
+        local refId = tes3mp.GetActorRefId(actorIndex)
+        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        
+        tes3mp.LogMessage(1, refId .. "-" .. refIndex .. " changed cell")
+    end
+end
+
 function BaseCell:SendObjectsDeleted(pid)
 
     local objectIndex = 0

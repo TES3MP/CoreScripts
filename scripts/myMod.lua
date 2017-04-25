@@ -425,6 +425,22 @@ Methods.OnPlayerSpellbookChange = function(pid)
     end
 end
 
+Methods.OnActorList = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorList()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnActorCellChange = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorCellChange()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to save actor cell change in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnObjectPlace = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsPlaced()
@@ -478,14 +494,6 @@ Methods.OnContainer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveContainers()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to set containers in unloaded " .. cellDescription)
-    end
-end
-
-Methods.OnActorList = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorList()
-    else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
     end
 end
 
