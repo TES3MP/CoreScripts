@@ -42,6 +42,7 @@ function BasePlayer:__init(pid)
             magickaCurrent = 1,
             fatigueBase = 1,
             fatigueCurrent = 1,
+            bounty = 0
         },
     };
     self.data.customClass = {}
@@ -112,6 +113,7 @@ function BasePlayer:FinishLogin()
         self:LoadAttributes()
         self:LoadSkills()
         self:LoadStatsDynamic()
+        self:LoadBounty()
         self:LoadCell()
         self:LoadInventory()
         self:LoadEquipment()
@@ -344,6 +346,15 @@ end
 function BasePlayer:LoadLevel()
     tes3mp.SetLevel(self.pid, self.data.stats.level)
     tes3mp.SendLevel(self.pid)
+end
+
+function BasePlayer:SaveBounty()
+    self.data.stats.bounty = tes3mp.GetBounty(self.pid)
+end
+
+function BasePlayer:LoadBounty()
+    tes3mp.SetBounty(self.pid, self.data.stats.bounty)
+    tes3mp.SendBounty(self.pid)
 end
 
 function BasePlayer:SaveCell()

@@ -320,6 +320,12 @@ Methods.OnPlayerLevelChange = function(pid)
     end
 end
 
+Methods.OnPlayerBountyChange = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:SaveBounty()
+    end
+end
+
 Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveCell()

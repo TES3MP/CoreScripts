@@ -359,6 +359,10 @@ function OnPlayerLevelChange(pid)
     myMod.OnPlayerLevelChange(pid)
 end
 
+function OnPlayerBountyChange(pid)
+    myMod.OnPlayerBountyChange(pid)
+end
+
 function OnPlayerCellChange(pid)
     myMod.OnPlayerCellChange(pid)
 end
