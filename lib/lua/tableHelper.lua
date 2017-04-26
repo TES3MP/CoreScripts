@@ -32,6 +32,12 @@ function tableHelper.containsValue(t, valueToFind, checkNestedTables)
     return false
 end
 
+function tableHelper.insertValueIfMissing(t, value)
+    if tableHelper.containsValue(t, value, false) == false then
+        table.insert(t, value)
+    end
+end
+
 function tableHelper.getIndexByPattern(t, patternToFind)
     for key, value in pairs(t) do
         if string.match(value, patternToFind) ~= nil then
