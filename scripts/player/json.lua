@@ -1,3 +1,4 @@
+require("config")
 require("patterns")
 local jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
@@ -32,7 +33,7 @@ end
 
 function Player:Save()
     if self.hasAccount and self.loggedIn then
-        jsonInterface.save("player/" .. self.accountFile, self.data)
+        jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end
 
