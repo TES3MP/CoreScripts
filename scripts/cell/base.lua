@@ -1,31 +1,29 @@
 require("patterns")
 tableHelper = require("tableHelper")
+inventoryHelper = require("inventoryHelper")
 require("utils")
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
 
-    self.data = {}
-    self.data.entry = {}
-    self.data.entry.description = cellDescription
-
-    self.data.refIdDelete = {}
-    self.data.refIdPlace = {}
-    self.data.refIdScale = {}
-    self.data.refIdLock = {}
-    self.data.refIdUnlock = {}
-    self.data.refIdDoorState = {}
-
-    self.data.count = {}
-    self.data.charge = {}
-    self.data.goldValue = {}
-    self.data.position = {}
-    self.data.rotation = {}
-    self.data.scale = {}
-    self.data.lockLevel = {}
-    self.data.doorState = {}
-
-    self.data.lastVisit = {}
+    self.data =
+    {
+        entry = {
+            description = cellDescription
+        },
+        lastVisit = {},
+        objectData = {},
+        packets = {
+            delete = {},
+            place = {},
+            scale = {},
+            lock = {},
+            unlock = {},
+            doorState = {},
+            container = {},
+            actorList = {}
+        }
+    };
 
     self.visitors = {}
     self.authority = nil
@@ -97,74 +95,67 @@ function BaseCell:SetAuthority(pid)
 end
 
 function BaseCell:HasContainerData()
-    if self.data.refIdContainer ~= nil then
-        return true
+
+    if tableHelper.isEmpty(self.data.packets.container) == true then
+        return false
     end
 
-    return false
+    return true
 end
 
 function BaseCell:HasActorData()
-    if self.data.refIdActor ~= nil then
-        return true
+
+    if tableHelper.isEmpty(self.data.packets.actorList) == true then
+        return false
     end
 
-    return false
+    return true
+end
+
+function BaseCell:InitializeObjectData(refIndex, refId)
+
+    if self.data.objectData[refIndex] == nil then
+        self.data.objectData[refIndex] = {}
+        self.data.objectData[refIndex].refId = refId
+    end
+end
+
+function BaseCell:DeleteObjectData(refIndex)
+    self.data.objectData[refIndex] = nil
 end
 
 function BaseCell:SaveObjectsDeleted()
 
-    local refIndex
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
         -- With this object being deleted, we no longer need to store
-        -- any special information about it
-        self.data.refIdScale[refIndex] = nil
-        self.data.refIdLock[refIndex] = nil
-        self.data.refIdUnlock[refIndex] = nil
-        self.data.refIdDoorState[refIndex] = nil
-
-        self.data.count[refIndex] = nil
-        self.data.charge[refIndex] = nil
-        self.data.goldValue[refIndex] = nil
-        self.data.position[refIndex] = nil
-        self.data.rotation[refIndex] = nil
-        self.data.scale[refIndex] = nil
-        self.data.lockLevel[refIndex] = nil
-        self.data.doorState[refIndex] = nil
-
-        -- If this is a container, make sure we remove its table
-        if self.data.refIdContainer ~= nil and self.data.refIdContainer[refIndex] ~= nil then
-
-            local containerName = self.data.refIdContainer[refIndex] .. refIndex
-
-            self.data[containerName] = nil
-            self.data.refIdContainer[refIndex] = nil
+        -- any packets to be sent about it
+        for packetIndex, packetType in pairs(self.data.packets) do
+            tableHelper.removeValue(self.data.packets[packetIndex], refIndex)
         end
 
         -- If this is an object that did not originally exist in the cell,
-        -- remove it from refIdPlace
-        if self.data.refIdPlace[refIndex] ~= nil then
-            self.data.refIdPlace[refIndex] = nil
-        -- Otherwise, add it to refIdDelete
+        -- remove its data entirely
+        if tableHelper.containsValue(self.data.packets.place, refIndex) then
+            tableHelper.removeValue(self.data.packets.place, refIndex)
+            self:DeleteObjectData(refIndex)
+        -- Otherwise, add it to packets.delete and record only its refId in objectData
         else
-            self.data.refIdDelete[refIndex] = tes3mp.GetObjectRefId(i)
+            table.insert(self.data.packets.delete, refIndex)
+            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
         end
     end
 end
 
 function BaseCell:SaveObjectsPlaced()
 
-    local refIndex
-    local tempValue
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        self.data.refIdPlace[refIndex] = tes3mp.GetObjectRefId(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
 
         local count = tes3mp.GetObjectCount(i)
         local charge = tes3mp.GetObjectCharge(i)
@@ -172,75 +163,85 @@ function BaseCell:SaveObjectsPlaced()
 
         -- Only save count if it isn't the default value of 1
         if count ~= 1 then
-            self.data.count[refIndex] = count
+            self.data.objectData[refIndex].count = count
         end
 
         -- Only save charge if it isn't the default value of -1
         if charge ~= -1 then
-            self.data.charge[refIndex] = charge
+            self.data.objectData[refIndex].charge = charge
         end
 
         -- Only save goldValue if it isn't the default value of 1
         if goldValue ~=1 then
-            self.data.goldValue[refIndex] = goldValue
+            self.data.objectData[refIndex].goldValue = goldValue
         end
 
-        tempValue = tes3mp.GetObjectPosX(i)
-        tempValue = tempValue .. ", " .. tes3mp.GetObjectPosY(i)
-        tempValue = tempValue .. ", " .. tes3mp.GetObjectPosZ(i)
-        self.data.position[refIndex] = tempValue
+        self.data.objectData[refIndex].location = {
+            posX = tes3mp.GetObjectPosX(i),
+            posY = tes3mp.GetObjectPosY(i),
+            posZ = tes3mp.GetObjectPosZ(i),
+            rotX = tes3mp.GetObjectRotX(i),
+            rotY = tes3mp.GetObjectRotY(i),
+            rotZ = tes3mp.GetObjectRotZ(i)
+        }
 
-        tempValue = tes3mp.GetObjectRotX(i)
-        tempValue = tempValue .. ", " .. tes3mp.GetObjectRotY(i)
-        tempValue = tempValue .. ", " .. tes3mp.GetObjectRotZ(i)
-        self.data.rotation[refIndex] = tempValue
+        table.insert(self.data.packets.place, refIndex)
     end
 end
 
 function BaseCell:SaveObjectsScaled()
 
-    local refIndex
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        self.data.refIdScale[refIndex] = tes3mp.GetObjectRefId(i)
-        self.data.scale[refIndex] = tes3mp.GetObjectScale(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
+        
+        tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
     end
 end
 
 function BaseCell:SaveObjectsLocked()
 
-    local refIndex
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        self.data.refIdLock[refIndex] = tes3mp.GetObjectRefId(i)
-        self.data.lockLevel[refIndex] = tes3mp.GetObjectLockLevel(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].lockLevel = tes3mp.GetObjectLockLevel(i)
+
+        tableHelper.insertValueIfMissing(self.data.packets.lock, refIndex)
+
+        tableHelper.removeValue(self.data.packets.unlock, refIndex)
     end
 end
 
 function BaseCell:SaveObjectsUnlocked()
 
-    local refIndex
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        self.data.refIdUnlock[refIndex] = tes3mp.GetObjectRefId(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].lockLevel = nil
+
+        tableHelper.insertValueIfMissing(self.data.packets.unlock, refIndex)
+
+        tableHelper.removeValue(self.data.packets.lock, refIndex)
     end
 end
 
 function BaseCell:SaveDoorStates()
 
-    local refIndex
-
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        self.data.refIdDoorState[refIndex] = tes3mp.GetObjectRefId(i)
-        self.data.doorState[refIndex] = tes3mp.GetObjectDoorState(i)
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].doorState = tes3mp.GetObjectDoorState(i)
+
+        tableHelper.insertValueIfMissing(self.data.packets.doorState, refIndex)
     end
 end
 
@@ -254,22 +255,20 @@ function BaseCell:SaveContainers()
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
     local action = tes3mp.GetLastEventAction()
 
-    if self.data.refIdContainer == nil then
-        self.data.refIdContainer = {}
-    end
-
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        local containerRefId = tes3mp.GetObjectRefId(objectIndex)
-        local containerRefIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
-        self.data.refIdContainer[containerRefIndex] = containerRefId
+        local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
 
-        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefIndex
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(objectIndex))
 
-        -- If this table doesn't exist, initialize it
-        -- If it exists and the action is SET, empty it
-        if self.data[containerTableName] == nil or action == actionTypes.SET then
-            self.data[containerTableName] = {}
+        tableHelper.insertValueIfMissing(self.data.packets.container, refIndex)
+
+        local inventory = self.data.objectData[refIndex].inventory
+
+        -- If this object's inventory is nil, or if the action is SET,
+        -- change the inventory to an empty table
+        if inventory == nil or action == actionTypes.SET then
+            inventory = {}
         end
 
         for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
@@ -278,63 +277,41 @@ function BaseCell:SaveContainers()
             local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
 
-            local storedIndex, currentItemPattern = nil
+            -- Check if the object's stored inventory contains this item already
+            if inventoryHelper.containsItem(inventory, itemRefId, itemCharge) then
+                local item = inventoryHelper.getItem(inventory, itemRefId, itemCharge)
 
-            -- If this isn't a SET action, put together a pattern based on this item's refId and charge
-            if action ~= actionTypes.SET then
+                if action == actionTypes.ADD then
+                    item.count = item.count + itemCount
+                elseif action == actionTypes.REMOVE then
+                    local newCount = item.count - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
 
-                currentItemPattern = itemRefId .. ", (%d+), " .. itemCharge .. "$"
-
-                -- Because both - and % are special characters, escape them with another % each
-                currentItemPattern = string.gsub(currentItemPattern, "%-", "%%%-")
-
-                -- Check if an item matching the pattern already exists in the container
-                storedIndex = tableHelper.getIndexByPattern(self.data[containerTableName], currentItemPattern)
-            end
-
-            -- If storedIndex is nil, it can mean a number of things
-            if storedIndex == nil then
-                -- Tell the client that they are attempting to REMOVE a non-existent item,
-                -- indicative of a data race situation
-                -- (to be implemented later)
+                    -- The item will still exist in the container with a lower count
+                    if newCount > 0 then
+                        item.count = newCount
+                    -- The item is to be completely removed
+                    elseif newCount == 0 then
+                        item = nil
+                    else
+                        tes3mp.LogMessage(2, "Attempt to remove more than possible from item")
+                    end
+                end
+            else
                 if action == actionTypes.REMOVE then
                     tes3mp.LogMessage(2, "Attempt to remove non-existent item")
-                -- If we have received ADD for a previously non-existent item, or we are
-                -- just using SET, simply insert the item
                 else
-                    local itemData = itemRefId .. ", " .. itemCount .. ", " .. itemCharge
-                    table.insert(self.data[containerTableName], itemData)
-                end
-            -- A similar item was found in the container's data
-            else
-                for oldCount in string.gmatch(self.data[containerTableName][storedIndex], currentItemPattern) do
-                    -- If the action was ADD, then sum up the counts
-                    if action == actionTypes.ADD then
+                    local item = {
+                        refId = itemRefId,
+                        count = itemCount,
+                        charge = itemCharge
+                    }
 
-                        local newCount = tonumber(oldCount) + itemCount
-                        self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
-
-                    -- If the action was REMOVE, make sure we're not removing more than possible
-                    elseif action == actionTypes.REMOVE then
-
-                        local newCount = tonumber(oldCount) - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
-                        
-                        -- The item will still exist in the container with a lower count
-                        if newCount > 0 then
-                            self.data[containerTableName][storedIndex] = itemRefId .. ", " .. newCount .. ", " .. itemCharge
-                        -- The item is to be completely removed
-                        elseif newCount == 0 then
-                            self.data[containerTableName][storedIndex] = nil
-                        -- Tell the client that they are attempting to REMOVE more of an item
-                        -- than is possible, indicative of a data race situation
-                        -- (to be implemented later)
-                        else
-                            tes3mp.LogMessage(2, "Attempt to remove more than possible from item")
-                        end
-                    end
+                    table.insert(inventory, item)
                 end
             end
         end
+
+        self.data.objectData[refIndex].inventory = inventory
     end
 end
 
@@ -343,23 +320,13 @@ function BaseCell:SaveActorList()
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
     local action = tes3mp.GetLastActorListAction()
 
-    if self.data.refIdActor == nil then
-        self.data.refIdActor = {}
-    end
-
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
-        local refId = tes3mp.GetActorRefId(actorIndex)
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        self.data.refIdActor[refIndex] = refId
 
-        local actorTableName = "actor-" .. refId .. "-" .. refIndex
+        self:InitializeObjectData(refIndex, tes3mp.GetActorRefId(actorIndex))
 
-        -- If this table doesn't exist, initialize it
-        -- If it exists and the action is SET, empty it
-        if self.data[actorTableName] == nil or action == actionTypes.SET then
-            self.data[actorTableName] = {}
-        end
+        tableHelper.insertValueIfMissing(self.data.packets.actorList, refIndex)
     end
 end
 
@@ -382,12 +349,12 @@ function BaseCell:SendObjectsDeleted(pid)
     tes3mp.SetScriptEventCell(self.description)
 
     -- Objects deleted
-    for refIndex, refId in pairs(self.data.refIdDelete) do
+    for arrayIndex, refIndex in pairs(self.data.packets.delete) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -405,16 +372,16 @@ function BaseCell:SendObjectsPlaced(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdPlace) do
+    for arrayIndex, refIndex in pairs(self.data.packets.place) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
-        local count = self.data.count[refIndex]
-        local charge = self.data.charge[refIndex]
-        local goldValue = self.data.goldValue[refIndex]
+        local count = self.data.objectData[refIndex].count
+        local charge = self.data.objectData[refIndex].charge
+        local goldValue = self.data.objectData[refIndex].goldValue
 
         -- Use default count of 1 when the value is missing
         if count == nil then
@@ -434,14 +401,8 @@ function BaseCell:SendObjectsPlaced(pid)
         tes3mp.SetObjectCharge(charge)
         tes3mp.SetObjectCount(count)
         tes3mp.SetObjectGoldValue(goldValue)
-
-        for posX, posY, posZ in string.gmatch(self.data.position[refIndex], patterns.coordinates) do
-            tes3mp.SetObjectPosition(posX, posY, posZ)
-        end
-
-        for rotX, rotY, rotZ in string.gmatch(self.data.rotation[refIndex], patterns.coordinates) do
-            tes3mp.SetObjectRotation(rotX, rotY, rotZ)
-        end
+        tes3mp.SetObjectPosition(self.data.objectData[refIndex].location.posX, self.data.objectData[refIndex].location.posY, self.data.objectData[refIndex].location.posZ)
+        tes3mp.SetObjectRotation(self.data.objectData[refIndex].location.rotX, self.data.objectData[refIndex].location.rotY, self.data.objectData[refIndex].location.rotZ)
 
         tes3mp.AddWorldObject()
 
@@ -460,13 +421,13 @@ function BaseCell:SendObjectsScaled(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdScale) do
+    for arrayIndex, refIndex in pairs(self.data.packets.scale) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectScale(self.data.scale[refIndex])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectScale(self.data.objectData[refIndex].scale)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -484,13 +445,13 @@ function BaseCell:SendObjectsLocked(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdLock) do
+    for arrayIndex, refIndex in pairs(self.data.packets.lock) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectLockLevel(self.data.lockLevel[refIndex])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectLockLevel(self.data.objectData[refIndex].lockLevel)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -508,12 +469,12 @@ function BaseCell:SendObjectsUnlocked(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdUnlock) do
+    for arrayIndex, refIndex in pairs(self.data.packets.unlock) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -531,13 +492,13 @@ function BaseCell:SendDoorStates(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdDoorState) do
+    for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectDoorState(self.data.doorState[refIndex])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectDoorState(self.data.objectData[refIndex].doorState)
         tes3mp.AddWorldObject()
 
         objectIndex = objectIndex + 1
@@ -555,36 +516,24 @@ function BaseCell:SendContainers(pid)
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
 
-    for containerRefIndex, containerRefId in pairs(self.data.refIdContainer) do
+    for arrayIndex, refIndex in pairs(self.data.packets.container) do
 
-        local splitIndex = containerRefIndex:split("-")
+        local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(containerRefId)
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
-        local containerTableName = "container-" .. containerRefId .. "-" .. containerRefIndex
+        for itemIndex, item in pairs(self.data.objectData[refIndex].inventory) do
+            tes3mp.SetContainerItemRefId(item.refId)
+            tes3mp.SetContainerItemCount(item.count)
+            tes3mp.SetContainerItemCharge(item.charge)
 
-        -- If someone has (for whatever reason) removed a container table, ensure
-        -- that the server doesn't crash because of it
-        if self.data[containerTableName] ~= nil then
-
-            for itemIndex, value in pairs(self.data[containerTableName]) do
-                if string.match(value, patterns.item) ~= nil then
-                    for itemRefId, itemCount, itemCharge in string.gmatch(value, patterns.item) do
-
-                        tes3mp.SetContainerItemRefId(itemRefId)
-                        tes3mp.SetContainerItemCount(itemCount)
-                        tes3mp.SetContainerItemCharge(itemCharge)
-
-                        tes3mp.AddContainerItem()
-                    end
-                end
-            end
-
-            tes3mp.AddWorldObject()
-
-            objectIndex = objectIndex + 1
+            tes3mp.AddContainerItem()
         end
+
+        tes3mp.AddWorldObject()
+
+        objectIndex = objectIndex + 1
     end
 
     if objectIndex > 0 then
@@ -603,23 +552,14 @@ function BaseCell:SendActorList(pid)
     tes3mp.InitScriptActorList(pid)
     tes3mp.SetScriptActorListCell(self.description)
 
-    for refIndex, refId in pairs(self.data.refIdActor) do
+    for arrayIndex, refIndex in pairs(self.data.packets.actorList) do
 
         local splitIndex = refIndex:split("-")
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
-        tes3mp.SetActorRefId(refId)
+        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        local actorTableName = "actor-" .. refId .. "-" .. refIndex
-
-        -- If someone has (for whatever reason) removed an actor table, ensure
-        -- that the server doesn't crash because of it
-        if self.data[actorTableName] ~= nil then
-
-            tes3mp.AddActor()
-
-            actorIndex = actorIndex + 1
-        end
+        actorIndex = actorIndex + 1
     end
 
     if actorIndex > 0 then

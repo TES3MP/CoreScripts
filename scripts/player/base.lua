@@ -10,11 +10,11 @@ function BasePlayer:__init(pid)
     {
         login = {
             name = "",
-            password = "",
+            password = ""
         },
         settings = {
             admin = 0,
-            consoleAllowed = config.allowConsole,
+            consoleAllowed = config.allowConsole
         },
         character = {
             race = "",
@@ -22,7 +22,7 @@ function BasePlayer:__init(pid)
             hair = "",
             gender = 1,
             class = "",
-            birthsign = "",
+            birthsign = ""
         },
         location = {
             cell = "",
@@ -43,7 +43,7 @@ function BasePlayer:__init(pid)
             fatigueBase = 1,
             fatigueCurrent = 1,
             bounty = 0
-        },
+        }
     };
     self.data.customClass = {}
     self.data.attributes = {}
