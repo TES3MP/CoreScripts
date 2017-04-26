@@ -47,6 +47,17 @@ function tableHelper.getIndexByPattern(t, patternToFind)
     return nil
 end
 
+function tableHelper.getIndexByNestedKeyValue(t, keyToFind, valueToFind)
+    for key, value in pairs(t) do
+        if type(value) == "table" then
+            if tableHelper.containsKeyValue(value, keyToFind, valueToFind) == true then
+                return key
+            end
+        end
+    end
+    return nil
+end
+
 function tableHelper.removeValue(t, valueToFind)
 
     tableHelper.replaceValue(t, valueToFind, nil)
