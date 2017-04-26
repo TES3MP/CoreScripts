@@ -130,19 +130,20 @@ function BaseCell:SaveObjectsDeleted()
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
-        -- With this object being deleted, we no longer need to store
-        -- any packets to be sent about it
+        -- Check whether this is a placed object
+        local wasPlaced = tableHelper.containsValue(self.data.packets.place, refIndex)
+
+        -- Delete all packets for the object
         for packetIndex, packetType in pairs(self.data.packets) do
             tableHelper.removeValue(self.data.packets[packetIndex], refIndex)
         end
 
-        -- If this is an object that did not originally exist in the cell,
-        -- remove its data entirely
-        if tableHelper.containsValue(self.data.packets.place, refIndex) then
-            tableHelper.removeValue(self.data.packets.place, refIndex)
-            self:DeleteObjectData(refIndex)
-        -- Otherwise, add it to packets.delete and record only its refId in objectData
-        else
+        -- Delete all object data
+        self:DeleteObjectData(refIndex)
+
+        -- If wasPlaced is false, this is a pre-existing object from the game's data files
+        -- that should be tracked and deleted every time this cell is opened
+        if wasPlaced == false then
             table.insert(self.data.packets.delete, refIndex)
             self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
         end
