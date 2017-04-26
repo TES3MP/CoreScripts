@@ -122,6 +122,15 @@ function tableHelper.usesNumericalKeys(t)
     return true
 end
 
+-- Checks whether there are any items in the table
+function tableHelper.isEmpty(t)
+    if next(t) == nil then
+        return true
+    end
+
+    return false
+end
+
 -- Checks whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
