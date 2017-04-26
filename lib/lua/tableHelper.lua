@@ -208,4 +208,4 @@ function tableHelper.print(t, indentLevel)
     return str
 end
 
-return tableHelper;
+return tableHelper
