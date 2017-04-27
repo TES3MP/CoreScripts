@@ -540,6 +540,15 @@ Methods.OnActorCellChange = function(pid, oldCellDescription)
 
                 newCell.data.objectData[refIndex].cellChangeFrom = oldCellDescription                
             end
+
+            newCell.data.objectData[refIndex].location = {
+                posX = tes3mp.GetActorPosX(actorIndex),
+                posY = tes3mp.GetActorPosY(actorIndex),
+                posZ = tes3mp.GetActorPosZ(actorIndex),
+                rotX = tes3mp.GetActorRotX(actorIndex),
+                rotY = tes3mp.GetActorRotY(actorIndex),
+                rotZ = tes3mp.GetActorRotZ(actorIndex)
+            }
         end
 
         -- Go through every temporary loaded cell and unload it
