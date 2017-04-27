@@ -207,7 +207,7 @@ Methods.OnPlayerDisconnect = function(pid)
         -- Unload every cell for this player
         for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
 
-            Methods.UnloadCell(pid, loadedCellDescription)
+            Methods.UnloadCellForPlayer(pid, loadedCellDescription)
         end
 
         Players[pid]:Destroy()
@@ -335,7 +335,7 @@ Methods.OnPlayerCellChange = function(pid)
     end
 end
 
-Methods.LoadCell = function(pid, cellDescription)
+Methods.LoadCell = function(cellDescription)
 
     -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
@@ -351,6 +351,11 @@ Methods.LoadCell = function(pid, cellDescription)
             LoadedCells[cellDescription]:CreateEntry()
         end
     end
+end
+
+Methods.LoadCellForPlayer = function(pid, cellDescription)
+
+    Methods.LoadCell(cellDescription)
 
     -- Record that this player has the cell loaded
     LoadedCells[cellDescription]:AddVisitor(pid)
@@ -361,7 +366,16 @@ Methods.LoadCell = function(pid, cellDescription)
     end
 end
 
-Methods.UnloadCell = function(pid, cellDescription)
+Methods.UnloadCell = function(cellDescription)
+
+    if LoadedCells[cellDescription] ~= nil then
+
+        LoadedCells[cellDescription]:Save()
+        LoadedCells[cellDescription] = nil
+    end
+end
+
+Methods.UnloadCellForPlayer = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
@@ -390,9 +404,9 @@ Methods.OnPlayerCellState = function(pid)
             local stateType = tes3mp.GetCellStateType(pid, i)
 
             if stateType == 0 then
-                Methods.LoadCell(pid, cellDescription)
+                Methods.LoadCellForPlayer(pid, cellDescription)
             elseif stateType == 1 then
-                Methods.UnloadCell(pid, cellDescription)
+                Methods.UnloadCellForPlayer(pid, cellDescription)
             end
         end
     end
@@ -433,9 +447,107 @@ Methods.OnActorList = function(pid, cellDescription)
     end
 end
 
-Methods.OnActorCellChange = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorCellChange()
+
+Methods.MoveObjectBetweenCells = function(refIndex, oldCell, newCell)
+
+    -- Move all packets about this refIndex from the old cell to the new cell
+    for packetIndex, packetType in pairs(oldCell.data.packets) do
+
+        if tableHelper.containsValue(oldCell.data.packets[packetIndex], refIndex) then
+
+            table.insert(newCell.data.packets[packetIndex], refIndex)
+            tableHelper.removeValue(oldCell.data.packets[packetIndex], refIndex)
+        end
+    end
+
+    newCell.data.objectData[refIndex] = oldCell.data.objectData[refIndex]
+
+    oldCell:DeleteObjectData(refIndex)
+end
+
+Methods.OnActorCellChange = function(pid, oldCellDescription)
+    if LoadedCells[oldCellDescription] ~= nil then
+
+        local oldCell = LoadedCells[oldCellDescription]
+        local temporaryLoadedCells = {}
+
+        for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
+
+            local refId = tes3mp.GetActorRefId(actorIndex)
+            local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+            local newCellDescription = tes3mp.GetActorCell(actorIndex)
+
+            tes3mp.LogMessage(1, "Actor " .. refId .. ", " .. refIndex .. " changed cell from " .. oldCellDescription .. " to " .. newCellDescription)
+
+            -- If the new cell is not loaded, load it temporarily
+            if LoadedCells[newCellDescription] == nil then
+                Methods.LoadCell(newCellDescription)
+                table.insert(temporaryLoadedCells, newCellDescription)
+            end
+
+            local newCell = LoadedCells[newCellDescription]
+
+            -- Was this actor placed in the old cell, instead of being a pre-existing actor?
+            -- If so, delete it entirely from the old cell and make it get placed in the new cell
+            if tableHelper.containsValue(oldCell.data.packets.place, refIndex) == true then
+                tes3mp.LogAppend(1, "- As a server-only object, it was moved entirely")
+                Methods.MoveObjectBetweenCells(refIndex, oldCell, newCell)
+
+            -- Was this actor moved to the old cell from another cell?
+            elseif tableHelper.containsValue(oldCell.data.packets.cellChangeFrom, refIndex) == true then
+
+                local originalCellDescription = oldCell.data.objectData[refIndex].cellChangeFrom
+
+                -- Is the new cell actually this actor's original cell?
+                -- If so, move its data back and remove all of its cell change data
+                if originalCellDescription == newCellDescription then
+                    tes3mp.LogAppend(1, "- It is now back in its original cell " .. originalCellDescription)
+                    Methods.MoveObjectBetweenCells(refIndex, oldCell, newCell)
+
+                    tableHelper.removeValue(newCell.data.packets.cellChangeTo, refIndex)
+                    tableHelper.removeValue(newCell.data.packets.cellChangeFrom, refIndex)
+
+                    newCell.data.objectData[refIndex].cellChangeTo = nil
+                    newCell.data.objectData[refIndex].cellChangeFrom = nil
+                -- Otherwise, move its data to the new cell, delete it from the old cell, and update its
+                -- information in its original cell
+                else
+                    tes3mp.LogAppend(1, "- This is now referenced in its original cell " .. originalCellDescription)
+                    Methods.MoveObjectBetweenCells(refIndex, oldCell, newCell)
+
+                    -- If the original cell is not loaded, load it temporarily
+                    if LoadedCells[originalCellDescription] == nil then
+                        Methods.LoadCell(originalCellDescription)
+                        table.insert(temporaryLoadedCells, originalCellDescription)
+                    end
+
+                    local originalCell = LoadedCells[originalCellDescription]
+                    originalCell.data.objectData[refIndex].cellChangeTo = newCellDescription
+                end
+
+            -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
+            -- in its old cell
+            else
+                tes3mp.LogAppend(1, "- This was its first move away from its original cell")
+
+                Methods.MoveObjectBetweenCells(refIndex, oldCell, newCell)
+
+                table.insert(oldCell.data.packets.cellChangeTo, refIndex)
+                oldCell:InitializeObjectData(refIndex, refId)
+                oldCell.data.objectData[refIndex].cellChangeTo = newCellDescription
+
+                table.insert(newCell.data.packets.cellChangeFrom, refIndex)
+
+                newCell.data.objectData[refIndex].cellChangeFrom = oldCellDescription                
+            end
+        end
+
+        -- Go through every temporary loaded cell and unload it
+        for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
+            Methods.UnloadCell(newCellDescription)
+        end
+
+        oldCell:Save()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to save actor cell change in unloaded " .. cellDescription)
     end

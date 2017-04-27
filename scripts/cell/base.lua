@@ -21,7 +21,9 @@ function BaseCell:__init(cellDescription)
             unlock = {},
             doorState = {},
             container = {},
-            actorList = {}
+            actorList = {},
+            cellChangeTo = {},
+            cellChangeFrom = {}
         }
     };
 
@@ -122,6 +124,10 @@ end
 
 function BaseCell:DeleteObjectData(refIndex)
     self.data.objectData[refIndex] = nil
+end
+
+function BaseCell:SaveLastVisit(playerName)
+    self.data.lastVisit[playerName] = os.time()
 end
 
 function BaseCell:SaveObjectsDeleted()
@@ -246,11 +252,6 @@ function BaseCell:SaveDoorStates()
     end
 end
 
-function BaseCell:SaveLastVisit(playerName)
-
-    self.data.lastVisit[playerName] = os.time()
-end
-
 function BaseCell:SaveContainers()
 
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
@@ -328,17 +329,6 @@ function BaseCell:SaveActorList()
         self:InitializeObjectData(refIndex, tes3mp.GetActorRefId(actorIndex))
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, refIndex)
-    end
-end
-
-function BaseCell:SaveActorCellChange()
-
-    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
-
-        local refId = tes3mp.GetActorRefId(actorIndex)
-        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        
-        tes3mp.LogMessage(1, refId .. "-" .. refIndex .. " changed cell")
     end
 end
 
