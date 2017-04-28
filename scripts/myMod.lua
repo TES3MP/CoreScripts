@@ -526,8 +526,9 @@ Methods.OnActorCellChange = function(pid, oldCellDescription)
                 end
 
             -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
-            -- in its old cell
-            else
+            -- in its old cell, as long as it's not supposed to already be in the new cell
+            elseif oldCell.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
+
                 tes3mp.LogAppend(1, "- This was its first move away from its original cell")
 
                 Methods.MoveObjectBetweenCells(refIndex, oldCell, newCell)
