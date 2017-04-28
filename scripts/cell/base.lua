@@ -334,7 +334,7 @@ end
 
 function BaseCell:SendObjectsDeleted(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -348,17 +348,17 @@ function BaseCell:SendObjectsDeleted(pid)
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendObjectDelete()
     end
 end
 
 function BaseCell:SendObjectsPlaced(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -397,17 +397,17 @@ function BaseCell:SendObjectsPlaced(pid)
 
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendObjectPlace()
     end
 end
 
 function BaseCell:SendObjectsScaled(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -421,17 +421,17 @@ function BaseCell:SendObjectsScaled(pid)
         tes3mp.SetObjectScale(self.data.objectData[refIndex].scale)
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendObjectScale()
     end
 end
 
 function BaseCell:SendObjectsLocked(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -445,17 +445,17 @@ function BaseCell:SendObjectsLocked(pid)
         tes3mp.SetObjectLockLevel(self.data.objectData[refIndex].lockLevel)
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendObjectLock()
     end
 end
 
 function BaseCell:SendObjectsUnlocked(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -468,17 +468,17 @@ function BaseCell:SendObjectsUnlocked(pid)
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendObjectUnlock()
     end
 end
 
 function BaseCell:SendDoorStates(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -492,17 +492,17 @@ function BaseCell:SendDoorStates(pid)
         tes3mp.SetObjectDoorState(self.data.objectData[refIndex].doorState)
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
         tes3mp.SendDoorState()
     end
 end
 
 function BaseCell:SendContainers(pid)
 
-    local objectIndex = 0
+    local objectCount = 0
 
     tes3mp.InitScriptEvent(pid)
     tes3mp.SetScriptEventCell(self.description)
@@ -524,10 +524,10 @@ function BaseCell:SendContainers(pid)
 
         tes3mp.AddWorldObject()
 
-        objectIndex = objectIndex + 1
+        objectCount = objectCount + 1
     end
 
-    if objectIndex > 0 then
+    if objectCount > 0 then
 
         -- Set the action to SET
         tes3mp.SetScriptEventAction(0)
@@ -538,7 +538,7 @@ end
 
 function BaseCell:SendActorList(pid)
 
-    local actorIndex = 0
+    local actorCount = 0
 
     tes3mp.InitScriptActorList(pid)
     tes3mp.SetScriptActorListCell(self.description)
@@ -550,10 +550,10 @@ function BaseCell:SendActorList(pid)
         tes3mp.SetActorMpNum(splitIndex[2])
         tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        actorIndex = actorIndex + 1
+        actorCount = actorCount + 1
     end
 
-    if actorIndex > 0 then
+    if actorCount > 0 then
 
         -- Set the action to SET
         tes3mp.SetScriptActorListAction(0)
