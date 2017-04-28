@@ -447,6 +447,14 @@ Methods.OnActorList = function(pid, cellDescription)
     end
 end
 
+Methods.OnActorStatsDynamic = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorStatsDynamic()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to save dynamic stats in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnActorCellChange = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorCellChanges()

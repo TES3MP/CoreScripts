@@ -22,6 +22,7 @@ function BaseCell:__init(cellDescription)
             doorState = {},
             container = {},
             actorList = {},
+            statsDynamic = {},
             cellChangeTo = {},
             cellChangeFrom = {}
         }
@@ -346,6 +347,31 @@ function BaseCell:SaveActorList()
         self:InitializeObjectData(refIndex, tes3mp.GetActorRefId(actorIndex))
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, refIndex)
+    end
+end
+
+function BaseCell:SaveActorStatsDynamic()
+
+    for i = 0, tes3mp.GetActorListSize() - 1 do
+
+        local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
+
+        if self.data.objectData[refIndex] ~= nil then
+
+            if self.data.objectData[refIndex].stats == nil then
+                self.data.objectData[refIndex].stats = {}
+            end
+
+            local stats = self.data.objectData[refIndex].stats
+            stats.healthBase = tes3mp.GetActorHealthBase(i)
+            stats.healthCurrent = tes3mp.GetActorHealthCurrent(i)
+            stats.magickaBase = tes3mp.GetActorMagickaBase(i)
+            stats.magickaCurrent = tes3mp.GetActorMagickaCurrent(i)
+            stats.fatigueBase = tes3mp.GetActorFatigueBase(i)
+            stats.fatigueCurrent = tes3mp.GetActorFatigueCurrent(i)
+
+            tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, refIndex)
+        end
     end
 end
 
