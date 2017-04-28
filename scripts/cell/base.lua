@@ -570,6 +570,91 @@ function BaseCell:SendActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
+function BaseCell:SendActorCellChanges(pid)
+
+    local temporaryLoadedCells = {}
+    local actorCount = 0
+
+    -- Move actors originally from this cell to other cells
+    tes3mp.InitScriptActorList(pid)
+    tes3mp.SetScriptActorListCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.cellChangeTo) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+        local newCellDescription = self.data.objectData[refIndex].cellChangeTo
+        tes3mp.SetActorCell(newCellDescription)
+
+        -- If the new cell is not loaded, load it temporarily
+        if LoadedCells[newCellDescription] == nil then
+            myMod.LoadCell(newCellDescription)
+            table.insert(temporaryLoadedCells, newCellDescription)
+        end
+
+        local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
+
+        tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+        tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+
+        tes3mp.AddActor()
+
+        actorCount = actorCount + 1
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorCellChange()
+    end
+
+    -- Go through every temporary loaded cell and unload it
+    for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
+        myMod.UnloadCell(newCellDescription)
+    end
+
+    -- Make a table of every cell that has sent actors to this cell
+    local cellChangesFrom = {}
+
+    for arrayIndex, refIndex in pairs(self.data.packets.cellChangeFrom) do
+
+        local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
+
+        if cellChangesFrom[originalCellDescription] == nil then
+            cellChangesFrom[originalCellDescription] = {}
+        end
+
+        table.insert(cellChangesFrom[originalCellDescription], refIndex)
+    end
+
+    -- Send a cell change packet for every cell that has sent actors to this cell
+    for originalCellDescription, actorArray in pairs(cellChangesFrom) do
+        
+        tes3mp.InitScriptActorList(pid)
+        tes3mp.SetScriptActorListCell(originalCellDescription)
+
+        for arrayIndex, refIndex in pairs(actorArray) do
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetActorRefNumIndex(splitIndex[1])
+            tes3mp.SetActorMpNum(splitIndex[2])
+            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+            tes3mp.SetActorCell(self.description)
+
+            local location = self.data.objectData[refIndex].location
+
+            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+
+            tes3mp.AddActor()
+        end
+
+        tes3mp.SendActorCellChange()
+    end
+end
+
 function BaseCell:RequestContainers(pid)
 
     tes3mp.InitScriptEvent(pid)
@@ -609,6 +694,7 @@ function BaseCell:SendCellData(pid)
 
     if self:HasActorData() then
         self:SendActorList(pid)
+        self:SendActorCellChanges(pid)
     else
         self:RequestActorList(pid)
     end
