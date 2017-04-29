@@ -706,6 +706,36 @@ function BaseCell:SendActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
+function BaseCell:SendActorStatsDynamic(pid)
+
+    local actorCount = 0
+
+    tes3mp.InitScriptActorList(pid)
+    tes3mp.SetScriptActorListCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.statsDynamic) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+        tes3mp.SetActorHealthBase(self.data.objectData[refIndex].stats.healthBase)
+        tes3mp.SetActorHealthCurrent(self.data.objectData[refIndex].stats.healthCurrent)
+        tes3mp.SetActorMagickaBase(self.data.objectData[refIndex].stats.magickaBase)
+        tes3mp.SetActorMagickaCurrent(self.data.objectData[refIndex].stats.magickaCurrent)
+        tes3mp.SetActorFatigueBase(self.data.objectData[refIndex].stats.fatigueBase)
+        tes3mp.SetActorFatigueCurrent(self.data.objectData[refIndex].stats.fatigueCurrent)
+        tes3mp.AddActor()
+
+        actorCount = actorCount + 1
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorStatsDynamic()
+    end
+end
+
 function BaseCell:SendActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
@@ -831,6 +861,7 @@ function BaseCell:SendCellData(pid)
     if self:HasActorData() then
         self:SendActorList(pid)
         self:SendActorCellChanges(pid)
+        self:SendActorStatsDynamic(pid)
     else
         self:RequestActorList(pid)
     end
