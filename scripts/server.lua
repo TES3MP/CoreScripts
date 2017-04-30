@@ -395,10 +395,6 @@ function OnActorList(pid, cellDescription)
     myMod.OnActorList(pid, cellDescription)
 end
 
-function OnActorStatsDynamic(pid, cellDescription)
-    myMod.OnActorStatsDynamic(pid, cellDescription)
-end
-
 function OnActorCellChange(pid, cellDescription)
     myMod.OnActorCellChange(pid, cellDescription)
 end

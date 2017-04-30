@@ -441,7 +441,7 @@ end
 
 Methods.OnCellUnload = function(cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        tes3mp.LogMessage(1, "Saving stored actor data for " .. cellDescription)
+        LoadedCells[cellDescription]:SaveActorStatsDynamic()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
     end
@@ -452,14 +452,6 @@ Methods.OnActorList = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveActorList()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
-    end
-end
-
-Methods.OnActorStatsDynamic = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorStatsDynamic()
-    else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to save dynamic stats in unloaded " .. cellDescription)
     end
 end
 

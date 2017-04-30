@@ -368,9 +368,14 @@ end
 
 function BaseCell:SaveActorStatsDynamic()
 
-    tes3mp.ReadLastActorList()
+    tes3mp.ReadCellActorList(self.description)
+    local actorListSize = tes3mp.GetActorListSize()
 
-    for i = 0, tes3mp.GetActorListSize() - 1 do
+    if actorListSize == 0 then
+        return
+    end
+
+    for i = 0, actorListSize - 1 do
 
         local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
