@@ -150,6 +150,8 @@ end
 
 function BaseCell:SaveObjectsDeleted()
 
+    tes3mp.ReadLastEvent()
+
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
@@ -175,6 +177,8 @@ function BaseCell:SaveObjectsDeleted()
 end
 
 function BaseCell:SaveObjectsPlaced()
+
+    tes3mp.ReadLastEvent()
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -216,6 +220,8 @@ end
 
 function BaseCell:SaveObjectsScaled()
 
+    tes3mp.ReadLastEvent()
+
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
@@ -228,6 +234,8 @@ function BaseCell:SaveObjectsScaled()
 end
 
 function BaseCell:SaveObjectsLocked()
+
+    tes3mp.ReadLastEvent()
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -244,6 +252,8 @@ end
 
 function BaseCell:SaveObjectsUnlocked()
 
+    tes3mp.ReadLastEvent()
+
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
@@ -259,6 +269,8 @@ end
 
 function BaseCell:SaveDoorStates()
 
+    tes3mp.ReadLastEvent()
+
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
@@ -272,8 +284,10 @@ end
 
 function BaseCell:SaveContainers()
 
+    tes3mp.ReadLastEvent()
+
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
-    local action = tes3mp.GetLastEventAction()
+    local action = tes3mp.GetEventAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -472,8 +486,8 @@ function BaseCell:SendObjectsDeleted(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     -- Objects deleted
     for arrayIndex, refIndex in pairs(self.data.packets.delete) do
@@ -496,8 +510,8 @@ function BaseCell:SendObjectsPlaced(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.place) do
 
@@ -545,8 +559,8 @@ function BaseCell:SendObjectsScaled(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.scale) do
 
@@ -569,8 +583,8 @@ function BaseCell:SendObjectsLocked(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.lock) do
 
@@ -593,8 +607,8 @@ function BaseCell:SendObjectsUnlocked(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.unlock) do
 
@@ -616,8 +630,8 @@ function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
 
@@ -640,8 +654,8 @@ function BaseCell:SendContainers(pid)
 
     local objectCount = 0
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.container) do
 
@@ -666,7 +680,7 @@ function BaseCell:SendContainers(pid)
     if objectCount > 0 then
 
         -- Set the action to SET
-        tes3mp.SetScriptEventAction(0)
+        tes3mp.SetEventAction(0)
 
         tes3mp.SendContainer()
     end
@@ -823,11 +837,11 @@ end
 
 function BaseCell:RequestContainers(pid)
 
-    tes3mp.InitScriptEvent(pid)
-    tes3mp.SetScriptEventCell(self.description)
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetScriptEventAction(3)
+    tes3mp.SetEventAction(3)
 
     tes3mp.SendContainer()
 end
