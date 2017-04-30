@@ -381,32 +381,15 @@ Methods.UnloadCellForPlayer = function(pid, cellDescription)
 
         -- No longer record that this player has the cell loaded
         LoadedCells[cellDescription]:RemoveVisitor(pid)
+        LoadedCells[cellDescription]:SaveActorStatsDynamic()
         LoadedCells[cellDescription]:Save()
 
-        -- If there are no visitors left, delete the cell
-        if LoadedCells[cellDescription]:GetVisitorCount() == 0 then
-            LoadedCells[cellDescription] = nil
-        elseif LoadedCells[cellDescription]:GetAuthority() == pid then
+        -- If this player was the cell's authority, set another player
+        -- as the authority
+        if LoadedCells[cellDescription]:GetAuthority() == pid then
             for key, otherPid in pairs(LoadedCells[cellDescription].visitors) do
                 LoadedCells[cellDescription]:SetAuthority(otherPid)
                 break
-            end
-        end
-    end
-end
-
-Methods.OnPlayerCellState = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        for i = 0, tes3mp.GetCellStateChangesSize(pid) - 1 do
-
-            local cellDescription = tes3mp.GetCellStateDescription(pid, i)
-            local stateType = tes3mp.GetCellStateType(pid, i)
-
-            if stateType == 0 then
-                Methods.LoadCellForPlayer(pid, cellDescription)
-            elseif stateType == 1 then
-                Methods.UnloadCellForPlayer(pid, cellDescription)
             end
         end
     end
@@ -439,12 +422,22 @@ Methods.OnPlayerSpellbookChange = function(pid)
     end
 end
 
-Methods.OnCellUnload = function(cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorStatsDynamic()
+Methods.OnCellLoad = function(pid, cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Methods.LoadCellForPlayer(pid, cellDescription)
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
     end
+end
+
+Methods.OnCellUnload = function(pid, cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Methods.UnloadCellForPlayer(pid, cellDescription)
+    end
+end
+
+Methods.OnCellDeletion = function(cellDescription)
+    LoadedCells[cellDescription] = nil
 end
 
 Methods.OnActorList = function(pid, cellDescription)
