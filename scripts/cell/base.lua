@@ -351,8 +351,10 @@ end
 
 function BaseCell:SaveActorList()
 
+    tes3mp.ReadLastActorList()
+
     local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
-    local action = tes3mp.GetLastActorListAction()
+    local action = tes3mp.GetActorListAction()
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -365,6 +367,8 @@ function BaseCell:SaveActorList()
 end
 
 function BaseCell:SaveActorStatsDynamic()
+
+    tes3mp.ReadLastActorList()
 
     for i = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -390,6 +394,8 @@ function BaseCell:SaveActorStatsDynamic()
 end
 
 function BaseCell:SaveActorCellChanges()
+
+    tes3mp.ReadLastActorList()
 
     local temporaryLoadedCells = {}
 
@@ -690,8 +696,8 @@ function BaseCell:SendActorList(pid)
 
     local actorCount = 0
 
-    tes3mp.InitScriptActorList(pid)
-    tes3mp.SetScriptActorListCell(self.description)
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.actorList) do
 
@@ -706,7 +712,7 @@ function BaseCell:SendActorList(pid)
     if actorCount > 0 then
 
         -- Set the action to SET
-        tes3mp.SetScriptActorListAction(0)
+        tes3mp.SetActorListAction(0)
 
         tes3mp.SendActorList()
     end
@@ -714,8 +720,8 @@ end
 
 function BaseCell:SendActorAuthority(pid)
 
-    tes3mp.InitScriptActorList(pid)
-    tes3mp.SetScriptActorListCell(self.description)
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
 
     tes3mp.SendActorAuthority()
 end
@@ -724,8 +730,8 @@ function BaseCell:SendActorStatsDynamic(pid)
 
     local actorCount = 0
 
-    tes3mp.InitScriptActorList(pid)
-    tes3mp.SetScriptActorListCell(self.description)
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.statsDynamic) do
 
@@ -756,8 +762,8 @@ function BaseCell:SendActorCellChanges(pid)
     local actorCount = 0
 
     -- Move actors originally from this cell to other cells
-    tes3mp.InitScriptActorList(pid)
-    tes3mp.SetScriptActorListCell(self.description)
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.cellChangeTo) do
 
@@ -811,8 +817,8 @@ function BaseCell:SendActorCellChanges(pid)
     -- Send a cell change packet for every cell that has sent actors to this cell
     for originalCellDescription, actorArray in pairs(cellChangesFrom) do
         
-        tes3mp.InitScriptActorList(pid)
-        tes3mp.SetScriptActorListCell(originalCellDescription)
+        tes3mp.InitializeActorList(pid)
+        tes3mp.SetActorListCell(originalCellDescription)
 
         for arrayIndex, refIndex in pairs(actorArray) do
 
@@ -848,11 +854,11 @@ end
 
 function BaseCell:RequestActorList(pid)
 
-    tes3mp.InitScriptActorList(pid)
-    tes3mp.SetScriptActorListCell(self.description)
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetScriptActorListAction(3)
+    tes3mp.SetActorListAction(3)
 
     tes3mp.SendActorList()
 end
