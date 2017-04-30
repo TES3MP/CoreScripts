@@ -437,7 +437,7 @@ Methods.OnCellUnload = function(pid, cellDescription)
 end
 
 Methods.OnCellDeletion = function(cellDescription)
-    LoadedCells[cellDescription] = nil
+    Methods.UnloadCell(cellDescription)
 end
 
 Methods.OnActorList = function(pid, cellDescription)
