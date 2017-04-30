@@ -387,6 +387,10 @@ function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end
 
+function OnCellUnload(cellDescription)
+    myMod.OnCellUnload(cellDescription)
+end
+
 function OnActorList(pid, cellDescription)
     myMod.OnActorList(pid, cellDescription)
 end

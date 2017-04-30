@@ -439,6 +439,14 @@ Methods.OnPlayerSpellbookChange = function(pid)
     end
 end
 
+Methods.OnCellUnload = function(cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        tes3mp.LogMessage(1, "Saving stored actor data for " .. cellDescription)
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnActorList = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorList()

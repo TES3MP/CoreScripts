@@ -845,6 +845,8 @@ end
 
 function BaseCell:SendCellData(pid)
 
+    tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
+
     self:SendObjectsDeleted(pid)
     self:SendObjectsPlaced(pid)
     self:SendObjectsScaled(pid)
