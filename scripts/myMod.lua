@@ -381,6 +381,7 @@ Methods.UnloadCellForPlayer = function(pid, cellDescription)
 
         -- No longer record that this player has the cell loaded
         LoadedCells[cellDescription]:RemoveVisitor(pid)
+        LoadedCells[cellDescription]:SaveActorPositions()
         LoadedCells[cellDescription]:SaveActorStatsDynamic()
         LoadedCells[cellDescription]:Save()
 

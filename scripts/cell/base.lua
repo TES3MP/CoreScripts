@@ -22,6 +22,7 @@ function BaseCell:__init(cellDescription)
             doorState = {},
             container = {},
             actorList = {},
+            position = {},
             statsDynamic = {},
             cellChangeTo = {},
             cellChangeFrom = {}
@@ -366,6 +367,35 @@ function BaseCell:SaveActorList()
     end
 end
 
+function BaseCell:SaveActorPositions()
+
+    tes3mp.ReadCellActorList(self.description)
+    local actorListSize = tes3mp.GetActorListSize()
+
+    if actorListSize == 0 then
+        return
+    end
+
+    for i = 0, actorListSize - 1 do
+
+        local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
+
+        if tes3mp.DoesActorHavePosition(i) == true and self.data.objectData[refIndex] ~= nil then
+
+            self.data.objectData[refIndex].location = {
+                posX = tes3mp.GetActorPosX(i),
+                posY = tes3mp.GetActorPosY(i),
+                posZ = tes3mp.GetActorPosZ(i),
+                rotX = tes3mp.GetActorRotX(i),
+                rotY = tes3mp.GetActorRotY(i),
+                rotZ = tes3mp.GetActorRotZ(i)
+            }
+
+            tableHelper.insertValueIfMissing(self.data.packets.position, refIndex)
+        end
+    end
+end
+
 function BaseCell:SaveActorStatsDynamic()
 
     tes3mp.ReadCellActorList(self.description)
@@ -379,19 +409,16 @@ function BaseCell:SaveActorStatsDynamic()
 
         local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
-        if self.data.objectData[refIndex] ~= nil then
+        if tes3mp.DoesActorHaveStatsDynamic(i) == true and self.data.objectData[refIndex] ~= nil then
 
-            if self.data.objectData[refIndex].stats == nil then
-                self.data.objectData[refIndex].stats = {}
-            end
-
-            local stats = self.data.objectData[refIndex].stats
-            stats.healthBase = tes3mp.GetActorHealthBase(i)
-            stats.healthCurrent = tes3mp.GetActorHealthCurrent(i)
-            stats.magickaBase = tes3mp.GetActorMagickaBase(i)
-            stats.magickaCurrent = tes3mp.GetActorMagickaCurrent(i)
-            stats.fatigueBase = tes3mp.GetActorFatigueBase(i)
-            stats.fatigueCurrent = tes3mp.GetActorFatigueCurrent(i)
+            self.data.objectData[refIndex].stats = {
+                healthBase = tes3mp.GetActorHealthBase(i),
+                healthCurrent = tes3mp.GetActorHealthCurrent(i),
+                magickaBase = tes3mp.GetActorMagickaBase(i),
+                magickaCurrent = tes3mp.GetActorMagickaCurrent(i),
+                fatigueBase = tes3mp.GetActorFatigueBase(i),
+                fatigueCurrent = tes3mp.GetActorFatigueCurrent(i)
+            }
 
             tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, refIndex)
         end
@@ -731,6 +758,35 @@ function BaseCell:SendActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
+function BaseCell:SendActorPositions(pid)
+
+    local actorCount = 0
+
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.position) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+        local location = self.data.objectData[refIndex].location
+
+        tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+        tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+
+        tes3mp.AddActor()
+
+        actorCount = actorCount + 1
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorPosition()
+    end
+end
+
 function BaseCell:SendActorStatsDynamic(pid)
 
     local actorCount = 0
@@ -745,12 +801,15 @@ function BaseCell:SendActorStatsDynamic(pid)
         tes3mp.SetActorMpNum(splitIndex[2])
         tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        tes3mp.SetActorHealthBase(self.data.objectData[refIndex].stats.healthBase)
-        tes3mp.SetActorHealthCurrent(self.data.objectData[refIndex].stats.healthCurrent)
-        tes3mp.SetActorMagickaBase(self.data.objectData[refIndex].stats.magickaBase)
-        tes3mp.SetActorMagickaCurrent(self.data.objectData[refIndex].stats.magickaCurrent)
-        tes3mp.SetActorFatigueBase(self.data.objectData[refIndex].stats.fatigueBase)
-        tes3mp.SetActorFatigueCurrent(self.data.objectData[refIndex].stats.fatigueCurrent)
+        local stats = self.data.objectData[refIndex].stats
+
+        tes3mp.SetActorHealthBase(stats.healthBase)
+        tes3mp.SetActorHealthCurrent(stats.healthCurrent)
+        tes3mp.SetActorMagickaBase(stats.magickaBase)
+        tes3mp.SetActorMagickaCurrent(stats.magickaCurrent)
+        tes3mp.SetActorFatigueBase(stats.fatigueBase)
+        tes3mp.SetActorFatigueCurrent(stats.fatigueCurrent)
+
         tes3mp.AddActor()
 
         actorCount = actorCount + 1
@@ -888,6 +947,7 @@ function BaseCell:SendCellData(pid)
     if self:HasActorData() then
         self:SendActorList(pid)
         self:SendActorCellChanges(pid)
+        self:SendActorPositions(pid)
         self:SendActorStatsDynamic(pid)
     else
         self:RequestActorList(pid)
