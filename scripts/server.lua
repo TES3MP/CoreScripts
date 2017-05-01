@@ -4,6 +4,7 @@ tableHelper = require("tableHelper")
 require("utils")
 require("guiIds")
 require("deathReasons")
+require("color")
 myMod = require("myMod")
 
 Database = nil
@@ -338,7 +339,7 @@ function OnPlayerSendMessage(pid, message)
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
-            tes3mp.SendMessage(pid, message, false)
+            tes3mp.SendMessage(pid, color.Error..message..color.Default, false)
         end
 
         return false -- commands should be hidden
