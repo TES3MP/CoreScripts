@@ -53,6 +53,24 @@ local adminhelptext = "Admins only:\
 /removemoderator <pid> - Demote player from moderator\
 /console <pid> <on/off/default> - Enable/disable in-game console for player"
 
+Sample = {}
+
+function LoadPluginList()
+    local Sample2 = jsonInterface.load("pluginlist.json")
+    for idx, pl in pairs(Sample2) do
+        idx = tonumber(idx) + 1
+        for n, h in pairs(pl) do
+            Sample[idx] = {n}
+            io.write(("%d, {%s"):format(idx, n))
+            for _, v in ipairs(h) do
+                io.write((", %d"):format(tonumber(v, 16)))
+                table.insert(Sample[idx], tonumber(v,16))
+            end
+            table.insert(Sample[idx], "")
+            io.write("}\n")
+        end
+    end
+end
 
 function OnServerInit()
 
@@ -65,13 +83,12 @@ function OnServerInit()
 
     myMod.InitializeWorld()
     myMod.PushPlayerList(Players)
+    LoadPluginList()
 end
 
 function OnServerExit(error)
     tes3mp.LogMessage(3, tostring(error))
 end
-
-Sample = {{"Morrowind.esm", ""}, {"Bloodmoon.esm", ""}, {"Tribunal.esm", ""}}
 
 function OnRequestPluginList(id, field)
     id = id + 1
