@@ -71,6 +71,17 @@ function OnServerExit(error)
     tes3mp.LogMessage(3, tostring(error))
 end
 
+Sample = {{"Morrowind.esm", ""}, {"Bloodmoon.esm", ""}, {"Tribunal.esm", ""}}
+
+function OnRequestPluginList(id, field)
+    id = id + 1
+    field = field + 1
+    if #Sample < id then
+        return ""
+    end
+    return Sample[id][field]
+end
+
 function OnPlayerConnect(pid)
     tes3mp.SetConsoleAllow(pid, config.allowConsole)
 
