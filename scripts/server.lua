@@ -201,6 +201,29 @@ function OnPlayerSendMessage(pid, message)
         elseif (cmd[1] == "teleportto" or cmd[1] == "tpto") and moderator then
             myMod.TeleportToPlayer(pid, pid, cmd[2])
 
+        elseif (cmd[1] == "setauthority" or cmd[1] == "setauth") and moderator and #cmd > 2 then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+                local cellDescription = ""
+
+                for i = 3, #cmd do
+                    cellDescription = cellDescription .. cmd[i]
+
+                    if i ~= #cmd then
+                        cellDescription = cellDescription .. " "
+                    end
+                end
+
+                -- Get rid of quotation marks
+                cellDescription = string.gsub(cellDescription, '"', '')
+
+                if myMod.IsCellLoaded(cellDescription) == true then
+                    local targetPlayer = tonumber(cmd[2])
+                    myMod.SetCellAuthority(targetPlayer, cellDescription)
+                else
+                    tes3mp.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
+                end
+            end
+
         elseif cmd[1] == "kick" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
                 local targetPlayer = tonumber(cmd[2])

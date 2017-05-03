@@ -335,6 +335,15 @@ Methods.OnPlayerCellChange = function(pid)
     end
 end
 
+Methods.IsCellLoaded = function(cellDescription)
+    
+    return LoadedCells[cellDescription] ~= nil
+end
+
+Methods.SetCellAuthority = function(pid, cellDescription)
+    LoadedCells[cellDescription]:SetAuthority(pid)
+end
+
 Methods.LoadCell = function(cellDescription)
 
     -- If this cell isn't loaded at all, load it
