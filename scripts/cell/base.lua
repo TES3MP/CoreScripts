@@ -348,6 +348,8 @@ function BaseCell:SaveContainers()
 
         self.data.objectData[refIndex].inventory = inventory
     end
+
+    self:Save()
 end
 
 function BaseCell:SaveActorList()
@@ -365,6 +367,8 @@ function BaseCell:SaveActorList()
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, refIndex)
     end
+
+    self:Save()
 end
 
 function BaseCell:SaveActorPositions()
