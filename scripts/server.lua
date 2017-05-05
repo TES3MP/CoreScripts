@@ -3,7 +3,6 @@ class = require("classy")
 tableHelper = require("tableHelper")
 require("utils")
 require("guiIds")
-require("deathReasons")
 require("color")
 myMod = require("myMod")
 
@@ -130,14 +129,20 @@ function OnPlayerDisconnect(pid)
     myMod.OnPlayerDisconnect(pid)
 end
 
-function OnPlayerDeath(pid, reason, killerId)
+function OnPlayerDeath(pid)
 
-    local pname = tes3mp.GetName(pid)
-    local message = ("%s (%d) %s"):format(pname, pid, reasons.GetReasonName(reason))
+    local playerName = tes3mp.GetName(pid)
+    local deathReason = tes3mp.GetDeathReason(pid)
 
-    if reason == reasons.killed then
-       message = ("%s by %s (%d)"):format(message, tes3mp.GetName(killerId), killerId)
+    tes3mp.LogMessage(1, "Original death reason was " .. deathReason)
+
+    if deathReason == "suicide" then
+        deathReason = "committed suicide"
+    else
+        deathReason = "was killed by " .. deathReason
     end
+
+    local message = ("%s (%d) %s"):format(playerName, pid, deathReason)
 
     message = message .. ".\n"
     tes3mp.SendMessage(pid, message, true)
