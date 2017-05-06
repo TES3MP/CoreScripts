@@ -785,16 +785,22 @@ function BaseCell:SendActorPositions(pid)
         local splitIndex = refIndex:split("-")
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
-        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        local location = self.data.objectData[refIndex].location
+        if self.data.objectData[refIndex] ~= nil then
+            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-        tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+            local location = self.data.objectData[refIndex].location
 
-        tes3mp.AddActor()
+            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-        actorCount = actorCount + 1
+            tes3mp.AddActor()
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(3, "- Had position packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.position, refIndex)
+        end
     end
 
     if actorCount > 0 then
@@ -814,20 +820,26 @@ function BaseCell:SendActorStatsDynamic(pid)
         local splitIndex = refIndex:split("-")
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
-        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        local stats = self.data.objectData[refIndex].stats
+        if self.data.objectData[refIndex] ~= nil then
+            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        tes3mp.SetActorHealthBase(stats.healthBase)
-        tes3mp.SetActorHealthCurrent(stats.healthCurrent)
-        tes3mp.SetActorMagickaBase(stats.magickaBase)
-        tes3mp.SetActorMagickaCurrent(stats.magickaCurrent)
-        tes3mp.SetActorFatigueBase(stats.fatigueBase)
-        tes3mp.SetActorFatigueCurrent(stats.fatigueCurrent)
+            local stats = self.data.objectData[refIndex].stats
 
-        tes3mp.AddActor()
+            tes3mp.SetActorHealthBase(stats.healthBase)
+            tes3mp.SetActorHealthCurrent(stats.healthCurrent)
+            tes3mp.SetActorMagickaBase(stats.magickaBase)
+            tes3mp.SetActorMagickaCurrent(stats.magickaCurrent)
+            tes3mp.SetActorFatigueBase(stats.fatigueBase)
+            tes3mp.SetActorFatigueCurrent(stats.fatigueCurrent)
 
-        actorCount = actorCount + 1
+            tes3mp.AddActor()
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(3, "- Had statsDynamic packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.statsDynamic, refIndex)
+        end
     end
 
     if actorCount > 0 then
@@ -897,13 +909,18 @@ function BaseCell:SendActorCellChanges(pid)
 
     for arrayIndex, refIndex in pairs(self.data.packets.cellChangeFrom) do
 
-        local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
+        if self.data.objectData[refIndex] ~= nil then
+            local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
 
-        if cellChangesFrom[originalCellDescription] == nil then
-            cellChangesFrom[originalCellDescription] = {}
+            if cellChangesFrom[originalCellDescription] == nil then
+                cellChangesFrom[originalCellDescription] = {}
+            end
+
+            table.insert(cellChangesFrom[originalCellDescription], refIndex)
+        else
+            tes3mp.LogAppend(3, "- Had cellChangeFrom packet recorded for " .. refIndex .. ", but no matching cell description! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.cellChangeFrom, refIndex) 
         end
-
-        table.insert(cellChangesFrom[originalCellDescription], refIndex)
     end
 
     -- Send a cell change packet for every cell that has sent actors to this cell
