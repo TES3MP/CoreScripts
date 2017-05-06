@@ -290,7 +290,7 @@ end
 
 Methods.AuthCheck = function(pid)
     if Players[pid]:IsLoggedIn() then
-        return
+        return true
     end
 
     local pname = tes3mp.GetName(pid)
@@ -299,6 +299,7 @@ Methods.AuthCheck = function(pid)
     Players[pid]:Kick()
 
     Players[pid] = nil
+    return false
 end
 
 Methods.OnPlayerAttributesChange = function(pid)
