@@ -131,7 +131,7 @@ function BasePlayer:IsAdmin()
 end
 
 function BasePlayer:IsModerator()
-    return self.data.settings.admin == 1
+    return self.data.settings.admin >= 1
 end
 
 function BasePlayer:PromoteModerator(other)
