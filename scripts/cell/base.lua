@@ -451,71 +451,80 @@ function BaseCell:SaveActorCellChanges()
 
         local newCell = LoadedCells[newCellDescription]
 
-        -- Was this actor placed in the old cell, instead of being a pre-existing actor?
-        -- If so, delete it entirely from the old cell and make it get placed in the new cell
-        if tableHelper.containsValue(self.data.packets.place, refIndex) == true then
-            tes3mp.LogAppend(1, "- As a server-only object, it was moved entirely")
-            self:MoveObjectData(refIndex, newCell)
+        -- Only proceed if this Actor is actually supposed to exist in this cell
+        if self.data.objectData[refIndex] ~= nil then
 
-        -- Was this actor moved to the old cell from another cell?
-        elseif tableHelper.containsValue(self.data.packets.cellChangeFrom, refIndex) == true then
-
-            local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
-
-            -- Is the new cell actually this actor's original cell?
-            -- If so, move its data back and remove all of its cell change data
-            if originalCellDescription == newCellDescription then
-                tes3mp.LogAppend(1, "- It is now back in its original cell " .. originalCellDescription)
+            -- Was this actor placed in the old cell, instead of being a pre-existing actor?
+            -- If so, delete it entirely from the old cell and make it get placed in the new cell
+            if tableHelper.containsValue(self.data.packets.place, refIndex) == true then
+                tes3mp.LogAppend(1, "- As a server-only object, it was moved entirely")
                 self:MoveObjectData(refIndex, newCell)
 
-                tableHelper.removeValue(newCell.data.packets.cellChangeTo, refIndex)
-                tableHelper.removeValue(newCell.data.packets.cellChangeFrom, refIndex)
+            -- Was this actor moved to the old cell from another cell?
+            elseif tableHelper.containsValue(self.data.packets.cellChangeFrom, refIndex) == true then
 
-                newCell.data.objectData[refIndex].cellChangeTo = nil
-                newCell.data.objectData[refIndex].cellChangeFrom = nil
-            -- Otherwise, move its data to the new cell, delete it from the old cell, and update its
-            -- information in its original cell
-            else
-                tes3mp.LogAppend(1, "- This is now referenced in its original cell " .. originalCellDescription)
-                self:MoveObjectData(refIndex, newCell)
+                local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
 
-                -- If the original cell is not loaded, load it temporarily
-                if LoadedCells[originalCellDescription] == nil then
-                    myMod.LoadCell(originalCellDescription)
-                    table.insert(temporaryLoadedCells, originalCellDescription)
+                -- Is the new cell actually this actor's original cell?
+                -- If so, move its data back and remove all of its cell change data
+                if originalCellDescription == newCellDescription then
+                    tes3mp.LogAppend(1, "- It is now back in its original cell " .. originalCellDescription)
+                    self:MoveObjectData(refIndex, newCell)
+
+                    tableHelper.removeValue(newCell.data.packets.cellChangeTo, refIndex)
+                    tableHelper.removeValue(newCell.data.packets.cellChangeFrom, refIndex)
+
+                    newCell.data.objectData[refIndex].cellChangeTo = nil
+                    newCell.data.objectData[refIndex].cellChangeFrom = nil
+                -- Otherwise, move its data to the new cell, delete it from the old cell, and update its
+                -- information in its original cell
+                else
+                    self:MoveObjectData(refIndex, newCell)
+
+                    -- If the original cell is not loaded, load it temporarily
+                    if LoadedCells[originalCellDescription] == nil then
+                        myMod.LoadCell(originalCellDescription)
+                        table.insert(temporaryLoadedCells, originalCellDescription)
+                    end
+
+                    local originalCell = LoadedCells[originalCellDescription]
+
+                    if originalCell.data.objectData[refIndex] ~= nil then
+                        tes3mp.LogAppend(1, "- This is now referenced in its original cell " .. originalCellDescription)
+                        originalCell.data.objectData[refIndex].cellChangeTo = newCellDescription
+                    else
+                        tes3mp.LogAppend(3, "- It does not exist in its original cell " .. originalCellDescription .. "! Please report this to a developer")
+                    end
                 end
 
-                local originalCell = LoadedCells[originalCellDescription]
-                originalCell.data.objectData[refIndex].cellChangeTo = newCellDescription
+            -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
+            -- in its old cell, as long as it's not supposed to already be in the new cell
+            elseif self.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
+
+                tes3mp.LogAppend(1, "- This was its first move away from its original cell")
+
+                self:MoveObjectData(refIndex, newCell)
+
+                table.insert(self.data.packets.cellChangeTo, refIndex)
+                self:InitializeObjectData(refIndex, refId)
+                self.data.objectData[refIndex].cellChangeTo = newCellDescription
+
+                table.insert(newCell.data.packets.cellChangeFrom, refIndex)
+
+                newCell.data.objectData[refIndex].cellChangeFrom = self.description
             end
 
-        -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
-        -- in its old cell, as long as it's not supposed to already be in the new cell
-        elseif self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
-
-            tes3mp.LogAppend(1, "- This was its first move away from its original cell")
-
-            self:MoveObjectData(refIndex, newCell)
-
-            table.insert(self.data.packets.cellChangeTo, refIndex)
-            self:InitializeObjectData(refIndex, refId)
-            self.data.objectData[refIndex].cellChangeTo = newCellDescription
-
-            table.insert(newCell.data.packets.cellChangeFrom, refIndex)
-
-            newCell.data.objectData[refIndex].cellChangeFrom = self.description
+            newCell.data.objectData[refIndex].location = {
+                posX = tes3mp.GetActorPosX(actorIndex),
+                posY = tes3mp.GetActorPosY(actorIndex),
+                posZ = tes3mp.GetActorPosZ(actorIndex),
+                rotX = tes3mp.GetActorRotX(actorIndex),
+                rotY = tes3mp.GetActorRotY(actorIndex),
+                rotZ = tes3mp.GetActorRotZ(actorIndex)
+            }
         else
             tes3mp.LogAppend(3, "- Invalid or repeated cell change was attempted! Please report this to a developer")
         end
-
-        newCell.data.objectData[refIndex].location = {
-            posX = tes3mp.GetActorPosX(actorIndex),
-            posY = tes3mp.GetActorPosY(actorIndex),
-            posZ = tes3mp.GetActorPosZ(actorIndex),
-            rotX = tes3mp.GetActorRotX(actorIndex),
-            rotY = tes3mp.GetActorRotY(actorIndex),
-            rotZ = tes3mp.GetActorRotZ(actorIndex)
-        }
     end
 
     -- Go through every temporary loaded cell and unload it
@@ -851,14 +860,21 @@ function BaseCell:SendActorCellChanges(pid)
             table.insert(temporaryLoadedCells, newCellDescription)
         end
 
-        local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
+        if LoadedCells[newCellDescription].data.objectData[refIndex] ~= nil then
 
-        tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-        tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+            local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
-        tes3mp.AddActor()
+            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-        actorCount = actorCount + 1
+            tes3mp.AddActor()
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description .. " to  " .. newCellDescription .. " with no position data! Please report this to a developer")
+            self.data.objectData[refIndex] = nil
+            tableHelper.removeValue(self.data.packets.cellChangeTo, refIndex)
+        end
     end
 
     if actorCount > 0 then
