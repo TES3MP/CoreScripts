@@ -86,6 +86,12 @@ function OnServerInit()
 end
 
 function OnServerPostInit()
+    local allowStr = "allowed"
+    if not config.allowConsole then
+        allowStr = "not "..allowStr
+    end
+    tes3mp.SetRuleString("console", allowStr)
+    tes3mp.SetRuleString("spawn", config.defaultRespawnCell)
 end
 
 function OnServerExit(error)
