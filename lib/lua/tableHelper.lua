@@ -58,6 +58,27 @@ function tableHelper.getIndexByNestedKeyValue(t, keyToFind, valueToFind)
     return nil
 end
 
+-- Iterate through a table and return a new table based on it that has no nil values
+-- (useful for numerical arrays because they retain nil values)
+--
+-- Based on http://stackoverflow.com/a/28302975
+function tableHelper.cleanNils(t)
+
+    local newTable = {}
+    
+    for key, value in pairs(t) do
+        if type(value) == "table" then
+            tableHelper.cleanNils(value)
+        else
+            newTable[#newTable + 1] = value
+        end
+    end
+
+    t = newTable
+end
+
+-- Set values to nil here instead of using table.remove(), so this method can be used on
+-- a table while iterating through it
 function tableHelper.removeValue(t, valueToFind)
 
     tableHelper.replaceValue(t, valueToFind, nil)
