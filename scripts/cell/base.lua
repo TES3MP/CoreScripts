@@ -852,27 +852,33 @@ function BaseCell:SendActorCellChanges(pid)
         tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
         local newCellDescription = self.data.objectData[refIndex].cellChangeTo
-        tes3mp.SetActorCell(newCellDescription)
 
-        -- If the new cell is not loaded, load it temporarily
-        if LoadedCells[newCellDescription] == nil then
-            myMod.LoadCell(newCellDescription)
-            table.insert(temporaryLoadedCells, newCellDescription)
-        end
+        if newCellDescription ~= nil then
+            tes3mp.SetActorCell(newCellDescription)
 
-        if LoadedCells[newCellDescription].data.objectData[refIndex] ~= nil then
+            -- If the new cell is not loaded, load it temporarily
+            if LoadedCells[newCellDescription] == nil then
+                myMod.LoadCell(newCellDescription)
+                table.insert(temporaryLoadedCells, newCellDescription)
+            end
 
-            local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
+            if LoadedCells[newCellDescription].data.objectData[refIndex] ~= nil then
 
-            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+                local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
-            tes3mp.AddActor()
+                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-            actorCount = actorCount + 1
+                tes3mp.AddActor()
+
+                actorCount = actorCount + 1
+            else
+                tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description .. " to  " .. newCellDescription .. " with no position data! Please report this to a developer")
+                self.data.objectData[refIndex] = nil
+                tableHelper.removeValue(self.data.packets.cellChangeTo, refIndex)
+            end
         else
-            tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description .. " to  " .. newCellDescription .. " with no position data! Please report this to a developer")
-            self.data.objectData[refIndex] = nil
+            tes3mp.LogAppend(3, "- Had cellChangeTo packet recorded for " .. refIndex .. ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeTo, refIndex)
         end
     end
