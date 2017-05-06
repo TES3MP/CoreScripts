@@ -101,7 +101,7 @@ function tableHelper.fixNumericalKeys(t)
         if type(value) == "table" then
             tableHelper.fixNumericalKeys(value)
         end
-        
+
         if type(key) ~= "number" and type(tonumber(key)) == "number" then
             newTable[tonumber(key)] = value
             t[key] = nil

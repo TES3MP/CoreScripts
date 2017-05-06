@@ -41,7 +41,7 @@ end
 function Database:CreateTable(tableName, columnArray)
 
     local query = string.format("CREATE TABLE IF NOT EXISTS %s(", tableName)
-    
+
     for index, column in pairs(columnArray) do
         for name, definition in pairs(column) do
             if index > 1 then
@@ -140,7 +140,7 @@ function Database:SavePlayer(dbPid, data)
         if tableHelper.usesNumericalKeys(categoryTable) then
 
             local tableName = "player_slots_" .. category
-            
+
             -- Delete the current slots before repopulating them
             self:DeleteRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
 
@@ -168,12 +168,12 @@ function Database:LoadPlayer(dbPid, data)
     local slotTables = { "equipment", "inventory", "spellbook" }
 
     for category, categoryTable in pairs(data) do
-            
+
         if tableHelper.containsValue(slotTables, category) then
             local tableName = "player_slots_" .. category
 
             local rows = self:SelectRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
-            
+
             for index, row in pairs(rows) do
                 local slot = row.slot
 

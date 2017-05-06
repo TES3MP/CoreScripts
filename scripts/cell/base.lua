@@ -184,7 +184,7 @@ function BaseCell:SaveObjectsPlaced()
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        
+
         self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
 
         local count = tes3mp.GetObjectCount(i)
@@ -229,7 +229,7 @@ function BaseCell:SaveObjectsScaled()
 
         self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
         self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
-        
+
         tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
     end
 end
@@ -491,7 +491,7 @@ function BaseCell:SaveActorCellChanges()
 
         -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
         -- in its old cell, as long as it's not supposed to already be in the new cell
-        elseif self.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
+        elseif self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
 
             tes3mp.LogAppend(1, "- This was its first move away from its original cell")
 
@@ -503,7 +503,9 @@ function BaseCell:SaveActorCellChanges()
 
             table.insert(newCell.data.packets.cellChangeFrom, refIndex)
 
-            newCell.data.objectData[refIndex].cellChangeFrom = self.description                
+            newCell.data.objectData[refIndex].cellChangeFrom = self.description
+        else
+            tes3mp.LogAppend(3, "- Invalid or repeated cell change was attempted! Please report this to a developer")
         end
 
         newCell.data.objectData[refIndex].location = {
@@ -884,7 +886,7 @@ function BaseCell:SendActorCellChanges(pid)
 
     -- Send a cell change packet for every cell that has sent actors to this cell
     for originalCellDescription, actorArray in pairs(cellChangesFrom) do
-        
+
         tes3mp.InitializeActorList(pid)
         tes3mp.SetActorListCell(originalCellDescription)
 

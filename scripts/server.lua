@@ -15,9 +15,9 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
 
     Database = require("database")
     Database:LoadDriver(config.databaseType)
-    
+
     tes3mp.LogMessage(1, "Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")
-    
+
     Database:Connect(config.databasePath)
 
     -- Make sure we enable foreign keys

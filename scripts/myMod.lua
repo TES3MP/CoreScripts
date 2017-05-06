@@ -52,7 +52,7 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
             tes3mp.SendMessage(pid, message, false)
         end
     end
-    
+
     return valid
 end
 
@@ -119,7 +119,7 @@ end
 Methods.GetConnectedPlayerCount = function()
 
     local playerCount = 0
-    
+
     for pid, player in pairs(Players) do
         if player:IsLoggedIn() then
             playerCount = playerCount + 1
@@ -336,7 +336,7 @@ Methods.OnPlayerCellChange = function(pid)
 end
 
 Methods.IsCellLoaded = function(cellDescription)
-    
+
     return LoadedCells[cellDescription] ~= nil
 end
 
