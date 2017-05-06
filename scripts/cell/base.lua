@@ -751,9 +751,15 @@ function BaseCell:SendActorList(pid)
         local splitIndex = refIndex:split("-")
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
-        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
-        actorCount = actorCount + 1
+        if self.data.objectData[refIndex] ~= nil then
+            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(3, "- Had actorList packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.actorList, refIndex)
+        end
     end
 
     if actorCount > 0 then
