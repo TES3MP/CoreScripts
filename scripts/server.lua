@@ -92,6 +92,7 @@ function OnServerPostInit()
     end
     tes3mp.SetRuleString("console", allowStr)
     tes3mp.SetRuleString("spawn", config.defaultRespawnCell)
+    tes3mp.SetRuleValue("adminsOnline", 0)
 end
 
 function OnServerExit(error)
@@ -122,8 +123,15 @@ function OnPlayerConnect(pid)
     end
 end
 
+local adminsCounter = 0
+
 function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConnect
-    myMod.AuthCheck(pid)
+    if myMod.AuthCheck(pid) then
+        if Players[pid]:IsModerator() then
+            adminsCounter = adminsCounter + 1
+            tes3mp.SetRuleValue("adminsOnline", adminsCounter)
+        end
+    end
 end
 
 function OnPlayerDisconnect(pid)
@@ -136,6 +144,8 @@ function OnPlayerDisconnect(pid)
     myMod.OnPlayerCellChange(pid)
 
     myMod.OnPlayerDisconnect(pid)
+    adminsCounter = adminsCounter - 1
+    tes3mp.SetRuleValue("adminsOnline", adminsCounter)
 end
 
 function OnPlayerDeath(pid)
