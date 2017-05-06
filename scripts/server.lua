@@ -85,6 +85,9 @@ function OnServerInit()
     LoadPluginList()
 end
 
+function OnServerPostInit()
+end
+
 function OnServerExit(error)
     tes3mp.LogMessage(3, tostring(error))
 end
