@@ -31,6 +31,9 @@ function BaseCell:__init(cellDescription)
 
     self.visitors = {}
     self.authority = nil
+
+    self.isRequestingActorList = false
+    self.actorListRequestPid = nil
 end
 
 function BaseCell:HasEntry()
@@ -84,6 +87,12 @@ function BaseCell:RemoveVisitor(pid)
 
         -- Remember when this visitor left
         self:SaveLastVisit(Players[pid].accountName)
+
+        -- Were we waiting on an actorList request from this pid?
+        if self.isRequestingActorList == true and self.actorListRequestPid == pid then
+            self.isRequestingActorList = false
+            self.actorListRequestPid = nil
+        end
     end
 end
 
@@ -356,7 +365,7 @@ function BaseCell:SaveActorList()
 
     tes3mp.ReadLastActorList()
 
-    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
+    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
     local action = tes3mp.GetActorListAction()
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
@@ -369,6 +378,8 @@ function BaseCell:SaveActorList()
     end
 
     self:Save()
+
+    self.isRequestingActorList = false
 end
 
 function BaseCell:SaveActorPositions()
@@ -969,6 +980,9 @@ end
 
 function BaseCell:RequestActorList(pid)
 
+    self.isRequestingActorList = true
+    self.actorListRequestPid = pid
+
     tes3mp.InitializeActorList(pid)
     tes3mp.SetActorListCell(self.description)
 
@@ -995,12 +1009,14 @@ function BaseCell:SendCellData(pid)
         self:RequestContainers(pid)
     end
 
-    if self:HasActorData() then
+    if self:HasActorData() == true then
+        tes3mp.LogAppend(1, "- Had actor data")
         self:SendActorList(pid)
         self:SendActorCellChanges(pid)
         self:SendActorPositions(pid)
         self:SendActorStatsDynamic(pid)
-    else
+    elseif self.isRequestingActorList == false then
+        tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
     end
 end
