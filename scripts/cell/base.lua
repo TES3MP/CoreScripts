@@ -225,6 +225,10 @@ function BaseCell:SaveObjectsPlaced()
         }
 
         table.insert(self.data.packets.place, refIndex)
+
+        if tes3mp.GetObjectIsActor(i) == true then
+            table.insert(self.data.packets.actorList, refIndex)
+        end
     end
 end
 
