@@ -4,6 +4,7 @@ tableHelper = require("tableHelper")
 require("utils")
 require("guiIds")
 require("color")
+require("time")
 myMod = require("myMod")
 
 Database = nil
@@ -68,6 +69,34 @@ function LoadPluginList()
             table.insert(Sample[idx], "")
             io.write("}\n")
         end
+    end
+end
+
+do
+    local counter = 0
+    local tid_ut = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+    function UpdateTime()
+        local hour = 0
+        if config.timeSyncMode == 1 then
+            counter = counter + (0.0083 * config.timeServerMult)
+            hour = counter
+        elseif config.timeSyncMode == 2 then
+            -- ToDo: implement like this
+            -- local pid = GetFirstPlayer()
+            -- hour = tes3mp.GetHours(pid)
+        end
+        local day = hour/24
+        hour = math.fmod(hour, 24)
+        for pid,_ in pairs(Players) do
+            tes3mp.SetHour(pid, hour)
+            tes3mp.SetDay(pid, day)
+            print("sending time to ".. tostring(pid))
+        end
+
+        tes3mp.RestartTimer(tid_ut, time.seconds(1));
+    end
+    if config.timeSyncMode ~= 0 then
+        tes3mp.StartTimer(tid_ut);
     end
 end
 
