@@ -529,14 +529,16 @@ function BaseCell:SaveActorCellChanges()
                 newCell.data.objectData[refIndex].cellChangeFrom = self.description
             end
 
-            newCell.data.objectData[refIndex].location = {
-                posX = tes3mp.GetActorPosX(actorIndex),
-                posY = tes3mp.GetActorPosY(actorIndex),
-                posZ = tes3mp.GetActorPosZ(actorIndex),
-                rotX = tes3mp.GetActorRotX(actorIndex),
-                rotY = tes3mp.GetActorRotY(actorIndex),
-                rotZ = tes3mp.GetActorRotZ(actorIndex)
-            }
+            if newCell.data.objectData[refIndex] ~= nil then
+                newCell.data.objectData[refIndex].location = {
+                    posX = tes3mp.GetActorPosX(actorIndex),
+                    posY = tes3mp.GetActorPosY(actorIndex),
+                    posZ = tes3mp.GetActorPosZ(actorIndex),
+                    rotX = tes3mp.GetActorRotX(actorIndex),
+                    rotY = tes3mp.GetActorRotY(actorIndex),
+                    rotZ = tes3mp.GetActorRotZ(actorIndex)
+                }
+            end
         else
             tes3mp.LogAppend(3, "- Invalid or repeated cell change was attempted! Please report this to a developer")
         end
@@ -842,7 +844,7 @@ function BaseCell:SendActorStatsDynamic(pid)
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self.data.objectData[refIndex] ~= nil then
+        if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].stats ~= nil then
             tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
             local stats = self.data.objectData[refIndex].stats
