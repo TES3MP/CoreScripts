@@ -14,5 +14,6 @@ config.defaultRespawnCell = "Pelagiad, Fort Pelagiad"
 
 config.timeSyncMode = 1 -- 0 Do not sync, 1 Use server side counter, 2 use time of frist joined client (not implemented)
 config.timeServerMult = 1 -- multiply seconds to this value (default ~120 seconds per hour)
+config.timeServerInitTime = 7 -- You can init the time like with ingame command -  "Set GameHour"
 
 return config

@@ -73,7 +73,7 @@ function LoadPluginList()
 end
 
 do
-    local counter = 0
+    local counter = config.timeServerInitTime
     local tid_ut = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
     function UpdateTime()
         local hour = 0
@@ -90,7 +90,6 @@ do
         for pid,_ in pairs(Players) do
             tes3mp.SetHour(pid, hour)
             tes3mp.SetDay(pid, day)
-            --print("sending time to ".. tostring(pid))
         end
 
         tes3mp.RestartTimer(tid_ut, time.seconds(1));
