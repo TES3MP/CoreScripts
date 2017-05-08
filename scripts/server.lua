@@ -90,7 +90,7 @@ do
         for pid,_ in pairs(Players) do
             tes3mp.SetHour(pid, hour)
             tes3mp.SetDay(pid, day)
-            print("sending time to ".. tostring(pid))
+            --print("sending time to ".. tostring(pid))
         end
 
         tes3mp.RestartTimer(tid_ut, time.seconds(1));

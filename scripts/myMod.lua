@@ -370,8 +370,15 @@ Methods.LoadCellForPlayer = function(pid, cellDescription)
     -- Record that this player has the cell loaded
     LoadedCells[cellDescription]:AddVisitor(pid)
 
+    local authPid = LoadedCells[cellDescription]:GetAuthority()
+
     -- If the cell's authority is nil, set this player as the authority
-    if LoadedCells[cellDescription]:GetAuthority() == nil then
+    if authPid == nil then
+        LoadedCells[cellDescription]:SetAuthority(pid)
+    -- Otherwise, only set this player as the authority if their ping is noticeably lower
+    -- than that of the current authority
+    elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
+        tes3mp.LogMessage(2, "Player " .. pid .. " took over authority from player " .. authPid .. " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
     end
 end
