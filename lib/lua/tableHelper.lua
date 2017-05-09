@@ -1,5 +1,11 @@
 local tableHelper = {};
 
+function tableHelper.getCount(t)
+    local count = 0
+    for key in pairs(t) do count = count + 1 end
+    return count
+end
+
 -- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
 function tableHelper.containsKeyValue(t, keyToFind, valueToFind, checkNestedTables)
@@ -136,19 +142,30 @@ end
 -- don't have to be consecutive
 function tableHelper.usesNumericalKeys(t)
 
-    local tableSize = 0
+    if tableHelper.getCount(t) == 0 then
+        return false
+    end
 
     for key, value in pairs(t) do
-
-        tableSize = tableSize + 1
-
         if type(key) ~= "number" then
             return false
         end
     end
 
-    if tableSize == 0 then
+    return true
+end
+
+-- Checks whether the table contains only numerical values
+function tableHelper.usesNumericalValues(t)
+
+    if tableHelper.getCount(t) == 0 then
         return false
+    end
+
+    for key, value in pairs(t) do
+        if type(value) ~= "number" then
+            return false
+        end
     end
 
     return true

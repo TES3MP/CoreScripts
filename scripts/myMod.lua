@@ -131,9 +131,7 @@ end
 
 Methods.GetLoadedCellCount = function()
 
-    local cellCount = 0
-    for cell in pairs(LoadedCells) do cellCount = cellCount + 1 end
-    return cellCount
+    return tableHelper.getCount(LoadedCells)
 end
 
 Methods.PrintPlayerPosition = function(pid, targetPlayer)
