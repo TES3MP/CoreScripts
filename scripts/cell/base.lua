@@ -1024,9 +1024,11 @@ function BaseCell:SendCellData(pid)
     self:SendObjectsUnlocked(pid)
     self:SendDoorStates(pid)
 
-    if self:HasContainerData() then
+    if self:HasContainerData() == true then
+        tes3mp.LogAppend(1, "- Had container data")
         self:SendContainers(pid)
     else
+        tes3mp.LogAppend(1, "- Requesting containers")
         self:RequestContainers(pid)
     end
 
