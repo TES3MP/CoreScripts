@@ -194,28 +194,7 @@ function BaseCell:SaveObjectsPlaced()
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-
-        local count = tes3mp.GetObjectCount(i)
-        local charge = tes3mp.GetObjectCharge(i)
-        local goldValue = tes3mp.GetObjectGoldValue(i)
-
-        -- Only save count if it isn't the default value of 1
-        if count ~= 1 then
-            self.data.objectData[refIndex].count = count
-        end
-
-        -- Only save charge if it isn't the default value of -1
-        if charge ~= -1 then
-            self.data.objectData[refIndex].charge = charge
-        end
-
-        -- Only save goldValue if it isn't the default value of 1
-        if goldValue ~=1 then
-            self.data.objectData[refIndex].goldValue = goldValue
-        end
-
-        self.data.objectData[refIndex].location = {
+        local location = {
             posX = tes3mp.GetObjectPosX(i),
             posY = tes3mp.GetObjectPosY(i),
             posZ = tes3mp.GetObjectPosZ(i),
@@ -224,10 +203,37 @@ function BaseCell:SaveObjectsPlaced()
             rotZ = tes3mp.GetObjectRotZ(i)
         }
 
-        table.insert(self.data.packets.place, refIndex)
+        -- Ensure data integrity before proceeeding
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-        if tes3mp.GetObjectIsActor(i) == true then
-            table.insert(self.data.packets.actorList, refIndex)
+            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+
+            local count = tes3mp.GetObjectCount(i)
+            local charge = tes3mp.GetObjectCharge(i)
+            local goldValue = tes3mp.GetObjectGoldValue(i)
+
+            -- Only save count if it isn't the default value of 1
+            if count ~= 1 then
+                self.data.objectData[refIndex].count = count
+            end
+
+            -- Only save charge if it isn't the default value of -1
+            if charge ~= -1 then
+                self.data.objectData[refIndex].charge = charge
+            end
+
+            -- Only save goldValue if it isn't the default value of 1
+            if goldValue ~=1 then
+                self.data.objectData[refIndex].goldValue = goldValue
+            end
+
+            self.data.objectData[refIndex].location = location
+
+            table.insert(self.data.packets.place, refIndex)
+
+            if tes3mp.GetObjectIsActor(i) == true then
+                table.insert(self.data.packets.actorList, refIndex)
+            end
         end
     end
 end
@@ -585,39 +591,48 @@ function BaseCell:SendObjectsPlaced(pid)
 
     for arrayIndex, refIndex in pairs(self.data.packets.place) do
 
-        local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        local location = self.data.objectData[refIndex].location
 
-        local count = self.data.objectData[refIndex].count
-        local charge = self.data.objectData[refIndex].charge
-        local goldValue = self.data.objectData[refIndex].goldValue
+        -- Ensure data integrity before proceeeding
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-        -- Use default count of 1 when the value is missing
-        if count == nil then
-            count = 1
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+
+            local count = self.data.objectData[refIndex].count
+            local charge = self.data.objectData[refIndex].charge
+            local goldValue = self.data.objectData[refIndex].goldValue
+
+            -- Use default count of 1 when the value is missing
+            if count == nil then
+                count = 1
+            end
+
+            -- Use default charge of -1 when the value is missing
+            if charge == nil then
+                charge = -1
+            end
+
+            -- Use default goldValue of 1 when the value is missing
+            if goldValue == nil then
+                goldValue = 1
+            end
+
+            tes3mp.SetObjectCharge(charge)
+            tes3mp.SetObjectCount(count)
+            tes3mp.SetObjectGoldValue(goldValue)
+            tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+            tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+
+            tes3mp.AddWorldObject()
+
+            objectCount = objectCount + 1
+        else
+            self.data.objectData[refIndex] = nil
+            tableHelper.removeValue(self.data.packets.place, refIndex)
         end
-
-        -- Use default charge of -1 when the value is missing
-        if charge == nil then
-            charge = -1
-        end
-
-        -- Use default goldValue of 1 when the value is missing
-        if goldValue == nil then
-            goldValue = 1
-        end
-
-        tes3mp.SetObjectCharge(charge)
-        tes3mp.SetObjectCount(count)
-        tes3mp.SetObjectGoldValue(goldValue)
-        tes3mp.SetObjectPosition(self.data.objectData[refIndex].location.posX, self.data.objectData[refIndex].location.posY, self.data.objectData[refIndex].location.posZ)
-        tes3mp.SetObjectRotation(self.data.objectData[refIndex].location.rotX, self.data.objectData[refIndex].location.rotY, self.data.objectData[refIndex].location.rotZ)
-
-        tes3mp.AddWorldObject()
-
-        objectCount = objectCount + 1
     end
 
     if objectCount > 0 then
