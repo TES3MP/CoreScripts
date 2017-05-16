@@ -463,20 +463,20 @@ function OnPlayerSendMessage(pid, message)
     return true -- default behavior, chat messages should not
 end
 
-function OnPlayerAttributesChange(pid)
-    myMod.OnPlayerAttributesChange(pid)
+function OnPlayerAttribute(pid)
+    myMod.OnPlayerAttribute(pid)
 end
 
-function OnPlayerSkillsChange(pid)
-    myMod.OnPlayerSkillsChange(pid)
+function OnPlayerSkill(pid)
+    myMod.OnPlayerSkill(pid)
 end
 
-function OnPlayerLevelChange(pid)
-    myMod.OnPlayerLevelChange(pid)
+function OnPlayerLevel(pid)
+    myMod.OnPlayerLevel(pid)
 end
 
-function OnPlayerBountyChange(pid)
-    myMod.OnPlayerBountyChange(pid)
+function OnPlayerBounty(pid)
+    myMod.OnPlayerBounty(pid)
 end
 
 function OnPlayerCellChange(pid)
@@ -487,16 +487,16 @@ function OnPlayerCellState(pid)
     myMod.OnPlayerCellState(pid)
 end
 
-function OnPlayerEquipmentChange(pid)
-    myMod.OnPlayerEquipmentChange(pid)
+function OnPlayerEquipment(pid)
+    myMod.OnPlayerEquipment(pid)
 end
 
-function OnPlayerInventoryChange(pid)
-    myMod.OnPlayerInventoryChange(pid)
+function OnPlayerInventory(pid)
+    myMod.OnPlayerInventory(pid)
 end
 
-function OnPlayerSpellbookChange(pid)
-    myMod.OnPlayerSpellbookChange(pid)
+function OnPlayerSpellbook(pid)
+    myMod.OnPlayerSpellbook(pid)
 end
 
 function OnPlayerEndCharGen(pid)

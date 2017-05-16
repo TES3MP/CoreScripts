@@ -300,26 +300,26 @@ Methods.AuthCheck = function(pid)
     return false
 end
 
-Methods.OnPlayerAttributesChange = function(pid)
+Methods.OnPlayerAttribute = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveAttributes()
     end
 end
 
-Methods.OnPlayerSkillsChange = function(pid)
+Methods.OnPlayerSkill = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveSkills()
     end
 end
 
-Methods.OnPlayerLevelChange = function(pid)
+Methods.OnPlayerLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveLevel()
         Players[pid]:SaveStatsDynamic()
     end
 end
 
-Methods.OnPlayerBountyChange = function(pid)
+Methods.OnPlayerBounty = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveBounty()
     end
@@ -411,19 +411,19 @@ Methods.UnloadCellForPlayer = function(pid, cellDescription)
     end
 end
 
-Methods.OnPlayerEquipmentChange = function(pid)
+Methods.OnPlayerEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveEquipment()
     end
 end
 
-Methods.OnPlayerInventoryChange = function(pid)
+Methods.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveInventory()
     end
 end
 
-Methods.OnPlayerSpellbookChange = function(pid)
+Methods.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         local action = tes3mp.GetSpellbookAction(pid)
