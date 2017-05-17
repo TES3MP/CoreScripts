@@ -367,6 +367,7 @@ function BaseCell:SaveContainers()
         end
 
         tableHelper.cleanNils(inventory)
+        self.data.objectData[refIndex].inventory = inventory
     end
 
     self:Save()
