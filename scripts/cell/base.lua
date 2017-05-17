@@ -333,7 +333,8 @@ function BaseCell:SaveContainers()
 
             -- Check if the object's stored inventory contains this item already
             if inventoryHelper.containsItem(inventory, itemRefId, itemCharge) then
-                local item = inventoryHelper.getItem(inventory, itemRefId, itemCharge)
+                local foundIndex = inventoryHelper.getItemIndex(inventory, itemRefId, itemCharge)
+                local item = inventory[foundIndex]
 
                 if action == actionTypes.ADD then
                     item.count = item.count + itemCount
@@ -345,7 +346,7 @@ function BaseCell:SaveContainers()
                         item.count = newCount
                     -- The item is to be completely removed
                     elseif newCount == 0 then
-                        item = nil
+                        inventory[foundIndex] = nil
                     else
                         tes3mp.LogMessage(2, "Attempt to remove more than possible from item")
                     end
@@ -365,7 +366,7 @@ function BaseCell:SaveContainers()
             end
         end
 
-        self.data.objectData[refIndex].inventory = inventory
+        tableHelper.cleanNils(inventory)
     end
 
     self:Save()

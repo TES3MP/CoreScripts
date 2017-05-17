@@ -9,10 +9,10 @@ function inventoryHelper.containsItem(inventory, refId, charge)
     return false
 end
 
-function inventoryHelper.getItem(inventory, refId, charge)
+function inventoryHelper.getItemIndex(inventory, refId, charge)
     for itemIndex, item in pairs(inventory) do
         if item.refId == refId and item.charge == charge then
-            return item
+            return itemIndex
         end
     end
     return nil

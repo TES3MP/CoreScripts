@@ -525,9 +525,12 @@ function BasePlayer:RemoveSpells()
         -- Only print spell removal if the spell actually exists
         if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
             tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
-            table.removeValue(self.data.spellbook, spellId)
+            local foundIndex = tableHelper.getIndexByNestedKeyValue(self.data.spellbook, "spellId", spellId)
+            self.data.spellbook[foundIndex] = nil
         end
     end
+
+    tableHelper.cleanNils(self.data.spellbook)
 end
 
 function BasePlayer:SetSpells()

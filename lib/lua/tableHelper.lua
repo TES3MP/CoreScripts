@@ -75,12 +75,15 @@ function tableHelper.cleanNils(t)
     for key, value in pairs(t) do
         if type(value) == "table" then
             tableHelper.cleanNils(value)
-        else
+        end
+        
+        if type(key) == "number" then
             newTable[#newTable + 1] = value
+            t[key] = nil
         end
     end
 
-    t = newTable
+    tableHelper.merge(t, newTable)
 end
 
 -- Set values to nil here instead of using table.remove(), so this method can be used on
