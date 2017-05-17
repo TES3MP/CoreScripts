@@ -134,6 +134,13 @@ function BaseCell:InitializeObjectData(refIndex, refId)
 end
 
 function BaseCell:DeleteObjectData(refIndex)
+
+    -- Delete all packets associated with an object
+    for packetIndex, packetType in pairs(self.data.packets) do
+        tableHelper.removeValue(self.data.packets[packetIndex], refIndex)
+    end
+
+    -- Delete all object data
     self.data.objectData[refIndex] = nil
 end
 
@@ -151,7 +158,7 @@ function BaseCell:MoveObjectData(refIndex, newCell)
 
     newCell.data.objectData[refIndex] = self.data.objectData[refIndex]
 
-    self:DeleteObjectData(refIndex)
+    self.data.objectData[refIndex] = nil
 end
 
 function BaseCell:SaveLastVisit(playerName)
@@ -160,29 +167,52 @@ end
 
 function BaseCell:SaveObjectsDeleted()
 
+    local temporaryLoadedCells = {}
+
     tes3mp.ReadLastEvent()
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
-        -- Check whether this is a placed object
-        local wasPlaced = tableHelper.containsValue(self.data.packets.place, refIndex)
+        -- Check whether this object was moved to this cell from another one
+        local wasMovedHere = tableHelper.containsValue(self.data.packets.cellChangeFrom, refIndex)
+        
+        if wasMovedHere == true then
 
-        -- Delete all packets for the object
-        for packetIndex, packetType in pairs(self.data.packets) do
-            tableHelper.removeValue(self.data.packets[packetIndex], refIndex)
+            local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
+
+            -- If the new cell is not loaded, load it temporarily
+            if LoadedCells[originalCellDescription] == nil then
+                myMod.LoadCell(originalCellDescription)
+                table.insert(temporaryLoadedCells, originalCellDescription)
+            end
+
+            local originalCell = LoadedCells[originalCellDescription]
+
+            originalCell:DeleteObjectData(refIndex)
+            table.insert(originalCell.data.packets.delete, refIndex)
+            originalCell:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+
+            self:DeleteObjectData(refIndex)
+
+        else
+            -- Check whether this is a placed object
+            local wasPlaced = tableHelper.containsValue(self.data.packets.place, refIndex)
+
+            self:DeleteObjectData(refIndex)
+
+            if wasPlacedHere == false then
+
+                table.insert(self.data.packets.delete, refIndex)
+                self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+            end
         end
+    end
 
-        -- Delete all object data
-        self:DeleteObjectData(refIndex)
-
-        -- If wasPlaced is false, this is a pre-existing object from the game's data files
-        -- that should be tracked and deleted every time this cell is opened
-        if wasPlaced == false then
-            table.insert(self.data.packets.delete, refIndex)
-            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        end
+    -- Go through every temporary loaded cell and unload it
+    for arrayIndex, originalCellDescription in pairs(temporaryLoadedCells) do
+        myMod.UnloadCell(originalCellDescription)
     end
 end
 
@@ -454,9 +484,9 @@ end
 
 function BaseCell:SaveActorCellChanges()
 
-    tes3mp.ReadLastActorList()
-
     local temporaryLoadedCells = {}
+
+    tes3mp.ReadLastActorList()
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
