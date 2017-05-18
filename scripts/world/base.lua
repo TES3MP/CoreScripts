@@ -6,8 +6,13 @@ function BaseWorld:__init(test)
     {
         general = {
             currentMpNum = 0
-        }
+        },
+        journal = {}
     };
+end
+
+function BaseWorld:HasEntry()
+    return self.hasEntry
 end
 
 function BaseWorld:GetCurrentMpNum()
@@ -19,8 +24,20 @@ function BaseWorld:SetCurrentMpNum(currentMpNum)
     self:Save()
 end
 
-function BaseWorld:HasEntry()
-    return self.hasEntry
+function BaseWorld:AddJournal(pid)
+
+    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+
+        local journalItem = {
+            type = tes3mp.GetJournalItemType(pid, i),
+            index = tes3mp.GetJournalItemIndex(pid, i),
+            quest = tes3mp.GetJournalItemQuest(pid, i)
+        }
+
+        table.insert(self.data.journal, journalItem)
+    end
+
+    self:Save()
 end
 
 return BaseWorld

@@ -499,6 +499,10 @@ function OnPlayerSpellbook(pid)
     myMod.OnPlayerSpellbook(pid)
 end
 
+function OnPlayerJournal(pid)
+    myMod.OnPlayerJournal(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

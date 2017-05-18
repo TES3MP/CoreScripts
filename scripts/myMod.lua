@@ -438,6 +438,12 @@ Methods.OnPlayerSpellbook = function(pid)
     end
 end
 
+Methods.OnPlayerJournal = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:AddJournal(pid)
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
