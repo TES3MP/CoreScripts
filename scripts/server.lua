@@ -503,6 +503,10 @@ function OnPlayerJournal(pid)
     myMod.OnPlayerJournal(pid)
 end
 
+function OnPlayerFaction(pid)
+    myMod.OnPlayerFaction(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

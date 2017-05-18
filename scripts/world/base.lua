@@ -7,7 +7,8 @@ function BaseWorld:__init(test)
         general = {
             currentMpNum = 0
         },
-        journal = {}
+        journal = {},
+        factions = {}
     };
 end
 
@@ -24,7 +25,7 @@ function BaseWorld:SetCurrentMpNum(currentMpNum)
     self:Save()
 end
 
-function BaseWorld:AddJournal(pid)
+function BaseWorld:SaveJournal(pid)
 
     for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
 
@@ -35,6 +36,22 @@ function BaseWorld:AddJournal(pid)
         }
 
         table.insert(self.data.journal, journalItem)
+    end
+
+    self:Save()
+end
+
+function BaseWorld:SaveFactions(pid)
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local faction = {
+            factionId = tes3mp.GetFactionId(pid, i),
+            rank = tes3mp.GetFactionRank(pid, i),
+            isExpelled = tes3mp.GetFactionExpelledState(pid, i)
+        }
+
+        table.insert(self.data.factions, faction)
     end
 
     self:Save()
@@ -54,6 +71,16 @@ function BaseWorld:LoadJournal(pid)
     end
 
     tes3mp.SendJournalChanges(pid)
+end
+
+function BaseWorld:LoadFactions(pid)
+
+    for index, faction in pairs(self.data.factions) do
+
+        tes3mp.AddFaction(pid, faction.factionId, faction.rank, faction.isExpelled)
+    end
+
+    tes3mp.SendFactionChanges(pid)
 end
 
 return BaseWorld

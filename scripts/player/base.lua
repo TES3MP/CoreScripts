@@ -120,6 +120,7 @@ function BasePlayer:FinishLogin()
         self:LoadSpellbook()
         self:SetConsole(self.data.settings.consoleAllowed)
         WorldInstance:LoadJournal(self.pid)
+        WorldInstance:LoadFactions(self.pid)
     end
 end
 

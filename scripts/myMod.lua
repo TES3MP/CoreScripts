@@ -440,7 +440,13 @@ end
 
 Methods.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:AddJournal(pid)
+        WorldInstance:SaveJournal(pid)
+    end
+end
+
+Methods.OnPlayerFaction = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveFactions(pid)
     end
 end
 
