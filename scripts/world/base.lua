@@ -40,4 +40,20 @@ function BaseWorld:AddJournal(pid)
     self:Save()
 end
 
+function BaseWorld:LoadJournal(pid)
+
+    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
+
+    for index, journalItem in pairs(self.data.journal) do
+
+        if journalItem.type == journalItemTypes.ENTRY then
+            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index)
+        else
+            tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
+        end
+    end
+
+    tes3mp.SendJournalChanges(pid)
+end
+
 return BaseWorld

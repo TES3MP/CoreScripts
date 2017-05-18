@@ -119,6 +119,7 @@ function BasePlayer:FinishLogin()
         self:LoadEquipment()
         self:LoadSpellbook()
         self:SetConsole(self.data.settings.consoleAllowed)
+        WorldInstance:LoadJournal(self.pid)
     end
 end
 
@@ -198,15 +199,7 @@ function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)
     tes3mp.SetHair(self.pid, self.data.character.hair)
-
-    -- Temporary: "sex" has been renamed into "gender", but maintain backwards
-    -- compatibility for a while
-    if self.data.character.gender == nil then
-        tes3mp.SetIsMale(self.pid, self.data.character.sex)
-    else
-        tes3mp.SetIsMale(self.pid, self.data.character.gender)
-    end
-
+    tes3mp.SetIsMale(self.pid, self.data.character.gender)
     tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
 
     tes3mp.SendBaseInfo(self.pid)
@@ -444,8 +437,6 @@ end
 
 function BasePlayer:LoadInventory()
 
-    -- Keep this around to update everyone to the new BasePlayer file format
-    -- instead of crashing the server
     if self.data.inventory == nil then
         self.data.inventory = {}
     end
@@ -483,8 +474,6 @@ end
 
 function BasePlayer:LoadSpellbook()
 
-    -- Keep this around to update everyone to the new BasePlayer file format
-    -- instead of crashing the server
     if self.data.spellbook == nil then
         self.data.spellbook = {}
     end
