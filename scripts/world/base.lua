@@ -45,13 +45,16 @@ function BaseWorld:SaveFactions(pid)
 
     for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
 
-        local faction = {
-            factionId = tes3mp.GetFactionId(pid, i),
-            rank = tes3mp.GetFactionRank(pid, i),
-            isExpelled = tes3mp.GetFactionExpelledState(pid, i)
-        }
+        local factionId = tes3mp.GetFactionId(pid, i)
+        local faction = self.data.factions[factionId]
 
-        table.insert(self.data.factions, faction)
+        if faction == nil then
+            faction = {}
+        end
+
+        faction.rank = tes3mp.GetFactionRank(pid, i)
+        faction.isExpelled = tes3mp.GetFactionExpelledState(pid, i)
+        self.data.factions[factionId] = faction
     end
 
     self:Save()
@@ -75,9 +78,9 @@ end
 
 function BaseWorld:LoadFactions(pid)
 
-    for index, faction in pairs(self.data.factions) do
+    for factionId, faction in pairs(self.data.factions) do
 
-        tes3mp.AddFaction(pid, faction.factionId, faction.rank, faction.isExpelled)
+        tes3mp.AddFaction(pid, factionId, faction.rank, faction.isExpelled)
     end
 
     tes3mp.SendFactionChanges(pid)
