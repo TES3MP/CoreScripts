@@ -547,6 +547,9 @@ Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:SaveStatsDynamic()
     Players[pid]:SaveEquipment()
     Players[pid]:CreateAccount()
+
+    WorldInstance:LoadJournal(pid)
+    WorldInstance:LoadFactions(pid)
 end
 
 Methods.OnMpNumIncrement = function(currentMpNum)
