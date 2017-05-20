@@ -63,7 +63,7 @@ function LoadPluginList()
             Sample[idx] = {n}
             io.write(("%d, {%s"):format(idx, n))
             for _, v in ipairs(h) do
-                io.write((", %d"):format(tonumber(v, 16)))
+                io.write((", %X"):format(tonumber(v, 16)))
                 table.insert(Sample[idx], tonumber(v,16))
             end
             table.insert(Sample[idx], "")
