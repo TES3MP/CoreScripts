@@ -8,7 +8,8 @@ function BaseWorld:__init(test)
             currentMpNum = 0
         },
         journal = {},
-        factions = {}
+        factions = {},
+        topics = {}
     };
 end
 
@@ -60,6 +61,20 @@ function BaseWorld:SaveFactions(pid)
     self:Save()
 end
 
+function BaseWorld:SaveTopics(pid)
+
+    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
+
+        local topicId = tes3mp.GetTopicId(pid, i)
+
+        if tableHelper.containsValue(self.data.topics, topicId) == false then
+            table.insert(self.data.topics, topicId)
+        end
+    end
+
+    self:Save()
+end
+
 function BaseWorld:LoadJournal(pid)
 
     local journalItemTypes = { ENTRY = 0, INDEX = 1 }
@@ -84,6 +99,16 @@ function BaseWorld:LoadFactions(pid)
     end
 
     tes3mp.SendFactionChanges(pid)
+end
+
+function BaseWorld:LoadTopics(pid)
+
+    for index, topicId in pairs(self.data.topics) do
+
+        tes3mp.AddTopic(pid, topicId)
+    end
+
+    tes3mp.SendTopicChanges(pid)
 end
 
 return BaseWorld

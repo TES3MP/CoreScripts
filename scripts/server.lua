@@ -507,6 +507,10 @@ function OnPlayerFaction(pid)
     myMod.OnPlayerFaction(pid)
 end
 
+function OnPlayerTopic(pid)
+    myMod.OnPlayerTopic(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

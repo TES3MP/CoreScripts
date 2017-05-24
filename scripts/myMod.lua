@@ -450,6 +450,12 @@ Methods.OnPlayerFaction = function(pid)
     end
 end
 
+Methods.OnPlayerTopic = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveTopics(pid)
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
@@ -542,6 +548,7 @@ Methods.OnPlayerEndCharGen = function(pid)
 
     WorldInstance:LoadJournal(pid)
     WorldInstance:LoadFactions(pid)
+    WorldInstance:LoadTopics(pid)
 end
 
 Methods.OnMpNumIncrement = function(currentMpNum)
