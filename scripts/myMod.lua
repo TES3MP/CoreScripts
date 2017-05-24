@@ -516,14 +516,6 @@ Methods.OnObjectLock = function(pid, cellDescription)
     end
 end
 
-Methods.OnObjectUnlock = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsUnlocked()
-    else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to unlock object in unloaded " .. cellDescription)
-    end
-end
-
 Methods.OnDoorState = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveDoorStates()

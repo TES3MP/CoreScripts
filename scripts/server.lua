@@ -547,10 +547,6 @@ function OnObjectLock(pid, cellDescription)
     myMod.OnObjectLock(pid, cellDescription)
 end
 
-function OnObjectUnlock(pid, cellDescription)
-    myMod.OnObjectUnlock(pid, cellDescription)
-end
-
 function OnDoorState(pid, cellDescription)
     myMod.OnDoorState(pid, cellDescription)
 end

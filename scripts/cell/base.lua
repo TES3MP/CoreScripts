@@ -18,7 +18,6 @@ function BaseCell:__init(cellDescription)
             place = {},
             scale = {},
             lock = {},
-            unlock = {},
             doorState = {},
             container = {},
             actorList = {},
@@ -295,25 +294,6 @@ function BaseCell:SaveObjectsLocked()
         self.data.objectData[refIndex].lockLevel = tes3mp.GetObjectLockLevel(i)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, refIndex)
-
-        tableHelper.removeValue(self.data.packets.unlock, refIndex)
-    end
-end
-
-function BaseCell:SaveObjectsUnlocked()
-
-    tes3mp.ReadLastEvent()
-
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
-
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].lockLevel = nil
-
-        tableHelper.insertValueIfMissing(self.data.packets.unlock, refIndex)
-
-        tableHelper.removeValue(self.data.packets.lock, refIndex)
     end
 end
 
@@ -720,29 +700,6 @@ function BaseCell:SendObjectsLocked(pid)
     end
 end
 
-function BaseCell:SendObjectsUnlocked(pid)
-
-    local objectCount = 0
-
-    tes3mp.InitiateEvent(pid)
-    tes3mp.SetEventCell(self.description)
-
-    for arrayIndex, refIndex in pairs(self.data.packets.unlock) do
-
-        local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.AddWorldObject()
-
-        objectCount = objectCount + 1
-    end
-
-    if objectCount > 0 then
-        tes3mp.SendObjectUnlock()
-    end
-end
-
 function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
@@ -1053,7 +1010,6 @@ function BaseCell:SendCellData(pid)
     self:SendObjectsPlaced(pid)
     self:SendObjectsScaled(pid)
     self:SendObjectsLocked(pid)
-    self:SendObjectsUnlocked(pid)
     self:SendDoorStates(pid)
 
     if self:HasContainerData() == true then
