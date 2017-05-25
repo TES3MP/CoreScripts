@@ -201,7 +201,7 @@ function BaseCell:SaveObjectsDeleted()
 
             self:DeleteObjectData(refIndex)
 
-            if wasPlacedHere == false then
+            if wasPlaced == false then
 
                 table.insert(self.data.packets.delete, refIndex)
                 self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
