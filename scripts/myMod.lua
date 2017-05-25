@@ -506,19 +506,27 @@ Methods.OnObjectDelete = function(pid, cellDescription)
     end
 end
 
-Methods.OnObjectScale = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsScaled()
-    else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to scale object in unloaded " .. cellDescription)
-    end
-end
-
 Methods.OnObjectLock = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsLocked()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to lock object in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnObjectTrap = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectTrapsTriggered()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to trigger object traps in unloaded " .. cellDescription)
+    end
+end
+
+Methods.OnObjectScale = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectsScaled()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to scale object in unloaded " .. cellDescription)
     end
 end
 

@@ -543,12 +543,16 @@ function OnObjectDelete(pid, cellDescription)
     myMod.OnObjectDelete(pid, cellDescription)
 end
 
-function OnObjectScale(pid, cellDescription)
-    myMod.OnObjectScale(pid, cellDescription)
-end
-
 function OnObjectLock(pid, cellDescription)
     myMod.OnObjectLock(pid, cellDescription)
+end
+
+function OnObjectTrap(pid, cellDescription)
+    myMod.OnObjectTrap(pid, cellDescription)
+end
+
+function OnObjectScale(pid, cellDescription)
+    myMod.OnObjectScale(pid, cellDescription)
 end
 
 function OnDoorState(pid, cellDescription)

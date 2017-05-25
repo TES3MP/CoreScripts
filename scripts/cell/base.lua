@@ -16,8 +16,9 @@ function BaseCell:__init(cellDescription)
         packets = {
             delete = {},
             place = {},
-            scale = {},
             lock = {},
+            trap = {},
+            scale = {},
             doorState = {},
             container = {},
             actorList = {},
@@ -197,11 +198,11 @@ function BaseCell:SaveObjectsDeleted()
 
         else
             -- Check whether this is a placed object
-            local wasPlaced = tableHelper.containsValue(self.data.packets.place, refIndex)
+            local wasPlacedHere = tableHelper.containsValue(self.data.packets.place, refIndex)
 
             self:DeleteObjectData(refIndex)
 
-            if wasPlaced == false then
+            if wasPlacedHere == false then
 
                 table.insert(self.data.packets.delete, refIndex)
                 self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
@@ -267,21 +268,6 @@ function BaseCell:SaveObjectsPlaced()
     end
 end
 
-function BaseCell:SaveObjectsScaled()
-
-    tes3mp.ReadLastEvent()
-
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
-
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
-
-        tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
-    end
-end
-
 function BaseCell:SaveObjectsLocked()
 
     tes3mp.ReadLastEvent()
@@ -294,6 +280,35 @@ function BaseCell:SaveObjectsLocked()
         self.data.objectData[refIndex].lockLevel = tes3mp.GetObjectLockLevel(i)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, refIndex)
+    end
+end
+
+function BaseCell:SaveObjectTrapsTriggered()
+
+    tes3mp.ReadLastEvent()
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+
+        tableHelper.insertValueIfMissing(self.data.packets.trap, refIndex)
+    end
+end
+
+function BaseCell:SaveObjectsScaled()
+
+    tes3mp.ReadLastEvent()
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
+
+        tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
     end
 end
 
@@ -700,6 +715,29 @@ function BaseCell:SendObjectsLocked(pid)
     end
 end
 
+function BaseCell:SendObjectTrapsTriggered(pid)
+
+    local objectCount = 0
+
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.trap) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.AddWorldObject()
+
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendObjectTrap()
+    end
+end
+
 function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
@@ -1008,8 +1046,9 @@ function BaseCell:SendCellData(pid)
 
     self:SendObjectsDeleted(pid)
     self:SendObjectsPlaced(pid)
-    self:SendObjectsScaled(pid)
     self:SendObjectsLocked(pid)
+    self:SendObjectTrapsTriggered(pid)
+    self:SendObjectsScaled(pid)
     self:SendDoorStates(pid)
 
     if self:HasContainerData() == true then
