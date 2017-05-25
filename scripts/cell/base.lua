@@ -728,6 +728,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectDisarmState(true)
         tes3mp.AddWorldObject()
 
         objectCount = objectCount + 1
