@@ -395,12 +395,6 @@ function BasePlayer:LoadCell()
 
         tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
 
-        -- Temporary: "angle" has been renamed into "rot", so keep this check for
-        -- backwards compatibility
-        if rot[0] ~= nil and rot[1] ~= nil and rot[2] ~= nil then
-            tes3mp.SetAngle(self.pid, rot[0], rot[1], rot[2])
-        end
-
         tes3mp.SendCell(self.pid)
         tes3mp.SendPos(self.pid)
     end
