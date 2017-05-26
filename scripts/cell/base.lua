@@ -505,6 +505,8 @@ function BaseCell:SaveActorEquipment()
                 }
             end
         end
+
+        tableHelper.insertValueIfMissing(self.data.packets.equipment, refIndex)
     end
 
     self:Save()
@@ -946,6 +948,49 @@ function BaseCell:SendActorStatsDynamic(pid)
     end
 end
 
+function BaseCell:SendActorEquipment(pid)
+
+    local actorCount = 0
+
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.equipment) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].equipment ~= nil then
+            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
+
+            local equipment = self.data.objectData[refIndex].equipment
+
+            for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
+
+                local currentItem = equipment[itemIndex]
+
+                if currentItem ~= nil then
+                    tes3mp.EquipActorItem(itemIndex, currentItem.refId, currentItem.count, currentItem.charge)
+                else
+                    tes3mp.UnequipActorItem(itemIndex)
+                end
+            end
+
+            tes3mp.AddActor()
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(3, "- Had equipment packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.equipment, refIndex)
+        end
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorEquipment()
+    end
+end
+
 function BaseCell:SendActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
@@ -1099,6 +1144,7 @@ function BaseCell:SendCellData(pid)
         self:SendActorCellChanges(pid)
         self:SendActorPositions(pid)
         self:SendActorStatsDynamic(pid)
+        self:SendActorEquipment(pid)
     elseif self.isRequestingActorList == false then
         tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
