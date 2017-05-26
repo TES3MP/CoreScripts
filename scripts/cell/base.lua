@@ -21,6 +21,7 @@ function BaseCell:__init(cellDescription)
             scale = {},
             doorState = {},
             container = {},
+            equipment = {},
             actorList = {},
             position = {},
             statsDynamic = {},
@@ -475,6 +476,38 @@ function BaseCell:SaveActorStatsDynamic()
             tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, refIndex)
         end
     end
+end
+
+function BaseCell:SaveActorEquipment()
+
+    tes3mp.ReadLastActorList()
+    local actorListSize = tes3mp.GetActorListSize()
+
+    if actorListSize == 0 then
+        return
+    end
+
+    for actorIndex = 0, actorListSize - 1 do
+
+        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        self.data.objectData[refIndex].equipment = {}
+
+        for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
+
+            local itemRefId = tes3mp.GetActorEquipmentItemRefId(actorIndex, itemIndex)
+
+            if itemRefId ~= "" then
+
+                self.data.objectData[refIndex].equipment[itemIndex] = {
+                    refId = itemRefId,
+                    count = tes3mp.GetActorEquipmentItemCount(actorIndex, itemIndex),
+                    charge = tes3mp.GetActorEquipmentItemCharge(actorIndex, itemIndex)
+                }
+            end
+        end
+    end
+
+    self:Save()
 end
 
 function BaseCell:SaveActorCellChanges()

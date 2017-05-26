@@ -482,6 +482,14 @@ Methods.OnActorList = function(pid, cellDescription)
     end
 end
 
+Methods.OnActorEquipment = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorEquipment()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set equipment in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnActorCellChange = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorCellChanges()
