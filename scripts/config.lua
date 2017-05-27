@@ -11,9 +11,10 @@ config.allowConsole = true -- Enable or disable in-game "~" console
 -- Death and respawn options
 config.deathTime = 5 -- Time to stay dead before being respawned
 config.defaultRespawnCell = "Pelagiad, Fort Pelagiad"
+config.respawnAtLastBed = true
 
 config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time counter
 config.timeServerMult = 1 -- Time multiplier (default is ~120 seconds per hour)
-config.timeServerInitTime = 0 -- The initial time on the server
+config.timeServerInitTime = 7 -- The initial time on the server
 
 return config
