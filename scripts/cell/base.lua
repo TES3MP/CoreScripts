@@ -33,6 +33,9 @@ function BaseCell:__init(cellDescription)
     self.visitors = {}
     self.authority = nil
 
+    self.isRequestingContainers = false
+    self.containerRequestPid = nil
+
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
 end
@@ -88,6 +91,12 @@ function BaseCell:RemoveVisitor(pid)
 
         -- Remember when this visitor left
         self:SaveLastVisit(Players[pid].accountName)
+
+        -- Were we waiting on a container request from this pid?
+        if self.isRequestingContainers == true and self.containerRequestPid == pid then
+            self.isRequestingContainers = false
+            self.containerRequestPid = nil
+        end
 
         -- Were we waiting on an actorList request from this pid?
         if self.isRequestingActorList == true and self.actorListRequestPid == pid then
@@ -397,6 +406,10 @@ function BaseCell:SaveContainers()
     end
 
     self:Save()
+
+    if action == actionTypes.SET then
+        self.isRequestingContainers = false
+    end
 end
 
 function BaseCell:SaveActorList()
@@ -1102,6 +1115,9 @@ end
 
 function BaseCell:RequestContainers(pid)
 
+    self.isRequestingContainers = true
+    self.containerRequestPid = pid
+
     tes3mp.InitiateEvent(pid)
     tes3mp.SetEventCell(self.description)
 
@@ -1139,7 +1155,7 @@ function BaseCell:SendCellData(pid)
     if self:HasContainerData() == true then
         tes3mp.LogAppend(1, "- Had container data")
         self:SendContainers(pid)
-    else
+    elseif self.isRequestingContainers == false then
         tes3mp.LogAppend(1, "- Requesting containers")
         self:RequestContainers(pid)
     end
