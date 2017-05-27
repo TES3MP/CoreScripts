@@ -490,23 +490,26 @@ function BaseCell:SaveActorEquipment()
     for actorIndex = 0, actorListSize - 1 do
 
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        self.data.objectData[refIndex].equipment = {}
 
-        for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
+        if self.data.objectData[refIndex] ~= nil then
+            self.data.objectData[refIndex].equipment = {}
 
-            local itemRefId = tes3mp.GetActorEquipmentItemRefId(actorIndex, itemIndex)
+            for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
 
-            if itemRefId ~= "" then
+                local itemRefId = tes3mp.GetActorEquipmentItemRefId(actorIndex, itemIndex)
 
-                self.data.objectData[refIndex].equipment[itemIndex] = {
-                    refId = itemRefId,
-                    count = tes3mp.GetActorEquipmentItemCount(actorIndex, itemIndex),
-                    charge = tes3mp.GetActorEquipmentItemCharge(actorIndex, itemIndex)
-                }
+                if itemRefId ~= "" then
+
+                    self.data.objectData[refIndex].equipment[itemIndex] = {
+                        refId = itemRefId,
+                        count = tes3mp.GetActorEquipmentItemCount(actorIndex, itemIndex),
+                        charge = tes3mp.GetActorEquipmentItemCharge(actorIndex, itemIndex)
+                    }
+                end
             end
-        end
 
-        tableHelper.insertValueIfMissing(self.data.packets.equipment, refIndex)
+            tableHelper.insertValueIfMissing(self.data.packets.equipment, refIndex)
+        end
     end
 
     self:Save()
@@ -520,11 +523,10 @@ function BaseCell:SaveActorCellChanges()
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
-        local refId = tes3mp.GetActorRefId(actorIndex)
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         local newCellDescription = tes3mp.GetActorCell(actorIndex)
 
-        tes3mp.LogMessage(1, "Actor " .. refId .. ", " .. refIndex .. " changed cell from " .. self.description .. " to " .. newCellDescription)
+        tes3mp.LogMessage(1, "Actor " .. refIndex .. " changed cell from " .. self.description .. " to " .. newCellDescription)
 
         -- If the new cell is not loaded, load it temporarily
         if LoadedCells[newCellDescription] == nil then
@@ -589,7 +591,11 @@ function BaseCell:SaveActorCellChanges()
                 self:MoveObjectData(refIndex, newCell)
 
                 table.insert(self.data.packets.cellChangeTo, refIndex)
-                self:InitializeObjectData(refIndex, refId)
+
+                if self.data.objectData[refIndex] == nil then
+                    self.data.objectData[refIndex] = {}
+                end
+
                 self.data.objectData[refIndex].cellChangeTo = newCellDescription
 
                 table.insert(newCell.data.packets.cellChangeFrom, refIndex)
