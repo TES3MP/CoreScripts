@@ -907,8 +907,6 @@ function BaseCell:SendActorPositions(pid)
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self.data.objectData[refIndex] ~= nil then
-            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
-
             local location = self.data.objectData[refIndex].location
 
             tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
@@ -942,8 +940,6 @@ function BaseCell:SendActorStatsDynamic(pid)
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].stats ~= nil then
-            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
-
             local stats = self.data.objectData[refIndex].stats
 
             tes3mp.SetActorHealthBase(stats.healthBase)
@@ -981,8 +977,6 @@ function BaseCell:SendActorEquipment(pid)
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].equipment ~= nil then
-            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
-
             local equipment = self.data.objectData[refIndex].equipment
 
             for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
@@ -1024,7 +1018,6 @@ function BaseCell:SendActorCellChanges(pid)
         local splitIndex = refIndex:split("-")
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
-        tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
         local newCellDescription = self.data.objectData[refIndex].cellChangeTo
 
@@ -1097,7 +1090,6 @@ function BaseCell:SendActorCellChanges(pid)
             local splitIndex = refIndex:split("-")
             tes3mp.SetActorRefNumIndex(splitIndex[1])
             tes3mp.SetActorMpNum(splitIndex[2])
-            tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
             tes3mp.SetActorCell(self.description)
 
@@ -1162,7 +1154,6 @@ function BaseCell:SendCellData(pid)
 
     if self:HasActorData() == true then
         tes3mp.LogAppend(1, "- Had actor data")
-        self:SendActorList(pid)
         self:SendActorCellChanges(pid)
         self:SendActorPositions(pid)
         self:SendActorStatsDynamic(pid)
