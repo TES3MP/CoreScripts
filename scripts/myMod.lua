@@ -358,6 +358,11 @@ Methods.LoadCell = function(cellDescription)
         else
             LoadedCells[cellDescription]:CreateEntry()
         end
+    -- Otherwise, save momentary actor data so it can be sent
+    -- to the cell's new loader
+    else
+        LoadedCells[cellDescription]:SaveActorPositions()
+        LoadedCells[cellDescription]:SaveActorStatsDynamic()
     end
 end
 
