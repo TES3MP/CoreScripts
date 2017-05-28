@@ -74,8 +74,10 @@ function BaseCell:AddVisitor(pid)
         end
 
         if shouldSendInfo == true then
-            self:SendCellData(pid)
+            self:SendInitialCellData(pid)
         end
+
+        self:SendMomentaryCellData(pid)
     end
 end
 
@@ -1133,7 +1135,7 @@ function BaseCell:RequestActorList(pid)
     tes3mp.SendActorList()
 end
 
-function BaseCell:SendCellData(pid)
+function BaseCell:SendInitialCellData(pid)
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
 
@@ -1155,12 +1157,18 @@ function BaseCell:SendCellData(pid)
     if self:HasActorData() == true then
         tes3mp.LogAppend(1, "- Had actor data")
         self:SendActorCellChanges(pid)
-        self:SendActorPositions(pid)
-        self:SendActorStatsDynamic(pid)
         self:SendActorEquipment(pid)
     elseif self.isRequestingActorList == false then
         tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
+    end
+end
+
+function BaseCell:SendMomentaryCellData(pid)
+
+    if self:HasActorData() == true then
+        self:SendActorPositions(pid)
+        self:SendActorStatsDynamic(pid)
     end
 end
 
