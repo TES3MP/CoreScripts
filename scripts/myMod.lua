@@ -511,6 +511,14 @@ Methods.OnObjectPlace = function(pid, cellDescription)
     end
 end
 
+Methods.OnObjectSpawn = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectsSpawned()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to spawn object in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnObjectDelete = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveObjectsDeleted()

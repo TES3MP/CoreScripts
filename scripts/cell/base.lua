@@ -16,6 +16,7 @@ function BaseCell:__init(cellDescription)
         packets = {
             delete = {},
             place = {},
+            spawn = {},
             lock = {},
             trap = {},
             scale = {},
@@ -209,8 +210,8 @@ function BaseCell:SaveObjectsDeleted()
             self:DeleteObjectData(refIndex)
 
         else
-            -- Check whether this is a placed object
-            local wasPlacedHere = tableHelper.containsValue(self.data.packets.place, refIndex)
+            -- Check whether this is a placed or spawned object
+            local wasPlacedHere = tableHelper.containsValue(self.data.packets.place, refIndex) or tableHelper.containsValue(self.data.packets.spawn, refIndex)
 
             self:DeleteObjectData(refIndex)
 
@@ -272,10 +273,36 @@ function BaseCell:SaveObjectsPlaced()
             self.data.objectData[refIndex].location = location
 
             table.insert(self.data.packets.place, refIndex)
+        end
+    end
+end
 
-            if tes3mp.GetObjectIsActor(i) == true then
-                table.insert(self.data.packets.actorList, refIndex)
-            end
+function BaseCell:SaveObjectsSpawned()
+
+    tes3mp.ReadLastEvent()
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        local location = {
+            posX = tes3mp.GetObjectPosX(i),
+            posY = tes3mp.GetObjectPosY(i),
+            posZ = tes3mp.GetObjectPosZ(i),
+            rotX = tes3mp.GetObjectRotX(i),
+            rotY = tes3mp.GetObjectRotY(i),
+            rotZ = tes3mp.GetObjectRotZ(i)
+        }
+
+        -- Ensure data integrity before proceeeding
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+
+            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+
+            self.data.objectData[refIndex].location = location
+
+            table.insert(self.data.packets.spawn, refIndex)
+            table.insert(self.data.packets.actorList, refIndex)
         end
     end
 end
@@ -554,9 +581,9 @@ function BaseCell:SaveActorCellChanges()
         -- Only proceed if this Actor is actually supposed to exist in this cell
         if self.data.objectData[refIndex] ~= nil then
 
-            -- Was this actor placed in the old cell, instead of being a pre-existing actor?
-            -- If so, delete it entirely from the old cell and make it get placed in the new cell
-            if tableHelper.containsValue(self.data.packets.place, refIndex) == true then
+            -- Was this actor spawned in the old cell, instead of being a pre-existing actor?
+            -- If so, delete it entirely from the old cell and make it get spawned in the new cell
+            if tableHelper.containsValue(self.data.packets.spawn, refIndex) == true then
                 tes3mp.LogAppend(1, "- As a server-only object, it was moved entirely")
                 self:MoveObjectData(refIndex, newCell)
 
@@ -720,6 +747,47 @@ function BaseCell:SendObjectsPlaced(pid)
 
     if objectCount > 0 then
         tes3mp.SendObjectPlace()
+    end
+end
+
+function BaseCell:SendObjectsSpawned(pid)
+
+    -- Keep this around for backwards compatibility
+    if self.data.packets.spawn == nil then
+        self.data.packets.spawn = {}
+    end
+
+    local objectCount = 0
+
+    tes3mp.InitiateEvent(pid)
+    tes3mp.SetEventCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.spawn) do
+
+        local location = self.data.objectData[refIndex].location
+
+        -- Ensure data integrity before proceeeding
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+
+            tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+            tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+
+            tes3mp.AddWorldObject()
+
+            objectCount = objectCount + 1
+        else
+            self.data.objectData[refIndex] = nil
+            tableHelper.removeValue(self.data.packets.spawn, refIndex)
+        end
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendObjectSpawn()
     end
 end
 
@@ -911,12 +979,16 @@ function BaseCell:SendActorPositions(pid)
         if self.data.objectData[refIndex] ~= nil then
             local location = self.data.objectData[refIndex].location
 
-            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+            -- Ensure data integrity before proceeeding
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-            tes3mp.AddActor()
+                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-            actorCount = actorCount + 1
+                tes3mp.AddActor()
+
+                actorCount = actorCount + 1
+            end
         else
             tes3mp.LogAppend(3, "- Had position packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.position, refIndex)
@@ -1036,12 +1108,16 @@ function BaseCell:SendActorCellChanges(pid)
 
                 local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
-                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+                -- Ensure data integrity before proceeeding
+                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-                tes3mp.AddActor()
+                    tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+                    tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-                actorCount = actorCount + 1
+                    tes3mp.AddActor()
+
+                    actorCount = actorCount + 1
+                end
             else
                 tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description .. " to  " .. newCellDescription .. " with no position data! Please report this to a developer")
                 self.data.objectData[refIndex] = nil
@@ -1081,6 +1157,8 @@ function BaseCell:SendActorCellChanges(pid)
         end
     end
 
+    local actorCount = 0
+
     -- Send a cell change packet for every cell that has sent actors to this cell
     for originalCellDescription, actorArray in pairs(cellChangesFrom) do
 
@@ -1097,13 +1175,21 @@ function BaseCell:SendActorCellChanges(pid)
 
             local location = self.data.objectData[refIndex].location
 
-            tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-            tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+            -- Ensure data integrity before proceeeding
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-            tes3mp.AddActor()
+                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
+                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+
+                tes3mp.AddActor()
+
+                actorCount = actorCount + 1
+            end
         end
 
-        tes3mp.SendActorCellChange()
+        if actorCount > 0 then
+            tes3mp.SendActorCellChange()
+        end
     end
 end
 
@@ -1141,6 +1227,7 @@ function BaseCell:SendInitialCellData(pid)
 
     self:SendObjectsDeleted(pid)
     self:SendObjectsPlaced(pid)
+    self:SendObjectsSpawned(pid)
     self:SendObjectsLocked(pid)
     self:SendObjectTrapsTriggered(pid)
     self:SendObjectsScaled(pid)

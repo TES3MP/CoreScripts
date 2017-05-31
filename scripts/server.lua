@@ -543,6 +543,10 @@ function OnObjectPlace(pid, cellDescription)
     myMod.OnObjectPlace(pid, cellDescription)
 end
 
+function OnObjectSpawn(pid, cellDescription)
+    myMod.OnObjectSpawn(pid, cellDescription)
+end
+
 function OnObjectDelete(pid, cellDescription)
     myMod.OnObjectDelete(pid, cellDescription)
 end
