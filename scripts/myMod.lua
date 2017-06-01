@@ -61,7 +61,7 @@ Methods.IsPlayerNameLoggedIn = function(newName)
 
     for pid, player in pairs(Players) do
         if player:IsLoggedIn() then
-            if player.name == newName then
+            if string.lower(player.name) == string.lower(newName) then
                 return true
             end
         end
