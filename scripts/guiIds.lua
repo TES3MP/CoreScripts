@@ -16,11 +16,11 @@ GUI.ID = enum {
 }
 
 GUI.ShowLogin = function(pid)
-    tes3mp.InputDialog(pid, GUI.ID.LOGIN, "Enter your password:")
+    tes3mp.PasswordDialog(pid, GUI.ID.LOGIN, "Enter your password:")
 end
 
 GUI.ShowRegister = function(pid)
-    tes3mp.InputDialog(pid, GUI.ID.REGISTER, "Create new password:")
+    tes3mp.PasswordDialog(pid, GUI.ID.REGISTER, "Create new password:")
 end
 
 local GetConnectedPlayerList = function()
