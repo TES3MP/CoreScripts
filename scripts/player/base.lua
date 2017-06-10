@@ -122,6 +122,7 @@ function BasePlayer:FinishLogin()
         WorldInstance:LoadJournal(self.pid)
         WorldInstance:LoadFactions(self.pid)
         WorldInstance:LoadTopics(self.pid)
+        WorldInstance:LoadKills(self.pid)
     end
 end
 

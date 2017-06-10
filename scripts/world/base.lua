@@ -9,7 +9,8 @@ function BaseWorld:__init(test)
         },
         journal = {},
         factions = {},
-        topics = {}
+        topics = {},
+        kills = {}
     };
 end
 
@@ -75,6 +76,18 @@ function BaseWorld:SaveTopics(pid)
     self:Save()
 end
 
+function BaseWorld:SaveKills(pid)
+
+    for i = 0, tes3mp.GetKillChangesSize(pid) - 1 do
+
+        local refId = tes3mp.GetKillRefId(pid, i)
+        local number = tes3mp.GetKillNumber(pid, i)
+        self.data.kills[refId] = number
+    end
+
+    self:Save()
+end
+
 function BaseWorld:LoadJournal(pid)
 
     local journalItemTypes = { ENTRY = 0, INDEX = 1 }
@@ -109,6 +122,16 @@ function BaseWorld:LoadTopics(pid)
     end
 
     tes3mp.SendTopicChanges(pid)
+end
+
+function BaseWorld:LoadKills(pid)
+
+    for refId, number in pairs(self.data.kills) do
+
+        tes3mp.AddKill(pid, refId, number)
+    end
+
+    tes3mp.SendKillChanges(pid)
 end
 
 return BaseWorld

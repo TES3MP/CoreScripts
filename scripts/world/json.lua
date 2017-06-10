@@ -1,3 +1,4 @@
+require("config")
 jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 local BaseWorld = require("world.base")
@@ -28,7 +29,7 @@ end
 
 function World:Save()
     if self.hasEntry then
-        jsonInterface.save("world/" .. self.worldFile, self.data)
+        jsonInterface.save("world/" .. self.worldFile, self.data, config.worldKeyOrder)
     end
 end
 

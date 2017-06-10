@@ -511,6 +511,10 @@ function OnPlayerTopic(pid)
     myMod.OnPlayerTopic(pid)
 end
 
+function OnPlayerKillCount(pid)
+    myMod.OnPlayerKillCount(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

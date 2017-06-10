@@ -460,6 +460,12 @@ Methods.OnPlayerTopic = function(pid)
     end
 end
 
+Methods.OnPlayerKillCount = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveKills(pid)
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
@@ -577,6 +583,7 @@ Methods.OnPlayerEndCharGen = function(pid)
     WorldInstance:LoadJournal(pid)
     WorldInstance:LoadFactions(pid)
     WorldInstance:LoadTopics(pid)
+    WorldInstance:LoadKills(pid)
 end
 
 Methods.OnMpNumIncrement = function(currentMpNum)
