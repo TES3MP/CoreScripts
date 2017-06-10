@@ -223,7 +223,7 @@ function OnDeathTimeExpiration(pid)
 
             if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
                 tes3mp.SetPos(pid, config.defaultRespawnPos[1], config.defaultRespawnPos[2], config.defaultRespawnPos[3])
-                tes3mp.SetAngle(pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
+                tes3mp.SetRot(pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
                 tes3mp.SendPos(pid)
             end
         end

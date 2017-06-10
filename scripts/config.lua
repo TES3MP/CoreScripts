@@ -11,12 +11,12 @@ config.allowConsole = true -- Enable or disable in-game "~" console
 
 -- Death and respawn options
 config.deathTime = 5 -- Time to stay dead before being respawned
-config.defaultSpawnCell = nil
-config.defaultSpawnPos = nil
-config.defaultSpawnRot = nil
-config.defaultRespawnCell = "Pelagiad, Fort Pelagiad"
-config.defaultRespawnPos = nil
-config.defaultRespawnRot = nil
+config.defaultSpawnCell = "-3, -2"
+config.defaultSpawnPos = {-23980.693359375, -15561.556640625, 505}
+config.defaultSpawnRot = {-0.000152587890625, 1.6182196140289}
+config.defaultRespawnCell = "Balmora, Temple"
+config.defaultRespawnPos = {4700.5673828125, 3874.7416992188, 14758.990234375}
+config.defaultRespawnRot = {0.25314688682556, 1.570611000061}
 config.respawnAtLastBed = true
 
 config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time counter
