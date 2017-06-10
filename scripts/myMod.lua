@@ -89,8 +89,8 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     targetPos[0] = tes3mp.GetPosX(targetPlayer)
     targetPos[1] = tes3mp.GetPosY(targetPlayer)
     targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-    targetRot[0] = tes3mp.GetAngleX(targetPlayer)
-    targetRot[1] = tes3mp.GetAngleZ(targetPlayer)
+    targetRot[0] = tes3mp.GetRotX(targetPlayer)
+    targetRot[1] = tes3mp.GetRotZ(targetPlayer)
     targetGrid[0] = tes3mp.GetExteriorX(targetPlayer)
     targetGrid[1] = tes3mp.GetExteriorY(targetPlayer)
     targetCell = tes3mp.GetCell(targetPlayer)
@@ -104,7 +104,7 @@ Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     end
 
     tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
-    tes3mp.SetAngle(originPlayer, targetRot[0], targetRot[1])
+    tes3mp.SetRot(originPlayer, targetRot[0], targetRot[1])
 
     tes3mp.SendCell(originPlayer)
     tes3mp.SendPos(originPlayer)
@@ -592,7 +592,7 @@ Methods.OnPlayerEndCharGen = function(pid)
 
         if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
             tes3mp.SetPos(pid, config.defaultSpawnPos[1], config.defaultSpawnPos[2], config.defaultSpawnPos[3])
-            tes3mp.SetAngle(pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
+            tes3mp.SetRot(pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
             tes3mp.SendPos(pid)
         end
     end

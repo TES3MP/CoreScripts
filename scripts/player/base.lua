@@ -366,8 +366,8 @@ function BasePlayer:SaveCell()
     self.data.location.posX = tes3mp.GetPosX(self.pid)
     self.data.location.posY = tes3mp.GetPosY(self.pid)
     self.data.location.posZ = tes3mp.GetPosZ(self.pid)
-    self.data.location.rotX = tes3mp.GetAngleX(self.pid)
-    self.data.location.rotZ = tes3mp.GetAngleZ(self.pid)
+    self.data.location.rotX = tes3mp.GetRotX(self.pid)
+    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 end
 
 function BasePlayer:LoadCell()
@@ -392,7 +392,7 @@ function BasePlayer:LoadCell()
         rot[1] = self.data.location.rotZ
 
         tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
-        tes3mp.SetAngle(self.pid, rot[0], rot[1])
+        tes3mp.SetRot(self.pid, rot[0], rot[1])
 
         tes3mp.SendCell(self.pid)
         tes3mp.SendPos(self.pid)
