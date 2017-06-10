@@ -509,10 +509,13 @@ function BaseCell:SaveActorStatsDynamic()
             self.data.objectData[refIndex].stats = {
                 healthBase = tes3mp.GetActorHealthBase(i),
                 healthCurrent = tes3mp.GetActorHealthCurrent(i),
+                healthModified = tes3mp.GetActorHealthModified(i),
                 magickaBase = tes3mp.GetActorMagickaBase(i),
                 magickaCurrent = tes3mp.GetActorMagickaCurrent(i),
+                magickaModified = tes3mp.GetActorMagickaModified(i),
                 fatigueBase = tes3mp.GetActorFatigueBase(i),
-                fatigueCurrent = tes3mp.GetActorFatigueCurrent(i)
+                fatigueCurrent = tes3mp.GetActorFatigueCurrent(i),
+                fatigueModified = tes3mp.GetActorFatigueModified(i)
             }
 
             tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, refIndex)
@@ -1018,10 +1021,13 @@ function BaseCell:SendActorStatsDynamic(pid)
 
             tes3mp.SetActorHealthBase(stats.healthBase)
             tes3mp.SetActorHealthCurrent(stats.healthCurrent)
+            tes3mp.SetActorHealthModified(stats.healthModified)
             tes3mp.SetActorMagickaBase(stats.magickaBase)
             tes3mp.SetActorMagickaCurrent(stats.magickaCurrent)
+            tes3mp.SetActorMagickaModified(stats.magickaModified)
             tes3mp.SetActorFatigueBase(stats.fatigueBase)
             tes3mp.SetActorFatigueCurrent(stats.fatigueCurrent)
+            tes3mp.SetActorFatigueModified(stats.fatigueModified)
 
             tes3mp.AddActor()
 
