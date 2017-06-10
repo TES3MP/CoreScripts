@@ -354,15 +354,7 @@ function BasePlayer:LoadBounty()
 end
 
 function BasePlayer:SaveCell()
-    local currentCell = ""
-
-    if tes3mp.IsInExterior(self.pid) == true then
-        currentCell = tes3mp.GetExteriorX(self.pid) .. "," .. tes3mp.GetExteriorY(self.pid)
-    else
-        currentCell = tes3mp.GetCell(self.pid)
-    end
-
-    self.data.location.cell = currentCell
+    self.data.location.cell = tes3mp.GetCell(self.pid)
     self.data.location.posX = tes3mp.GetPosX(self.pid)
     self.data.location.posY = tes3mp.GetPosY(self.pid)
     self.data.location.posZ = tes3mp.GetPosZ(self.pid)
@@ -375,13 +367,7 @@ function BasePlayer:LoadCell()
 
     if newCell ~= nil then
 
-        if string.match(newCell, patterns.exteriorCell) ~= nil then
-            for gridX, gridY in string.gmatch(newCell, patterns.exteriorCell) do
-                tes3mp.SetExterior(self.pid, tonumber(gridX), tonumber(gridY))
-            end
-        else
-            tes3mp.SetCell(self.pid, newCell)
-        end
+        tes3mp.SetCell(self.pid, newCell)
 
         local pos = {0, 0, 0}
         local rot = {0, 0}
