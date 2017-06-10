@@ -584,6 +584,18 @@ Methods.OnPlayerEndCharGen = function(pid)
     WorldInstance:LoadFactions(pid)
     WorldInstance:LoadTopics(pid)
     WorldInstance:LoadKills(pid)
+
+    if config.defaultSpawnCell ~= nil then
+
+        tes3mp.SetCell(pid, config.defaultSpawnCell)
+        tes3mp.SendCell(pid)
+
+        if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
+            tes3mp.SetPos(pid, config.defaultSpawnPos[1], config.defaultSpawnPos[2], config.defaultSpawnPos[3])
+            tes3mp.SetAngle(pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
+            tes3mp.SendPos(pid)
+        end
+    end
 end
 
 Methods.OnMpNumIncrement = function(currentMpNum)

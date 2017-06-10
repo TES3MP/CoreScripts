@@ -135,7 +135,8 @@ function OnServerPostInit()
         allowStr = "not "..allowStr
     end
     tes3mp.SetRuleString("console", allowStr)
-    tes3mp.SetRuleString("spawn", config.defaultRespawnCell)
+    tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
+    tes3mp.SetRuleString("respawnCell", tostring(config.defaultRespawnCell))
     ResetAdminCounter()
 end
 
@@ -215,8 +216,17 @@ function OnDeathTimeExpiration(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         tes3mp.Resurrect(pid)
-        tes3mp.SetCell(pid, config.defaultRespawnCell)
-        tes3mp.SendCell(pid)
+
+        if config.defaultRespawnCell ~= nil then
+            tes3mp.SetCell(pid, config.defaultRespawnCell)
+            tes3mp.SendCell(pid)
+
+            if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
+                tes3mp.SetPos(pid, config.defaultRespawnPos[1], config.defaultRespawnPos[2], config.defaultRespawnPos[3])
+                tes3mp.SetAngle(pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
+                tes3mp.SendPos(pid)
+            end
+        end
     end
 end
 
