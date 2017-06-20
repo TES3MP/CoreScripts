@@ -515,10 +515,6 @@ function OnPlayerCellChange(pid)
     myMod.OnPlayerCellChange(pid)
 end
 
-function OnPlayerCellState(pid)
-    myMod.OnPlayerCellState(pid)
-end
-
 function OnPlayerEquipment(pid)
     myMod.OnPlayerEquipment(pid)
 end
