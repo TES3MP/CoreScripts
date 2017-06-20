@@ -7,7 +7,8 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
 config.worldKeyOrder = {"general", "topics", "kills", "journal"}
 
 config.loginTime = 60 -- Time to login
-config.allowConsole = true -- Enable or disable in-game "~" console
+config.allowConsole = false -- Enable or disable the in-game "~" console
+config.difficulty = 0 -- The difficulty level used by default, from -100 to 100
 
 -- Death and respawn options
 config.deathTime = 5 -- Time to stay dead before being respawned

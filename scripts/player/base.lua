@@ -14,7 +14,8 @@ function BasePlayer:__init(pid)
         },
         settings = {
             admin = 0,
-            consoleAllowed = config.allowConsole
+            consoleAllowed = config.allowConsole,
+            difficulty = config.difficulty
         },
         character = {
             race = "",
@@ -117,7 +118,7 @@ function BasePlayer:FinishLogin()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
-        self:SetConsole(self.data.settings.consoleAllowed)
+        self:LoadSettings()
 
         WorldInstance:LoadJournal(self.pid)
         WorldInstance:LoadFactions(self.pid)
@@ -512,6 +513,14 @@ function BasePlayer:SetSpells()
     self:AddSpells()
 end
 
+function BasePlayer:GetConsole(state)
+    return self.data.settings.consoleAllowed
+end
+
+function BasePlayer:GetDifficulty(state)
+    return self.data.settings.difficulty
+end
+
 function BasePlayer:SetConsole(state)
     if state == nil or state == "default" then
         state = config.allowConsole
@@ -519,11 +528,25 @@ function BasePlayer:SetConsole(state)
     else
         self.data.settings.consoleAllowed = state
     end
+
     tes3mp.SetConsoleAllow(self.pid, state)
 end
 
-function BasePlayer:GetConsole(state)
-    return self.data.settings.consoleAllowed
+function BasePlayer:SetDifficulty(difficulty)
+    if difficulty == nil then
+        difficulty = config.difficulty
+    end
+
+    self.data.settings.difficulty = difficulty
+
+    tes3mp.SetDifficulty(self.pid, difficulty)
+end
+
+function BasePlayer:LoadSettings()
+    
+    self:SetConsole(self.data.settings.consoleAllowed)
+    self:SetDifficulty(self.data.settings.difficulty)
+    tes3mp.SendSettings(self.pid)
 end
 
 function BasePlayer:AddCellLoaded(cellDescription)

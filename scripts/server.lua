@@ -51,7 +51,8 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
-/console <pid> <on/off/default> - Enable/disable in-game console for player"
+/console <pid> <on/off/default> - Enable/disable in-game console for player\
+/difficulty <pid> <value> - Set the difficulty for a particular player"
 
 Sample = {}
 
@@ -134,7 +135,9 @@ function OnServerPostInit()
     if not config.allowConsole then
         allowStr = "not "..allowStr
     end
+
     tes3mp.SetRuleString("console", allowStr)
+    tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
     tes3mp.SetRuleString("respawnCell", tostring(config.defaultRespawnCell))
     ResetAdminCounter()
@@ -155,6 +158,8 @@ end
 
 function OnPlayerConnect(pid)
     tes3mp.SetConsoleAllow(pid, config.allowConsole)
+    tes3mp.SetDifficulty(pid, config.difficulty)
+    tes3mp.SendSettings(pid)
 
     local pname = tes3mp.GetName(pid)
 
@@ -457,9 +462,26 @@ function OnPlayerSendMessage(pid, message)
                  return false
             end
 
+            Players[targetPlayer]:LoadSettings()
             tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, false)
             if targetPlayer ~= pid then
                 tes3mp.SendMessage(targetPlayer, "Console" .. state, false)
+            end
+
+        elseif cmd[1] == "difficulty" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPlayer = tonumber(cmd[2])
+                local difficulty = tonumber(cmd[3])
+
+                if type(difficulty) == "number" then
+                    Players[targetPlayer]:SetDifficulty(difficulty)
+                    Players[targetPlayer]:LoadSettings()
+                    tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPlayer].name .. " is now " .. difficulty .. "\n", false)
+                else
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
+                    return false
+                end
             end
 
         else
