@@ -4,7 +4,7 @@ config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where datab
 
 -- The order in which table keys should be saved to JSON files
 config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal"}
+config.worldKeyOrder = {"general", "topics", "kills", "journal", "type", "index", "quest", "actorRefId"}
 
 config.loginTime = 60 -- Time to login
 config.allowConsole = false -- Enable or disable the in-game "~" console

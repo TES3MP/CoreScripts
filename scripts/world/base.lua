@@ -29,6 +29,8 @@ end
 
 function BaseWorld:SaveJournal(pid)
 
+    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
+
     for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
 
         local journalItem = {
@@ -36,6 +38,10 @@ function BaseWorld:SaveJournal(pid)
             index = tes3mp.GetJournalItemIndex(pid, i),
             quest = tes3mp.GetJournalItemQuest(pid, i)
         }
+
+        if journalItem.type == journalItemTypes.ENTRY then
+            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
+        end
 
         table.insert(self.data.journal, journalItem)
     end
@@ -95,7 +101,12 @@ function BaseWorld:LoadJournal(pid)
     for index, journalItem in pairs(self.data.journal) do
 
         if journalItem.type == journalItemTypes.ENTRY then
-            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index)
+
+            if journalItem.actorRefId == nil then
+                journalItem.actorRefId = "player"
+            end
+
+            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
         else
             tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
         end
