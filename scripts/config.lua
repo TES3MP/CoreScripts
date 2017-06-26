@@ -8,7 +8,7 @@ config.worldKeyOrder = {"general", "topics", "kills", "journal", "type", "index"
 
 config.loginTime = 60 -- Time to login
 config.allowConsole = false -- Enable or disable the in-game "~" console
-config.difficulty = 0 -- The difficulty level used by default, from -100 to 100
+config.difficulty = 0 -- The difficulty level used by default, with vanilla OpenMW values going from -100 to 100
 
 -- Death and respawn options
 config.deathTime = 5 -- Time to stay dead before being respawned

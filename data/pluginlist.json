@@ -1,5 +1,13 @@
-{
-    "0": {"Morrowind.esm": []},
-    "1": {"Tribunal.esm": []},
-    "2": {"Bloodmoon.esm": []}
+// This file lets you enforce a certain plugin list and order for all clients
+// attempting to join this server
+//
+// By default, only the English and Russian editions of Morrowind are allowed,
+// because the German and French editions have hardcoded translations, whereas
+// the Russian edition has localization files that make it compatible with the
+// English edition
+
+{    
+    "0": {"Morrowind.esm": ["0x7B6AF5B9", "0x34282D67"]},
+    "1": {"Tribunal.esm": ["0xF481F334", "0x211329EF"]},
+    "2": {"Bloodmoon.esm": ["0x43DD2132", "0x9EB62F26"]}
 }
