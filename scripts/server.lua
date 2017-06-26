@@ -139,7 +139,22 @@ function OnServerPostInit()
     tes3mp.SetRuleString("console", allowStr)
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
-    tes3mp.SetRuleString("respawnCell", tostring(config.defaultRespawnCell))
+
+    local respawnCell
+
+    if config.respawnAtImperialShrine == true then
+        respawnCell = "nearest Imperial shrine"
+
+        if config.respawnAtTribunalTemple == true then
+            respawnCell = respawnCell .. " or Tribunal temple"
+        end
+    elseif config.respawnAtTribunalTemple == true then
+        respawnCell = "nearest Tribunal temple"
+    else
+        respawnCell = tostring(config.defaultRespawnCell)
+    end
+
+    tes3mp.SetRuleString("respawnCell", respawnCell)
     ResetAdminCounter()
 end
 
@@ -218,11 +233,29 @@ end
 
 function OnDeathTimeExpiration(pid)
 
+    local resurrectTypes = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2}
+
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.Resurrect(pid)
+        local currentResurrectType
 
-        if config.defaultRespawnCell ~= nil then
+        if config.respawnAtImperialShrine == true then
+            if config.respawnAtTribunalTemple == true then
+                if math.random() > 0.5 then
+                    currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+                else
+                    currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+                end
+            else
+                currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+            end
+
+        elseif config.respawnAtTribunalTemple == true then
+            currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+
+        elseif config.defaultRespawnCell ~= nil then
+            currentResurrectType = resurrectTypes.REGULAR
+
             tes3mp.SetCell(pid, config.defaultRespawnCell)
             tes3mp.SendCell(pid)
 
@@ -232,6 +265,19 @@ function OnDeathTimeExpiration(pid)
                 tes3mp.SendPos(pid)
             end
         end
+
+        local message = "You have been resurrected"
+
+        if currentResurrectType == resurrectTypes.IMPERIAL_SHRINE then
+            message = message .. " at the nearest Imperial shrine"
+        elseif currentResurrectType == resurrectTypes.TRIBUNAL_TEMPLE then
+            message = message .. " at the nearest Tribunal temple"
+        end
+
+        message = message .. ".\n"
+        tes3mp.SetResurrectType(pid, currentResurrectType)
+        tes3mp.SendResurrect(pid)
+        tes3mp.SendMessage(pid, message, false)
     end
 end
 
@@ -477,7 +523,7 @@ function OnPlayerSendMessage(pid, message)
                 if type(difficulty) == "number" then
                     Players[targetPlayer]:SetDifficulty(difficulty)
                     Players[targetPlayer]:LoadSettings()
-                    tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPlayer].name .. " is now " .. difficulty .. "\n", false)
+                    tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPlayer].name .. " is now " .. difficulty .. "\n", true)
                 else
                     tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
                     return false
