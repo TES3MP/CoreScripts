@@ -131,12 +131,12 @@ function OnServerInit()
 end
 
 function OnServerPostInit()
-    local allowStr = "allowed"
+    local consoleRuleString = "allowed"
     if not config.allowConsole then
-        allowStr = "not "..allowStr
+        consoleRuleString = "not " .. consoleRuleString
     end
 
-    tes3mp.SetRuleString("console", allowStr)
+    tes3mp.SetRuleString("console", consoleRuleString)
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
 
@@ -518,9 +518,13 @@ function OnPlayerSendMessage(pid, message)
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPlayer = tonumber(cmd[2])
-                local difficulty = tonumber(cmd[3])
+                local difficulty = cmd[3]
 
-                if type(difficulty) == "number" then
+                if type(tonumber(difficulty)) == "number" then
+                    difficulty = tonumber(difficulty)
+                end
+
+                if difficulty == "default" or type(difficulty) == "number" then
                     Players[targetPlayer]:SetDifficulty(difficulty)
                     Players[targetPlayer]:LoadSettings()
                     tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPlayer].name .. " is now " .. difficulty .. "\n", true)

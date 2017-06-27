@@ -14,8 +14,8 @@ function BasePlayer:__init(pid)
         },
         settings = {
             admin = 0,
-            consoleAllowed = config.allowConsole,
-            difficulty = config.difficulty
+            consoleAllowed = "default",
+            difficulty = "default"
         },
         character = {
             race = "",
@@ -533,19 +533,22 @@ function BasePlayer:SetConsole(state)
 end
 
 function BasePlayer:SetDifficulty(difficulty)
-    if difficulty == nil then
+    if difficulty == nil or difficulty == "default" then
         difficulty = config.difficulty
+        self.data.settings.difficulty = "default"
+    else
+        self.data.settings.difficulty = difficulty    
     end
 
-    self.data.settings.difficulty = difficulty
-
     tes3mp.SetDifficulty(self.pid, difficulty)
+    tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. self.pid)
 end
 
 function BasePlayer:LoadSettings()
     
     self:SetConsole(self.data.settings.consoleAllowed)
     self:SetDifficulty(self.data.settings.difficulty)
+
     tes3mp.SendSettings(self.pid)
 end
 
