@@ -191,14 +191,6 @@ function BasePlayer:SaveLogin()
     self.data.login.name = tes3mp.GetName(self.pid)
 end
 
-function BasePlayer:SaveCharacter()
-    self.data.character.race = tes3mp.GetRace(self.pid)
-    self.data.character.head = tes3mp.GetHead(self.pid)
-    self.data.character.hair = tes3mp.GetHair(self.pid)
-    self.data.character.gender = tes3mp.GetIsMale(self.pid)
-    self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
-end
-
 function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)
@@ -209,31 +201,12 @@ function BasePlayer:LoadCharacter()
     tes3mp.SendBaseInfo(self.pid)
 end
 
-function BasePlayer:SaveClass()
-    if tes3mp.IsClassDefault(self.pid) == 1 then
-        self.data.character.class = tes3mp.GetDefaultClass(self.pid)
-    else
-        self.data.character.class = "custom"
-        self.data.customClass.name = tes3mp.GetClassName(self.pid)
-        self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
-        self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
-        local majorAttributes = {}
-        local majorSkills = {}
-        local minorSkills = {}
-
-        for i = 0, 1, 1 do
-            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
-        end
-
-        for i = 0, 4, 1 do
-            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
-            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
-        end
-
-        self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
-        self.data.customClass.majorSkills = table.concat(majorSkills, ", ")
-        self.data.customClass.minorSkills = table.concat(minorSkills, ", ")
-    end
+function BasePlayer:SaveCharacter()
+    self.data.character.race = tes3mp.GetRace(self.pid)
+    self.data.character.head = tes3mp.GetHead(self.pid)
+    self.data.character.hair = tes3mp.GetHair(self.pid)
+    self.data.character.gender = tes3mp.GetIsMale(self.pid)
+    self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
 end
 
 function BasePlayer:LoadClass()
@@ -269,13 +242,31 @@ function BasePlayer:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
-function BasePlayer:SaveStatsDynamic()
-    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
-    self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
-    self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
-    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
-    self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
-    self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
+function BasePlayer:SaveClass()
+    if tes3mp.IsClassDefault(self.pid) == 1 then
+        self.data.character.class = tes3mp.GetDefaultClass(self.pid)
+    else
+        self.data.character.class = "custom"
+        self.data.customClass.name = tes3mp.GetClassName(self.pid)
+        self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
+        self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
+        local majorAttributes = {}
+        local majorSkills = {}
+        local minorSkills = {}
+
+        for i = 0, 1, 1 do
+            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
+        end
+
+        for i = 0, 4, 1 do
+            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
+            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
+        end
+
+        self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
+        self.data.customClass.majorSkills = table.concat(majorSkills, ", ")
+        self.data.customClass.minorSkills = table.concat(minorSkills, ", ")
+    end
 end
 
 function BasePlayer:LoadStatsDynamic()
@@ -289,11 +280,13 @@ function BasePlayer:LoadStatsDynamic()
     tes3mp.SendStatsDynamic(self.pid)
 end
 
-function BasePlayer:SaveAttributes()
-    for name in pairs(self.data.attributes) do
-        local attributeId = tes3mp.GetAttributeId(name)
-        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
-    end
+function BasePlayer:SaveStatsDynamic()
+    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
+    self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
+    self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
+    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
+    self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
+    self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
 end
 
 function BasePlayer:LoadAttributes()
@@ -304,19 +297,11 @@ function BasePlayer:LoadAttributes()
     tes3mp.SendAttributes(self.pid)
 end
 
-function BasePlayer:SaveSkills()
-    for name in pairs(self.data.skills) do
-        local skillId = tes3mp.GetSkillId(name)
-        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
-        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
-    end
-
-    for name in pairs(self.data.attributeSkillIncreases) do
+function BasePlayer:SaveAttributes()
+    for name in pairs(self.data.attributes) do
         local attributeId = tes3mp.GetAttributeId(name)
-        self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
+        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
     end
-
-    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function BasePlayer:LoadSkills()
@@ -336,8 +321,19 @@ function BasePlayer:LoadSkills()
     tes3mp.SendSkills(self.pid)
 end
 
-function BasePlayer:SaveLevel()
-    self.data.stats.level = tes3mp.GetLevel(self.pid)
+function BasePlayer:SaveSkills()
+    for name in pairs(self.data.skills) do
+        local skillId = tes3mp.GetSkillId(name)
+        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
+        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+    end
+
+    for name in pairs(self.data.attributeSkillIncreases) do
+        local attributeId = tes3mp.GetAttributeId(name)
+        self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
+    end
+
+    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function BasePlayer:LoadLevel()
@@ -345,8 +341,8 @@ function BasePlayer:LoadLevel()
     tes3mp.SendLevel(self.pid)
 end
 
-function BasePlayer:SaveBounty()
-    self.data.stats.bounty = tes3mp.GetBounty(self.pid)
+function BasePlayer:SaveLevel()
+    self.data.stats.level = tes3mp.GetLevel(self.pid)
 end
 
 function BasePlayer:LoadBounty()
@@ -354,13 +350,8 @@ function BasePlayer:LoadBounty()
     tes3mp.SendBounty(self.pid)
 end
 
-function BasePlayer:SaveCell()
-    self.data.location.cell = tes3mp.GetCell(self.pid)
-    self.data.location.posX = tes3mp.GetPosX(self.pid)
-    self.data.location.posY = tes3mp.GetPosY(self.pid)
-    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
-    self.data.location.rotX = tes3mp.GetRotX(self.pid)
-    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
+function BasePlayer:SaveBounty()
+    self.data.stats.bounty = tes3mp.GetBounty(self.pid)
 end
 
 function BasePlayer:LoadCell()
@@ -384,6 +375,15 @@ function BasePlayer:LoadCell()
         tes3mp.SendCell(self.pid)
         tes3mp.SendPos(self.pid)
     end
+end
+
+function BasePlayer:SaveCell()
+    self.data.location.cell = tes3mp.GetCell(self.pid)
+    self.data.location.posX = tes3mp.GetPosX(self.pid)
+    self.data.location.posY = tes3mp.GetPosY(self.pid)
+    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
+    self.data.location.rotX = tes3mp.GetRotX(self.pid)
+    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 end
 
 function BasePlayer:LoadEquipment()
