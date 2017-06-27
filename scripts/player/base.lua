@@ -67,6 +67,7 @@ function BasePlayer:__init(pid)
     self.data.equipment = {}
     self.data.inventory = {}
     self.data.spellbook = {}
+    self.data.books = {}
 
     self.initTimestamp = os.time()
 
@@ -118,6 +119,7 @@ function BasePlayer:FinishLogin()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
+        self:LoadBooks()
         self:LoadSettings()
 
         WorldInstance:LoadJournal(self.pid)
@@ -511,6 +513,33 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:LoadBooks()
+
+    if self.data.books == nil then
+        self.data.books = {}
+    end
+
+    for index, bookId in pairs(self.data.books) do
+
+        tes3mp.AddBook(self.pid, bookId)
+    end
+
+    tes3mp.SendBookChanges(self.pid)
+end
+
+function BasePlayer:AddBooks()
+
+    for i = 0, tes3mp.GetBookChangesSize(self.pid) - 1 do
+        local bookId = tes3mp.GetBookId(self.pid, i)
+
+        -- Only add new book if we don't already have it
+        if tableHelper.containsValue(self.data.books, bookId, false) == false then
+            tes3mp.LogMessage(1, "Adding book " .. bookId .. " to " .. tes3mp.GetName(self.pid))
+            table.insert(self.data.books, bookId)
+        end
+    end
 end
 
 function BasePlayer:GetConsole(state)

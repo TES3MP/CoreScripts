@@ -52,7 +52,7 @@ local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /console <pid> <on/off/default> - Enable/disable in-game console for player\
-/difficulty <pid> <value> - Set the difficulty for a particular player"
+/difficulty <pid> <value/default> - Set the difficulty for a particular player"
 
 Sample = {}
 
@@ -591,6 +591,10 @@ end
 
 function OnPlayerKillCount(pid)
     myMod.OnPlayerKillCount(pid)
+end
+
+function OnPlayerBook(pid)
+    myMod.OnPlayerBook(pid)
 end
 
 function OnPlayerEndCharGen(pid)

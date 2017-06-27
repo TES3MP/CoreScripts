@@ -451,6 +451,12 @@ Methods.OnPlayerKillCount = function(pid)
     end
 end
 
+Methods.OnPlayerBook = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:AddBooks()
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
