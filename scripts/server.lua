@@ -275,8 +275,7 @@ function OnDeathTimeExpiration(pid)
         end
 
         message = message .. ".\n"
-        tes3mp.SetResurrectType(pid, currentResurrectType)
-        tes3mp.SendResurrect(pid)
+        tes3mp.Resurrect(pid, currentResurrectType)
         tes3mp.SendMessage(pid, message, false)
     end
 end
