@@ -462,6 +462,13 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
+        elseif cmd[1] == "suicide" then
+            if config.allowSuicideCommand == true then
+                tes3mp.SetHealthCurrent(pid, 0)
+                tes3mp.SendStatsDynamic(pid)
+            else
+                tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            end
         else
             local message = "Not a valid command. Type /help for more info.\n"
             tes3mp.SendMessage(pid, color.Error..message..color.Default, false)

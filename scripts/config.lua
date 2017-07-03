@@ -55,6 +55,9 @@ config.respawnAtImperialShrine = true
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
 
+-- Whether players should be allowed to use the /suicide command
+config.allowSuicideCommand = true
+
 -- Whether time should be synchronized across clients
 -- Valid values: 0, 1
 -- Note: 0 for no time sync, 1 for time sync based on the server's time counter
