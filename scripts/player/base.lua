@@ -195,6 +195,72 @@ function BasePlayer:SaveLogin()
     self.data.login.name = tes3mp.GetName(self.pid)
 end
 
+function BasePlayer:ProcessDeath()
+
+    local deathReason = tes3mp.GetDeathReason(self.pid)
+
+    tes3mp.LogMessage(1, "Original death reason was " .. deathReason)
+
+    if deathReason == "suicide" then
+        deathReason = "committed suicide"
+    else
+        deathReason = "was killed by " .. deathReason
+    end
+
+    local message = ("%s (%d) %s"):format(self.data.login.name, self.pid, deathReason)
+
+    message = message .. ".\n"
+    tes3mp.SendMessage(self.pid, message, true)
+
+    self.tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
+    tes3mp.StartTimer(self.tid_resurrect);
+end
+
+function BasePlayer:Resurrect()
+    local resurrectTypes = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2}
+
+    local currentResurrectType
+
+    if config.respawnAtImperialShrine == true then
+        if config.respawnAtTribunalTemple == true then
+            if math.random() > 0.5 then
+                currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+            else
+                currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+            end
+        else
+            currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+        end
+
+    elseif config.respawnAtTribunalTemple == true then
+        currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+
+    elseif config.defaultRespawnCell ~= nil then
+        currentResurrectType = resurrectTypes.REGULAR
+
+        tes3mp.SetCell(self.pid, config.defaultRespawnCell)
+        tes3mp.SendCell(self.pid)
+
+        if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
+            tes3mp.SetPos(self.pid, config.defaultRespawnPos[1], config.defaultRespawnPos[2], config.defaultRespawnPos[3])
+            tes3mp.SetRot(self.pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
+            tes3mp.SendPos(self.pid)
+        end
+    end
+
+    local message = "You have been resurrected"
+
+    if currentResurrectType == resurrectTypes.IMPERIAL_SHRINE then
+        message = message .. " at the nearest Imperial shrine"
+    elseif currentResurrectType == resurrectTypes.TRIBUNAL_TEMPLE then
+        message = message .. " at the nearest Tribunal temple"
+    end
+
+    message = message .. ".\n"
+    tes3mp.Resurrect(self.pid, currentResurrectType)
+    tes3mp.SendMessage(self.pid, message, false)
+end
+
 function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)

@@ -209,77 +209,6 @@ function OnPlayerDisconnect(pid)
     DecrementAdminCounter()
 end
 
-function OnPlayerDeath(pid)
-
-    local playerName = tes3mp.GetName(pid)
-    local deathReason = tes3mp.GetDeathReason(pid)
-
-    tes3mp.LogMessage(1, "Original death reason was " .. deathReason)
-
-    if deathReason == "suicide" then
-        deathReason = "committed suicide"
-    else
-        deathReason = "was killed by " .. deathReason
-    end
-
-    local message = ("%s (%d) %s"):format(playerName, pid, deathReason)
-
-    message = message .. ".\n"
-    tes3mp.SendMessage(pid, message, true)
-
-    Players[pid].tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", pid)
-    tes3mp.StartTimer(Players[pid].tid_resurrect);
-end
-
-function OnDeathTimeExpiration(pid)
-
-    local resurrectTypes = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2}
-
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        local currentResurrectType
-
-        if config.respawnAtImperialShrine == true then
-            if config.respawnAtTribunalTemple == true then
-                if math.random() > 0.5 then
-                    currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
-                else
-                    currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
-                end
-            else
-                currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
-            end
-
-        elseif config.respawnAtTribunalTemple == true then
-            currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
-
-        elseif config.defaultRespawnCell ~= nil then
-            currentResurrectType = resurrectTypes.REGULAR
-
-            tes3mp.SetCell(pid, config.defaultRespawnCell)
-            tes3mp.SendCell(pid)
-
-            if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
-                tes3mp.SetPos(pid, config.defaultRespawnPos[1], config.defaultRespawnPos[2], config.defaultRespawnPos[3])
-                tes3mp.SetRot(pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
-                tes3mp.SendPos(pid)
-            end
-        end
-
-        local message = "You have been resurrected"
-
-        if currentResurrectType == resurrectTypes.IMPERIAL_SHRINE then
-            message = message .. " at the nearest Imperial shrine"
-        elseif currentResurrectType == resurrectTypes.TRIBUNAL_TEMPLE then
-            message = message .. " at the nearest Tribunal temple"
-        end
-
-        message = message .. ".\n"
-        tes3mp.Resurrect(pid, currentResurrectType)
-        tes3mp.SendMessage(pid, message, false)
-    end
-end
-
 function OnPlayerResurrect(pid)
 end
 
@@ -542,6 +471,14 @@ function OnPlayerSendMessage(pid, message)
     end
 
     return true -- default behavior, chat messages should not
+end
+
+function OnPlayerDeath(pid)
+    myMod.OnPlayerDeath(pid)
+end
+
+function OnDeathTimeExpiration(pid)
+    myMod.OnDeathTimeExpiration(pid)
 end
 
 function OnPlayerAttribute(pid)

@@ -284,6 +284,18 @@ Methods.AuthCheck = function(pid)
     return false
 end
 
+Methods.OnPlayerDeath = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:ProcessDeath()
+    end
+end
+
+Methods.OnDeathTimeExpiration = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:Resurrect()
+    end
+end
+
 Methods.OnPlayerAttribute = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveAttributes()
