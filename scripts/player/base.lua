@@ -68,6 +68,7 @@ function BasePlayer:__init(pid)
     self.data.inventory = {}
     self.data.spellbook = {}
     self.data.books = {}
+    self.data.mapExplored = {}
 
     self.initTimestamp = os.time()
 
@@ -120,6 +121,7 @@ function BasePlayer:FinishLogin()
         self:LoadEquipment()
         self:LoadSpellbook()
         self:LoadBooks()
+        self:LoadMap()
         self:LoadSettings()
 
         WorldInstance:LoadJournal(self.pid)
@@ -380,12 +382,26 @@ function BasePlayer:LoadCell()
 end
 
 function BasePlayer:SaveCell()
-    self.data.location.cell = tes3mp.GetCell(self.pid)
+
+    -- Keep this around to update old player files
+    if self.data.mapExplored == nil then
+        self.data.mapExplored = {}
+    end
+
+    local cell = tes3mp.GetCell(self.pid)
+    self.data.location.cell = cell
     self.data.location.posX = tes3mp.GetPosX(self.pid)
     self.data.location.posY = tes3mp.GetPosY(self.pid)
     self.data.location.posZ = tes3mp.GetPosZ(self.pid)
     self.data.location.rotX = tes3mp.GetRotX(self.pid)
     self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
+
+    if tes3mp.IsInExterior(self.pid) == true then
+
+        if tableHelper.containsValue(self.data.mapExplored, cell) == false then
+            table.insert(self.data.mapExplored, cell)
+        end
+    end
 end
 
 function BasePlayer:LoadEquipment()
@@ -542,6 +558,20 @@ function BasePlayer:AddBooks()
     end
 end
 
+function BasePlayer:LoadMap()
+
+    if self.data.mapExplored == nil then
+        self.data.mapExplored = {}
+    end
+
+    for index, cellDescription in pairs(self.data.mapExplored) do
+
+        tes3mp.AddCellExplored(self.pid, cellDescription)
+    end
+
+    tes3mp.SendMapChanges(self.pid)
+end
+
 function BasePlayer:GetConsole(state)
     return self.data.settings.consoleAllowed
 end
@@ -587,7 +617,6 @@ function BasePlayer:AddCellLoaded(cellDescription)
     if tableHelper.containsValue(self.cellsLoaded, cellDescription) == false then
         table.insert(self.cellsLoaded, cellDescription)
     end
-
 end
 
 function BasePlayer:RemoveCellLoaded(cellDescription)
