@@ -257,6 +257,8 @@ function BasePlayer:Resurrect()
     end
 
     message = message .. ".\n"
+
+    tes3mp.SetDeathPenaltyJailDays(self.pid, config.deathPenaltyJailDays)
     tes3mp.Resurrect(self.pid, currentResurrectType)
     tes3mp.SendMessage(self.pid, message, false)
 end

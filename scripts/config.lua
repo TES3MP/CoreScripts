@@ -55,6 +55,9 @@ config.respawnAtImperialShrine = true
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
 
+-- The number of days spent in jail as a penalty for dying
+config.deathPenaltyJailDays = 3
+
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
 
