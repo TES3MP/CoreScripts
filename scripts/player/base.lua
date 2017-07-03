@@ -121,7 +121,7 @@ function BasePlayer:FinishLogin()
         self:LoadEquipment()
         self:LoadSpellbook()
         self:LoadBooks()
-        self:LoadMap()
+        --self:LoadMap()
         self:LoadSettings()
 
         WorldInstance:LoadJournal(self.pid)
