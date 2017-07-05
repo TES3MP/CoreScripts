@@ -427,13 +427,14 @@ end
 Methods.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
+        local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
         local action = tes3mp.GetSpellbookAction(pid)
 
-        if action == 0 then
+        if action == actionTypes.SET then
             Players[pid]:SetSpells()
-        elseif action == 1 then
+        elseif action == actionTypes.ADD then
             Players[pid]:AddSpells()
-        elseif action == 2 then
+        elseif action == actionTypes.REMOVE then
             Players[pid]:RemoveSpells()
         end
     end
@@ -447,7 +448,15 @@ end
 
 Methods.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveFactions(pid)
+
+        local actionTypes = { RANK = 0, EXPULSION = 1, BOTH = 2}
+        local action = tes3mp.GetFactionChangesAction(pid)
+
+        if action == actionTypes.RANK then
+            WorldInstance:SaveFactionRanks(pid)
+        elseif action == actionTypes.EXPULSION then
+            WorldInstance:SaveFactionExpulsion(pid)
+        end
     end
 end
 

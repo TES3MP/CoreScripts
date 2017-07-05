@@ -49,7 +49,7 @@ function BaseWorld:SaveJournal(pid)
     self:Save()
 end
 
-function BaseWorld:SaveFactions(pid)
+function BaseWorld:SaveFactionRanks(pid)
 
     for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
 
@@ -61,6 +61,23 @@ function BaseWorld:SaveFactions(pid)
         end
 
         faction.rank = tes3mp.GetFactionRank(pid, i)
+        self.data.factions[factionId] = faction
+    end
+
+    self:Save()
+end
+
+function BaseWorld:SaveFactionExpulsion(pid)
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local factionId = tes3mp.GetFactionId(pid, i)
+        local faction = self.data.factions[factionId]
+
+        if faction == nil then
+            faction = {}
+        end
+
         faction.isExpelled = tes3mp.GetFactionExpelledState(pid, i)
         self.data.factions[factionId] = faction
     end

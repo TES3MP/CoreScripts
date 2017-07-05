@@ -370,7 +370,7 @@ function BaseCell:SaveContainers()
 
     tes3mp.ReadLastEvent()
 
-    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
+    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
     local action = tes3mp.GetEventAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
