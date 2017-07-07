@@ -675,7 +675,7 @@ function BaseCell:SendObjectsDeleted(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     -- Objects deleted
@@ -699,7 +699,7 @@ function BaseCell:SendObjectsPlaced(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.place) do
@@ -762,7 +762,7 @@ function BaseCell:SendObjectsSpawned(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.spawn) do
@@ -798,7 +798,7 @@ function BaseCell:SendObjectsScaled(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.scale) do
@@ -822,7 +822,7 @@ function BaseCell:SendObjectsLocked(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.lock) do
@@ -846,7 +846,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.trap) do
@@ -870,7 +870,7 @@ function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
@@ -894,7 +894,7 @@ function BaseCell:SendContainers(pid)
 
     local objectCount = 0
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.container) do
@@ -1204,7 +1204,7 @@ function BaseCell:RequestContainers(pid)
     self.isRequestingContainers = true
     self.containerRequestPid = pid
 
-    tes3mp.InitiateEvent(pid)
+    tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(self.description)
 
     -- Set the action to REQUEST
