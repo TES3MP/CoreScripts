@@ -115,6 +115,8 @@ function BaseWorld:LoadJournal(pid)
 
     local journalItemTypes = { ENTRY = 0, INDEX = 1 }
 
+    tes3mp.InitializeJournalChanges(pid)
+
     for index, journalItem in pairs(self.data.journal) do
 
         if journalItem.type == journalItemTypes.ENTRY then
@@ -134,6 +136,11 @@ end
 
 function BaseWorld:LoadFactions(pid)
 
+    local actionTypes = { RANK = 0, EXPULSION = 1, BOTH = 2 }
+
+    tes3mp.InitializeFactionChanges(pid)
+    tes3mp.SetFactionChangesAction(pid, actionTypes.BOTH)
+
     for factionId, faction in pairs(self.data.factions) do
 
         tes3mp.AddFaction(pid, factionId, faction.rank, faction.isExpelled)
@@ -144,6 +151,8 @@ end
 
 function BaseWorld:LoadTopics(pid)
 
+    tes3mp.InitializeTopicChanges(pid)
+
     for index, topicId in pairs(self.data.topics) do
 
         tes3mp.AddTopic(pid, topicId)
@@ -153,6 +162,8 @@ function BaseWorld:LoadTopics(pid)
 end
 
 function BaseWorld:LoadKills(pid)
+
+    tes3mp.InitializeKillChanges(pid)
 
     for refId, number in pairs(self.data.kills) do
 

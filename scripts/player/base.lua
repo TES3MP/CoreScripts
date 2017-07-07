@@ -511,9 +511,8 @@ function BasePlayer:LoadInventory()
         self.data.inventory = {}
     end
 
-    -- Clear whatever items the BasePlayer may have so we can completely
-    -- replace them
-    tes3mp.ClearInventory(self.pid)
+    -- Send an empty initialized inventory to clear the player's existing items
+    tes3mp.InitializeInventoryChanges(self.pid)
     tes3mp.SendInventoryChanges(self.pid)
 
     for index, currentItem in pairs(self.data.inventory) do
@@ -549,7 +548,8 @@ function BasePlayer:LoadSpellbook()
         self.data.spellbook = {}
     end
 
-    tes3mp.ClearSpellbook(self.pid)
+    -- Send an empty initialized spellbook to clear the player's existing spells
+    tes3mp.InitializeSpellbookChanges(self.pid)
     tes3mp.SendSpellbookChanges(self.pid)
 
     for index, currentSpell in pairs(self.data.spellbook) do
@@ -605,6 +605,8 @@ function BasePlayer:LoadBooks()
         self.data.books = {}
     end
 
+    tes3mp.InitializeBookChanges(self.pid)
+
     for index, bookId in pairs(self.data.books) do
 
         tes3mp.AddBook(self.pid, bookId)
@@ -631,6 +633,8 @@ function BasePlayer:LoadMap()
     if self.data.mapExplored == nil then
         self.data.mapExplored = {}
     end
+
+    tes3mp.InitializeMapChanges(self.pid)
 
     for index, cellDescription in pairs(self.data.mapExplored) do
 
