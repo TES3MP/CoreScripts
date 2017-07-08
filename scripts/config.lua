@@ -24,6 +24,12 @@ config.allowConsole = false
 --       though you can use any integer value here
 config.difficulty = 0
 
+-- Whether faction ranks should be shared across the players on the server or not
+config.shareFactionRanks = true
+
+-- Whether faction expulsion should be shared across the players on the server or not
+config.shareFactionExpulsion = true
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 

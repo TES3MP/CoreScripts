@@ -1,3 +1,4 @@
+stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
 function BaseWorld:__init(test)
@@ -8,7 +9,8 @@ function BaseWorld:__init(test)
             currentMpNum = 0
         },
         journal = {},
-        factions = {},
+        factionRanks = {},
+        factionExpulsion = {},
         topics = {},
         kills = {}
     };
@@ -50,39 +52,11 @@ function BaseWorld:SaveJournal(pid)
 end
 
 function BaseWorld:SaveFactionRanks(pid)
-
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
-        local factionId = tes3mp.GetFactionId(pid, i)
-        local faction = self.data.factions[factionId]
-
-        if faction == nil then
-            faction = {}
-        end
-
-        faction.rank = tes3mp.GetFactionRank(pid, i)
-        self.data.factions[factionId] = faction
-    end
-
-    self:Save()
+    stateHelper:SaveFactionRanks(pid, self)
 end
 
 function BaseWorld:SaveFactionExpulsion(pid)
-
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
-        local factionId = tes3mp.GetFactionId(pid, i)
-        local faction = self.data.factions[factionId]
-
-        if faction == nil then
-            faction = {}
-        end
-
-        faction.isExpelled = tes3mp.GetFactionExpelledState(pid, i)
-        self.data.factions[factionId] = faction
-    end
-
-    self:Save()
+    stateHelper:SaveFactionExpulsion(pid, self)
 end
 
 function BaseWorld:SaveTopics(pid)
@@ -134,19 +108,12 @@ function BaseWorld:LoadJournal(pid)
     tes3mp.SendJournalChanges(pid)
 end
 
-function BaseWorld:LoadFactions(pid)
+function BaseWorld:LoadFactionRanks(pid)
+    stateHelper:LoadFactionRanks(pid, self)
+end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1, BOTH = 2 }
-
-    tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.BOTH)
-
-    for factionId, faction in pairs(self.data.factions) do
-
-        tes3mp.AddFaction(pid, factionId, faction.rank, faction.isExpelled)
-    end
-
-    tes3mp.SendFactionChanges(pid)
+function BaseWorld:LoadFactionExpulsion(pid)
+    stateHelper:LoadFactionExpulsion(pid, self)
 end
 
 function BaseWorld:LoadTopics(pid)

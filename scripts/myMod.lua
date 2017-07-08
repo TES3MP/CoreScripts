@@ -427,7 +427,7 @@ end
 Methods.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local actionTypes = { SET = 0, ADD = 1, REMOVE = 2}
+        local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
         local action = tes3mp.GetSpellbookAction(pid)
 
         if action == actionTypes.SET then
@@ -449,13 +449,23 @@ end
 Methods.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local actionTypes = { RANK = 0, EXPULSION = 1, BOTH = 2}
+        local actionTypes = { RANK = 0, EXPULSION = 1 }
         local action = tes3mp.GetFactionChangesAction(pid)
 
         if action == actionTypes.RANK then
-            WorldInstance:SaveFactionRanks(pid)
+            if config.shareFactionRanks == true then
+                WorldInstance:SaveFactionRanks(pid)
+                tes3mp.SendFactionChanges(pid, true)
+            else
+                Players[pid]:SaveFactionRanks()
+            end
         elseif action == actionTypes.EXPULSION then
-            WorldInstance:SaveFactionExpulsion(pid)
+            if config.shareFactionExpulsion == true then
+                WorldInstance:SaveFactionExpulsion(pid)
+                tes3mp.SendFactionChanges(pid, true)
+            else
+                Players[pid]:SaveFactionExpulsion()
+            end
         end
     end
 end
@@ -593,7 +603,19 @@ Methods.OnPlayerEndCharGen = function(pid)
     Players[pid]:CreateAccount()
 
     WorldInstance:LoadJournal(pid)
-    WorldInstance:LoadFactions(pid)
+    
+    if config.shareFactionRanks == true then
+        WorldInstance:LoadFactionRanks(pid)
+    else
+        Players[pid]:LoadFactionRanks()
+    end
+
+    if config.shareFactionExpulsion == true then
+        WorldInstance:LoadFactionExpulsion(pid)
+    else
+        Players[pid]:LoadFactionExpulsion()
+    end
+
     WorldInstance:LoadTopics(pid)
     WorldInstance:LoadKills(pid)
 

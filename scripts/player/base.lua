@@ -1,5 +1,6 @@
 require("config")
 require("patterns")
+stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
 local BasePlayer = class("BasePlayer")
 
@@ -67,6 +68,8 @@ function BasePlayer:__init(pid)
     self.data.equipment = {}
     self.data.inventory = {}
     self.data.spellbook = {}
+    self.data.factionRanks = {}
+    self.data.factionExpulsion = {}
     self.data.books = {}
     self.data.mapExplored = {}
 
@@ -125,7 +128,19 @@ function BasePlayer:FinishLogin()
         self:LoadSettings()
 
         WorldInstance:LoadJournal(self.pid)
-        WorldInstance:LoadFactions(self.pid)
+
+        if config.shareFactionRanks == true then
+            WorldInstance:LoadFactionRanks(self.pid)
+        else
+            self:LoadFactionRanks()
+        end
+
+        if config.shareFactionExpulsion == true then
+            WorldInstance:LoadFactionExpulsion(self.pid)
+        else
+            self:LoadFactionExpulsion()
+        end
+
         WorldInstance:LoadTopics(self.pid)
         WorldInstance:LoadKills(self.pid)
     end
@@ -248,7 +263,7 @@ function BasePlayer:Resurrect()
         end
     end
 
-    local message = "You have been resurrected"
+    local message = "You have been revived"
 
     if currentResurrectType == resurrectTypes.IMPERIAL_SHRINE then
         message = message .. " at the nearest Imperial shrine"
@@ -597,6 +612,22 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:SaveFactionRanks()
+    stateHelper:SaveFactionRanks(self.pid, self)
+end
+
+function BasePlayer:LoadFactionRanks()
+    stateHelper:LoadFactionRanks(self.pid, self)
+end
+
+function BasePlayer:SaveFactionExpulsion()
+    stateHelper:SaveFactionExpulsion(self.pid, self)
+end
+
+function BasePlayer:LoadFactionExpulsion()
+    stateHelper:LoadFactionExpulsion(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()
