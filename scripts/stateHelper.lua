@@ -1,5 +1,31 @@
 StateHelper = class("StateHelper")
 
+function StateHelper:SaveJournal(pid, stateObject)
+
+    if stateObject.data.journal == nil then
+        stateObject.data.journal = {}
+    end
+
+    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
+
+    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+
+        local journalItem = {
+            type = tes3mp.GetJournalItemType(pid, i),
+            index = tes3mp.GetJournalItemIndex(pid, i),
+            quest = tes3mp.GetJournalItemQuest(pid, i)
+        }
+
+        if journalItem.type == journalItemTypes.ENTRY then
+            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
+        end
+
+        table.insert(stateObject.data.journal, journalItem)
+    end
+
+    stateObject:Save()
+end
+
 function StateHelper:SaveFactionRanks(pid, stateObject)
 
     if stateObject.data.factionRanks == nil then
@@ -28,6 +54,33 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
     end
 
     stateObject:Save()
+end
+
+function StateHelper:LoadJournal(pid, stateObject)
+
+    if stateObject.data.journal == nil then
+        stateObject.data.journal = {}
+    end
+
+    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
+
+    tes3mp.InitializeJournalChanges(pid)
+
+    for index, journalItem in pairs(stateObject.data.journal) do
+
+        if journalItem.type == journalItemTypes.ENTRY then
+
+            if journalItem.actorRefId == nil then
+                journalItem.actorRefId = "player"
+            end
+
+            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
+        else
+            tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
+        end
+    end
+
+    tes3mp.SendJournalChanges(pid)
 end
 
 function StateHelper:LoadFactionRanks(pid, stateObject)

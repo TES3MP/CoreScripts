@@ -139,6 +139,9 @@ function OnServerPostInit()
     tes3mp.SetRuleString("console", consoleRuleString)
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
+    tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
+    tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
+    tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
 
     local respawnCell
 

@@ -30,25 +30,7 @@ function BaseWorld:SetCurrentMpNum(currentMpNum)
 end
 
 function BaseWorld:SaveJournal(pid)
-
-    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
-
-    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
-
-        local journalItem = {
-            type = tes3mp.GetJournalItemType(pid, i),
-            index = tes3mp.GetJournalItemIndex(pid, i),
-            quest = tes3mp.GetJournalItemQuest(pid, i)
-        }
-
-        if journalItem.type == journalItemTypes.ENTRY then
-            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
-        end
-
-        table.insert(self.data.journal, journalItem)
-    end
-
-    self:Save()
+    stateHelper:SaveJournal(pid, self)
 end
 
 function BaseWorld:SaveFactionRanks(pid)
@@ -86,26 +68,7 @@ function BaseWorld:SaveKills(pid)
 end
 
 function BaseWorld:LoadJournal(pid)
-
-    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
-
-    tes3mp.InitializeJournalChanges(pid)
-
-    for index, journalItem in pairs(self.data.journal) do
-
-        if journalItem.type == journalItemTypes.ENTRY then
-
-            if journalItem.actorRefId == nil then
-                journalItem.actorRefId = "player"
-            end
-
-            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
-        else
-            tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
-        end
-    end
-
-    tes3mp.SendJournalChanges(pid)
+    stateHelper:LoadJournal(pid, self)
 end
 
 function BaseWorld:LoadFactionRanks(pid)

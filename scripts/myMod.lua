@@ -448,7 +448,13 @@ end
 
 Methods.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveJournal(pid)
+
+        if config.shareJournal == true then
+            WorldInstance:SaveJournal(pid)
+            tes3mp.SendJournalChanges(pid, true)
+        else
+            Players[pid]:SaveJournal()
+        end
     end
 end
 

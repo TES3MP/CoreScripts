@@ -127,7 +127,11 @@ function BasePlayer:FinishLogin()
         --self:LoadMap()
         self:LoadSettings()
 
-        WorldInstance:LoadJournal(self.pid)
+        if config.shareJournal == true then
+            WorldInstance:LoadJournal(self.pid)
+        else
+            self:LoadJournal()
+        end
 
         if config.shareFactionRanks == true then
             WorldInstance:LoadFactionRanks(self.pid)
@@ -154,7 +158,11 @@ function BasePlayer:EndCharGen()
     self:SaveEquipment()
     self:CreateAccount()
 
-    WorldInstance:LoadJournal(self.pid)
+    if config.shareJournal == true then
+        WorldInstance:LoadJournal(self.pid)
+    else
+        self:LoadJournal()
+    end
     
     if config.shareFactionRanks == true then
         WorldInstance:LoadFactionRanks(self.pid)
@@ -650,6 +658,14 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:SaveJournal()
+    stateHelper:SaveJournal(self.pid, self)
+end
+
+function BasePlayer:LoadJournal()
+    stateHelper:LoadJournal(self.pid, self)
 end
 
 function BasePlayer:SaveFactionRanks()
