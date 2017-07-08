@@ -412,6 +412,12 @@ Methods.UnloadCellForPlayer = function(pid, cellDescription)
     end
 end
 
+Methods.OnPlayerEndCharGen = function(pid)
+    if Players[pid] ~= nil then
+        Players[pid]:EndCharGen()
+    end
+end
+
 Methods.OnPlayerEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveEquipment()
@@ -591,44 +597,6 @@ Methods.OnContainer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveContainers()
     else
         tes3mp.LogMessage(2, "Undefined behavior: trying to set containers in unloaded " .. cellDescription)
-    end
-end
-
-Methods.OnPlayerEndCharGen = function(pid)
-    Players[pid]:SaveLogin()
-    Players[pid]:SaveCharacter()
-    Players[pid]:SaveClass()
-    Players[pid]:SaveStatsDynamic()
-    Players[pid]:SaveEquipment()
-    Players[pid]:CreateAccount()
-
-    WorldInstance:LoadJournal(pid)
-    
-    if config.shareFactionRanks == true then
-        WorldInstance:LoadFactionRanks(pid)
-    else
-        Players[pid]:LoadFactionRanks()
-    end
-
-    if config.shareFactionExpulsion == true then
-        WorldInstance:LoadFactionExpulsion(pid)
-    else
-        Players[pid]:LoadFactionExpulsion()
-    end
-
-    WorldInstance:LoadTopics(pid)
-    WorldInstance:LoadKills(pid)
-
-    if config.defaultSpawnCell ~= nil then
-
-        tes3mp.SetCell(pid, config.defaultSpawnCell)
-        tes3mp.SendCell(pid)
-
-        if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
-            tes3mp.SetPos(pid, config.defaultSpawnPos[1], config.defaultSpawnPos[2], config.defaultSpawnPos[3])
-            tes3mp.SetRot(pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
-            tes3mp.SendPos(pid)
-        end
     end
 end
 

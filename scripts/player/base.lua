@@ -146,6 +146,44 @@ function BasePlayer:FinishLogin()
     end
 end
 
+function BasePlayer:EndCharGen()
+    self:SaveLogin()
+    self:SaveCharacter()
+    self:SaveClass()
+    self:SaveStatsDynamic()
+    self:SaveEquipment()
+    self:CreateAccount()
+
+    WorldInstance:LoadJournal(self.pid)
+    
+    if config.shareFactionRanks == true then
+        WorldInstance:LoadFactionRanks(self.pid)
+    else
+        self:LoadFactionRanks()
+    end
+
+    if config.shareFactionExpulsion == true then
+        WorldInstance:LoadFactionExpulsion(self.pid)
+    else
+        self:LoadFactionExpulsion()
+    end
+
+    WorldInstance:LoadTopics(self.pid)
+    WorldInstance:LoadKills(self.pid)
+
+    if config.defaultSpawnCell ~= nil then
+
+        tes3mp.SetCell(self.pid, config.defaultSpawnCell)
+        tes3mp.SendCell(self.pid)
+
+        if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
+            tes3mp.SetPos(self.pid, config.defaultSpawnPos[1], config.defaultSpawnPos[2], config.defaultSpawnPos[3])
+            tes3mp.SetRot(self.pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
+            tes3mp.SendPos(self.pid)
+        end
+    end
+end
+
 function BasePlayer:IsLoggedIn()
     return self.loggedIn
 end
