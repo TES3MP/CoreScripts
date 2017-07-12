@@ -65,7 +65,7 @@ config.respawnAtImperialShrine = true
 config.respawnAtTribunalTemple = true
 
 -- The number of days spent in jail as a penalty for dying
-config.deathPenaltyJailDays = 3
+config.deathPenaltyJailDays = 5
 
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
