@@ -590,6 +590,14 @@ Methods.OnObjectScale = function(pid, cellDescription)
     end
 end
 
+Methods.OnObjectState = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveObjectStates()
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: trying to set object states in unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnDoorState = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveDoorStates()

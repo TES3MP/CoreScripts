@@ -595,6 +595,10 @@ function OnObjectScale(pid, cellDescription)
     myMod.OnObjectScale(pid, cellDescription)
 end
 
+function OnObjectState(pid, cellDescription)
+    myMod.OnObjectState(pid, cellDescription)
+end
+
 function OnDoorState(pid, cellDescription)
     myMod.OnDoorState(pid, cellDescription)
 end

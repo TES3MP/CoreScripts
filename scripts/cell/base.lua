@@ -20,6 +20,7 @@ function BaseCell:__init(cellDescription)
             lock = {},
             trap = {},
             scale = {},
+            state = {},
             doorState = {},
             container = {},
             equipment = {},
@@ -348,6 +349,25 @@ function BaseCell:SaveObjectsScaled()
         self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
+    end
+end
+
+function BaseCell:SaveObjectStates()
+
+    if self.data.packets.state == nil then
+        self.data.packets.state = {}
+    end
+
+    tes3mp.ReadLastEvent()
+
+    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+
+        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self.data.objectData[refIndex].state = tes3mp.GetObjectState(i)
+
+        tableHelper.insertValueIfMissing(self.data.packets.state, refIndex)
     end
 end
 
@@ -794,30 +814,6 @@ function BaseCell:SendObjectsSpawned(pid)
     end
 end
 
-function BaseCell:SendObjectsScaled(pid)
-
-    local objectCount = 0
-
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
-
-    for arrayIndex, refIndex in pairs(self.data.packets.scale) do
-
-        local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.SetObjectScale(self.data.objectData[refIndex].scale)
-        tes3mp.AddWorldObject()
-
-        objectCount = objectCount + 1
-    end
-
-    if objectCount > 0 then
-        tes3mp.SendObjectScale()
-    end
-end
-
 function BaseCell:SendObjectsLocked(pid)
 
     local objectCount = 0
@@ -863,6 +859,54 @@ function BaseCell:SendObjectTrapsTriggered(pid)
 
     if objectCount > 0 then
         tes3mp.SendObjectTrap()
+    end
+end
+
+function BaseCell:SendObjectsScaled(pid)
+
+    local objectCount = 0
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.scale) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectScale(self.data.objectData[refIndex].scale)
+        tes3mp.AddWorldObject()
+
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendObjectScale()
+    end
+end
+
+function BaseCell:SendObjectStates(pid)
+
+    local objectCount = 0
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.state) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
+        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+        tes3mp.SetObjectState(self.data.objectData[refIndex].state)
+        tes3mp.AddWorldObject()
+
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendObjectState()
     end
 end
 
@@ -1237,6 +1281,7 @@ function BaseCell:SendInitialCellData(pid)
     self:SendObjectsLocked(pid)
     self:SendObjectTrapsTriggered(pid)
     self:SendObjectsScaled(pid)
+    self:SendObjectStates(pid)
     self:SendDoorStates(pid)
 
     if self:HasContainerData() == true then
