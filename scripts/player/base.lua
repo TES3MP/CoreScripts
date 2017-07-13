@@ -70,6 +70,7 @@ function BasePlayer:__init(pid)
     self.data.spellbook = {}
     self.data.factionRanks = {}
     self.data.factionExpulsion = {}
+    self.data.factionReputation = {}
     self.data.books = {}
     self.data.mapExplored = {}
 
@@ -145,6 +146,12 @@ function BasePlayer:FinishLogin()
             self:LoadFactionExpulsion()
         end
 
+        if config.shareFactionReputation == true then
+            WorldInstance:LoadFactionReputation(self.pid)
+        else
+            self:LoadFactionReputation()
+        end
+
         WorldInstance:LoadTopics(self.pid)
         WorldInstance:LoadKills(self.pid)
     end
@@ -174,6 +181,12 @@ function BasePlayer:EndCharGen()
         WorldInstance:LoadFactionExpulsion(self.pid)
     else
         self:LoadFactionExpulsion()
+    end
+
+    if config.shareFactionReputation == true then
+        WorldInstance:LoadFactionReputation(self.pid)
+    else
+        self:LoadFactionReputation()
     end
 
     WorldInstance:LoadTopics(self.pid)
@@ -686,6 +699,14 @@ end
 
 function BasePlayer:LoadFactionExpulsion()
     stateHelper:LoadFactionExpulsion(self.pid, self)
+end
+
+function BasePlayer:SaveFactionReputation()
+    stateHelper:SaveFactionReputation(self.pid, self)
+end
+
+function BasePlayer:LoadFactionReputation()
+    stateHelper:LoadFactionReputation(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()

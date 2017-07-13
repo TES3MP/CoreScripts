@@ -56,6 +56,21 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
     stateObject:Save()
 end
 
+function StateHelper:SaveFactionReputation(pid, stateObject)
+
+    if stateObject.data.factionReputation == nil then
+        stateObject.data.factionReputation = {}
+    end
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local factionId = tes3mp.GetFactionId(pid, i)
+        stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
+    end
+
+    stateObject:Save()
+end
+
 function StateHelper:LoadJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -89,14 +104,16 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
         stateObject.data.factionRanks = {}
     end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1 }
+    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 
     tes3mp.InitializeFactionChanges(pid)
     tes3mp.SetFactionChangesAction(pid, actionTypes.RANK)
 
     for factionId, rank in pairs(stateObject.data.factionRanks) do
 
-        tes3mp.AddFaction(pid, factionId, rank, false)
+        tes3mp.SetFactionId(factionId)
+        tes3mp.SetFactionRank(rank)
+        tes3mp.AddFaction(pid)
     end
 
     tes3mp.SendFactionChanges(pid)
@@ -108,14 +125,37 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
         stateObject.data.factionExpulsion = {}
     end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1 }
+    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 
     tes3mp.InitializeFactionChanges(pid)
     tes3mp.SetFactionChangesAction(pid, actionTypes.EXPULSION)
 
     for factionId, state in pairs(stateObject.data.factionExpulsion) do
 
-        tes3mp.AddFaction(pid, factionId, -1, state)
+        tes3mp.SetFactionId(factionId)
+        tes3mp.SetFactionExpulsionState(state)
+        tes3mp.AddFaction(pid)
+    end
+
+    tes3mp.SendFactionChanges(pid)
+end
+
+function StateHelper:LoadFactionReputation(pid, stateObject)
+
+    if stateObject.data.factionReputation == nil then
+        stateObject.data.factionReputation = {}
+    end
+
+    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
+
+    tes3mp.InitializeFactionChanges(pid)
+    tes3mp.SetFactionChangesAction(pid, actionTypes.REPUTATION)
+
+    for factionId, reputation in pairs(stateObject.data.factionReputation) do
+
+        tes3mp.SetFactionId(factionId)
+        tes3mp.SetFactionReputation(reputation)
+        tes3mp.AddFaction(pid)
     end
 
     tes3mp.SendFactionChanges(pid)

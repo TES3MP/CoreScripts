@@ -461,7 +461,7 @@ end
 Methods.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local actionTypes = { RANK = 0, EXPULSION = 1 }
+        local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
         local action = tes3mp.GetFactionChangesAction(pid)
 
         if action == actionTypes.RANK then
@@ -477,6 +477,13 @@ Methods.OnPlayerFaction = function(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionExpulsion()
+            end
+        elseif action == actionTypes.REPUTATION then
+            if config.shareFactionReputation == true then
+                WorldInstance:SaveFactionReputation(pid)
+                tes3mp.SendFactionChanges(pid, true)
+            else
+                Players[pid]:SaveFactionReputation()
             end
         end
     end

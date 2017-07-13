@@ -11,6 +11,7 @@ function BaseWorld:__init(test)
         journal = {},
         factionRanks = {},
         factionExpulsion = {},
+        factionReputation = {},
         topics = {},
         kills = {}
     };
@@ -39,6 +40,10 @@ end
 
 function BaseWorld:SaveFactionExpulsion(pid)
     stateHelper:SaveFactionExpulsion(pid, self)
+end
+
+function BaseWorld:SaveFactionReputation(pid)
+    stateHelper:SaveFactionReputation(pid, self)
 end
 
 function BaseWorld:SaveTopics(pid)
@@ -77,6 +82,10 @@ end
 
 function BaseWorld:LoadFactionExpulsion(pid)
     stateHelper:LoadFactionExpulsion(pid, self)
+end
+
+function BaseWorld:LoadFactionReputation(pid)
+    stateHelper:LoadFactionReputation(pid, self)
 end
 
 function BaseWorld:LoadTopics(pid)
