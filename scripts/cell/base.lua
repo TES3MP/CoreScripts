@@ -888,6 +888,10 @@ end
 
 function BaseCell:SendObjectStates(pid)
 
+    if self.data.packets.state == nil then
+        self.data.packets.state = {}
+    end
+
     local objectCount = 0
 
     tes3mp.InitializeEvent(pid)
