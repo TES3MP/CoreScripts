@@ -1,4 +1,5 @@
 require("config")
+require("actionTypes")
 require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
@@ -291,26 +292,25 @@ function BasePlayer:ProcessDeath()
 end
 
 function BasePlayer:Resurrect()
-    local resurrectTypes = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2}
 
     local currentResurrectType
 
     if config.respawnAtImperialShrine == true then
         if config.respawnAtTribunalTemple == true then
             if math.random() > 0.5 then
-                currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+                currentResurrectType = actionTypes.resurrect.IMPERIAL_SHRINE
             else
-                currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+                currentResurrectType = actionTypes.resurrect.TRIBUNAL_TEMPLE
             end
         else
-            currentResurrectType = resurrectTypes.IMPERIAL_SHRINE
+            currentResurrectType = actionTypes.resurrect.IMPERIAL_SHRINE
         end
 
     elseif config.respawnAtTribunalTemple == true then
-        currentResurrectType = resurrectTypes.TRIBUNAL_TEMPLE
+        currentResurrectType = actionTypes.resurrect.TRIBUNAL_TEMPLE
 
     elseif config.defaultRespawnCell ~= nil then
-        currentResurrectType = resurrectTypes.REGULAR
+        currentResurrectType = actionTypes.resurrect.REGULAR
 
         tes3mp.SetCell(self.pid, config.defaultRespawnCell)
         tes3mp.SendCell(self.pid)
@@ -324,9 +324,9 @@ function BasePlayer:Resurrect()
 
     local message = "You have been revived"
 
-    if currentResurrectType == resurrectTypes.IMPERIAL_SHRINE then
+    if currentResurrectType == actionTypes.resurrect.IMPERIAL_SHRINE then
         message = message .. " at the nearest Imperial shrine"
-    elseif currentResurrectType == resurrectTypes.TRIBUNAL_TEMPLE then
+    elseif currentResurrectType == actionTypes.resurrect.TRIBUNAL_TEMPLE then
         message = message .. " at the nearest Tribunal temple"
     end
 

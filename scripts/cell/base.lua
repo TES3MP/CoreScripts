@@ -1,3 +1,4 @@
+require("actionTypes")
 require("patterns")
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
@@ -390,7 +391,6 @@ function BaseCell:SaveContainers()
 
     tes3mp.ReadLastEvent()
 
-    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
     local action = tes3mp.GetEventAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -405,7 +405,7 @@ function BaseCell:SaveContainers()
 
         -- If this object's inventory is nil, or if the action is SET,
         -- change the inventory to an empty table
-        if inventory == nil or action == actionTypes.SET then
+        if inventory == nil or action == actionTypes.container.SET then
             inventory = {}
         end
 
@@ -420,9 +420,9 @@ function BaseCell:SaveContainers()
                 local foundIndex = inventoryHelper.getItemIndex(inventory, itemRefId, itemCharge)
                 local item = inventory[foundIndex]
 
-                if action == actionTypes.ADD then
+                if action == actionTypes.container.ADD then
                     item.count = item.count + itemCount
-                elseif action == actionTypes.REMOVE then
+                elseif action == actionTypes.container.REMOVE then
                     local newCount = item.count - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
 
                     -- The item will still exist in the container with a lower count
@@ -436,7 +436,7 @@ function BaseCell:SaveContainers()
                     end
                 end
             else
-                if action == actionTypes.REMOVE then
+                if action == actionTypes.container.REMOVE then
                     tes3mp.LogMessage(2, "Attempt to remove non-existent item")
                 else
                     local item = {
@@ -456,7 +456,7 @@ function BaseCell:SaveContainers()
 
     self:Save()
 
-    if action == actionTypes.SET then
+    if action == actionTypes.container.SET then
         self.isRequestingContainers = false
     end
 end
@@ -464,9 +464,6 @@ end
 function BaseCell:SaveActorList()
 
     tes3mp.ReadLastActorList()
-
-    local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
-    local action = tes3mp.GetActorListAction()
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 

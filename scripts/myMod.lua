@@ -1,3 +1,4 @@
+require("actionTypes")
 local time = require("time")
 local Methods = {}
 
@@ -433,14 +434,13 @@ end
 Methods.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local actionTypes = { SET = 0, ADD = 1, REMOVE = 2 }
         local action = tes3mp.GetSpellbookAction(pid)
 
-        if action == actionTypes.SET then
+        if action == actionTypes.spellbook.SET then
             Players[pid]:SetSpells()
-        elseif action == actionTypes.ADD then
+        elseif action == actionTypes.spellbook.ADD then
             Players[pid]:AddSpells()
-        elseif action == actionTypes.REMOVE then
+        elseif action == actionTypes.spellbook.REMOVE then
             Players[pid]:RemoveSpells()
         end
     end
@@ -461,24 +461,23 @@ end
 Methods.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
         local action = tes3mp.GetFactionChangesAction(pid)
 
-        if action == actionTypes.RANK then
+        if action == actionTypes.faction.RANK then
             if config.shareFactionRanks == true then
                 WorldInstance:SaveFactionRanks(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionRanks()
             end
-        elseif action == actionTypes.EXPULSION then
+        elseif action == actionTypes.faction.EXPULSION then
             if config.shareFactionExpulsion == true then
                 WorldInstance:SaveFactionExpulsion(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionExpulsion()
             end
-        elseif action == actionTypes.REPUTATION then
+        elseif action == actionTypes.faction.REPUTATION then
             if config.shareFactionReputation == true then
                 WorldInstance:SaveFactionReputation(pid)
                 tes3mp.SendFactionChanges(pid, true)

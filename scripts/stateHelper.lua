@@ -1,3 +1,4 @@
+require("actionTypes")
 StateHelper = class("StateHelper")
 
 function StateHelper:SaveJournal(pid, stateObject)
@@ -5,8 +6,6 @@ function StateHelper:SaveJournal(pid, stateObject)
     if stateObject.data.journal == nil then
         stateObject.data.journal = {}
     end
-
-    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
 
     for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
 
@@ -16,7 +15,7 @@ function StateHelper:SaveJournal(pid, stateObject)
             quest = tes3mp.GetJournalItemQuest(pid, i)
         }
 
-        if journalItem.type == journalItemTypes.ENTRY then
+        if journalItem.type == actionTypes.journal.ENTRY then
             journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
         end
 
@@ -77,13 +76,11 @@ function StateHelper:LoadJournal(pid, stateObject)
         stateObject.data.journal = {}
     end
 
-    local journalItemTypes = { ENTRY = 0, INDEX = 1 }
-
     tes3mp.InitializeJournalChanges(pid)
 
     for index, journalItem in pairs(stateObject.data.journal) do
 
-        if journalItem.type == journalItemTypes.ENTRY then
+        if journalItem.type == actionTypes.journal.ENTRY then
 
             if journalItem.actorRefId == nil then
                 journalItem.actorRefId = "player"
@@ -104,10 +101,8 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
         stateObject.data.factionRanks = {}
     end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
-
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.RANK)
+    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.RANK)
 
     for factionId, rank in pairs(stateObject.data.factionRanks) do
 
@@ -125,10 +120,8 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
         stateObject.data.factionExpulsion = {}
     end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
-
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.EXPULSION)
+    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.EXPULSION)
 
     for factionId, state in pairs(stateObject.data.factionExpulsion) do
 
@@ -146,10 +139,8 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
         stateObject.data.factionReputation = {}
     end
 
-    local actionTypes = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
-
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.REPUTATION)
+    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.REPUTATION)
 
     for factionId, reputation in pairs(stateObject.data.factionReputation) do
 
