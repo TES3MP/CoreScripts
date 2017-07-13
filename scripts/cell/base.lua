@@ -872,13 +872,19 @@ function BaseCell:SendObjectsScaled(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.scale) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.SetObjectScale(self.data.objectData[refIndex].scale)
-        tes3mp.AddWorldObject()
+        local refId = self.data.objectData[refIndex].refId
+        local scale = self.data.objectData[refIndex].scale
 
-        objectCount = objectCount + 1
+        if refId ~= nil and scale ~= nil then
+
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(refId)
+            tes3mp.SetObjectScale(scale)
+            tes3mp.AddWorldObject()
+
+            objectCount = objectCount + 1
+        end
     end
 
     if objectCount > 0 then

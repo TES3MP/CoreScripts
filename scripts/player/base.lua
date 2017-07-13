@@ -322,7 +322,7 @@ function BasePlayer:Resurrect()
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
-        tes3mp.Jail(self.pid, config.deathPenaltyJailDays, true, true, "You've been revived and brought here by unknown figures, but your skills have been affected by your time spent incapacitated.")
+        tes3mp.Jail(self.pid, config.deathPenaltyJailDays, true, true, "You've been revived and brought back here, but your skills have been affected by your time spent incapacitated.")
     end
 
     tes3mp.SendMessage(self.pid, message, false)
