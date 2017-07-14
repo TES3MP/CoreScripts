@@ -40,13 +40,15 @@ local helptext = "\nCommand list:\
 /list - List all players on the server"
 
 local modhelptext = "Moderators only:\
-/superman - Increase acrobatics, athletics and speed\
+/kick <pid> - Kick player\
 /teleport (<pid>/all) - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
+/cells - List all loaded cells on the server\
 /getpos <pid> - Get player position and cell\
 /setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
 /setskill <pid> <skill> <value> - Set a player's skill to a certain value\
-/kick <pid> - Kick player"
+/superman - Increase acrobatics, athletics and speed\
+/setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
@@ -240,7 +242,7 @@ function OnPlayerSendMessage(pid, message)
         if cmd[1] == "players" or cmd[1] == "list" then
             GUI.ShowPlayerList(pid)
 
-        elseif cmd[1] == "cells" then
+        elseif cmd[1] == "cells" and moderator then
             GUI.ShowCellList(pid)
 
         elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
