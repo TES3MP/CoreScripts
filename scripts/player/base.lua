@@ -45,11 +45,23 @@ function BasePlayer:__init(pid)
             fatigueBase = 1,
             fatigueCurrent = 1,
             bounty = 0
-        }
+        },
+        customClass = {},
+        attributes = {},
+        attributes = {},
+        attributeSkillIncreases = {},
+        skills = {},
+        skillProgress = {},
+        equipment = {},
+        inventory = {},
+        spellbook = {},
+        shapeshift = {},
+        factionRanks = {},
+        factionExpulsion = {},
+        factionReputation = {},
+        books = {},
+        mapExplored = {}
     };
-    self.data.customClass = {}
-    self.data.attributes = {}
-    self.data.attributeSkillIncreases = {}
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
         local attributeName = tes3mp.GetAttributeName(i)
@@ -57,23 +69,11 @@ function BasePlayer:__init(pid)
         self.data.attributeSkillIncreases[attributeName] = 0
     end
 
-    self.data.skills = {}
-    self.data.skillProgress = {}
-
     for i = 0, (tes3mp.GetSkillCount() - 1) do
         local skillName = tes3mp.GetSkillName(i)
         self.data.skills[skillName] = 1
         self.data.skillProgress[skillName] = 0
     end
-
-    self.data.equipment = {}
-    self.data.inventory = {}
-    self.data.spellbook = {}
-    self.data.factionRanks = {}
-    self.data.factionExpulsion = {}
-    self.data.factionReputation = {}
-    self.data.books = {}
-    self.data.mapExplored = {}
 
     self.initTimestamp = os.time()
 
@@ -127,6 +127,7 @@ function BasePlayer:FinishLogin()
         self:LoadSpellbook()
         self:LoadBooks()
         --self:LoadMap()
+        self:LoadShapeshift()
         self:LoadSettings()
 
         if config.shareJournal == true then
@@ -174,20 +175,14 @@ function BasePlayer:EndCharGen()
     
     if config.shareFactionRanks == true then
         WorldInstance:LoadFactionRanks(self.pid)
-    else
-        self:LoadFactionRanks()
     end
 
     if config.shareFactionExpulsion == true then
         WorldInstance:LoadFactionExpulsion(self.pid)
-    else
-        self:LoadFactionExpulsion()
     end
 
     if config.shareFactionReputation == true then
         WorldInstance:LoadFactionReputation(self.pid)
-    else
-        self:LoadFactionReputation()
     end
 
     WorldInstance:LoadTopics(self.pid)
@@ -502,6 +497,27 @@ end
 
 function BasePlayer:SaveBounty()
     self.data.stats.bounty = tes3mp.GetBounty(self.pid)
+end
+
+function BasePlayer:LoadShapeshift()
+
+    if self.data.shapeshift == nil then
+        self.data.shapeshift = {}
+    end
+
+    if self.data.shapeshift.isWerewolf == true then
+        tes3mp.SetWerewolfState(self.pid, true)
+        tes3mp.SendShapeshift(self.pid)
+    end
+end
+
+function BasePlayer:SaveShapeshift()
+
+    if self.data.shapeshift == nil then
+        self.data.shapeshift = {}
+    end
+
+    self.data.shapeshift.isWerewolf = tes3mp.IsWerewolf(self.pid)
 end
 
 function BasePlayer:LoadCell()

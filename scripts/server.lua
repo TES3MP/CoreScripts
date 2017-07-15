@@ -511,6 +511,10 @@ function OnPlayerBounty(pid)
     myMod.OnPlayerBounty(pid)
 end
 
+function OnPlayerShapeshift(pid)
+    myMod.OnPlayerShapeshift(pid)
+end
+
 function OnPlayerCellChange(pid)
     myMod.OnPlayerCellChange(pid)
 end

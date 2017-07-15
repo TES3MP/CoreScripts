@@ -322,6 +322,12 @@ Methods.OnPlayerBounty = function(pid)
     end
 end
 
+Methods.OnPlayerShapeshift = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:SaveShapeshift()
+    end
+end
+
 Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveCell()
