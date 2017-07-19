@@ -49,7 +49,7 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
     for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
 
         local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpelledState(pid, i)
+        stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
     end
 
     stateObject:Save()
