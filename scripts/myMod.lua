@@ -440,7 +440,7 @@ end
 Methods.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local action = tes3mp.GetSpellbookAction(pid)
+        local action = tes3mp.GetSpellbookChangesAction(pid)
 
         if action == actionTypes.spellbook.SET then
             Players[pid]:SetSpells()

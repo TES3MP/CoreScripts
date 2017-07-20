@@ -642,9 +642,8 @@ function BasePlayer:LoadSpellbook()
         self.data.spellbook = {}
     end
 
-    -- Send an empty initialized spellbook to clear the player's existing spells
     tes3mp.InitializeSpellbookChanges(self.pid)
-    tes3mp.SendSpellbookChanges(self.pid)
+    tes3mp.SetSpellbookChangesAction(self.pid, actionTypes.spellbook.SET)
 
     for index, currentSpell in pairs(self.data.spellbook) do
 
