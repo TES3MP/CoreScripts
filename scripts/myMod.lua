@@ -603,10 +603,17 @@ Methods.OnObjectScale = function(pid, cellDescription)
 end
 
 Methods.OnObjectState = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectStates()
-    else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set object states in unloaded " .. cellDescription)
+    local shouldUnload = false
+
+    if LoadedCells[cellDescription] == nil then
+        Methods.LoadCell(cellDescription)
+        shouldUnload = true
+    end
+
+    LoadedCells[cellDescription]:SaveObjectStates()
+
+    if shouldUnload == true then
+        Methods.UnloadCell(cellDescription)
     end
 end
 
