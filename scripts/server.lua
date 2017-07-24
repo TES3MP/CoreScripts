@@ -12,6 +12,8 @@ Player = nil
 Cell = nil
 World = nil
 
+timeCounter = config.timeServerInitTime
+
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
     Database = require("database")
@@ -76,13 +78,12 @@ function LoadPluginList()
 end
 
 do
-    local counter = config.timeServerInitTime
     local tid_ut = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
     function UpdateTime()
         local hour = 0
         if config.timeSyncMode == 1 then
-            counter = counter + (0.0083 * config.timeServerMult)
-            hour = counter
+            timeCounter = timeCounter + (0.0083 * config.timeServerMult)
+            hour = timeCounter
         elseif config.timeSyncMode == 2 then
             -- ToDo: implement like this
             -- local pid = GetFirstPlayer()
@@ -469,6 +470,11 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
+        elseif cmd[1] == "time" and moderator then
+            if type(tonumber(cmd[2])) == "number" then
+                timeCounter = tonumber(cmd[2])
+            end
+
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then
                 tes3mp.SetHealthCurrent(pid, 0)
@@ -476,6 +482,7 @@ function OnPlayerSendMessage(pid, message)
             else
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
             end
+
         else
             local message = "Not a valid command. Type /help for more info.\n"
             tes3mp.SendMessage(pid, color.Error..message..color.Default, false)
