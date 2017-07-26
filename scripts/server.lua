@@ -40,6 +40,7 @@ end
 
 local helptext = "\nCommand list:\
 /message <pid> <text> - Send a private message to a player (/msg)\
+/local <text> - Send a message that only players in your area can read (/l)\
 /list - List all players on the server"
 
 local modhelptext = "Moderators only:\
@@ -76,7 +77,7 @@ function LoadPluginList()
             io.write(("%d, {%s"):format(idx, n))
             for _, v in ipairs(h) do
                 io.write((", %X"):format(tonumber(v, 16)))
-                table.insert(Sample[idx], tonumber(v,16))
+                table.insert(Sample[idx], tonumber(v, 16))
             end
             table.insert(Sample[idx], "")
             io.write("}\n")
@@ -256,6 +257,17 @@ function OnPlayerSendMessage(pid, message)
                 message = pname .. " (" .. pid .. ") to " .. targetName .. " (" .. targetPid .. "): " .. cmd[3] .. "\n"
                 tes3mp.SendMessage(pid, message, false)
                 tes3mp.SendMessage(targetPid, message, false)
+            end
+
+        elseif cmd[1] == "local" or cmd[1] == "l" then
+            local cellDescription = Players[pid].data.location.cell
+
+            if myMod.IsCellLoaded(cellDescription) == true then
+                for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
+
+                    local message = pname .. " (" .. pid .. ") to local area: " .. cmd[2] .. "\n"
+                    tes3mp.SendMessage(visitorPid, message, false)
+                end
             end
 
         elseif cmd[1] == "players" or cmd[1] == "list" then
