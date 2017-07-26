@@ -39,6 +39,7 @@ else
 end
 
 local helptext = "\nCommand list:\
+/message <pid> <text> - Send a private message to a player (/msg)\
 /list - List all players on the server"
 
 local modhelptext = "Moderators only:\
@@ -246,7 +247,18 @@ function OnPlayerSendMessage(pid, message)
     if message:sub(1,1) == '/' then
         local cmd = (message:sub(2, #message)):split(" ")
 
-        if cmd[1] == "players" or cmd[1] == "list" then
+        if cmd[1] == "message" or cmd[1] == "msg" then
+            if pid == tonumber(cmd[2]) then
+                tes3mp.SendMessage(pid, "You can't message yourself.\n")
+            elseif myMod.CheckPlayerValidity(pid, cmd[2]) then
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
+                message = pname .. " (" .. pid .. ") to " .. targetName .. " (" .. targetPid .. "): " .. cmd[3] .. "\n"
+                tes3mp.SendMessage(pid, message, false)
+                tes3mp.SendMessage(targetPid, message, false)
+            end
+
+        elseif cmd[1] == "players" or cmd[1] == "list" then
             GUI.ShowPlayerList(pid)
 
         elseif cmd[1] == "cells" and moderator then
@@ -284,8 +296,8 @@ function OnPlayerSendMessage(pid, message)
                 cellDescription = string.gsub(cellDescription, '"', '')
 
                 if myMod.IsCellLoaded(cellDescription) == true then
-                    local targetPlayer = tonumber(cmd[2])
-                    myMod.SetCellAuthority(targetPlayer, cellDescription)
+                    local targetPid = tonumber(cmd[2])
+                    myMod.SetCellAuthority(targetPid, cellDescription)
                 else
                     tes3mp.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
                 end
@@ -293,59 +305,59 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "kick" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local targetPlayer = tonumber(cmd[2])
-                local targetPlayerName = Players[targetPlayer].name
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
                 local message
 
-                if Players[targetPlayer]:IsAdmin() then
-                    message = "You cannot kick an Admin from the server\n"
+                if Players[targetPid]:IsAdmin() then
+                    message = "You cannot kick an Admin from the server.\n"
                     tes3mp.SendMessage(pid, message, false)
-                elseif Players[targetPlayer]:IsModerator() and not admin then
-                    message = "You cannot kick a fellow Moderator from the server\n"
+                elseif Players[targetPid]:IsModerator() and not admin then
+                    message = "You cannot kick a fellow Moderator from the server.\n"
                     tes3mp.SendMessage(pid, message, false)
                 else
-                    message = targetPlayerName .. " was kicked from the server by " .. pname .. "!\n"
+                    message = targetName .. " was kicked from the server by " .. pname .. "!\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPlayer]:Kick()
+                    Players[targetPid]:Kick()
                 end
             end
 
         elseif cmd[1] == "addmoderator" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local targetPlayer = tonumber(cmd[2])
-                local targetPlayerName = Players[targetPlayer].name
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
                 local message
 
-                if Players[targetPlayer]:IsAdmin() then
-                    message = targetPlayerName .. " is already an Admin\n"
+                if Players[targetPid]:IsAdmin() then
+                    message = targetName .. " is already an Admin.\n"
                     tes3mp.SendMessage(pid, message, false)
-                elseif Players[targetPlayer]:IsModerator() then
-                    message = targetPlayerName .. " is already a Moderator\n"
+                elseif Players[targetPid]:IsModerator() then
+                    message = targetName .. " is already a Moderator.\n"
                     tes3mp.SendMessage(pid, message, false)
                 else
-                    message = targetPlayerName .. " was promoted to Moderator!\n"
+                    message = targetName .. " was promoted to Moderator!\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPlayer].data.settings.admin = 1
-                    Players[targetPlayer]:Save()
+                    Players[targetPid].data.settings.admin = 1
+                    Players[targetPid]:Save()
                 end
             end
 
         elseif cmd[1] == "removemoderator" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local targetPlayer = tonumber(cmd[2])
-                local targetPlayerName = Players[targetPlayer].name
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
                 local message
 
-                if Players[targetPlayer]:IsAdmin() then
-                    message = "Cannot demote " .. targetPlayerName .. " because they are an Admin\n"
+                if Players[targetPid]:IsAdmin() then
+                    message = "Cannot demote " .. targetName .. " because they are an Admin.\n"
                     tes3mp.SendMessage(pid, message, false)
-                elseif Players[targetPlayer]:IsModerator() then
-                    message = targetPlayerName .. " was demoted from Moderator!\n"
+                elseif Players[targetPid]:IsModerator() then
+                    message = targetName .. " was demoted from Moderator!\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPlayer].data.settings.admin = 0
-                    Players[targetPlayer]:Save()
+                    Players[targetPid].data.settings.admin = 0
+                    Players[targetPid]:Save()
                 else
-                    message = targetPlayerName .. " is not a Moderator\n"
+                    message = targetName .. " is not a Moderator.\n"
                     tes3mp.SendMessage(pid, message, false)
                 end
             end
@@ -363,8 +375,8 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "setattr" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local targetPlayer = tonumber(cmd[2])
-                local targetPlayerName = Players[targetPlayer].name
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
 
                 if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
                     local attrid
@@ -377,20 +389,20 @@ function OnPlayerSendMessage(pid, message)
                     end
 
                     if attrid ~= -1 and attrid < tes3mp.GetAttributeCount() then
-                        tes3mp.SetAttributeBase(targetPlayer, attrid, value)
-                        tes3mp.SendAttributes(targetPlayer)
+                        tes3mp.SetAttributeBase(targetPid, attrid, value)
+                        tes3mp.SendAttributes(targetPid)
 
-                        local message = targetPlayerName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
+                        local message = targetName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
                         tes3mp.SendMessage(pid, message, true)
-                        Players[targetPlayer]:SaveAttributes()
+                        Players[targetPid]:SaveAttributes()
                     end
                 end
             end
 
         elseif cmd[1] == "setskill" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local targetPlayer = tonumber(cmd[2])
-                local targetPlayerName = Players[targetPlayer].name
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
 
                 if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
                     local skillid
@@ -403,12 +415,12 @@ function OnPlayerSendMessage(pid, message)
                     end
 
                     if skillid ~= -1 and skillid < tes3mp.GetSkillCount() then
-                        tes3mp.SetSkillBase(targetPlayer, skillid, value)
-                        tes3mp.SendSkills(targetPlayer)
+                        tes3mp.SetSkillBase(targetPid, skillid, value)
+                        tes3mp.SendSkills(targetPid)
 
-                        local message = targetPlayerName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
+                        local message = targetName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
                         tes3mp.SendMessage(pid, message, true)
-                        Players[targetPlayer]:SaveSkills()
+                        Players[targetPid]:SaveSkills()
                     end
                 end
             end
@@ -429,37 +441,37 @@ function OnPlayerSendMessage(pid, message)
             myMod.PrintPlayerPosition(pid, cmd[2])
 
         elseif cmd[1] == "console" and admin then
-            local targetPlayer = tonumber(cmd[2])
-            local targetPlayerName = ""
+            local targetPid = tonumber(cmd[2])
+            local targetName = ""
             local state = ""
 
-            if Players[targetPlayer] == nil then
-                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPlayer) .. " not found.\n", false)
+            if Players[targetPid] == nil then
+                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPid) .. " not found.\n", false)
                 return false
             elseif cmd[3] == "on" then
-                Players[targetPlayer]:SetConsole(true)
+                Players[targetPid]:SetConsole(true)
                 state = " enabled.\n"
             elseif cmd[3] == "off" then
-                Players[targetPlayer]:SetConsole(false)
+                Players[targetPid]:SetConsole(false)
                 state = " disabled.\n"
             elseif cmd[3] == "default" then
-                Players[targetPlayer]:SetConsole("default")
+                Players[targetPid]:SetConsole("default")
                 state = " reset to default.\n"
             else
                  tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
                  return false
             end
 
-            Players[targetPlayer]:LoadSettings()
-            tes3mp.SendMessage(pid, "Console for " .. Players[targetPlayer].name .. state, false)
-            if targetPlayer ~= pid then
-                tes3mp.SendMessage(targetPlayer, "Console" .. state, false)
+            Players[targetPid]:LoadSettings()
+            tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
+            if targetPid ~= pid then
+                tes3mp.SendMessage(targetPid, "Console" .. state, false)
             end
 
         elseif cmd[1] == "difficulty" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
-                local targetPlayer = tonumber(cmd[2])
+                local targetPid = tonumber(cmd[2])
                 local difficulty = cmd[3]
 
                 if type(tonumber(difficulty)) == "number" then
@@ -467,9 +479,9 @@ function OnPlayerSendMessage(pid, message)
                 end
 
                 if difficulty == "default" or type(difficulty) == "number" then
-                    Players[targetPlayer]:SetDifficulty(difficulty)
-                    Players[targetPlayer]:LoadSettings()
-                    tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPlayer].name .. " is now " .. difficulty .. "\n", true)
+                    Players[targetPid]:SetDifficulty(difficulty)
+                    Players[targetPid]:LoadSettings()
+                    tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " .. difficulty .. "\n", true)
                 else
                     tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
                     return false
