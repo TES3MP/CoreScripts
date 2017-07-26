@@ -10,7 +10,7 @@ config.databaseType = "json"
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "mapExplored", "admin", "consoleAllowed", "difficulty", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "admin", "consoleAllowed", "difficulty", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 config.worldKeyOrder = {"general", "topics", "kills", "journal", "type", "index", "quest", "actorRefId"}
 
 -- Time to login, in seconds
@@ -82,7 +82,7 @@ config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time 
 -- Note: The default value of 1 is roughly 120 seconds per ingame hour
 config.timeServerMult = 1
 
--- The initial ingame hour on the server
+-- The initial ingame time on the server
 config.timeServerInitTime = 7
 
 return config

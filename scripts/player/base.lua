@@ -60,7 +60,8 @@ function BasePlayer:__init(pid)
         factionExpulsion = {},
         factionReputation = {},
         books = {},
-        mapExplored = {}
+        mapExplored = {},
+        ipAddresses = {}
     };
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
@@ -114,6 +115,7 @@ end
 function BasePlayer:FinishLogin()
     self.loggedIn = true
     if self.hasAccount ~= false then -- load account
+        self:SaveIpAddress()
         self:LoadCharacter()
         self:LoadClass()
         self:LoadLevel()
@@ -165,6 +167,7 @@ function BasePlayer:EndCharGen()
     self:SaveClass()
     self:SaveStatsDynamic()
     self:SaveEquipment()
+    self:SaveIpAddress()
     self:CreateAccount()
 
     if config.shareJournal == true then
@@ -263,6 +266,18 @@ end
 
 function BasePlayer:SaveLogin()
     self.data.login.name = tes3mp.GetName(self.pid)
+end
+
+function BasePlayer:SaveIpAddress()
+    if self.data.ipAddresses == nil then
+        self.data.ipAddresses = {}
+    end
+
+    local ipAddress = tes3mp.GetIP(self.pid)
+
+    if tableHelper.containsValue(self.data.ipAddresses, ipAddress) == false then
+        table.insert(self.data.ipAddresses, ipAddress)
+    end
 end
 
 function BasePlayer:ProcessDeath()
