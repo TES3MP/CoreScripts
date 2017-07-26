@@ -43,6 +43,7 @@ local helptext = "\nCommand list:\
 
 local modhelptext = "Moderators only:\
 /kick <pid> - Kick player\
+/time <value> - Set the server's time counter\
 /teleport (<pid>/all) - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /cells - List all loaded cells on the server\
@@ -57,6 +58,11 @@ local adminhelptext = "Admins only:\
 /removemoderator <pid> - Demote player from moderator\
 /console <pid> <on/off/default> - Enable/disable in-game console for player\
 /difficulty <pid> <value/default> - Set the difficulty for a particular player"
+
+-- Handle commands that only exist based on config options
+if config.allowSuicideCommand == true then
+    helptext = helptext .. "\n/suicide - Commit suicide"
+end
 
 Sample = {}
 
