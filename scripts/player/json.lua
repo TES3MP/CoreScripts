@@ -6,8 +6,8 @@ local BasePlayer = require("player.base")
 
 local Player = class("Player", BasePlayer)
 
-function Player:__init(pid)
-    BasePlayer.__init(self, pid)
+function Player:__init(pid, playerName)
+    BasePlayer.__init(self, pid, playerName)
 
     -- Replace characters not allowed in filenames
     self.accountFile = self.accountName

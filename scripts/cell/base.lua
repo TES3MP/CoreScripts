@@ -192,7 +192,7 @@ function BaseCell:SaveObjectsDeleted()
 
         -- Check whether this object was moved to this cell from another one
         local wasMovedHere = tableHelper.containsValue(self.data.packets.cellChangeFrom, refIndex)
-        
+
         if wasMovedHere == true then
 
             local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
@@ -1210,7 +1210,7 @@ function BaseCell:SendActorCellChanges(pid)
             table.insert(cellChangesFrom[originalCellDescription], refIndex)
         else
             tes3mp.LogAppend(3, "- Had cellChangeFrom packet recorded for " .. refIndex .. ", but no matching cell description! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.cellChangeFrom, refIndex) 
+            tableHelper.removeValue(self.data.packets.cellChangeFrom, refIndex)
         end
     end
 

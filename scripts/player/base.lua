@@ -5,7 +5,7 @@ stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
 local BasePlayer = class("BasePlayer")
 
-function BasePlayer:__init(pid)
+function BasePlayer:__init(pid, playerName)
     self.dbPid = nil
 
     self.data =
@@ -78,7 +78,12 @@ function BasePlayer:__init(pid)
 
     self.initTimestamp = os.time()
 
-    self.accountName = tes3mp.GetName(pid)
+    if playerName == nil then
+        self.accountName = tes3mp.GetName(pid)
+    else
+        self.accountName = playerName
+    end
+
     self.pid = pid
     self.loggedIn = false
     self.tid_login = nil
@@ -175,7 +180,7 @@ function BasePlayer:EndCharGen()
     else
         self:LoadJournal()
     end
-    
+
     if config.shareFactionRanks == true then
         WorldInstance:LoadFactionRanks(self.pid)
     end
@@ -808,7 +813,7 @@ function BasePlayer:SetDifficulty(difficulty)
         difficulty = config.difficulty
         self.data.settings.difficulty = "default"
     else
-        self.data.settings.difficulty = difficulty    
+        self.data.settings.difficulty = difficulty
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
@@ -816,7 +821,7 @@ function BasePlayer:SetDifficulty(difficulty)
 end
 
 function BasePlayer:LoadSettings()
-    
+
     self:SetConsole(self.data.settings.consoleAllowed)
     self:SetDifficulty(self.data.settings.difficulty)
 

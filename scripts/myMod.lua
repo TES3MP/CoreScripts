@@ -71,6 +71,27 @@ Methods.IsPlayerNameLoggedIn = function(newName)
     return false
 end
 
+-- Get the Player object of either an online player or an offline one
+Methods.GetPlayerByName = function(targetName)
+    -- Check if the player is online
+    for iteratorPid, player in pairs(Players) do
+
+        if string.lower(targetName) == string.lower(player.accountName) then
+            return player
+        end
+    end
+
+    -- If they're offline, try to load their account file
+    local targetPlayer = Player(nil, targetName)
+
+    if targetPlayer:HasAccount() == true then
+        targetPlayer:Load()
+        return targetPlayer
+    else
+        return nil
+    end
+end
+
 Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
     if (not Methods.CheckPlayerValidity(pid, originPlayer)) or (not Methods.CheckPlayerValidity(pid, targetPlayer)) then
         return
@@ -153,16 +174,14 @@ Methods.TestFunction = function()
       tes3mp.LogMessage(2, Players[0])
 end
 
-Methods.OnPlayerConnect = function(pid, pname)
-    Players[pid] = Player(pid)
-    -- pname = pname:gsub('%W','') -- Remove all non alphanumeric characters
-    -- pname = pname:gsub("^%s*(.-)%s*$", "%1") -- Remove leading and trailing whitespaces
-    Players[pid].name = pname
+Methods.OnPlayerConnect = function(pid, playerName)
+    Players[pid] = Player(pid, playerName)
+    Players[pid].name = playerName
 
-    local message = pname.." ("..pid..") ".."joined the server.\n"
+    local message = playerName .. " (" .. pid .. ") " .. "joined the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
-    message = "Welcome " .. pname .. "\nYou have "..tostring(config.loginTime).." seconds to"
+    message = "Welcome " .. playerName .. "\nYou have " .. tostring(config.loginTime) .. " seconds to"
 
     if Players[pid]:HasAccount() then
         message = message .. " log in.\n"
@@ -178,8 +197,8 @@ Methods.OnPlayerConnect = function(pid, pname)
     tes3mp.StartTimer(Players[pid].tid_login);
 end
 
-Methods.OnPlayerDeny = function(pid, pname)
-    local message = pname.." ("..pid..") " .. "joined and tried to use an existing player's name.\n"
+Methods.OnPlayerDeny = function(pid, playerName)
+    local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
     tes3mp.SendMessage(pid, message, true)
 end
 
@@ -276,8 +295,8 @@ Methods.AuthCheck = function(pid)
         return true
     end
 
-    local pname = tes3mp.GetName(pid)
-    local message = pname.." ("..pid..") ".."failed to log in.\n"
+    local playerName = tes3mp.GetName(pid)
+    local message = playerName .. " (" .. pid .. ") " .. "failed to log in.\n"
     tes3mp.SendMessage(pid, message, true)
     Players[pid]:Kick()
 

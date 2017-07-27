@@ -7,7 +7,7 @@ function World:__init()
     BaseWorld.__init(self)
 
     if self.hasEntry == nil then
-        
+
         local test = Database:GetSingleValue("world_general", "currentMpNum", "")
 
         if test ~= nil then

@@ -3,11 +3,11 @@ local BasePlayer = require("player.base")
 
 local Player = class("Player", BasePlayer)
 
-function Player:__init(pid)
-    BasePlayer.__init(self, pid)
+function Player:__init(pid, playerName)
+    BasePlayer.__init(self, pid, playerName)
 
     if self.hasAccount == nil then
-        
+
         self.dbPid = self:GetDatabaseId()
 
         if self.dbPid ~= nil then
