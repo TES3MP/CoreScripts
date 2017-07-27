@@ -236,9 +236,10 @@ Methods.OnGUIAction = function(pid, idGui, data)
         end
 
         -- Is this player on the banlist? If so, store their new IP and ban them
-        if tableHelper.containsValue(banList.playerNames, Players[pid].accountName) == true then
+        if tableHelper.containsValue(banList.playerNames, string.lower(Players[pid].accountName)) == true then
             Players[pid]:SaveIpAddress()
-            Players[pid]:Message("You are banned from this server.\n")
+
+            Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
             tes3mp.BanAddress(tes3mp.GetIP(pid))
         else
             Players[pid]:FinishLogin()

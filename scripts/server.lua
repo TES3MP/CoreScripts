@@ -348,12 +348,12 @@ function OnPlayerSendMessage(pid, message)
             elseif cmd[2] == "name" or cmd[2] == "player" then
                 local targetName = cmd[3]
 
-                if tableHelper.containsValue(banList.playerNames, playerName) == false then
-                    table.insert(banList.playerNames, playerName)
+                if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
+                    table.insert(banList.playerNames, string.lower(targetName))
                     SaveBanList()
 
                     local targetPlayer = myMod.GetPlayerByName(targetName)
-                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. playerName .. " are now banned.\n", false)
+                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now banned.\n", false)
 
                     for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                         tes3mp.BanAddress(ipAddress)
@@ -380,12 +380,12 @@ function OnPlayerSendMessage(pid, message)
             elseif cmd[2] == "name" or cmd[2] == "player" then
                 local targetName = cmd[3]
 
-                if tableHelper.containsValue(banList.playerNames, playerName) == false then
-                    table.insert(banList.playerNames, playerName)
+                if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
+                    tableHelper.removeValue(banList.playerNames, string.lower(targetName))
                     SaveBanList()
 
                     local targetPlayer = myMod.GetPlayerByName(targetName)
-                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. playerName .. " are now unbanned.\n", false)
+                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
 
                     for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                         tes3mp.UnbanAddress(ipAddress)
@@ -405,8 +405,8 @@ function OnPlayerSendMessage(pid, message)
                 else
                     message = "The following player names are banned:\n"
 
-                    for index, playerName in pairs(banList.playerNames) do
-                        message = message .. playerName
+                    for index, targetName in pairs(banList.playerNames) do
+                        message = message .. targetName
 
                         if index < #banList.playerNames then
                             message = message .. ", "
