@@ -234,8 +234,16 @@ Methods.OnGUIAction = function(pid, idGui, data)
             GUI.ShowLogin(pid)
             return true
         end
-        Players[pid]:FinishLogin()
-        Players[pid]:Message("You have successfully logged in.\n")
+
+        -- Is this player on the banlist? If so, store their new IP and ban them
+        if tableHelper.containsValue(banList.playerNames, Players[pid].accountName) == true then
+            Players[pid]:SaveIpAddress()
+            Players[pid]:Message("You are banned from this server.\n")
+            tes3mp.BanAddress(tes3mp.GetIP(pid))
+        else
+            Players[pid]:FinishLogin()
+            Players[pid]:Message("You have successfully logged in.\n")
+        end
     elseif idGui == GUI.ID.REGISTER then
         if data == nil then
             Players[pid]:Message("Password can not be empty\n")
