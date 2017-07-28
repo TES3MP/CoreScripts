@@ -13,7 +13,8 @@ function BaseWorld:__init(test)
         factionExpulsion = {},
         factionReputation = {},
         topics = {},
-        kills = {}
+        kills = {},
+        customVariables = {}
     };
 end
 

@@ -7,6 +7,10 @@ function StateHelper:SaveJournal(pid, stateObject)
         stateObject.data.journal = {}
     end
 
+    if stateObject.data.customVariables == nil then
+        stateObject.data.customVariables = {}
+    end
+
     for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
 
         local journalItem = {
@@ -20,6 +24,10 @@ function StateHelper:SaveJournal(pid, stateObject)
         end
 
         table.insert(stateObject.data.journal, journalItem)
+
+        if journalItem.quest == "a1_1_findspymaster" and journalItem.index >= 14 then
+            stateObject.data.customVariables.deliveredCaiusPackage = true
+        end 
     end
 
     stateObject:Save()

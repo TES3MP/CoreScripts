@@ -61,7 +61,8 @@ function BasePlayer:__init(pid, playerName)
         factionReputation = {},
         books = {},
         mapExplored = {},
-        ipAddresses = {}
+        ipAddresses = {},
+        customVariables= {}
     };
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
@@ -206,6 +207,14 @@ function BasePlayer:EndCharGen()
             tes3mp.SetRot(self.pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
             tes3mp.SendPos(self.pid)
         end
+    end
+
+    if config.shareJournal == true and WorldInstance.data.customVariables.deliveredCaiusPackage ~= true then
+        local item = { refId = "bk_a1_1_caiuspackage", count = 1, charge = -1 }
+        table.insert(self.data.inventory, item)
+        self:LoadInventory()
+        self:LoadEquipment()
+        tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation.\n\nAs a result, you start out with Caius Cosades' package.")
     end
 end
 
@@ -571,17 +580,23 @@ function BasePlayer:SaveCell()
     end
 
     local cell = tes3mp.GetCell(self.pid)
-    self.data.location.cell = cell
-    self.data.location.posX = tes3mp.GetPosX(self.pid)
-    self.data.location.posY = tes3mp.GetPosY(self.pid)
-    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
-    self.data.location.rotX = tes3mp.GetRotX(self.pid)
-    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 
-    if tes3mp.IsInExterior(self.pid) == true then
+    if cell == "Seyda Neen, Census and Excise Office" then
+        self:LoadCell()
+        tes3mp.MessageBox(self.pid, -1, "The default character generation is not compatible with multiplayer.")
+    else
+        self.data.location.cell = cell
+        self.data.location.posX = tes3mp.GetPosX(self.pid)
+        self.data.location.posY = tes3mp.GetPosY(self.pid)
+        self.data.location.posZ = tes3mp.GetPosZ(self.pid)
+        self.data.location.rotX = tes3mp.GetRotX(self.pid)
+        self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 
-        if tableHelper.containsValue(self.data.mapExplored, cell) == false then
-            table.insert(self.data.mapExplored, cell)
+        if tes3mp.IsInExterior(self.pid) == true then
+
+            if tableHelper.containsValue(self.data.mapExplored, cell) == false then
+                table.insert(self.data.mapExplored, cell)
+            end
         end
     end
 end
