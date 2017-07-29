@@ -312,6 +312,8 @@ function OnPlayerSendMessage(pid, message)
         if cmd[1] == "message" or cmd[1] == "msg" then
             if pid == tonumber(cmd[2]) then
                 tes3mp.SendMessage(pid, "You can't message yourself.\n")
+            elseif cmd[3] == nil then
+                tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
             elseif myMod.CheckPlayerValidity(pid, cmd[2]) then
                 local targetPid = tonumber(cmd[2])
                 local targetName = Players[targetPid].name
@@ -320,7 +322,7 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(targetPid, message, false)
             end
 
-        elseif cmd[1] == "local" or cmd[1] == "l" then
+        elseif (cmd[1] == "local" or cmd[1] == "l") and cmd[2] ~= nil then
             local cellDescription = Players[pid].data.location.cell
 
             if myMod.IsCellLoaded(cellDescription) == true then
@@ -331,7 +333,7 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "ban" and moderator then
+        elseif cmd[1] == "ban" and moderator and cmd[3] ~= nil then
 
             if cmd[2] == "ip" then
                 local ipAddress = cmd[3]
@@ -363,7 +365,7 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "unban" and moderator then
+        elseif cmd[1] == "unban" and moderator and cmd[3] ~= nil then
 
             if cmd[2] == "ip" then
                 local ipAddress = cmd[3]
@@ -439,7 +441,7 @@ function OnPlayerSendMessage(pid, message)
 
             tes3mp.SendMessage(pid, message, false)
 
-        elseif (cmd[1] == "ipaddresses" or cmd[1] == "ips") and moderator then
+        elseif (cmd[1] == "ipaddresses" or cmd[1] == "ips") and moderator and cmd[2] ~= nil then
             local targetName = cmd[2]
             local targetPlayer = myMod.GetPlayerByName(targetName)
 
