@@ -317,7 +317,8 @@ function OnPlayerSendMessage(pid, message)
             elseif myMod.CheckPlayerValidity(pid, cmd[2]) then
                 local targetPid = tonumber(cmd[2])
                 local targetName = Players[targetPid].name
-                message = playerName .. " (" .. pid .. ") to " .. targetName .. " (" .. targetPid .. "): " .. cmd[3] .. "\n"
+                message = playerName .. " (" .. pid .. ") to " .. targetName .. " (" .. targetPid .. "): "
+                message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
                 tes3mp.SendMessage(pid, message, false)
                 tes3mp.SendMessage(targetPid, message, false)
             end
@@ -328,7 +329,8 @@ function OnPlayerSendMessage(pid, message)
             if myMod.IsCellLoaded(cellDescription) == true then
                 for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
 
-                    local message = playerName .. " (" .. pid .. ") to local area: " .. cmd[2] .. "\n"
+                    local message = playerName .. " (" .. pid .. ") to local area: "
+                    message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
                     tes3mp.SendMessage(visitorPid, message, false)
                 end
             end
@@ -348,7 +350,7 @@ function OnPlayerSendMessage(pid, message)
                     tes3mp.SendMessage(pid, ipAddress .. " was already banned.\n", false)
                 end
             elseif cmd[2] == "name" or cmd[2] == "player" then
-                local targetName = cmd[3]
+                local targetName = tableHelper.concatenateFromIndex(cmd, 3)
 
                 if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
                     table.insert(banList.playerNames, string.lower(targetName))
@@ -380,7 +382,7 @@ function OnPlayerSendMessage(pid, message)
                     tes3mp.SendMessage(pid, ipAddress .. " is not banned.\n", false)
                 end
             elseif cmd[2] == "name" or cmd[2] == "player" then
-                local targetName = cmd[3]
+                local targetName = tableHelper.concatenateFromIndex(cmd, 3)
 
                 if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
                     tableHelper.removeValue(banList.playerNames, string.lower(targetName))
@@ -442,7 +444,7 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendMessage(pid, message, false)
 
         elseif (cmd[1] == "ipaddresses" or cmd[1] == "ips") and moderator and cmd[2] ~= nil then
-            local targetName = cmd[2]
+            local targetName = tableHelper.concatenateFromIndex(cmd, 2)
             local targetPlayer = myMod.GetPlayerByName(targetName)
 
             if targetPlayer == nil then
