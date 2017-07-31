@@ -42,6 +42,7 @@ end
 
 local helptext = "\nCommand list:\
 /message <pid> <text> - Send a private message to a player (/msg)\
+/me <text> - Send a message written in the third person\
 /local <text> - Send a message that only players in your area can read (/l)\
 /list - List all players on the server"
 
@@ -322,6 +323,10 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, message, false)
                 tes3mp.SendMessage(targetPid, message, false)
             end
+
+        elseif cmd[1] == "me" and cmd[2] ~= nil then
+            local message = playerName .. " (" .. pid .. ") " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            tes3mp.SendMessage(pid, message, true)
 
         elseif (cmd[1] == "local" or cmd[1] == "l") and cmd[2] ~= nil then
             local cellDescription = Players[pid].data.location.cell
