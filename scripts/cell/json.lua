@@ -1,3 +1,4 @@
+require("patterns")
 jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 local BaseCell = require("cell.base")
@@ -10,6 +11,7 @@ function Cell:__init(cellDescription)
     -- Replace characters not allowed in filenames
     self.cellFile = cellDescription
     self.cellFile = string.gsub(self.cellFile, ":", ";")
+    self.cellFile = string.gsub(self.cellFile, patterns.invalidFileCharacters, "_")
     self.cellFile = self.cellFile .. ".json"
 
     if self.hasEntry == nil then
