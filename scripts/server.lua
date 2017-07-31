@@ -488,15 +488,7 @@ function OnPlayerSendMessage(pid, message)
 
         elseif (cmd[1] == "setauthority" or cmd[1] == "setauth") and moderator and #cmd > 2 then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
-                local cellDescription = ""
-
-                for i = 3, #cmd do
-                    cellDescription = cellDescription .. cmd[i]
-
-                    if i ~= #cmd then
-                        cellDescription = cellDescription .. " "
-                    end
-                end
+                local cellDescription = tableHelper.concatenateFromIndex(cmd, 3)
 
                 -- Get rid of quotation marks
                 cellDescription = string.gsub(cellDescription, '"', '')
