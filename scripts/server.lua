@@ -704,6 +704,10 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
             end
 
+        elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
+            local message = playerName .. " (" .. pid .. "): " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+
         else
             local message = "Not a valid command. Type /help for more info.\n"
             tes3mp.SendMessage(pid, color.Error..message..color.Default, false)

@@ -152,5 +152,6 @@ color.YellowGreen = "#9ACD32"
 color.Default = color.White
 color.Error = color.Red
 color.Warning = color.GoldenRod
+color.GreenText = "#789922"
 
 return color
