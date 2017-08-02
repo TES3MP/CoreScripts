@@ -256,8 +256,8 @@ function OnPlayerConnect(pid)
 
     local playerName = tes3mp.GetName(pid)
 
-    if string.len(playerName) > 250 then
-        playerName = string.sub(playerName, 0, 250)
+    if string.len(playerName) > 35 then
+        playerName = string.sub(playerName, 0, 35)
     end
 
     if myMod.IsPlayerNameLoggedIn(playerName) then
