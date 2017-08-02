@@ -256,6 +256,10 @@ function OnPlayerConnect(pid)
 
     local playerName = tes3mp.GetName(pid)
 
+    if string.len(playerName) > 250 then
+        playerName = string.sub(playerName, 0, 250)
+    end
+
     if myMod.IsPlayerNameLoggedIn(playerName) then
         myMod.OnPlayerDeny(pid, playerName)
         return false -- deny player
