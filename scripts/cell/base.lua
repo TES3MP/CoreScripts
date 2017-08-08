@@ -122,6 +122,19 @@ function BaseCell:SetAuthority(pid)
     self:SendActorAuthority(pid)
 end
 
+-- Iterate through saved packets and ensure the object refIndexes they refer to
+-- actually exist
+function BaseCell:EnsureIntegrity()
+
+    for packetType, packetArray in pairs(self.data.packets) do
+        for arrayIndex, refIndex in pairs(self.data.packets[packetType]) do
+            if self.data.objectData[refIndex] == nil then
+                tableHelper.removeValue(self.data.packets[packetType], refIndex)
+            end
+        end
+    end
+end
+
 function BaseCell:HasContainerData()
 
     if tableHelper.isEmpty(self.data.packets.container) == true then
@@ -903,13 +916,19 @@ function BaseCell:SendObjectStates(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.state) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.SetObjectState(self.data.objectData[refIndex].state)
-        tes3mp.AddWorldObject()
+        local refId = self.data.objectData[refIndex].refId
+        local state = self.data.objectData[refIndex].state
 
-        objectCount = objectCount + 1
+        if refId ~= nil and state ~= nil then
+
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(refId)
+            tes3mp.SetObjectState(state)
+            tes3mp.AddWorldObject()
+
+            objectCount = objectCount + 1
+        end
     end
 
     if objectCount > 0 then
@@ -1279,6 +1298,8 @@ function BaseCell:RequestActorList(pid)
 end
 
 function BaseCell:SendInitialCellData(pid)
+
+    self:EnsureIntegrity()
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
 
