@@ -10,19 +10,14 @@ function Player:__init(pid, playerName)
     BasePlayer.__init(self, pid, playerName)
 
     -- Replace characters not allowed in filenames
-    self.accountFile = self.accountName
-    self.accountFile = string.gsub(self.accountFile, patterns.invalidFileCharacters, "_")
-    self.accountFile = self.accountFile .. ".json"
+    self.accountName = string.gsub(self.accountName, patterns.invalidFileCharacters, "_")
+    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR").."/player/", self.accountName .. ".json")
 
-    if self.hasAccount == nil then
-        local home = os.getenv("MOD_DIR").."/player/"
-        local file = io.open(home .. self.accountFile, "r")
-        if file ~= nil then
-            io.close()
-            self.hasAccount = true
-        else
-            self.hasAccount = false
-        end
+    if self.accountFile == "invalid" then
+        self.hasAccount = false
+        self.accountFile = self.accountName .. ".json"
+    else
+        self.hasAccount = true
     end
 end
 
