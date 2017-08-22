@@ -124,7 +124,7 @@ end
 
 -- Iterate through saved packets and ensure the object refIndexes they refer to
 -- actually exist
-function BaseCell:EnsureIntegrity()
+function BaseCell:EnsurePacketValidity()
 
     for packetType, packetArray in pairs(self.data.packets) do
         for arrayIndex, refIndex in pairs(self.data.packets[packetType]) do
@@ -133,6 +133,15 @@ function BaseCell:EnsureIntegrity()
             end
         end
     end
+end
+
+-- Check whether an object is in this cell
+function BaseCell:ContainsObject(refIndex)
+    if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].refId ~= nil then
+        return true
+    end
+
+    return false
 end
 
 function BaseCell:HasContainerData()
@@ -505,7 +514,7 @@ function BaseCell:SaveActorPositions()
 
         local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
-        if tes3mp.DoesActorHavePosition(i) == true and self.data.objectData[refIndex] ~= nil then
+        if tes3mp.DoesActorHavePosition(i) == true and self:ContainsObject(refIndex) then
 
             self.data.objectData[refIndex].location = {
                 posX = tes3mp.GetActorPosX(i),
@@ -534,7 +543,7 @@ function BaseCell:SaveActorStatsDynamic()
 
         local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
-        if tes3mp.DoesActorHaveStatsDynamic(i) == true and self.data.objectData[refIndex] ~= nil then
+        if tes3mp.DoesActorHaveStatsDynamic(i) == true and self:ContainsObject(refIndex) then
 
             self.data.objectData[refIndex].stats = {
                 healthBase = tes3mp.GetActorHealthBase(i),
@@ -566,7 +575,7 @@ function BaseCell:SaveActorEquipment()
 
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
 
-        if self.data.objectData[refIndex] ~= nil then
+        if self:ContainsObject(refIndex) then
             self.data.objectData[refIndex].equipment = {}
 
             for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
@@ -972,19 +981,25 @@ function BaseCell:SendContainers(pid)
         local splitIndex = refIndex:split("-")
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
-        for itemIndex, item in pairs(self.data.objectData[refIndex].inventory) do
-            tes3mp.SetContainerItemRefId(item.refId)
-            tes3mp.SetContainerItemCount(item.count)
-            tes3mp.SetContainerItemCharge(item.charge)
+        if self:ContainsObject(refIndex) then
+            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
-            tes3mp.AddContainerItem()
+            for itemIndex, item in pairs(self.data.objectData[refIndex].inventory) do
+                tes3mp.SetContainerItemRefId(item.refId)
+                tes3mp.SetContainerItemCount(item.count)
+                tes3mp.SetContainerItemCharge(item.charge)
+
+                tes3mp.AddContainerItem()
+            end
+
+            tes3mp.AddWorldObject()
+
+            objectCount = objectCount + 1
+        else
+            tes3mp.LogAppend(3, "- Had container packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.container, refIndex)
         end
-
-        tes3mp.AddWorldObject()
-
-        objectCount = objectCount + 1
     end
 
     if objectCount > 0 then
@@ -1009,7 +1024,7 @@ function BaseCell:SendActorList(pid)
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self.data.objectData[refIndex] ~= nil then
+        if self:ContainsObject(refIndex) then
             tes3mp.SetActorRefId(self.data.objectData[refIndex].refId)
 
             actorCount = actorCount + 1
@@ -1049,7 +1064,7 @@ function BaseCell:SendActorPositions(pid)
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self.data.objectData[refIndex] ~= nil then
+        if self:ContainsObject(refIndex) then
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
@@ -1086,7 +1101,7 @@ function BaseCell:SendActorStatsDynamic(pid)
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].stats ~= nil then
+        if self:ContainsObject(refIndex) and self.data.objectData[refIndex].stats ~= nil then
             local stats = self.data.objectData[refIndex].stats
 
             tes3mp.SetActorHealthBase(stats.healthBase)
@@ -1126,7 +1141,7 @@ function BaseCell:SendActorEquipment(pid)
         tes3mp.SetActorRefNumIndex(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].equipment ~= nil then
+        if self:ContainsObject(refIndex) and self.data.objectData[refIndex].equipment ~= nil then
             local equipment = self.data.objectData[refIndex].equipment
 
             for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
@@ -1299,7 +1314,7 @@ end
 
 function BaseCell:SendInitialCellData(pid)
 
-    self:EnsureIntegrity()
+    self:EnsurePacketValidity()
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
 
