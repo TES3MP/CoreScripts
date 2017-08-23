@@ -113,8 +113,11 @@ function LoadBanList()
 
             local targetPlayer = myMod.GetPlayerByName(targetName)
 
-            for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-                tes3mp.BanAddress(ipAddress)
+            if targetPlayer ~= nil then
+
+                for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
+                    tes3mp.BanAddress(ipAddress)
+                end
             end
         end
 
@@ -586,20 +589,20 @@ function OnPlayerSendMessage(pid, message)
                 local targetName = Players[targetPid].name
 
                 if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
-                    local attrid
+                    local attrId
                     local value = tonumber(cmd[4])
 
                     if tonumber(cmd[3]) ~= nil then
-                        attrid = tonumber(cmd[3])
+                        attrId = tonumber(cmd[3])
                     else
-                        attrid = tes3mp.GetAttributeId(cmd[3])
+                        attrId = tes3mp.GetAttributeId(cmd[3])
                     end
 
-                    if attrid ~= -1 and attrid < tes3mp.GetAttributeCount() then
-                        tes3mp.SetAttributeBase(targetPid, attrid, value)
+                    if attrId ~= -1 and attrId < tes3mp.GetAttributeCount() then
+                        tes3mp.SetAttributeBase(targetPid, attrId, value)
                         tes3mp.SendAttributes(targetPid)
 
-                        local message = targetName.."'s "..tes3mp.GetAttributeName(attrid).." is now "..value.."\n"
+                        local message = targetName.."'s "..tes3mp.GetAttributeName(attrId).." is now "..value.."\n"
                         tes3mp.SendMessage(pid, message, true)
                         Players[targetPid]:SaveAttributes()
                     end
@@ -612,20 +615,20 @@ function OnPlayerSendMessage(pid, message)
                 local targetName = Players[targetPid].name
 
                 if cmd[3] ~= nil and cmd[4] ~= nil and tonumber(cmd[4]) ~= nil then
-                    local skillid
+                    local skillId
                     local value = tonumber(cmd[4])
 
                     if tonumber(cmd[3]) ~= nil then
-                        skillid = tonumber(cmd[3])
+                        skillId = tonumber(cmd[3])
                     else
-                        skillid = tes3mp.GetSkillId(cmd[3])
+                        skillId = tes3mp.GetSkillId(cmd[3])
                     end
 
-                    if skillid ~= -1 and skillid < tes3mp.GetSkillCount() then
-                        tes3mp.SetSkillBase(targetPid, skillid, value)
+                    if skillId ~= -1 and skillId < tes3mp.GetSkillCount() then
+                        tes3mp.SetSkillBase(targetPid, skillId, value)
                         tes3mp.SendSkills(targetPid)
 
-                        local message = targetName.."'s "..tes3mp.GetSkillName(skillid).." is now "..value.."\n"
+                        local message = targetName.."'s "..tes3mp.GetSkillName(skillId).." is now "..value.."\n"
                         tes3mp.SendMessage(pid, message, true)
                         Players[targetPid]:SaveSkills()
                     end
