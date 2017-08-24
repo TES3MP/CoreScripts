@@ -22,7 +22,7 @@ Methods.InitializeWorld = function()
     end
 end
 
-Methods.CheckPlayerValidity = function(pid, targetPlayer)
+Methods.CheckPlayerValidity = function(pid, targetPid)
 
     local valid = false
     local sendMessage = true
@@ -31,7 +31,7 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
         sendMessage = false
     end
 
-    if targetPlayer == nil or type(tonumber(targetPlayer)) ~= "number" then
+    if targetPid == nil or type(tonumber(targetPid)) ~= "number" then
 
         if sendMessage then
             local message = "Please specify the player ID.\n"
@@ -41,9 +41,9 @@ Methods.CheckPlayerValidity = function(pid, targetPlayer)
         return false
     end
 
-    targetPlayer = tonumber(targetPlayer)
+    targetPid = tonumber(targetPid)
 
-    if targetPlayer >= 0 and Players[targetPlayer] ~= nil and Players[targetPlayer]:IsLoggedIn() then
+    if targetPid >= 0 and Players[targetPid] ~= nil and Players[targetPid]:IsLoggedIn() then
         valid = true
     end
 
@@ -92,40 +92,40 @@ Methods.GetPlayerByName = function(targetName)
     end
 end
 
-Methods.TeleportToPlayer = function(pid, originPlayer, targetPlayer)
-    if (not Methods.CheckPlayerValidity(pid, originPlayer)) or (not Methods.CheckPlayerValidity(pid, targetPlayer)) then
+Methods.TeleportToPlayer = function(pid, originPid, targetPid)
+    if (not Methods.CheckPlayerValidity(pid, originPid)) or (not Methods.CheckPlayerValidity(pid, targetPid)) then
         return
-    elseif tonumber(originPlayer) == tonumber(targetPlayer) then
+    elseif tonumber(originPid) == tonumber(targetPid) then
         local message = "You can't teleport to yourself.\n"
         tes3mp.SendMessage(pid, message, false)
         return
     end
 
-    local originPlayerName = Players[tonumber(originPlayer)].name
-    local targetPlayerName = Players[tonumber(targetPlayer)].name
+    local originPlayerName = Players[tonumber(originPid)].name
+    local targetPlayerName = Players[tonumber(targetPid)].name
     local targetCell = ""
     local targetCellName
     local targetPos = {0, 0, 0}
     local targetRot = {0, 0}
     local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPlayer)
-    targetPos[1] = tes3mp.GetPosY(targetPlayer)
-    targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-    targetRot[0] = tes3mp.GetRotX(targetPlayer)
-    targetRot[1] = tes3mp.GetRotZ(targetPlayer)
-    targetCell = tes3mp.GetCell(targetPlayer)
+    targetPos[0] = tes3mp.GetPosX(targetPid)
+    targetPos[1] = tes3mp.GetPosY(targetPid)
+    targetPos[2] = tes3mp.GetPosZ(targetPid)
+    targetRot[0] = tes3mp.GetRotX(targetPid)
+    targetRot[1] = tes3mp.GetRotZ(targetPid)
+    targetCell = tes3mp.GetCell(targetPid)
 
-    tes3mp.SetCell(originPlayer, targetCell)
-    tes3mp.SendCell(originPlayer)
+    tes3mp.SetCell(originPid, targetCell)
+    tes3mp.SendCell(originPid)
 
-    tes3mp.SetPos(originPlayer, targetPos[0], targetPos[1], targetPos[2])
-    tes3mp.SetRot(originPlayer, targetRot[0], targetRot[1])
-    tes3mp.SendPos(originPlayer)
+    tes3mp.SetPos(originPid, targetPos[0], targetPos[1], targetPos[2])
+    tes3mp.SetRot(originPid, targetRot[0], targetRot[1])
+    tes3mp.SendPos(originPid)
 
     local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCell .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-    tes3mp.SendMessage(originPlayer, originMessage, false)
-    tes3mp.SendMessage(targetPlayer, targetMessage, false)
+    tes3mp.SendMessage(originPid, originMessage, false)
+    tes3mp.SendMessage(targetPid, targetMessage, false)
 end
 
 Methods.GetConnectedPlayerCount = function()
@@ -146,22 +146,22 @@ Methods.GetLoadedCellCount = function()
     return tableHelper.getCount(LoadedCells)
 end
 
-Methods.PrintPlayerPosition = function(pid, targetPlayer)
-    if not Methods.CheckPlayerValidity(pid, targetPlayer) then
+Methods.PrintPlayerPosition = function(pid, targetPid)
+    if not Methods.CheckPlayerValidity(pid, targetPid) then
         return
     end
     local message = ""
-    local targetPlayerName = Players[tonumber(targetPlayer)].name
+    local targetPlayerName = Players[tonumber(targetPid)].name
     local targetCell = ""
     local targetCellName = ""
     local targetPos = {0, 0, 0}
     local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPlayer)
-    targetPos[1] = tes3mp.GetPosY(targetPlayer)
-    targetPos[2] = tes3mp.GetPosZ(targetPlayer)
-    targetCell = tes3mp.GetCell(targetPlayer)
+    targetPos[0] = tes3mp.GetPosX(targetPid)
+    targetPos[1] = tes3mp.GetPosY(targetPid)
+    targetPos[2] = tes3mp.GetPosZ(targetPid)
+    targetCell = tes3mp.GetCell(targetPid)
 
-    message = targetPlayerName.." ("..targetPlayer..") is in "..targetCell.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
+    message = targetPlayerName.." ("..targetPid..") is in "..targetCell.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
     tes3mp.SendMessage(pid, message, false)
 end
 
