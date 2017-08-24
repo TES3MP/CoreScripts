@@ -284,8 +284,7 @@ end
 
 function OnPlayerDisconnect(pid)
     tes3mp.LogMessage(1, "Player with pid("..pid..") disconnected.")
-    local playerName = tes3mp.GetName(pid)
-    local message = playerName .." (" .. pid .. ") " .. "left the server.\n"
+    local message = myMod.GetChatName(pid) .. " left the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
     -- Trigger any necessary script events useful for saving state
@@ -300,7 +299,7 @@ end
 
 function OnPlayerSendMessage(pid, message)
     local playerName = tes3mp.GetName(pid)
-    tes3mp.LogMessage(1, playerName .. "(" .. pid .. "): " .. message)
+    tes3mp.LogMessage(1, myMod.GetChatName(pid) .. ": " .. message)
 
     if myMod.OnPlayerMessage(pid, message) == false then
         return false
@@ -326,14 +325,14 @@ function OnPlayerSendMessage(pid, message)
             elseif myMod.CheckPlayerValidity(pid, cmd[2]) then
                 local targetPid = tonumber(cmd[2])
                 local targetName = Players[targetPid].name
-                message = playerName .. " (" .. pid .. ") to " .. targetName .. " (" .. targetPid .. "): "
+                message = myMod.GetChatName(pid) .. " to " .. myMod.GetChatName(targetPid) .. ": "
                 message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
                 tes3mp.SendMessage(pid, message, false)
                 tes3mp.SendMessage(targetPid, message, false)
             end
 
         elseif cmd[1] == "me" and cmd[2] ~= nil then
-            local message = playerName .. " (" .. pid .. ") " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            local message = myMod.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
             tes3mp.SendMessage(pid, message, true)
 
         elseif (cmd[1] == "local" or cmd[1] == "l") and cmd[2] ~= nil then
@@ -342,7 +341,7 @@ function OnPlayerSendMessage(pid, message)
             if myMod.IsCellLoaded(cellDescription) == true then
                 for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
 
-                    local message = playerName .. " (" .. pid .. ") to local area: "
+                    local message = myMod.GetChatName(pid) .. " to local area: "
                     message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
                     tes3mp.SendMessage(visitorPid, message, false)
                 end
@@ -371,7 +370,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetName = Players[targetPid].name
                 myMod.BanPlayer(pid, targetName)
             else
-               tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
+                tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
             end
 
         elseif cmd[1] == "unban" and moderator and cmd[3] ~= nil then
@@ -392,7 +391,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetName = tableHelper.concatenateFromIndex(cmd, 3)
                 myMod.UnbanPlayer(pid, targetName)
             else
-               tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
+                tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
             end
 
         elseif cmd[1] == "banlist" and moderator then
@@ -696,7 +695,7 @@ function OnPlayerSendMessage(pid, message)
             end
 
         elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
-            local message = playerName .. " (" .. pid .. "): " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            local message = myMod.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
             tes3mp.SendMessage(pid, message, true)
 
         else

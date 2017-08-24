@@ -57,6 +57,11 @@ Methods.CheckPlayerValidity = function(pid, targetPid)
     return valid
 end
 
+-- Get the "Name (pid)" representation of a player used in chat
+Methods.GetChatName = function(pid)
+    return Players[pid].name .. " (" .. pid .. ")"
+end
+
 -- Check if there is already a player with this name on the server
 Methods.IsPlayerNameLoggedIn = function(newName)
 
@@ -220,7 +225,7 @@ Methods.OnPlayerConnect = function(pid, playerName)
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
 
-    local message = playerName .. " (" .. pid .. ") " .. "joined the server.\n"
+    local message = Methods.GetChatName(pid) .. " joined the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
     message = "Welcome " .. playerName .. "\nYou have " .. tostring(config.loginTime) .. " seconds to"
@@ -454,7 +459,7 @@ Methods.LoadCellForPlayer = function(pid, cellDescription)
     -- Otherwise, only set this player as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
-        tes3mp.LogMessage(2, "Player " .. pid .. " took over authority from player " .. authPid .. " in " .. cellDescription .. " for latency reasons")
+        tes3mp.LogMessage(2, "Player " .. Methods.GetChatName(pid) .. " took over authority from player " .. Methods.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
     end
 end
