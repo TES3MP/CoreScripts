@@ -49,7 +49,8 @@ local helptext = "\nCommand list:\
 local modhelptext = "Moderators only:\
 /kick <pid> - Kick player\
 /ban ip <ip> - Ban an IP address\
-/ban name <name> - Ban a player name and all IP addresses stored for them\
+/ban name <name> - Ban a player and all IP addresses stored for them\
+/ban <pid> - Same as above, but using a pid as the argument\
 /unban ip <ip> - Unban an IP address\
 /unban name <name> - Unban a player name and all IP addresses stored for them\
 /banlist ips/names - Print all banned IPs or all banned player names\
@@ -347,9 +348,9 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "ban" and moderator and cmd[3] ~= nil then
+        elseif cmd[1] == "ban" and moderator then
 
-            if cmd[2] == "ip" then
+            if cmd[2] == "ip" and cmd[3] ~= nil then
                 local ipAddress = cmd[3]
 
                 if tableHelper.containsValue(banList.ipAddresses, ipAddress) == false then
@@ -361,22 +362,16 @@ function OnPlayerSendMessage(pid, message)
                 else
                     tes3mp.SendMessage(pid, ipAddress .. " was already banned.\n", false)
                 end
-            elseif cmd[2] == "name" or cmd[2] == "player" then
+            elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
                 local targetName = tableHelper.concatenateFromIndex(cmd, 3)
+                myMod.BanPlayer(pid, targetName)
 
-                if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
-                    table.insert(banList.playerNames, string.lower(targetName))
-                    SaveBanList()
-
-                    local targetPlayer = myMod.GetPlayerByName(targetName)
-                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now banned.\n", false)
-
-                    for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-                        tes3mp.BanAddress(ipAddress)
-                    end
-                else
-                    tes3mp.SendMessage(pid, targetName .. " was already banned.\n", false)
-                end
+            elseif type(tonumber(cmd[2])) == "number" and myMod.CheckPlayerValidity(pid, cmd[2]) then
+                local targetPid = tonumber(cmd[2])
+                local targetName = Players[targetPid].name
+                myMod.BanPlayer(pid, targetName)
+            else
+               tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
             end
 
         elseif cmd[1] == "unban" and moderator and cmd[3] ~= nil then
@@ -395,20 +390,9 @@ function OnPlayerSendMessage(pid, message)
                 end
             elseif cmd[2] == "name" or cmd[2] == "player" then
                 local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-
-                if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
-                    tableHelper.removeValue(banList.playerNames, string.lower(targetName))
-                    SaveBanList()
-
-                    local targetPlayer = myMod.GetPlayerByName(targetName)
-                    tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
-
-                    for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-                        tes3mp.UnbanAddress(ipAddress)
-                    end
-                else
-                    tes3mp.SendMessage(pid, targetName .. " is not banned.\n", false)
-                end
+                myMod.UnbanPlayer(pid, targetName)
+            else
+               tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
             end
 
         elseif cmd[1] == "banlist" and moderator then

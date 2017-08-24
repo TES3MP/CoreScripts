@@ -92,6 +92,48 @@ Methods.GetPlayerByName = function(targetName)
     end
 end
 
+Methods.BanPlayer = function(pid, targetName)
+    if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
+        local targetPlayer = Methods.GetPlayerByName(targetName)
+
+        if targetPlayer ~= nil then
+            table.insert(banList.playerNames, string.lower(targetName))
+            SaveBanList()
+
+            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now banned.\n", false)
+
+            for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
+                tes3mp.BanAddress(ipAddress)
+            end
+        else
+            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server.\n", false)
+        end
+    else
+        tes3mp.SendMessage(pid, targetName .. " was already banned.\n", false)
+    end
+end
+
+Methods.UnbanPlayer = function(pid, targetName)
+    if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
+        tableHelper.removeValue(banList.playerNames, string.lower(targetName))
+        SaveBanList()
+
+        local targetPlayer = Methods.GetPlayerByName(targetName)
+
+        if targetPlayer ~= nil then
+            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
+
+            for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
+                tes3mp.UnbanAddress(ipAddress)
+            end
+        else
+            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server, but has been removed from the ban list.\n", false)
+        end
+    else
+        tes3mp.SendMessage(pid, targetName .. " is not banned.\n", false)
+    end
+end
+
 Methods.TeleportToPlayer = function(pid, originPid, targetPid)
     if (not Methods.CheckPlayerValidity(pid, originPid)) or (not Methods.CheckPlayerValidity(pid, targetPid)) then
         return
