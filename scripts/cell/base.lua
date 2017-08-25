@@ -202,15 +202,19 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
-function BaseCell:SaveObjectsDeleted()
+function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
         -- Check whether this object was moved to this cell from another one
         local wasMovedHere = tableHelper.containsValue(self.data.packets.cellChangeFrom, refIndex)
@@ -229,7 +233,7 @@ function BaseCell:SaveObjectsDeleted()
 
             originalCell:DeleteObjectData(refIndex)
             table.insert(originalCell.data.packets.delete, refIndex)
-            originalCell:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+            originalCell:InitializeObjectData(refIndex, refId)
 
             self:DeleteObjectData(refIndex)
 
@@ -242,7 +246,7 @@ function BaseCell:SaveObjectsDeleted()
             if wasPlacedHere == false then
 
                 table.insert(self.data.packets.delete, refIndex)
-                self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+                self:InitializeObjectData(refIndex, refId)
             end
         end
     end
@@ -253,9 +257,10 @@ function BaseCell:SaveObjectsDeleted()
     end
 end
 
-function BaseCell:SaveObjectsPlaced()
+function BaseCell:SaveObjectsPlaced(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -273,7 +278,8 @@ function BaseCell:SaveObjectsPlaced()
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+            local refId = tes3mp.GetObjectRefId(i)
+            self:InitializeObjectData(refIndex, refId)
 
             local count = tes3mp.GetObjectCount(i)
             local charge = tes3mp.GetObjectCharge(i)
@@ -296,14 +302,17 @@ function BaseCell:SaveObjectsPlaced()
 
             self.data.objectData[refIndex].location = location
 
+            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", goldValue: " .. goldValue)
+
             table.insert(self.data.packets.place, refIndex)
         end
     end
 end
 
-function BaseCell:SaveObjectsSpawned()
+function BaseCell:SaveObjectsSpawned(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -321,9 +330,12 @@ function BaseCell:SaveObjectsSpawned()
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
 
-            self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+            local refId = tes3mp.GetObjectRefId(i)
+            self:InitializeObjectData(refIndex, refId)
 
             self.data.objectData[refIndex].location = location
+
+            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
             table.insert(self.data.packets.spawn, refIndex)
             table.insert(self.data.packets.actorList, refIndex)
@@ -331,95 +343,120 @@ function BaseCell:SaveObjectsSpawned()
     end
 end
 
-function BaseCell:SaveObjectsLocked()
+function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectLock from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
+        local lockLevel = tes3mp.GetObjectLockLevel(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].lockLevel = tes3mp.GetObjectLockLevel(i)
+        self:InitializeObjectData(refIndex, refId)
+        self.data.objectData[refIndex].lockLevel = lockLevel
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, refIndex)
     end
 end
 
-function BaseCell:SaveObjectTrapsTriggered()
+function BaseCell:SaveObjectTrapsTriggered(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
+        self:InitializeObjectData(refIndex, refId)
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.trap, refIndex)
     end
 end
 
-function BaseCell:SaveObjectsScaled()
+function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectScale from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
+        local scale = tes3mp.GetObjectScale(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].scale = tes3mp.GetObjectScale(i)
+        self:InitializeObjectData(refIndex, refId)
+        self.data.objectData[refIndex].scale = scale
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
     end
 end
 
-function BaseCell:SaveObjectStates()
+function BaseCell:SaveObjectStates(pid)
 
     if self.data.packets.state == nil then
         self.data.packets.state = {}
     end
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving ObjectState from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
+        local state = tes3mp.GetObjectState(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].state = tes3mp.GetObjectState(i)
+        self:InitializeObjectData(refIndex, refId)
+        self.data.objectData[refIndex].state = state
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, refIndex)
     end
 end
 
-function BaseCell:SaveDoorStates()
+function BaseCell:SaveDoorStates(pid)
 
     tes3mp.ReadLastEvent()
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refId = tes3mp.GetObjectRefId(i)
+        local doorState = tes3mp.GetObjectDoorState(i)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(i))
-        self.data.objectData[refIndex].doorState = tes3mp.GetObjectDoorState(i)
+        self:InitializeObjectData(refIndex, refId)
+        self.data.objectData[refIndex].doorState = doorState
 
         tableHelper.insertValueIfMissing(self.data.packets.doorState, refIndex)
     end
 end
 
-function BaseCell:SaveContainers()
+function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadLastEvent()
+    tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     local action = tes3mp.GetEventAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetObjectRefId(objectIndex))
+        self:InitializeObjectData(refIndex, refId)
+
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.container, refIndex)
 
@@ -483,15 +520,18 @@ function BaseCell:SaveContainers()
     end
 end
 
-function BaseCell:SaveActorList()
+function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadLastActorList()
+    tes3mp.LogMessage(1, "Saving ActorList from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        local refId = tes3mp.GetActorRefId(actorIndex)
 
-        self:InitializeObjectData(refIndex, tes3mp.GetActorRefId(actorIndex))
+        self:InitializeObjectData(refIndex, refId)
+        tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, refIndex)
     end
@@ -562,9 +602,11 @@ function BaseCell:SaveActorStatsDynamic()
     end
 end
 
-function BaseCell:SaveActorEquipment()
+function BaseCell:SaveActorEquipment(pid)
 
     tes3mp.ReadLastActorList()
+    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+
     local actorListSize = tes3mp.GetActorListSize()
 
     if actorListSize == 0 then
@@ -574,6 +616,7 @@ function BaseCell:SaveActorEquipment()
     for actorIndex = 0, actorListSize - 1 do
 
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        tes3mp.LogAppend(1, "- " .. refIndex)
 
         if self:ContainsObject(refIndex) then
             self.data.objectData[refIndex].equipment = {}
@@ -599,18 +642,19 @@ function BaseCell:SaveActorEquipment()
     self:Save()
 end
 
-function BaseCell:SaveActorCellChanges()
+function BaseCell:SaveActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastActorList()
+    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
         local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         local newCellDescription = tes3mp.GetActorCell(actorIndex)
 
-        tes3mp.LogMessage(1, "Actor " .. refIndex .. " changed cell from " .. self.description .. " to " .. newCellDescription)
+        tes3mp.LogAppend(1, "- " .. refIndex .. " moved to " .. newCellDescription)
 
         -- If the new cell is not loaded, load it temporarily
         if LoadedCells[newCellDescription] == nil then
@@ -626,7 +670,7 @@ function BaseCell:SaveActorCellChanges()
             -- Was this actor spawned in the old cell, instead of being a pre-existing actor?
             -- If so, delete it entirely from the old cell and make it get spawned in the new cell
             if tableHelper.containsValue(self.data.packets.spawn, refIndex) == true then
-                tes3mp.LogAppend(1, "- As a server-only object, it was moved entirely")
+                tes3mp.LogAppend(1, "-- As a server-only object, it was moved entirely")
                 self:MoveObjectData(refIndex, newCell)
 
             -- Was this actor moved to the old cell from another cell?
@@ -637,7 +681,7 @@ function BaseCell:SaveActorCellChanges()
                 -- Is the new cell actually this actor's original cell?
                 -- If so, move its data back and remove all of its cell change data
                 if originalCellDescription == newCellDescription then
-                    tes3mp.LogAppend(1, "- It is now back in its original cell " .. originalCellDescription)
+                    tes3mp.LogAppend(1, "-- It is now back in its original cell " .. originalCellDescription)
                     self:MoveObjectData(refIndex, newCell)
 
                     tableHelper.removeValue(newCell.data.packets.cellChangeTo, refIndex)
@@ -659,10 +703,10 @@ function BaseCell:SaveActorCellChanges()
                     local originalCell = LoadedCells[originalCellDescription]
 
                     if originalCell.data.objectData[refIndex] ~= nil then
-                        tes3mp.LogAppend(1, "- This is now referenced in its original cell " .. originalCellDescription)
+                        tes3mp.LogAppend(1, "-- This is now referenced in its original cell " .. originalCellDescription)
                         originalCell.data.objectData[refIndex].cellChangeTo = newCellDescription
                     else
-                        tes3mp.LogAppend(3, "- It does not exist in its original cell " .. originalCellDescription .. "! Please report this to a developer")
+                        tes3mp.LogAppend(3, "-- It does not exist in its original cell " .. originalCellDescription .. "! Please report this to a developer")
                     end
                 end
 
@@ -670,7 +714,7 @@ function BaseCell:SaveActorCellChanges()
             -- in its old cell, as long as it's not supposed to already be in the new cell
             elseif self.data.objectData[refIndex].cellChangeTo ~= newCellDescription then
 
-                tes3mp.LogAppend(1, "- This was its first move away from its original cell")
+                tes3mp.LogAppend(1, "-- This was its first move away from its original cell")
 
                 self:MoveObjectData(refIndex, newCell)
 
@@ -698,7 +742,7 @@ function BaseCell:SaveActorCellChanges()
                 }
             end
         else
-            tes3mp.LogAppend(3, "- Invalid or repeated cell change was attempted! Please report this to a developer")
+            tes3mp.LogAppend(3, "-- Invalid or repeated cell change was attempted! Please report this to a developer")
         end
     end
 

@@ -591,7 +591,7 @@ Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: invalid player " .. pid .. " loaded cell " .. cellDescription)
     end
 end
 
@@ -607,73 +607,73 @@ end
 
 Methods.OnActorList = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorList()
+        LoadedCells[cellDescription]:SaveActorList(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set actors in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorList for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnActorEquipment = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorEquipment()
+        LoadedCells[cellDescription]:SaveActorEquipment(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set equipment in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorEquipment for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnActorCellChange = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorCellChanges()
+        LoadedCells[cellDescription]:SaveActorCellChanges(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to save actor cell change in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorCellChange for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectPlace = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsPlaced()
+        LoadedCells[cellDescription]:SaveObjectsPlaced(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to place object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectPlace for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectSpawn = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsSpawned()
+        LoadedCells[cellDescription]:SaveObjectsSpawned(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to spawn object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectSpawn for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectDelete = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsDeleted()
+        LoadedCells[cellDescription]:SaveObjectsDeleted(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to delete object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectLock = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsLocked()
+        LoadedCells[cellDescription]:SaveObjectsLocked(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to lock object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectTrap = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectTrapsTriggered()
+        LoadedCells[cellDescription]:SaveObjectTrapsTriggered(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to trigger object traps in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectTrap for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnObjectScale = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsScaled()
+        LoadedCells[cellDescription]:SaveObjectsScaled(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to scale object in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectScale for unloaded " .. cellDescription)
     end
 end
 
@@ -685,7 +685,7 @@ Methods.OnObjectState = function(pid, cellDescription)
         shouldUnload = true
     end
 
-    LoadedCells[cellDescription]:SaveObjectStates()
+    LoadedCells[cellDescription]:SaveObjectStates(pid)
 
     if shouldUnload == true then
         Methods.UnloadCell(cellDescription)
@@ -694,17 +694,17 @@ end
 
 Methods.OnDoorState = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveDoorStates()
+        LoadedCells[cellDescription]:SaveDoorStates(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set door state in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent DoorState for unloaded " .. cellDescription)
     end
 end
 
 Methods.OnContainer = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveContainers()
+        LoadedCells[cellDescription]:SaveContainers(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: trying to set containers in unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
     end
 end
 
