@@ -69,7 +69,8 @@ local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /console <pid> on/off/default - Enable/disable in-game console for player\
-/difficulty <pid> <value>/default - Set the difficulty for a particular player"
+/difficulty <pid> <value>/default - Set the difficulty for a particular player\
+/werewolf <pid> on/off - Set the werewolf state of a particular player"
 
 -- Handle commands that only exist based on config options
 if config.allowSuicideCommand == true then
@@ -634,31 +635,31 @@ function OnPlayerSendMessage(pid, message)
             myMod.PrintPlayerPosition(pid, cmd[2])
 
         elseif cmd[1] == "console" and admin then
-            local targetPid = tonumber(cmd[2])
-            local targetName = ""
-            local state = ""
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
-            if Players[targetPid] == nil then
-                tes3mp.SendMessage(pid, "Player with pid ".. tostring(targetPid) .. " not found.\n", false)
-                return false
-            elseif cmd[3] == "on" then
-                Players[targetPid]:SetConsole(true)
-                state = " enabled.\n"
-            elseif cmd[3] == "off" then
-                Players[targetPid]:SetConsole(false)
-                state = " disabled.\n"
-            elseif cmd[3] == "default" then
-                Players[targetPid]:SetConsole("default")
-                state = " reset to default.\n"
-            else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
-                 return false
-            end
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
 
-            Players[targetPid]:LoadSettings()
-            tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
-            if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Console" .. state, false)
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetConsole(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetConsole(false)
+                    state = " disabled.\n"
+                elseif cmd[3] == "default" then
+                    Players[targetPid]:SetConsole("default")
+                    state = " reset to default.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadSettings()
+                tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Console" .. state, false)
+                end
             end
 
         elseif cmd[1] == "difficulty" and admin then
@@ -678,6 +679,31 @@ function OnPlayerSendMessage(pid, message)
                 else
                     tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
                     return false
+                end
+            end
+
+        elseif cmd[1] == "werewolf" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
+
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetWerewolfState(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetWerewolfState(false)
+                    state = " disabled.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /werewolf <pid> <on/off>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadShapeshift()
+                tes3mp.SendMessage(pid, "Werewolf state for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Werewolf state" .. state, false)
                 end
             end
 

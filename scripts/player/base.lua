@@ -872,6 +872,13 @@ function BasePlayer:SetDifficulty(difficulty)
     tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. self.pid)
 end
 
+function BasePlayer:SetWerewolfState(state)
+    self.data.shapeshift.isWerewolf = state
+
+    tes3mp.SetWerewolfState(self.pid, state)
+    tes3mp.SendShapeshift(self.pid)
+end
+
 function BasePlayer:LoadSettings()
 
     self:SetConsole(self.data.settings.consoleAllowed)
