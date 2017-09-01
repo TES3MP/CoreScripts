@@ -284,8 +284,9 @@ function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConn
 end
 
 function OnPlayerDisconnect(pid)
-    tes3mp.LogMessage(1, "Player with pid("..pid..") disconnected.")
+    tes3mp.LogMessage(1, "Player with pid "..pid.." disconnected.")
     local message = myMod.GetChatName(pid) .. " left the server.\n"
+
     tes3mp.SendMessage(pid, message, true)
 
     -- Trigger any necessary script events useful for saving state

@@ -59,7 +59,12 @@ end
 
 -- Get the "Name (pid)" representation of a player used in chat
 Methods.GetChatName = function(pid)
-    return Players[pid].name .. " (" .. pid .. ")"
+
+    if Players[pid] ~= nil then
+        return Players[pid].name .. " (" .. pid .. ")"
+    else
+        return "Unlogged player " .. " (" .. pid .. ")"
+    end
 end
 
 -- Check if there is already a player with this name on the server
