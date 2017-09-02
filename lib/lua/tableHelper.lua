@@ -6,20 +6,6 @@ function tableHelper.getCount(t)
     return count
 end
 
-function tableHelper.concatenateFromIndex(t, index)
-    local string = ""
-
-    for i = index, #t do
-        string = string .. t[i]
-
-        if i ~= #t then
-            string = string .. " "
-        end
-    end
-
-    return string
-end
-
 -- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
 function tableHelper.containsKeyValue(t, keyToFind, valueToFind, checkNestedTables)

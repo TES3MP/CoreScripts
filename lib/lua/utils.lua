@@ -1,10 +1,3 @@
-function string:split(sep)
-    local sep, fields = sep or ":", {}
-    local pattern = string.format("([^%s]+)", sep)
-    self:gsub(pattern, function(c) fields[#fields+1] = c end)
-    return fields
-end
-
 function doesModuleExist(name)
     if package.loaded[name] then
         return true
@@ -18,4 +11,18 @@ function doesModuleExist(name)
         end
         return false
     end
+end
+
+function createFile(filename)
+    if type(filename) ~= "string" then return false end
+
+    local home = getDataFolder()
+
+    local file = io.open(home .. filename, 'r')
+    
+    if file == nil  then
+        file = io.open(home .. filename, 'w+')
+    end
+    file:close()
+    return true
 end
