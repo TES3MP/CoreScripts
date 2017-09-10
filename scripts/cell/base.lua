@@ -1026,7 +1026,7 @@ function BaseCell:SendContainers(pid)
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
 
-        if self:ContainsObject(refIndex) then
+        if self:ContainsObject(refIndex) and self.data.objectData[refIndex].inventory ~= nil then
             tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
             for itemIndex, item in pairs(self.data.objectData[refIndex].inventory) do
