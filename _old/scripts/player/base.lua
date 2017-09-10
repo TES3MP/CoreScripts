@@ -358,6 +358,11 @@ function BasePlayer:Resurrect()
 
     message = message .. ".\n"
 
+    -- Ensure that dying as a werewolf turns you back into your normal form
+    if self.data.shapeshift.isWerewolf == true then
+        self:SetWerewolfState(false)
+    end
+
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
