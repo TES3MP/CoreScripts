@@ -6,6 +6,8 @@ ModInfo = {
     }
 }
 
+local dataFolder = getDataFolder()
+
 require("color")
 require("utils")
 jsonInterface = require("jsonInterface")
@@ -48,7 +50,7 @@ pluginList = {}
 function LoadPluginList()
     --tes3mp.LogMessage(2, "Reading pluginlist.json")
 
-    local pluginList2 = jsonInterface.load("pluginlist.json")
+    local pluginList2 = jsonInterface.load(dataFolder, "pluginlist.json")
     for idx, pl in pairs(pluginList2) do
         idx = tonumber(idx) + 1
         for n, h in pairs(pl) do
@@ -79,8 +81,8 @@ function updateMpNum(mpNum)
     local fileName = "mpNum.json"
     local cfgMpNum = {mpNum = 0}
     if mpNum == nil then
-        createFile(fileName)
-        cfgMpNum = jsonInterface.load(fileName)
+        createFile(dataFolder, fileName)
+        cfgMpNum = jsonInterface.load(dataFolder, fileName)
     end
     if cfgMpNum ~= nil  and cfgMpNum["mpNum"] ~= nil then
         if mpNum == nil then
@@ -88,7 +90,7 @@ function updateMpNum(mpNum)
             logMessage(0, "mpNum is loaded. Loaded value: " .. cfgMpNum["mpNum"])
         else
             cfgMpNum["mpNum"] = mpNum
-            jsonInterface.save(fileName, cfgMpNum)
+            jsonInterface.save(dataFolder, fileName, cfgMpNum)
             logMessage(0, "mpNum is updated. New value: " .. mpNum)
         end
     end

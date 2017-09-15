@@ -13,15 +13,13 @@ function doesModuleExist(name)
     end
 end
 
-function createFile(filename)
-    if type(filename) ~= "string" then return false end
+function createFile(dataFolder, fileName)
+    if type(fileName) ~= "string" then return false end
 
-    local home = getDataFolder()
-
-    local file = io.open(home .. filename, 'r')
+    local file = io.open(dataFolder .. fileName, 'r')
     
-    if file == nil  then
-        file = io.open(home .. filename, 'w+')
+    if file == nil then
+        file = io.open(dataFolder .. fileName, 'w+')
     end
     file:close()
     return true
