@@ -6,11 +6,52 @@ ModInfo = {
     }
 }
 
-local dataFolder = getDataFolder()
-
 require("color")
 require("utils")
 jsonInterface = require("jsonInterface")
+tableHelper = require("tableHelper")
+
+pluginList = {}
+
+local dataFolder = getDataFolder()
+
+function LoadPluginList()
+    logMessage(2, "Reading pluginlist.json")
+
+    local jsonPluginList = jsonInterface.load(dataFolder, "pluginlist.json")
+
+    -- Fix numerical keys to print plugins in the correct order
+    tableHelper.fixNumericalKeys(jsonPluginList)
+
+    for listIndex, pluginEntry in pairs(jsonPluginList) do
+        listIndex = listIndex + 1
+        for entryIndex, hashArray in pairs(pluginEntry) do
+            pluginList[listIndex] = {entryIndex}
+            io.write(("%d, {%s"):format(listIndex, entryIndex))
+            for _, hash in ipairs(hashArray) do
+                io.write((", %X"):format(tonumber(hash, 16)))
+                table.insert(pluginList[listIndex], tonumber(hash, 16))
+            end
+            table.insert(pluginList[listIndex], "")
+            io.write("}\n")
+        end
+    end
+end
+
+function InitializeServer()
+
+    local expectedVersion = "0.7-alpha"
+
+    if Data.Core.VERSION ~= expectedVersion then
+        logMessage(3, "Version mismatch between server and Core scripts!")
+        logAppend(3, "- The Core scripts require " .. expectedVersion)
+        stopServer(1)
+    end
+
+    LoadPluginList()
+end
+
+InitializeServer()
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
     return true
@@ -18,7 +59,7 @@ end)
 
 
 Event.register(Events.ON_PLAYER_SENDMESSAGE, function(player, message)
-    if Data.overrideChat ~= nil and Data.overrideChat == true then -- you can easly turn off Core behavior by Data.overrideChat = true
+    if Data.overrideChat ~= nil and Data.overrideChat == true then -- you can easily turn off Core behavior via Data.overrideChat = true
         return
     end
 
@@ -44,29 +85,6 @@ function helpCommand(player, args)
 end
 
 CommandController.registerCommand("help", helpCommand, "/help show this info")
-
-
-pluginList = {}
-function LoadPluginList()
-    --tes3mp.LogMessage(2, "Reading pluginlist.json")
-
-    local pluginList2 = jsonInterface.load(dataFolder, "pluginlist.json")
-    for idx, pl in pairs(pluginList2) do
-        idx = tonumber(idx) + 1
-        for n, h in pairs(pl) do
-            pluginList[idx] = {n}
-            io.write(("%d, {%s"):format(idx, n))
-            for _, v in ipairs(h) do
-                io.write((", %X"):format(tonumber(v, 16)))
-                table.insert(pluginList[idx], tonumber(v, 16))
-            end
-            table.insert(pluginList[idx], "")
-            io.write("}\n")
-        end
-    end
-end
-
-LoadPluginList()
 
 Event.register(Events.ON_REQUEST_PLUGIN_LIST, function(id, field)
     id = id + 1

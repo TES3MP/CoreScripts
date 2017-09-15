@@ -220,7 +220,7 @@ function tableHelper.print(t, indentLevel)
     end
 
     if (indentLevel == nil) then
-        tes3mp.LogMessage(1, tableHelper.print(t, 0))
+        logMessage(1, tableHelper.print(t, 0))
         return
     end
 
