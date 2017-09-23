@@ -11,9 +11,10 @@ require("utils")
 jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 
-pluginList = {}
-
+Config.Core = dofile(getModFolder() .. "config.lua")
 local dataFolder = getDataFolder()
+
+pluginList = {}
 
 function LoadPluginList()
     logMessage(2, "Reading pluginlist.json")
@@ -52,6 +53,10 @@ function InitializeServer()
 end
 
 InitializeServer()
+
+Event.register(Events.ON_POST_INIT, function()
+    updateMpNum() -- load mpNum to server
+end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
     return true
@@ -113,9 +118,5 @@ function updateMpNum(mpNum)
         end
     end
 end
-
-Event.register(Events.ON_POST_INIT, function()
-    updateMpNum() -- load mpNum to server
-end)
 
 Event.register(Events.ON_MP_REFNUM, updateMpNum)
