@@ -55,6 +55,36 @@ end
 InitializeServer()
 
 Event.register(Events.ON_POST_INIT, function()
+    local consoleRuleString = "allowed"
+    if not Config.Core.allowConsole then
+        consoleRuleString = "not " .. consoleRuleString
+    end
+
+    setRuleValue("console", consoleRuleString)
+    setRuleValue("difficulty", tostring(Config.Core.difficulty))
+    setRuleValue("deathPenaltyJailDays", tostring(Config.Core.deathPenaltyJailDays))
+    setRuleValue("spawnCell", tostring(Config.Core.defaultSpawnCell))
+    setRuleValue("shareJournal", tostring(Config.Core.shareJournal))
+    setRuleValue("shareFactionRanks", tostring(Config.Core.shareFactionRanks))
+    setRuleValue("shareFactionExpulsion", tostring(Config.Core.shareFactionExpulsion))
+    setRuleValue("shareFactionReputation", tostring(Config.Core.shareFactionReputation))
+
+    local respawnCell
+
+    if Config.Core.respawnAtImperialShrine == true then
+        respawnCell = "nearest Imperial shrine"
+
+        if Config.Core.respawnAtTribunalTemple == true then
+            respawnCell = respawnCell .. " or Tribunal temple"
+        end
+    elseif Config.Core.respawnAtTribunalTemple == true then
+        respawnCell = "nearest Tribunal temple"
+    else
+        respawnCell = tostring(Config.Core.defaultRespawnCell)
+    end
+
+    setRuleValue("respawnCell", respawnCell)
+
     updateMpNum() -- load mpNum to server
 end)
 
