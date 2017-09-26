@@ -1278,7 +1278,7 @@ function BaseCell:SendActorCellChanges(pid)
 
     for arrayIndex, refIndex in pairs(self.data.packets.cellChangeFrom) do
 
-        if self.data.objectData[refIndex] ~= nil then
+        if self.data.objectData[refIndex] ~= nil and self.data.objectData[refIndex].cellChangeFrom ~= nil then
             local originalCellDescription = self.data.objectData[refIndex].cellChangeFrom
 
             if cellChangesFrom[originalCellDescription] == nil then
