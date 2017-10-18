@@ -1,11 +1,3 @@
-ModInfo = {
-    name = "Core",
-    author = "tes3mp team",
-    version = "0.0.1",
-    dependencies = {
-    }
-}
-
 require("color")
 require("utils")
 jsonInterface = require("jsonInterface")
