@@ -1,4 +1,24 @@
-function doesModuleExist(name)
+DefaultPatterns = require("defaultPatterns")
+
+local FileUtils = {}
+
+-- Replace characters not allowed in filenames
+function FileUtils.convertToFilename(name)
+
+    return string.gsub(name, DefaultPatterns.invalidFileCharacters, "_")
+end
+
+function FileUtils.doesFileExist(folderPath, filename)
+
+    if getCaseInsensitiveFilename(folderPath, filename) == "invalid" then
+        return false
+    end
+
+    return true
+end
+
+function FileUtils.doesModuleExist(name)
+
     if package.loaded[name] then
         return true
     else
@@ -13,7 +33,8 @@ function doesModuleExist(name)
     end
 end
 
-function createFile(dataFolder, fileName)
+function FileUtils.createFile(dataFolder, fileName)
+
     if type(fileName) ~= "string" then return false end
 
     local file = io.open(dataFolder .. fileName, 'r')
@@ -24,3 +45,5 @@ function createFile(dataFolder, fileName)
     file:close()
     return true
 end
+
+return FileUtils

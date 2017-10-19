@@ -1,8 +1,8 @@
 local json = require ("dkjson");
 
-local jsonInterface = {};
+local JsonInterface = {}
 
-function jsonInterface.load(dataFolder, fileName)
+function JsonInterface.load(dataFolder, fileName)
     
     local file = assert(io.open(dataFolder .. fileName, 'r'), 'Error loading file: ' .. dataFolder .. fileName);
     local content = file:read("*all");
@@ -10,7 +10,7 @@ function jsonInterface.load(dataFolder, fileName)
     return json.decode(content, 1, nil);
 end
 
-function jsonInterface.save(dataFolder, fileName, data, keyOrderArray)
+function JsonInterface.save(dataFolder, fileName, data, keyOrderArray)
 
     local content = json.encode(data, { indent = true, keyorder = keyOrderArray });
     local file = assert(io.open(dataFolder .. fileName, 'w+b'), 'Error loading file: ' .. dataFolder .. fileName);
@@ -18,4 +18,4 @@ function jsonInterface.save(dataFolder, fileName, data, keyOrderArray)
     file:close();
 end
 
-return jsonInterface;
+return JsonInterface
