@@ -78,6 +78,24 @@ function StateHelper:SaveFactionReputation(pid, stateObject)
     stateObject:Save()
 end
 
+function StateHelper:SaveTopics(pid, stateObject)
+
+    if stateObject.data.topics == nil then
+        stateObject.data.topics = {}
+    end
+
+    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
+
+        local topicId = tes3mp.GetTopicId(pid, i)
+
+        if tableHelper.containsValue(stateObject.data.topics, topicId) == false then
+            table.insert(stateObject.data.topics, topicId)
+        end
+    end
+
+    stateObject:Save()
+end
+
 function StateHelper:LoadJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -158,6 +176,22 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
     end
 
     tes3mp.SendFactionChanges(pid)
+end
+
+function StateHelper:LoadTopics(pid, stateObject)
+
+    if stateObject.data.topics == nil then
+        stateObject.data.topics = {}
+    end
+
+    tes3mp.InitializeTopicChanges(pid)
+
+    for index, topicId in pairs(stateObject.data.topics) do
+
+        tes3mp.AddTopic(pid, topicId)
+    end
+
+    tes3mp.SendTopicChanges(pid)
 end
 
 return StateHelper
