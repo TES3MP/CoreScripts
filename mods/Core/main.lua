@@ -1,23 +1,24 @@
 require("color")
-require("utils")
-jsonInterface = require("jsonInterface")
-tableHelper = require("tableHelper")
+FileUtils = require("fileUtils")
+DefaultPatterns = require("defaultPatterns")
+JsonInterface = require("jsonInterface")
+TableHelper = require("tableHelper")
 
 Config.Core = dofile(getModFolder() .. "config.lua")
+EventHandler = dofile(getModFolder() .. "eventHandler.lua")
 local dataFolder = getDataFolder()
 
 pluginList = {}
 
-function LoadPluginList()
-    logMessage(2, "Reading pluginlist.json")
+function loadPluginList()
+    logMessage(Log.LOG_INFO, "Reading pluginlist.json")
 
-    local jsonPluginList = jsonInterface.load(dataFolder, "pluginlist.json")
+    local jsonPluginList = JsonInterface.load(dataFolder, "pluginlist.json")
 
     -- Fix numerical keys to print plugins in the correct order
-    tableHelper.fixNumericalKeys(jsonPluginList)
+    TableHelper.fixNumericalKeys(jsonPluginList)
 
-    for listIndex, pluginEntry in pairs(jsonPluginList) do
-        listIndex = listIndex + 1
+    for listIndex, pluginEntry in ipairs(jsonPluginList) do
         for entryIndex, hashArray in pairs(pluginEntry) do
             pluginList[listIndex] = {entryIndex}
             io.write(("%d, {%s"):format(listIndex, entryIndex))
@@ -31,20 +32,20 @@ function LoadPluginList()
     end
 end
 
-function InitializeServer()
+function initializeServer()
 
     local expectedVersion = "0.7-alpha"
 
     if Data.Core.VERSION ~= expectedVersion then
-        logMessage(3, "Version mismatch between server and Core scripts!")
-        logAppend(3, "- The Core scripts require " .. expectedVersion)
+        logMessage(Log.LOG_ERROR, "Version mismatch between server and Core scripts!")
+        logAppend(Log.LOG_ERROR, "- The Core scripts require " .. expectedVersion)
         stopServer(1)
     end
 
-    LoadPluginList()
+    loadPluginList()
 end
 
-InitializeServer()
+initializeServer()
 
 Event.register(Events.ON_POST_INIT, function()
     local consoleRuleString = "allowed"
@@ -78,10 +79,27 @@ Event.register(Events.ON_POST_INIT, function()
     setRuleValue("respawnCell", respawnCell)
 
     updateMpNum() -- load mpNum to server
+
 end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
-    return true
+
+    player:getSettings():setConsoleAllow(Config.Core.allowConsole)
+    player:getSettings():setDifficulty(Config.Core.difficulty)
+
+    -- Todo: Make this actually change the player's name permanently
+    if string.len(player.name) > 31 then
+        player.name = string.sub(player.name, 0, 31)
+    end
+
+    if EventHandler.isPlayerDuplicate(player) then
+        EventHandler.denyPlayerName(player)
+        return false -- deny player
+    else
+        logMessage(Log.LOG_INFO, "New player with pid (" .. player.pid .. ") connected!")
+        EventHandler.allowPlayerConnection(player)
+        return true -- accept player
+    end
 end)
 
 
@@ -126,17 +144,17 @@ function updateMpNum(mpNum)
     local fileName = "mpNum.json"
     local cfgMpNum = {mpNum = 0}
     if mpNum == nil then
-        createFile(dataFolder, fileName)
-        cfgMpNum = jsonInterface.load(dataFolder, fileName)
+        FileUtils.createFile(dataFolder, fileName)
+        cfgMpNum = JsonInterface.load(dataFolder, fileName)
     end
     if cfgMpNum ~= nil  and cfgMpNum["mpNum"] ~= nil then
         if mpNum == nil then
             setCurrentMpNum(cfgMpNum["mpNum"])
-            logMessage(0, "mpNum is loaded. Loaded value: " .. cfgMpNum["mpNum"])
+            logMessage(Log.LOG_INFO, "mpNum is loaded. Loaded value: " .. cfgMpNum["mpNum"])
         else
             cfgMpNum["mpNum"] = mpNum
             jsonInterface.save(dataFolder, fileName, cfgMpNum)
-            logMessage(0, "mpNum is updated. New value: " .. mpNum)
+            logMessage(Log.LOG_INFO, "mpNum is updated. New value: " .. mpNum)
         end
     end
 end
