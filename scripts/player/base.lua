@@ -55,6 +55,7 @@ function BasePlayer:__init(pid, playerName)
         equipment = {},
         inventory = {},
         spellbook = {},
+        quickKeys = {},
         shapeshift = {},
         journal = {},
         factionRanks = {},
@@ -135,6 +136,7 @@ function BasePlayer:FinishLogin()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
+        self:LoadQuickKeys()
         self:LoadBooks()
         --self:LoadMap()
         self:LoadShapeshift()
@@ -698,15 +700,7 @@ function BasePlayer:LoadSpellbook()
     for index, currentSpell in pairs(self.data.spellbook) do
 
         if currentSpell ~= nil then
-            if string.find(currentSpell.spellId, "$dynamic") then
-                tes3mp.AddCustomSpell(self.pid, currentSpell.spellId, currentSpell.name)
-                tes3mp.AddCustomSpellData(self.pid, currentSpell.spellId, currentSpell.data.type, currentSpell.data.cost, currentSpell.data.flags)
-                for effectIndex, effect in pairs(currentSpell.effects) do
-                    tes3mp.AddCustomSpellEffect(self.pid, currentSpell.spellId, effect.effectId, effect.skill, effect.attribute, effect.range, effect.area, effect.duration, effect.magnMin, effect.magnMax)
-                end
-            else
-                tes3mp.AddSpell(self.pid, currentSpell.spellId)
-            end
+            tes3mp.AddSpell(self.pid, currentSpell.spellId)
         end
     end
 
@@ -723,33 +717,6 @@ function BasePlayer:AddSpells()
             tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
             local newSpell = {}
             newSpell.spellId = spellId
-
-            if string.find(spellId, "$dynamic") then
-                newSpell.name = tes3mp.GetSpellName(self.pid, i)
-
-                newSpell.data = {}
-                newSpell.data.type = tes3mp.GetSpellType(self.pid, i)
-                newSpell.data.cost = tes3mp.GetSpellCost(self.pid, i)
-                newSpell.data.flags = tes3mp.GetSpellFlags(self.pid, i)
-
-                newSpell.effects = {}
-                
-                for j = 0, tes3mp.GetSpellEffectCount(self.pid, i) - 1 do
-                    local newEffect = {}
-
-                    newEffect.effectId = tes3mp.GetSpellEffectId(self.pid, i, j)
-                    newEffect.skill = tes3mp.GetSpellEffectSkill(self.pid, i, j)
-                    newEffect.attribute = tes3mp.GetSpellEffectAttribute(self.pid, i, j)
-                    newEffect.range = tes3mp.GetSpellEffectRange(self.pid, i, j)
-                    newEffect.area = tes3mp.GetSpellEffectArea(self.pid, i, j)
-                    newEffect.duration = tes3mp.GetSpellEffectDuration(self.pid, i, j)
-                    newEffect.magnMin = tes3mp.GetSpellEffectMagnMin(self.pid, i, j)
-                    newEffect.magnMax = tes3mp.GetSpellEffectMagnMax(self.pid, i, j)
-
-                    table.insert(newSpell.effects, newEffect)
-                end
-            end
-
             table.insert(self.data.spellbook, newSpell)
         end
     end
@@ -775,6 +742,37 @@ function BasePlayer:SetSpells()
 
     self.data.spellbook = {}
     self:AddSpells()
+end
+
+function BasePlayer:LoadQuickKeys()
+
+    if self.data.quickKeys == nil then
+        self.data.quickKeys = {}
+    end
+
+    tes3mp.InitializeQuickKeyChanges(self.pid)
+
+    for slot, currentQuickKey in pairs(self.data.quickKeys) do
+
+        if currentQuickKey ~= nil then
+            tes3mp.AddQuickKey(self.pid, slot, currentQuickKey.keyType, currentQuickKey.itemId)
+        end
+    end
+
+    tes3mp.SendQuickKeyChanges(self.pid)
+end
+
+function BasePlayer:SaveQuickKeys()
+
+    for i = 0, tes3mp.GetQuickKeyChangesSize(self.pid) - 1 do
+
+        local slot = tes3mp.GetQuickKeySlot(self.pid, i)
+
+        self.data.quickKeys[slot] = {
+            keyType = tes3mp.GetQuickKeyType(self.pid, i),
+            itemId = tes3mp.GetQuickKeyItemId(self.pid, i)
+        }
+    end
 end
 
 function BasePlayer:SaveJournal()

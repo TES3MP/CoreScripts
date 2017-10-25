@@ -532,6 +532,12 @@ Methods.OnPlayerSpellbook = function(pid)
     end
 end
 
+Methods.OnPlayerQuickKeys = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:SaveQuickKeys()
+    end
+end
+
 Methods.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 

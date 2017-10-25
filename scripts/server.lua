@@ -780,6 +780,10 @@ function OnPlayerSpellbook(pid)
     myMod.OnPlayerSpellbook(pid)
 end
 
+function OnPlayerQuickKeys(pid)
+    myMod.OnPlayerQuickKeys(pid)
+end
+
 function OnPlayerJournal(pid)
     myMod.OnPlayerJournal(pid)
 end
