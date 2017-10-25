@@ -775,44 +775,44 @@ function BasePlayer:SaveQuickKeys()
     end
 end
 
-function BasePlayer:SaveJournal()
-    stateHelper:SaveJournal(self.pid, self)
-end
-
 function BasePlayer:LoadJournal()
     stateHelper:LoadJournal(self.pid, self)
 end
 
-function BasePlayer:SaveFactionRanks()
-    stateHelper:SaveFactionRanks(self.pid, self)
+function BasePlayer:SaveJournal()
+    stateHelper:SaveJournal(self.pid, self)
 end
 
 function BasePlayer:LoadFactionRanks()
     stateHelper:LoadFactionRanks(self.pid, self)
 end
 
-function BasePlayer:SaveFactionExpulsion()
-    stateHelper:SaveFactionExpulsion(self.pid, self)
+function BasePlayer:SaveFactionRanks()
+    stateHelper:SaveFactionRanks(self.pid, self)
 end
 
 function BasePlayer:LoadFactionExpulsion()
     stateHelper:LoadFactionExpulsion(self.pid, self)
 end
 
-function BasePlayer:SaveFactionReputation()
-    stateHelper:SaveFactionReputation(self.pid, self)
+function BasePlayer:SaveFactionExpulsion()
+    stateHelper:SaveFactionExpulsion(self.pid, self)
 end
 
 function BasePlayer:LoadFactionReputation()
     stateHelper:LoadFactionReputation(self.pid, self)
 end
 
-function BasePlayer:SaveTopics()
-    stateHelper:SaveTopics(self.pid, self)
+function BasePlayer:SaveFactionReputation()
+    stateHelper:SaveFactionReputation(self.pid, self)
 end
 
 function BasePlayer:LoadTopics()
     stateHelper:LoadTopics(self.pid, self)
+end
+
+function BasePlayer:SaveTopics()
+    stateHelper:SaveTopics(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()
