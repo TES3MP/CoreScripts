@@ -1,4 +1,6 @@
 DefaultPatterns = {}
+
+DefaultPatterns.filenameComponents = "(.-)([^\\/]-%.?([^%.\\/]*))$" -- path, filename and extension as 3 values
 DefaultPatterns.invalidFileCharacters = '[<>:"/\\|*?]' -- characters not allowed in filenames
 DefaultPatterns.commaSplit = "([^, ]+)" -- strings separated by commas
 DefaultPatterns.exteriorCell = "(%-?%d+), ?(%-?%d+)$" -- X coordinate, Y coordinate

@@ -1,5 +1,3 @@
-DefaultPatterns = require("defaultPatterns")
-
 local FileUtils = {}
 
 -- Replace characters not allowed in filenames
@@ -8,7 +6,15 @@ function FileUtils.convertToFilename(name)
     return string.gsub(name, DefaultPatterns.invalidFileCharacters, "_")
 end
 
-function FileUtils.doesFileExist(folderPath, filename)
+-- Split a file path into its folder path, filename and extension
+function FileUtils.splitFilePath(filePath)
+
+    return string.match(filePath, DefaultPatterns.filenameComponents)
+end
+
+function FileUtils.doesFileExist(filePath)
+
+    local folderPath, filename = FileUtils.splitFilePath(filePath)
 
     if getCaseInsensitiveFilename(folderPath, filename) == "invalid" then
         return false
@@ -33,16 +39,18 @@ function FileUtils.doesModuleExist(name)
     end
 end
 
-function FileUtils.createFile(dataFolder, fileName)
+function FileUtils.createFile(filePath)
 
-    if type(fileName) ~= "string" then return false end
+    if type(filePath) ~= "string" then return false end
 
-    local file = io.open(dataFolder .. fileName, 'r')
+    local file = io.open(filePath, 'r')
     
     if file == nil then
-        file = io.open(dataFolder .. fileName, 'w+')
+        file = io.open(filePath, 'w+')
     end
+
     file:close()
+
     return true
 end
 
