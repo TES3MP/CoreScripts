@@ -1,19 +1,19 @@
 require("color")
-FileUtils = require("fileUtils")
 DefaultPatterns = require("defaultPatterns")
+FileUtils = require("fileUtils")
 JsonInterface = require("jsonInterface")
 TableHelper = require("tableHelper")
 
 Config.Core = dofile(getModFolder() .. "config.lua")
 EventHandler = dofile(getModFolder() .. "eventHandler.lua")
-local dataFolder = getDataFolder()
+BanManager = dofile(getModFolder() .. "banManager.lua")
 
 pluginList = {}
 
 function loadPluginList()
     logMessage(Log.LOG_INFO, "Reading pluginlist.json")
 
-    local jsonPluginList = JsonInterface.load(dataFolder, "pluginlist.json")
+    local jsonPluginList = JsonInterface.load(getDataFolder() .. "pluginlist.json")
 
     -- Fix numerical keys to print plugins in the correct order
     TableHelper.fixNumericalKeys(jsonPluginList)
@@ -43,6 +43,7 @@ function initializeServer()
     end
 
     loadPluginList()
+    BanManager.loadBanList(getDataFolder() .. "banlist.json")
 end
 
 initializeServer()
@@ -79,7 +80,6 @@ Event.register(Events.ON_POST_INIT, function()
     setRuleValue("respawnCell", respawnCell)
 
     updateMpNum() -- load mpNum to server
-
 end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
@@ -92,16 +92,23 @@ Event.register(Events.ON_PLAYER_CONNECT, function(player)
         player.name = string.sub(player.name, 0, 31)
     end
 
+    -- Make sure the accountName is a valid filename
+    player.customData.accountName = FileUtils.convertToFilename(player.name)
+
     if EventHandler.isPlayerDuplicate(player) then
         EventHandler.denyPlayerName(player)
         return false -- deny player
     else
         logMessage(Log.LOG_INFO, "New player with pid (" .. player.pid .. ") connected!")
         EventHandler.allowPlayerConnection(player)
+
         return true -- accept player
     end
 end)
 
+Event.register(Events.ON_GUI_ACTION, function(player, guiId, data)
+    EventHandler.onGUIAction(player, guiId, data)
+end)
 
 Event.register(Events.ON_PLAYER_SENDMESSAGE, function(player, message)
     if Data.overrideChat ~= nil and Data.overrideChat == true then -- you can easily turn off Core behavior via Data.overrideChat = true
@@ -144,8 +151,8 @@ function updateMpNum(mpNum)
     local fileName = "mpNum.json"
     local cfgMpNum = {mpNum = 0}
     if mpNum == nil then
-        FileUtils.createFile(dataFolder, fileName)
-        cfgMpNum = JsonInterface.load(dataFolder, fileName)
+        FileUtils.createFile(getDataFolder() .. fileName)
+        cfgMpNum = JsonInterface.load(getDataFolder() .. fileName)
     end
     if cfgMpNum ~= nil  and cfgMpNum["mpNum"] ~= nil then
         if mpNum == nil then
