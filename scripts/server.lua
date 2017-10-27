@@ -44,7 +44,8 @@ local helptext = "\nCommand list:\
 /message <pid> <text> - Send a private message to a player (/msg)\
 /me <text> - Send a message written in the third person\
 /local <text> - Send a message that only players in your area can read (/l)\
-/list - List all players on the server"
+/list - List all players on the server\
+/anim <animgroup> - Play an animation on yourself"
 
 local modhelptext = "Moderators only:\
 /kick <pid> - Kick player\
@@ -724,6 +725,9 @@ function OnPlayerSendMessage(pid, message)
         elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
             local message = myMod.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
             tes3mp.SendMessage(pid, message, true)
+
+        elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
+            tes3mp.PlayAnimation(pid, cmd[2], 0, 1, false)
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
