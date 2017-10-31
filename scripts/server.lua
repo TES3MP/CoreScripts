@@ -45,7 +45,8 @@ local helptext = "\nCommand list:\
 /me <text> - Send a message written in the third person\
 /local <text> - Send a message that only players in your area can read (/l)\
 /list - List all players on the server\
-/anim <animgroup> - Play an animation on yourself"
+/anim <animgroup> - Play an animation on yourself\
+/speech <sound> - Play a certain speech on yourself"
 
 local modhelptext = "Moderators only:\
 /kick <pid> - Kick player\
@@ -728,6 +729,9 @@ function OnPlayerSendMessage(pid, message)
 
         elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
             tes3mp.PlayAnimation(pid, cmd[2], 0, 1, false)
+
+        elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil then
+            tes3mp.PlaySpeech(pid, cmd[2])
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
