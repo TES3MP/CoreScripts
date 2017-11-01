@@ -46,8 +46,10 @@ local helptext = "\nCommand list:\
 /me <text> - Send a message written in the third person\
 /local <text> - Send a message that only players in your area can read (/l)\
 /list - List all players on the server\
-/anim <animgroup> - Play an animation on yourself\
-/speech <sound> - Play a certain speech on yourself"
+/anim <animation> - Play an animation on yourself, with a list of valid animations being provided if you use an invalid one\
+/speech <sound> - Play a certain speech on yourself\
+/help - Get the list of commands available to regular users\
+/help moderator/admin - Get the list of commands available to moderators or admins, if you are one"
 
 local modhelptext = "Moderators only:\
 /kick <pid> - Kick player\
@@ -59,7 +61,7 @@ local modhelptext = "Moderators only:\
 /banlist ips/names - Print all banned IPs or all banned player names\
 /ipaddresses <name> - Print all the IP addresses used by a player (/ips)\
 /time <value> - Set the server's time counter\
-/teleport (<pid>/all) - Teleport another player to your position (/tp)\
+/teleport <pid>/all - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /cells - List all loaded cells on the server\
 /getpos <pid> - Get player position and cell\
@@ -623,14 +625,23 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
         elseif cmd[1] == "help" then
-            local text = helptext .. "\n";
-            if moderator then
-                text = text .. modhelptext .. "\n"
+            if (cmd[2] == "moderator" or cmd[2] == "mod") then
+
+                if moderator then
+                    tes3mp.MessageBox(pid, -1, modhelptext .. "\n")
+                else
+                    tes3mp.SendMessage(pid, "Only Moderators and higher can see those commands.", false)
+                end
+            elseif cmd[2] == "admin" then
+
+                if admin then
+                    tes3mp.MessageBox(pid, -1, adminhelptext .. "\n")
+                else
+                    tes3mp.SendMessage(pid, "Only Admins can see those commands.", false)
+                end
+            else
+                tes3mp.MessageBox(pid, -1, helptext .. "\n")
             end
-            if admin then
-                text = text .. adminhelptext .. "\n"
-            end
-            tes3mp.MessageBox(pid, -1, text)
 
         elseif cmd[1] == "setext" and admin then
             tes3mp.SetExterior(pid, cmd[2], cmd[3])
