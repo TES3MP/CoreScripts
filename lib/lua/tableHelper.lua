@@ -6,14 +6,18 @@ function tableHelper.getCount(t)
     return count
 end
 
-function tableHelper.concatenateFromIndex(t, index)
+function tableHelper.concatenateFromIndex(t, index, delimiter)
     local string = ""
+
+    if delimiter == nil then
+        delimiter = " "
+    end
 
     for i = index, #t do
         string = string .. t[i]
 
         if i ~= #t then
-            string = string .. " "
+            string = string .. delimiter
         end
     end
 
