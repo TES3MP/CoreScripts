@@ -1,6 +1,7 @@
 require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
+animHelper = require("animHelper")
 require("utils")
 require("guiIds")
 require("color")
@@ -728,7 +729,12 @@ function OnPlayerSendMessage(pid, message)
             tes3mp.SendMessage(pid, message, true)
 
         elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
-            tes3mp.PlayAnimation(pid, cmd[2], 0, 1, false)
+            local isValid = animHelper.playAnimation(pid, cmd[2])
+                
+            if isValid == false then
+                local validList = animHelper.getValidList(pid)
+                tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" .. validList .. "\n", false)
+            end
 
         elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil then
             tes3mp.PlaySpeech(pid, cmd[2])
