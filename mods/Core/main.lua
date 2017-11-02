@@ -4,8 +4,8 @@ DefaultPatterns = require("defaultPatterns")
 JsonInterface = require("jsonInterface")
 TableHelper = require("tableHelper")
 
-Config.Core = dofile(getModFolder() .. "config.lua")
-EventHandler = dofile(getModFolder() .. "eventHandler.lua")
+Config.Core = import(getModFolder() .. "config.lua")
+EventHandler = import(getModFolder() .. "eventHandler.lua")
 local dataFolder = getDataFolder()
 
 pluginList = {}

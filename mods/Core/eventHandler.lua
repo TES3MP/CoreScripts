@@ -1,6 +1,7 @@
 local time = require("time")
-DataManager = dofile(getModFolder() .. "dataManager.lua")
-InterfaceManager = dofile(getModFolder() .. "interfaceManager.lua")
+
+DataManager = import(getModFolder() .. "dataManager.lua")
+InterfaceManager = import(getModFolder() .. "interfaceManager.lua")
 
 local EventHandler = {}
 
