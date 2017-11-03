@@ -1,5 +1,6 @@
-DataManager = dofile(getModFolder() .. "dataManager.lua")
-InterfaceManager = dofile(getModFolder() .. "interfaceManager.lua")
+
+DataManager = import(getModFolder() .. "dataManager.lua")
+InterfaceManager = import(getModFolder() .. "interfaceManager.lua")
 BanManager = dofile(getModFolder() .. "banManager.lua")
 
 local EventHandler = {}
