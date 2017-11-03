@@ -1,12 +1,14 @@
 require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
-animHelper = require("animHelper")
 require("utils")
 require("guiIds")
 require("color")
 require("time")
+
 myMod = require("myMod")
+animHelper = require("animHelper")
+speechHelper = require("speechHelper")
 
 Database = nil
 Player = nil
@@ -46,8 +48,8 @@ local helptext = "\nCommand list:\
 /me <text> - Send a message written in the third person\
 /local <text> - Send a message that only players in your area can read (/l)\
 /list - List all players on the server\
-/anim <animation> - Play an animation on yourself, with a list of valid animations being provided if you use an invalid one\
-/speech <sound> - Play a certain speech on yourself\
+/anim <animation> - Play an animation on yourself, with a list of valid inputs being provided if you use an invalid one (/a)\
+/speech <type> <index> - Play a certain speech on yourself, with a list of valid inputs being provided if you use invalid ones (/s)\
 /help - Get the list of commands available to regular users\
 /help moderator/admin - Get the list of commands available to moderators or admins, if you are one"
 
@@ -747,8 +749,13 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" .. validList .. "\n", false)
             end
 
-        elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil then
-            tes3mp.PlaySpeech(pid, cmd[2])
+        elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+            local isValid = speechHelper.playSpeech(pid, cmd[2], tonumber(cmd[3]))
+                
+            if isValid == false then
+                local validList = speechHelper.getValidList(pid)
+                tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n" .. validList .. "\n", false)
+            end
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
