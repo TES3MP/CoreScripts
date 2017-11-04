@@ -18,7 +18,7 @@ speechFolders["argonian"] = {
         hello = { count = 139 },
         hit = { count = 16, skip = { 11 } },
         idle = { count = 8 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 12 },
         thief = { count = 5 }
     },
@@ -45,7 +45,7 @@ speechFolders["breton"] = {
         hello = { count = 138, skip = { 126 } },
         hit = { count = 15 },
         idle = { count = 8 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 12 },
         thief = { count = 5 }
     },
@@ -155,7 +155,7 @@ speechFolders["khajiit"] = {
         hello = { count = 139 },
         hit = { count = 16 },
         idle = { count = 9 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 9 },
         thief = { count = 5 }
     },
@@ -182,7 +182,7 @@ speechFolders["nord"] = {
         hello = { count = 138 },
         hit = { count = 14 },
         idle = { count = 9 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 6 },
         thief = { count = 5 }
     },
@@ -236,7 +236,7 @@ speechFolders["redguard"] = {
         hello = { count = 138 },
         hit = { count = 15 },
         idle = { count = 9 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 12 },
         thief = { count = 5 }
     },
@@ -263,7 +263,7 @@ speechFolders["wood elf"] = {
         hello = { count = 138 },
         hit = { count = 15 },
         idle = { count = 9 },
-        intruder = { count = 9, skip = { 7 } },
+        intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
         service = { count = 6 },
         thief = { count = 5 }
     },
@@ -327,13 +327,17 @@ function speechHelper.getSpeech(pid, speechTypeAlias, speechIndex)
 
         speechPath = speechPath .. speechType .. "_"
 
-        if gender == 0 then
-            speechPath = speechPath .. speechFolders[race].femalePrefix
+        local indexPrefix
+
+        if speechTypeTable.prefixOverride ~= nil then
+            indexPrefix = speechTypeTable.prefixOverride
+        elseif gender == 0 then
+            indexPrefix = speechFolders[race].femalePrefix
         else
-            speechPath = speechPath .. speechFolders[race].malePrefix
+            indexPrefix = speechFolders[race].malePrefix
         end
 
-        speechPath = speechPath .. prefixZeroes(speechIndex, 3) .. ".mp3"
+        speechPath = speechPath .. indexPrefix .. prefixZeroes(speechIndex, 3) .. ".mp3"
 
         return speechPath
     end
