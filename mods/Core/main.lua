@@ -160,7 +160,7 @@ function updateMpNum(mpNum)
             logMessage(Log.LOG_INFO, "mpNum is loaded. Loaded value: " .. cfgMpNum["mpNum"])
         else
             cfgMpNum["mpNum"] = mpNum
-            jsonInterface.save(dataFolder, fileName, cfgMpNum)
+            JsonInterface.save(dataFolder, fileName, cfgMpNum)
             logMessage(Log.LOG_INFO, "mpNum is updated. New value: " .. mpNum)
         end
     end
