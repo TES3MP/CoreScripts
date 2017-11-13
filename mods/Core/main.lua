@@ -1,4 +1,5 @@
 require("color")
+
 DefaultPatterns = require("defaultPatterns")
 FileUtils = require("fileUtils")
 JsonInterface = require("jsonInterface")
@@ -6,7 +7,7 @@ TableHelper = require("tableHelper")
 
 Config.Core = import(getModFolder() .. "config.lua")
 EventHandler = import(getModFolder() .. "eventHandler.lua")
-BanManager = dofile(getModFolder() .. "banManager.lua")
+BanManager = import(getModFolder() .. "banManager.lua")
 
 pluginList = {}
 

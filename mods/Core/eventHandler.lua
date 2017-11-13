@@ -1,7 +1,6 @@
-
 DataManager = import(getModFolder() .. "dataManager.lua")
 InterfaceManager = import(getModFolder() .. "interfaceManager.lua")
-BanManager = dofile(getModFolder() .. "banManager.lua")
+BanManager = import(getModFolder() .. "banManager.lua")
 
 local EventHandler = {}
 
@@ -99,7 +98,7 @@ EventHandler.onGUIAction = function(player, guiId, guiData)
 
         player.customData.login = { password = guiData }
         player:message("You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
-        player:setCharGenStage(1, 4)
+        player:setCharGenStages(1, 4)
     end
 
     return false
