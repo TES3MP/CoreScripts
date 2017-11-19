@@ -107,6 +107,10 @@ Event.register(Events.ON_PLAYER_CONNECT, function(player)
     end
 end)
 
+Event.register(Events.ON_PLAYER_DISCONNECT, function(player)
+    EventHandler.onPlayerDisconnect(player)
+end)
+
 Event.register(Events.ON_GUI_ACTION, function(player, guiId, data)
     EventHandler.onGUIAction(player, guiId, data)
 end)

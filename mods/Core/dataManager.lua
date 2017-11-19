@@ -1,3 +1,5 @@
+PlayerBuilder = import(getModFolder() .. "playerBuilder.lua")
+
 local DataManager = {}
 
 DataManager.getObjectJsonPath = function(objectType, objectName)
@@ -38,16 +40,42 @@ end
 DataManager.setEntryFromTable = function(objectType, objectName, dataTable)
     
     if Config.Core.databaseType == "json" then
-        JsonInterface.save(DataManager.getObjectJsonPath(objectType, objectName), dataTable)
+        JsonInterface.save(DataManager.getObjectJsonPath(objectType, objectName), dataTable, Config.Core.playerKeyOrder)
 
     elseif Config.Core.databaseType == "sqlite3" then
         -- TODO: Fill this in later
     end
 end
 
-DataManager.setPlayerFromTable = function(player, playerData)
+DataManager.getTableFromPlayer = function(player)
+
+    local dataTable = {}
+
+    dataTable.character = PlayerBuilder.getCharacter(player)
+    dataTable.class = PlayerBuilder.getClass(player)
+    dataTable.stats = PlayerBuilder.getStats(player)
+    dataTable.attributes = PlayerBuilder.getAttributes(player)
+    dataTable.skills, dataTable.skillProgress, dataTable.attributeSkillIncreases = PlayerBuilder.getSkills(player)
+    dataTable.location = PlayerBuilder.getLocation(player)
+    dataTable.equipment = PlayerBuilder.getEquipment(player)
+
+    return dataTable
+end
+
+DataManager.setPlayerFromTable = function(player, dataTable)
+
     logMessage(Log.LOG_INFO, "Setting player from table")
+
+    -- Update 0.6 player tables to new format
+    dataTable = PlayerBuilder.getUpdatedTable(dataTable)
     
+    PlayerBuilder.setCharacter(player, dataTable.character)
+    PlayerBuilder.setClass(player, dataTable.class)
+    PlayerBuilder.setStats(player, dataTable.stats)
+    PlayerBuilder.setAttributes(player, dataTable.attributes)
+    PlayerBuilder.setSkills(player, dataTable.skills, dataTable.skillProgress, dataTable.attributeSkillIncreases)
+    PlayerBuilder.setLocation(player, dataTable.location)
+    PlayerBuilder.setEquipment(player, dataTable.equipment)
 end
 
 return DataManager

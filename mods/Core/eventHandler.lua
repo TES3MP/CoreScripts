@@ -51,6 +51,15 @@ EventHandler.denyPlayerName = function(player)
     player:message(messageText, true)
 end
 
+EventHandler.onPlayerDisconnect = function(player)
+
+    if player.customData.loggedIn == true then
+        local dataTable = DataManager.getTableFromPlayer(player)
+
+        DataManager.setEntryFromTable("player", player.customData.accountName .. "-test", dataTable)
+    end
+end
+
 EventHandler.onGUIAction = function(player, guiId, guiData)
 
     -- The data can be numerical, but we should convert it to a string
@@ -81,7 +90,7 @@ EventHandler.onGUIAction = function(player, guiId, guiData)
                 table.insert(playerData.ipAddresses, player.address)
             end
 
-            DataManager.setEntryFromTable("player", player.accountName, playerData)
+            DataManager.setEntryFromTable("player", player.customData.accountName, playerData)
             banAddress(player.address)
         else
             DataManager.setPlayerFromTable(player, playerData)
