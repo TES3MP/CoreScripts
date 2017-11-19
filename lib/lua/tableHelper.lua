@@ -1,3 +1,5 @@
+DefaultPatterns = require("defaultPatterns")
+
 local TableHelper = {}
 
 -- Swap keys with their values in a table, allowing for the easy creation of tables similar to enums
@@ -13,6 +15,18 @@ function TableHelper.getCount(inputTable)
     local count = 0
     for key in pairs(inputTable) do count = count + 1 end
     return count
+end
+
+-- Iterate through comma-separated values in a string and turn them into table values
+function TableHelper.getTableFromCommaSplit(inputString)
+
+    local newTable = {}
+
+    for value in string.gmatch(inputString, DefaultPatterns.commaSplit) do
+        table.insert(newTable, value)
+    end
+
+    return newTable
 end
 
 -- Check whether a table contains a key/value pair, optionally checking inside
