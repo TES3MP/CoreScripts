@@ -730,14 +730,18 @@ function OnPlayerSendMessage(pid, message)
                 timeCounter = tonumber(cmd[2])
             end
 
-        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
+        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
-            tes3mp.InitializeEvent(pid)
-            tes3mp.SetEventCell(Players[pid].data.location.cell)
-            tes3mp.SetEventConsoleCommand(tableHelper.concatenateFromIndex(cmd, 2))
-            tes3mp.SetPlayerAsObject(pid)
-            tes3mp.AddWorldObject()
-            tes3mp.SendConsoleCommand()
+                local targetPid = tonumber(cmd[2])
+
+                tes3mp.InitializeEvent(targetPid)
+                tes3mp.SetEventCell(Players[targetPid].data.location.cell)
+                tes3mp.SetEventConsoleCommand(tableHelper.concatenateFromIndex(cmd, 3))
+                tes3mp.SetPlayerAsObject(targetPid)
+                tes3mp.AddWorldObject()
+                tes3mp.SendConsoleCommand()
+            end
 
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then
