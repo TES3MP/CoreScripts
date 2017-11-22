@@ -75,7 +75,8 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
-/console <pid> on/off/default - Enable/disable in-game console for player\
+/setconsole <pid> on/off/default - Enable/disable in-game console for player\
+/runconsole <pid> <command> - Run a certain console command on a player\
 /difficulty <pid> <value>/default - Set the difficulty for a particular player\
 /werewolf <pid> on/off - Set the werewolf state of a particular player"
 
@@ -651,7 +652,7 @@ function OnPlayerSendMessage(pid, message)
         elseif cmd[1] == "getpos" and moderator then
             myMod.PrintPlayerPosition(pid, cmd[2])
 
-        elseif cmd[1] == "console" and admin then
+        elseif cmd[1] == "setconsole" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
@@ -668,7 +669,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetConsole("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /console <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>.\n", false)
                      return false
                 end
 
@@ -728,6 +729,15 @@ function OnPlayerSendMessage(pid, message)
             if type(tonumber(cmd[2])) == "number" then
                 timeCounter = tonumber(cmd[2])
             end
+
+        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
+
+            tes3mp.InitializeEvent(pid)
+            tes3mp.SetEventCell(Players[pid].data.location.cell)
+            tes3mp.SetEventConsoleCommand(tableHelper.concatenateFromIndex(cmd, 2))
+            tes3mp.SetPlayerAsObject(pid)
+            tes3mp.AddWorldObject()
+            tes3mp.SendConsoleCommand()
 
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then
