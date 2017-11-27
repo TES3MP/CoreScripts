@@ -16,8 +16,10 @@ function BasePlayer:__init(pid, playerName)
         },
         settings = {
             admin = 0,
+            difficulty = "default",
             consoleAllowed = "default",
-            difficulty = "default"
+            restAllowed = "default",
+            waitAllowed = "default"
         },
         character = {
             race = "",
@@ -860,23 +862,20 @@ function BasePlayer:LoadMap()
     tes3mp.SendMapChanges(self.pid)
 end
 
-function BasePlayer:GetConsole(state)
-    return self.data.settings.consoleAllowed
-end
-
 function BasePlayer:GetDifficulty(state)
     return self.data.settings.difficulty
 end
 
-function BasePlayer:SetConsole(state)
-    if state == nil or state == "default" then
-        state = config.allowConsole
-        self.data.settings.consoleAllowed = "default"
-    else
-        self.data.settings.consoleAllowed = state
-    end
+function BasePlayer:GetConsoleAllowed(state)
+    return self.data.settings.consoleAllowed
+end
 
-    tes3mp.SetConsoleAllow(self.pid, state)
+function BasePlayer:GetRestAllowed(state)
+    return self.data.settings.restAllowed
+end
+
+function BasePlayer:GetWaitAllowed(state)
+    return self.data.settings.waitAllowed
 end
 
 function BasePlayer:SetDifficulty(difficulty)
@@ -891,6 +890,39 @@ function BasePlayer:SetDifficulty(difficulty)
     tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. self.pid)
 end
 
+function BasePlayer:SetConsoleAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowConsole
+        self.data.settings.consoleAllowed = "default"
+    else
+        self.data.settings.consoleAllowed = state
+    end
+
+    tes3mp.SetConsoleAllowed(self.pid, state)
+end
+
+function BasePlayer:SetRestAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowRest
+        self.data.settings.restAllowed = "default"
+    else
+        self.data.settings.restAllowed = state
+    end
+
+    tes3mp.SetRestAllowed(self.pid, state)
+end
+
+function BasePlayer:SetWaitAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowWait
+        self.data.settings.waitAllowed = "default"
+    else
+        self.data.settings.waitAllowed = state
+    end
+
+    tes3mp.SetWaitAllowed(self.pid, state)
+end
+
 function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
@@ -900,8 +932,10 @@ end
 
 function BasePlayer:LoadSettings()
 
-    self:SetConsole(self.data.settings.consoleAllowed)
     self:SetDifficulty(self.data.settings.difficulty)
+    self:SetConsoleAllowed(self.data.settings.consoleAllowed)
+    self:SetRestAllowed(self.data.settings.restAllowed)
+    self:SetWaitAllowed(self.data.settings.waitAllowed)
 
     tes3mp.SendSettings(self.pid)
 end

@@ -76,6 +76,8 @@ local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setconsole <pid> on/off/default - Enable/disable in-game console for player\
+/setrest <pid> on/off/default - Enable/disable resting for player\
+/setwait <pid> on/off/default - Enable/disable waiting for player\
 /runconsole <pid> <command> - Run a certain console command on a player\
 /difficulty <pid> <value>/default - Set the difficulty for a particular player\
 /werewolf <pid> on/off - Set the werewolf state of a particular player"
@@ -222,8 +224,20 @@ function OnServerPostInit()
         consoleRuleString = "not " .. consoleRuleString
     end
 
-    tes3mp.SetRuleString("console", consoleRuleString)
+    local restRuleString = "allowed"
+    if not config.allowRest then
+        restRuleString = "not " .. restRuleString
+    end
+
+    local waitRuleString = "allowed"
+    if not config.allowWait then
+        waitRuleString = "not " .. waitRuleString
+    end
+
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
+    tes3mp.SetRuleString("console", consoleRuleString)
+    tes3mp.SetRuleString("resting", restRuleString)
+    tes3mp.SetRuleString("waiting", restRuleString)
     tes3mp.SetRuleString("deathPenaltyJailDays", tostring(config.deathPenaltyJailDays))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
     tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
@@ -263,8 +277,10 @@ function OnRequestPluginList(id, field)
 end
 
 function OnPlayerConnect(pid)
-    tes3mp.SetConsoleAllow(pid, config.allowConsole)
     tes3mp.SetDifficulty(pid, config.difficulty)
+    tes3mp.SetConsoleAllowed(pid, config.allowConsole)
+    tes3mp.SetRestAllowed(pid, config.allowRest)
+    tes3mp.SetWaitAllowed(pid, config.allowWait)
     tes3mp.SendSettings(pid)
 
     local playerName = tes3mp.GetName(pid)
@@ -652,34 +668,6 @@ function OnPlayerSendMessage(pid, message)
         elseif cmd[1] == "getpos" and moderator then
             myMod.PrintPlayerPosition(pid, cmd[2])
 
-        elseif cmd[1] == "setconsole" and admin then
-            if myMod.CheckPlayerValidity(pid, cmd[2]) then
-
-                local targetPid = tonumber(cmd[2])
-                local targetName = ""
-                local state = ""
-
-                if cmd[3] == "on" then
-                    Players[targetPid]:SetConsole(true)
-                    state = " enabled.\n"
-                elseif cmd[3] == "off" then
-                    Players[targetPid]:SetConsole(false)
-                    state = " disabled.\n"
-                elseif cmd[3] == "default" then
-                    Players[targetPid]:SetConsole("default")
-                    state = " reset to default.\n"
-                else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>.\n", false)
-                     return false
-                end
-
-                Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
-                if targetPid ~= pid then
-                    tes3mp.SendMessage(targetPid, "Console" .. state, false)
-                end
-            end
-
         elseif cmd[1] == "difficulty" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
@@ -697,6 +685,90 @@ function OnPlayerSendMessage(pid, message)
                 else
                     tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
                     return false
+                end
+            end
+
+        elseif cmd[1] == "setconsole" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
+
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetConsoleAllowed(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetConsoleAllowed(false)
+                    state = " disabled.\n"
+                elseif cmd[3] == "default" then
+                    Players[targetPid]:SetConsoleAllowed("default")
+                    state = " reset to default.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadSettings()
+                tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Console" .. state, false)
+                end
+            end
+
+        elseif cmd[1] == "setrest" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
+
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetRestAllowed(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetRestAllowed(false)
+                    state = " disabled.\n"
+                elseif cmd[3] == "default" then
+                    Players[targetPid]:SetRestAllowed("default")
+                    state = " reset to default.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setrest <pid> <on/off/default>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadSettings()
+                tes3mp.SendMessage(pid, "Resting for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Resting" .. state, false)
+                end
+            end
+
+        elseif cmd[1] == "setwait" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
+
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetWaitAllowed(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetWaitAllowed(false)
+                    state = " disabled.\n"
+                elseif cmd[3] == "default" then
+                    Players[targetPid]:SetWaitAllowed("default")
+                    state = " reset to default.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> <on/off/default>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadSettings()
+                tes3mp.SendMessage(pid, "Waiting for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Waiting" .. state, false)
                 end
             end
 

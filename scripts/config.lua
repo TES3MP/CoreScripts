@@ -10,19 +10,25 @@ config.databaseType = "json"
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "consoleAllowed", "difficulty", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty", "consoleAllowed", "restAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index", "quest", "actorRefId"}
 
 -- Time to login, in seconds
 config.loginTime = 60
 
--- Whether players should be allowed to use the ingame tilde (~) console by default
-config.allowConsole = false
-
 -- The difficulty level used by default
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
 --       though you can use any integer value here
 config.difficulty = 0
+
+-- Whether players should be allowed to use the ingame tilde (~) console by default
+config.allowConsole = false
+
+-- Whether players should be allowed to rest by default
+config.allowRest = true
+
+-- Whether players should be allowed to wait by default
+config.allowWait = true
 
 -- Whether journal entries should be shared across the players on the server or not
 config.shareJournal = true
