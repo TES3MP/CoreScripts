@@ -18,7 +18,8 @@ function BasePlayer:__init(pid, playerName)
             admin = 0,
             difficulty = "default",
             consoleAllowed = "default",
-            restAllowed = "default",
+            bedRestAllowed = "default",
+            wildernessRestAllowed = "default",
             waitAllowed = "default"
         },
         character = {
@@ -870,8 +871,12 @@ function BasePlayer:GetConsoleAllowed(state)
     return self.data.settings.consoleAllowed
 end
 
-function BasePlayer:GetRestAllowed(state)
-    return self.data.settings.restAllowed
+function BasePlayer:GetBedRestAllowed(state)
+    return self.data.settings.bedRestAllowed
+end
+
+function BasePlayer:GetWildernessRestAllowed(state)
+    return self.data.settings.wildernessRestAllowed
 end
 
 function BasePlayer:GetWaitAllowed(state)
@@ -901,15 +906,26 @@ function BasePlayer:SetConsoleAllowed(state)
     tes3mp.SetConsoleAllowed(self.pid, state)
 end
 
-function BasePlayer:SetRestAllowed(state)
+function BasePlayer:SetBedRestAllowed(state)
     if state == nil or state == "default" then
-        state = config.allowRest
-        self.data.settings.restAllowed = "default"
+        state = config.allowBedRest
+        self.data.settings.bedRestAllowed = "default"
     else
-        self.data.settings.restAllowed = state
+        self.data.settings.bedRestAllowed = state
     end
 
-    tes3mp.SetRestAllowed(self.pid, state)
+    tes3mp.SetBedRestAllowed(self.pid, state)
+end
+
+function BasePlayer:SetWildernessRestAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowWildernessRest
+        self.data.settings.wildernessRestAllowed = "default"
+    else
+        self.data.settings.wildernessRestAllowed = state
+    end
+
+    tes3mp.SetWildernessRestAllowed(self.pid, state)
 end
 
 function BasePlayer:SetWaitAllowed(state)
@@ -934,7 +950,8 @@ function BasePlayer:LoadSettings()
 
     self:SetDifficulty(self.data.settings.difficulty)
     self:SetConsoleAllowed(self.data.settings.consoleAllowed)
-    self:SetRestAllowed(self.data.settings.restAllowed)
+    self:SetBedRestAllowed(self.data.settings.bedRestAllowed)
+    self:SetWildernessRestAllowed(self.data.settings.wildernessRestAllowed)
     self:SetWaitAllowed(self.data.settings.waitAllowed)
 
     tes3mp.SendSettings(self.pid)

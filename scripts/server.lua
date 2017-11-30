@@ -76,7 +76,8 @@ local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setconsole <pid> on/off/default - Enable/disable in-game console for player\
-/setrest <pid> on/off/default - Enable/disable resting for player\
+/setbedrest <pid> on/off/default - Enable/disable bed resting for player\
+/setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
 /setwait <pid> on/off/default - Enable/disable waiting for player\
 /runconsole <pid> <command> - Run a certain console command on a player\
 /difficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -224,9 +225,14 @@ function OnServerPostInit()
         consoleRuleString = "not " .. consoleRuleString
     end
 
-    local restRuleString = "allowed"
-    if not config.allowRest then
-        restRuleString = "not " .. restRuleString
+    local bedRestRuleString = "allowed"
+    if not config.allowBedRest then
+        bedRestRuleString = "not " .. bedRestRuleString
+    end
+
+    local wildRestRuleString = "allowed"
+    if not config.allowWildernessRest then
+        wildRestRuleString = "not " .. wildRestRuleString
     end
 
     local waitRuleString = "allowed"
@@ -236,8 +242,9 @@ function OnServerPostInit()
 
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("console", consoleRuleString)
-    tes3mp.SetRuleString("resting", restRuleString)
-    tes3mp.SetRuleString("waiting", restRuleString)
+    tes3mp.SetRuleString("bedResting", bedRestRuleString)
+    tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
+    tes3mp.SetRuleString("waiting", waitRuleString)
     tes3mp.SetRuleString("deathPenaltyJailDays", tostring(config.deathPenaltyJailDays))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
     tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
@@ -279,7 +286,8 @@ end
 function OnPlayerConnect(pid)
     tes3mp.SetDifficulty(pid, config.difficulty)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
-    tes3mp.SetRestAllowed(pid, config.allowRest)
+    tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
+    tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
     tes3mp.SetWaitAllowed(pid, config.allowWait)
     tes3mp.SendSettings(pid)
 
@@ -716,7 +724,7 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "setrest" and admin then
+        elseif cmd[1] == "setbedrest" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
@@ -724,23 +732,51 @@ function OnPlayerSendMessage(pid, message)
                 local state = ""
 
                 if cmd[3] == "on" then
-                    Players[targetPid]:SetRestAllowed(true)
+                    Players[targetPid]:SetBedRestAllowed(true)
                     state = " enabled.\n"
                 elseif cmd[3] == "off" then
-                    Players[targetPid]:SetRestAllowed(false)
+                    Players[targetPid]:SetBedRestAllowed(false)
                     state = " disabled.\n"
                 elseif cmd[3] == "default" then
-                    Players[targetPid]:SetRestAllowed("default")
+                    Players[targetPid]:SetBedRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setrest <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> <on/off/default>.\n", false)
                      return false
                 end
 
                 Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Resting for " .. Players[targetPid].name .. state, false)
+                tes3mp.SendMessage(pid, "Bed resting for " .. Players[targetPid].name .. state, false)
                 if targetPid ~= pid then
-                    tes3mp.SendMessage(targetPid, "Resting" .. state, false)
+                    tes3mp.SendMessage(targetPid, "Bed resting" .. state, false)
+                end
+            end
+
+        elseif cmd[1] == "setwildrest" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local state = ""
+
+                if cmd[3] == "on" then
+                    Players[targetPid]:SetWildernessRestAllowed(true)
+                    state = " enabled.\n"
+                elseif cmd[3] == "off" then
+                    Players[targetPid]:SetWildernessRestAllowed(false)
+                    state = " disabled.\n"
+                elseif cmd[3] == "default" then
+                    Players[targetPid]:SetWildernessRestAllowed("default")
+                    state = " reset to default.\n"
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> <on/off/default>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:LoadSettings()
+                tes3mp.SendMessage(pid, "Wilderness resting for " .. Players[targetPid].name .. state, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Wilderness resting" .. state, false)
                 end
             end
 
