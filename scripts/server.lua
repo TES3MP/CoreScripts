@@ -75,12 +75,12 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
+/setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
 /setconsole <pid> on/off/default - Enable/disable in-game console for player\
 /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
 /setwait <pid> on/off/default - Enable/disable waiting for player\
 /runconsole <pid> <command> - Run a certain console command on a player\
-/difficulty <pid> <value>/default - Set the difficulty for a particular player\
 /werewolf <pid> on/off - Set the werewolf state of a particular player"
 
 -- Handle commands that only exist based on config options
@@ -676,7 +676,7 @@ function OnPlayerSendMessage(pid, message)
         elseif cmd[1] == "getpos" and moderator then
             myMod.PrintPlayerPosition(pid, cmd[2])
 
-        elseif cmd[1] == "difficulty" and admin then
+        elseif (cmd[1] == "setdifficulty" or cmd[1] == "setdiff") and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
@@ -752,7 +752,7 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "setwildrest" and admin then
+        elseif (cmd[1] == "setwildernessrest" or cmd[1] == "setwildrest") and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
