@@ -576,7 +576,13 @@ end
 
 Methods.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveTopics(pid)
+
+        if config.shareTopics == true then
+            WorldInstance:SaveTopics(pid)
+            tes3mp.SendTopicChanges(pid, true)
+        else
+            Players[pid]:SaveTopics()
+        end
     end
 end
 

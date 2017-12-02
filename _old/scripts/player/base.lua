@@ -56,9 +56,11 @@ function BasePlayer:__init(pid, playerName)
         inventory = {},
         spellbook = {},
         shapeshift = {},
+        journal = {},
         factionRanks = {},
         factionExpulsion = {},
         factionReputation = {},
+        topics = {},
         books = {},
         mapExplored = {},
         ipAddresses = {},
@@ -162,7 +164,12 @@ function BasePlayer:FinishLogin()
             self:LoadFactionReputation()
         end
 
-        WorldInstance:LoadTopics(self.pid)
+        if config.shareTopics == true then
+            WorldInstance:LoadTopics(self.pid)
+        else
+            self:LoadTopics()
+        end
+
         WorldInstance:LoadKills(self.pid)
     end
 end
@@ -178,8 +185,6 @@ function BasePlayer:EndCharGen()
 
     if config.shareJournal == true then
         WorldInstance:LoadJournal(self.pid)
-    else
-        self:LoadJournal()
     end
 
     if config.shareFactionRanks == true then
@@ -194,7 +199,10 @@ function BasePlayer:EndCharGen()
         WorldInstance:LoadFactionReputation(self.pid)
     end
 
-    WorldInstance:LoadTopics(self.pid)
+    if config.shareTopics == true then
+        WorldInstance:LoadTopics(self.pid)
+    end
+    
     WorldInstance:LoadKills(self.pid)
 
     if config.defaultSpawnCell ~= nil then
@@ -799,6 +807,14 @@ end
 
 function BasePlayer:LoadFactionReputation()
     stateHelper:LoadFactionReputation(self.pid, self)
+end
+
+function BasePlayer:SaveTopics()
+    stateHelper:SaveTopics(self.pid, self)
+end
+
+function BasePlayer:LoadTopics()
+    stateHelper:LoadTopics(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()

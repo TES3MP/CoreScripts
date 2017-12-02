@@ -48,17 +48,7 @@ function BaseWorld:SaveFactionReputation(pid)
 end
 
 function BaseWorld:SaveTopics(pid)
-
-    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
-
-        local topicId = tes3mp.GetTopicId(pid, i)
-
-        if tableHelper.containsValue(self.data.topics, topicId) == false then
-            table.insert(self.data.topics, topicId)
-        end
-    end
-
-    self:Save()
+    stateHelper:SaveTopics(pid, self)
 end
 
 function BaseWorld:SaveKills(pid)
@@ -90,15 +80,7 @@ function BaseWorld:LoadFactionReputation(pid)
 end
 
 function BaseWorld:LoadTopics(pid)
-
-    tes3mp.InitializeTopicChanges(pid)
-
-    for index, topicId in pairs(self.data.topics) do
-
-        tes3mp.AddTopic(pid, topicId)
-    end
-
-    tes3mp.SendTopicChanges(pid)
+    stateHelper:LoadTopics(pid, self)
 end
 
 function BaseWorld:LoadKills(pid)

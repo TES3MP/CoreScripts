@@ -36,6 +36,9 @@ config.shareFactionExpulsion = false
 -- Whether faction reputation should be shared across the players on the server or not
 config.shareFactionReputation = true
 
+-- Whether dialogue topics should be shared across the players on the server or not
+config.shareTopics = true
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 
