@@ -1,6 +1,6 @@
-DataManager = import(getModFolder() .. "dataManager.lua")
-InterfaceManager = import(getModFolder() .. "interfaceManager.lua")
-BanManager = import(getModFolder() .. "banManager.lua")
+DataManager = import(getModuleFolder() .. "dataManager.lua")
+InterfaceManager = import(getModuleFolder() .. "interfaceManager.lua")
+BanManager = import(getModuleFolder() .. "banManager.lua")
 
 local EventHandler = {}
 

@@ -5,9 +5,9 @@ FileUtils = require("fileUtils")
 JsonInterface = require("jsonInterface")
 TableHelper = require("tableHelper")
 
-Config.Core = import(getModFolder() .. "config.lua")
-EventHandler = import(getModFolder() .. "eventHandler.lua")
-BanManager = import(getModFolder() .. "banManager.lua")
+Config.Core = import(getModuleFolder() .. "config.lua")
+EventHandler = import(getModuleFolder() .. "eventHandler.lua")
+BanManager = import(getModuleFolder() .. "banManager.lua")
 
 pluginList = {}
 

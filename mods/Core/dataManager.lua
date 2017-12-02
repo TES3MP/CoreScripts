@@ -1,4 +1,4 @@
-PlayerBuilder = import(getModFolder() .. "playerBuilder.lua")
+PlayerBuilder = import(getModuleFolder() .. "playerBuilder.lua")
 
 local DataManager = {}
 
