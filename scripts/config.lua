@@ -79,6 +79,9 @@ config.respawnAtImperialShrine = true
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
 
+-- The maximum value that any attribute is allowed to have
+config.maxAttributeValue = 120
+
 -- The number of days spent in jail as a penalty for dying
 config.deathPenaltyJailDays = 5
 

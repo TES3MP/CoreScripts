@@ -51,7 +51,6 @@ function BasePlayer:__init(pid, playerName)
         },
         customClass = {},
         attributes = {},
-        attributes = {},
         attributeSkillIncreases = {},
         skills = {},
         skillProgress = {},
@@ -493,8 +492,26 @@ end
 
 function BasePlayer:SaveAttributes()
     for name in pairs(self.data.attributes) do
+
         local attributeId = tes3mp.GetAttributeId(name)
-        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
+
+        local baseValue = tes3mp.GetAttributeBase(self.pid, attributeId)
+        local modifierValue = tes3mp.GetAttributeModifier(self.pid, attributeId)
+
+        if baseValue > config.maxAttributeValue then
+            self:LoadAttributes()
+
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            tes3mp.SendMessage(self.pid, message)
+        elseif (baseValue + modifierValue) > config.maxAttributeValue then
+            tes3mp.ClearAttributeModifier(self.pid, attributeId)
+            tes3mp.SendAttributes(self.pid)
+
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            tes3mp.SendMessage(self.pid, message)
+        else
+            self.data.attributes[name] = baseValue
+        end
     end
 end
 
