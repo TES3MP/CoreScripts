@@ -534,9 +534,27 @@ end
 
 function BasePlayer:SaveSkills()
     for name in pairs(self.data.skills) do
+
         local skillId = tes3mp.GetSkillId(name)
-        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
-        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+
+        local baseValue = tes3mp.GetSkillBase(self.pid, skillId)
+        local modifierValue = tes3mp.GetSkillModifier(self.pid, skillId)
+
+        if baseValue > config.maxSkillValue then
+            self:LoadSkills()
+
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            tes3mp.SendMessage(self.pid, message)
+        elseif (baseValue + modifierValue) > config.maxSkillValue then
+            tes3mp.ClearSkillModifier(self.pid, skillId)
+            tes3mp.SendSkills(self.pid)
+
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            tes3mp.SendMessage(self.pid, message)
+        else
+            self.data.skills[name] = baseValue
+            self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+        end 
     end
 
     for name in pairs(self.data.attributeSkillIncreases) do
