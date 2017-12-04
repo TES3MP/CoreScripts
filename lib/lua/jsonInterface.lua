@@ -1,21 +1,21 @@
-local json = require ("dkjson");
+local json = require("dkjson");
 
-local jsonInterface = {};
+local JsonInterface = {}
 
-function jsonInterface.load(fileName)
-    local home = os.getenv("MOD_DIR") .. "/"
-    local file = assert(io.open(home .. fileName, 'r'), 'Error loading file: ' .. fileName);
+function JsonInterface.load(filePath)
+    
+    local file = assert(io.open(filePath, 'r'), 'Error loading file: ' .. filePath);
     local content = file:read("*all");
     file:close();
     return json.decode(content, 1, nil);
 end
 
-function jsonInterface.save(fileName, data, keyOrderArray)
-    local home = os.getenv("MOD_DIR") .. "/"
+function JsonInterface.save(filePath, data, keyOrderArray)
+
     local content = json.encode(data, { indent = true, keyorder = keyOrderArray });
-    local file = assert(io.open(home .. fileName, 'w+b'), 'Error loading file: ' .. fileName);
+    local file = assert(io.open(filePath, 'w+b'), 'Error loading file: ' .. filePath);
     file:write(content);
     file:close();
 end
 
-return jsonInterface;
+return JsonInterface
