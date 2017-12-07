@@ -30,7 +30,7 @@ end
 EventHandler.allowPlayerConnection = function(player)
     
     local messageText = EventHandler.getChatName(player) .. " joined the server.\n"
-    player:message(messageText, true)
+    player:message(0, messageText, true)
 
     messageText = "Welcome, " .. player.name .. ".\nYou have " .. tostring(Config.Core.loginTime) .. " seconds to"
 
@@ -42,13 +42,13 @@ EventHandler.allowPlayerConnection = function(player)
         InterfaceManager.showRegistration(player)
     end
 
-    player:message(messageText, false)
+    player:message(0, messageText, false)
     player.customData.loggedIn = true
 end
 
 EventHandler.denyPlayerName = function(player)
     local messageText = EventHandler.getChatName(player) .. " joined and tried to use an existing player's name.\n"
-    player:message(messageText, true)
+    player:message(0, messageText, true)
 end
 
 EventHandler.onPlayerDisconnect = function(player)
@@ -68,7 +68,7 @@ EventHandler.onGUIAction = function(player, guiId, guiData)
     if guiId == InterfaceManager.ID.LOGIN then
 
         if guiData == nil then
-            player:message("Passwords cannot be blank!\n", false)
+            player:message(0, "Passwords cannot be blank!\n", false)
             InterfaceManager.showLogin(player)
             return true
         end
@@ -77,14 +77,14 @@ EventHandler.onGUIAction = function(player, guiId, guiData)
 
         -- Just in case the password from the data file is a number, make sure to turn it into a string
         if tostring(playerData.login.password) ~= guiData then
-            player:message("Incorrect password!\n", false)
+            player:message(0, "Incorrect password!\n", false)
             InterfaceManager.showLogin(player)
             return true
         end
 
         -- Is this player on the banlist? If so, store their new IP and ban them
         if BanManager.isBanned(player) then
-            player:message(player.accountName .. " is banned from this server.\n", true)
+            player:message(0, player.accountName .. " is banned from this server.\n", true)
 
             if TableHelper.containsValue(playerData.ipAddresses, player.address) == false then
                 table.insert(playerData.ipAddresses, player.address)
@@ -94,19 +94,19 @@ EventHandler.onGUIAction = function(player, guiId, guiData)
             banAddress(player.address)
         else
             DataManager.setPlayerFromTable(player, playerData)
-            player:message("You have successfully logged in.\n", false)
+            player:message(0, "You have successfully logged in.\n", false)
         end
 
     elseif guiId == InterfaceManager.ID.REGISTER then
 
         if guiData == nil then
-            player:message("The password cannot be empty.\n", false)
+            player:message(0, "The password cannot be empty.\n", false)
             InterfaceManager.showRegistration(player)
             return true
         end
 
         player.customData.login = { password = guiData }
-        player:message("You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
+        player:message(0, "You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
         player:setCharGenStages(1, 4)
     end
 

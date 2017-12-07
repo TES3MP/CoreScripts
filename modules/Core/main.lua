@@ -84,7 +84,6 @@ Event.register(Events.ON_POST_INIT, function()
 end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
-
     player:getSettings():setConsoleAllow(Config.Core.allowConsole)
     player:getSettings():setDifficulty(Config.Core.difficulty)
 
@@ -115,14 +114,14 @@ Event.register(Events.ON_GUI_ACTION, function(player, guiId, data)
     EventHandler.onGUIAction(player, guiId, data)
 end)
 
-Event.register(Events.ON_PLAYER_SENDMESSAGE, function(player, message)
+Event.register(Events.ON_PLAYER_SENDMESSAGE, function(player, message, channel)
     if Data.overrideChat ~= nil and Data.overrideChat == true then -- you can easily turn off Core behavior via Data.overrideChat = true
         return
     end
 
     local chatMessage = ("%s (%d): %s\n"):format(player.name, player.pid, message)
-    io.write(chatMessage)
-    player:message(color.White..chatMessage, true) -- send to All
+    io.write(("Channel #%d %s"):format(channel, chatMessage))
+    player:message(channel, color.White..chatMessage, true) -- send to All
 end)
 
 function helpCommand(player, args)
@@ -136,7 +135,7 @@ function helpCommand(player, args)
     end
     helpMsg = table.concat(helpMsg)
 
-    player:message(color.Warning..helpMsg, false)
+    player:message(0, color.Warning..helpMsg, false)
     --player:messageBox(helpMsg)
     return true
 end
