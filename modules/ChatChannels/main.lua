@@ -6,7 +6,7 @@ end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
     player:renameChannel(systemChannel, "System")
-    player:joinToChannel(generalChannel, "General")
+    player:joinChannel(generalChannel, "General")
     return true
 end)
 
@@ -51,7 +51,7 @@ CommandController.registerCommand("channel", function(player, args, thisChannel)
         end
         local channelId = createChannel()
         player.customData[tostring(channelId)] = {args[2], "owner"}
-        player:joinToChannel(channelId, args[2])
+        player:joinChannel(channelId, args[2])
         player:setChannel(channelId)
         return true
     elseif command == "invite" then
@@ -83,7 +83,7 @@ CommandController.registerCommand("channel", function(player, args, thisChannel)
         end
 
         player.customData[tostring(channelId)][2] = "member"
-        player:joinToChannel(channelId, channel[1])
+        player:joinChannel(channelId, channel[1])
         player:setChannel(channelId)
         player:message(channelId, (color.Green.."%s has joined the channel.\n"):format(player.name), true)
         return true
