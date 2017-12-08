@@ -12,32 +12,32 @@ end)
 
 function invite(player, invitedPID, channelId, thisChannel)
     if tonumber(invitedPID) == nil then
-        player:message(thisChannel, color.Error.."Error. player id should be numeric value.\n")
+        player:message(thisChannel, color.Error.."Error: player ID should be a numerical value.\n")
         return false
     end    
 
     local invitedPl = Players.getByPID(invitedPID)
         
     if invitedPl == nil then
-        player:message(thisChannel, color.Error.."Error. Incorrect player id.\n")
+        player:message(thisChannel, color.Error.."Error: incorrect player ID.\n")
         return false
     end
     
     if tonumber(channelId) == nil then
-        player:message(thisChannel, color.Error.."Error. channel id should be numeric value.\n")
+        player:message(thisChannel, color.Error.."Error: channel ID should be a numerical value.\n")
         return false
     end    
 
     
     local channelStr = tostring(channelId)
     if player.customData[channelStr] == nil then
-        player:message(thisChannel, color.Error.."Error."..channelStr.." not found.\n")
+        player:message(thisChannel, color.Error.."Error:"..channelStr.." not found.\n")
     end
     local channelName = player.customData[channelStr][1]
 
     invitedPl.customData[channelStr] = {channelName, "invited"}
 
-    invitedPl:message(systemChannel, (color.Green.."You has been invited to \"%s\" channel. Type /channel accept \"%d\" to join\n"):format(channelName, thisChannel))
+    invitedPl:message(systemChannel, (color.Green.."You have been invited to channel \"%s\". To join, type /channel accept \"%d\"\n"):format(channelName, thisChannel))
     return true
 end
 
@@ -46,7 +46,7 @@ CommandController.registerCommand("channel", function(player, args, thisChannel)
     local command = args[1]
     if command == "create" then
         if args[2] == nil then
-            player:message(thisChannel, color.Error.."Error. incorrect channel name.\n")
+            player:message(thisChannel, color.Error.."Error: incorrect channel name.\n")
             return false
         end
         local channelId = createChannel()
@@ -60,7 +60,7 @@ CommandController.registerCommand("channel", function(player, args, thisChannel)
         elseif #args == 2 then -- /channel invite playerId
             return invite(player, args[2], thisChannel, thisChannel)
         else
-            player:message(thisChannel, color.Error.."Error. incorrect arguments.\n")
+            player:message(thisChannel, color.Error.."Error: incorrect arguments.\n")
             return false
         end
     elseif command == "accept" then
@@ -71,35 +71,35 @@ CommandController.registerCommand("channel", function(player, args, thisChannel)
 
         local channelId = tonumber(args[2])
         if channelId == nil then
-            player:message(thisChannel, color.Error.."Error. incorrect channel id.\n")
+            player:message(thisChannel, color.Error.."Error: incorrect channel ID.\n")
             return false
         end
 
         local channel = player.customData[tostring(channelId)]
 
         if channel == nil or channel[2] ~= "invited" then
-            player:message(thisChannel, (color.Error.."Error. You are not invited to %d channel.\n"):format(channelId))
+            player:message(thisChannel, (color.Error.."Error: you are not invited to channel %d.\n"):format(channelId))
             return true
         end
 
         player.customData[tostring(channelId)][2] = "member"
         player:joinToChannel(channelId, channel[1])
         player:setChannel(channelId)
-        player:message(channelId, (color.Green.."%s joined to channel.\n"):format(player.name), true)
+        player:message(channelId, (color.Green.."%s has joined the channel.\n"):format(player.name), true)
         return true
     elseif command == "leave" then
             local thisChStr = tostring(thisChannel)
             if thisChannel == systemChannel or thisChannel == generalChannel or player.customData[thisChStr] == nil
                 or player.customData[thisChStr][2] ~= "member" then
-                player:message(thisChannel, color.Warning.."Warning. Cannot leave this channel.\n")
+                player:message(thisChannel, color.Warning.."Warning: cannot leave this channel.\n")
                 return true
             end
             player.customData[thisChStr] = nil
-            player:message(thisChannel, (color.Green.."%s leaved channel.\n"):format(player.name), true)
+            player:message(thisChannel, (color.Green.."%s has left the channel.\n"):format(player.name), true)
             player:leaveChannel(thisChannel)
             return true
     else
-        player:message(thisChannel, color.Error.."Error. incorrect command id.\n")
+        player:message(thisChannel, color.Error.."Error: incorrect command ID.\n")
         return false
     end
 end, "/channel")
