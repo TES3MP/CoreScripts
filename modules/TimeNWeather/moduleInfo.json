@@ -1,0 +1,8 @@
+{
+    "name": "Time and Weather",
+    "author": "tes3mp team",
+    "version": "0.0.1",
+    "dependencies": {
+        "Core": ">=0.0.1"
+    }
+}
