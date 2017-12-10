@@ -64,18 +64,6 @@ Config.deathPenaltyJailDays = 5
 -- Whether players should be allowed to use the /suicide command
 Config.allowSuicideCommand = true
 
--- Whether time should be synchronized across clients
--- Valid values: 0, 1
--- Note: 0 for no time sync, 1 for time sync based on the server's time counter
-Config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time counter
-
--- The time multiplier used by the server
--- Note: The default value of 1 is roughly 120 seconds per ingame hour
-Config.timeServerMult = 1
-
--- The initial ingame time on the server
-Config.timeServerInitTime = 7
-
 -- The order in which table keys should be saved to JSON files
 Config.playerKeyOrder = {"login", "settings", "character", "class", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "consoleAllowed", "difficulty", "gender", "race", "head", "hair", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 Config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index", "quest", "actorRefId"}
