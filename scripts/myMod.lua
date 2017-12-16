@@ -63,7 +63,7 @@ Methods.GetChatName = function(pid)
     if Players[pid] ~= nil then
         return Players[pid].name .. " (" .. pid .. ")"
     else
-        return "Unlogged player " .. " (" .. pid .. ")"
+        return "Unlogged player (" .. pid .. ")"
     end
 end
 
