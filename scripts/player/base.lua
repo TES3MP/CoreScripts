@@ -663,7 +663,11 @@ function BasePlayer:LoadEquipment()
         local currentItem = self.data.equipment[i]
 
         if currentItem ~= nil then
-            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge)
+            if currentItem.enchantmentCharge == nil then
+                currentItem.enchantmentCharge = -1
+            end
+
+            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
         else
             tes3mp.UnequipItem(self.pid, i)
         end
@@ -683,7 +687,8 @@ function BasePlayer:SaveEquipment()
             self.data.equipment[i] = {
                 refId = itemRefId,
                 count = tes3mp.GetEquipmentItemCount(self.pid, i),
-                charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
+                charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
+                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
             }
         end
     end
@@ -702,7 +707,11 @@ function BasePlayer:LoadInventory()
     for index, currentItem in pairs(self.data.inventory) do
 
         if currentItem ~= nil then
-            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge)
+            if currentItem.enchantmentCharge == nil then
+                currentItem.enchantmentCharge = -1
+            end
+
+            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
         end
     end
 
@@ -720,7 +729,8 @@ function BasePlayer:SaveInventory()
             self.data.inventory[i] = {
                 refId = itemRefId,
                 count = tes3mp.GetInventoryItemCount(self.pid, i),
-                charge = tes3mp.GetInventoryItemCharge(self.pid, i)
+                charge = tes3mp.GetInventoryItemCharge(self.pid, i),
+                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, i)
             }
         end
     end
