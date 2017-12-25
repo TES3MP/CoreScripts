@@ -655,19 +655,19 @@ function OnPlayerSendMessage(pid, message)
             if (cmd[2] == "moderator" or cmd[2] == "mod") then
 
                 if moderator then
-                    tes3mp.MessageBox(pid, -1, modhelptext .. "\n")
+                    tes3mp.CustomMessageBox(pid, -1, modhelptext .. "\n", "Ok")
                 else
                     tes3mp.SendMessage(pid, "Only Moderators and higher can see those commands.", false)
                 end
             elseif cmd[2] == "admin" then
 
                 if admin then
-                    tes3mp.MessageBox(pid, -1, adminhelptext .. "\n")
+                    tes3mp.CustomMessageBox(pid, -1, adminhelptext .. "\n", "Ok")
                 else
                     tes3mp.SendMessage(pid, "Only Admins can see those commands.", false)
                 end
             else
-                tes3mp.MessageBox(pid, -1, helptext .. "\n")
+                tes3mp.CustomMessageBox(pid, -1, helptext .. "\n", "Ok")
             end
 
         elseif cmd[1] == "setext" and admin then
