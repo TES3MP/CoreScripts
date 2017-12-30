@@ -874,31 +874,36 @@ function OnPlayerSendMessage(pid, message)
                     packetType = "spawn"
                 end
 
-                local count = 1
-                local interval = 1
+                myMod.CreateObjectAtPlayer(targetPid, refId, packetType)
 
-                if type(tonumber(cmd[4])) == "number" and tonumber(cmd[4]) > 1 then
-                    count = tonumber(cmd[4])
+                local count = tonumber(cmd[4])
+
+                if count ~= nil and count > 1 then
+
+                    -- We've already placed the first object above, so lower the count
+                    -- for the object loop
+                    count = count - 1
+                    local interval = 1
+
+                    if tonumber(cmd[5]) ~= nil and tonumber(cmd[5]) > 1 then
+                        interval = tonumber(cmd[5])
+                    end
+
+                    local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
+                    local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
+
+                    ObjectLoops[loopIndex] = {
+                        packetType = packetType,
+                        timerId = timerId,
+                        interval = interval,
+                        count = count,
+                        targetPid = targetPid,
+                        targetName = Players[targetPid].accountName,
+                        refId = refId
+                    }
+
+                    tes3mp.StartTimer(timerId)
                 end
-
-                if type(tonumber(cmd[5])) == "number" and tonumber(cmd[5]) > 1 then
-                    interval = tonumber(cmd[5])
-                end                
-
-                local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
-                local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
-
-                ObjectLoops[loopIndex] = {
-                    packetType = packetType,
-                    timerId = timerId,
-                    interval = interval,
-                    count = count,
-                    targetPid = targetPid,
-                    targetName = Players[targetPid].accountName,
-                    refId = refId
-                }
-
-                tes3mp.StartTimer(timerId)
             end
 
         elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
