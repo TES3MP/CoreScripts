@@ -81,8 +81,8 @@ local adminhelptext = "Admins only:\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
 /setwait <pid> on/off/default - Enable/disable waiting for player\
 /runconsole <pid> <command> - Run a certain console command on a player\
-/placeat <pid> <refId> - Place a certain object at a player's location\
-/spawnat <pid> <refId> - Spawn a certain creature or NPC at a player's location\
+/placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
+/spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
 /werewolf <pid> on/off - Set the werewolf state of a particular player"
 
 -- Handle commands that only exist based on config options
@@ -865,45 +865,40 @@ function OnPlayerSendMessage(pid, message)
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
-
-                local mpNum = WorldInstance:GetCurrentMpNum() + 1
-                local cell = tes3mp.GetCell(targetPid)
-                local location = {
-                    posX = tes3mp.GetPosX(targetPid), posY = tes3mp.GetPosY(targetPid), posZ = tes3mp.GetPosZ(targetPid),
-                    rotX = tes3mp.GetRotX(targetPid), rotY = 0, rotZ = tes3mp.GetRotZ(targetPid)
-                }
                 local refId = cmd[3]
-                local refIndex =  0 .. "-" .. mpNum
-
-                WorldInstance:SetCurrentMpNum(mpNum)
-                tes3mp.SetCurrentMpNum(mpNum)
-            
-                LoadedCells[cell]:InitializeObjectData(refIndex, refId)
-                LoadedCells[cell].data.objectData[refIndex].location = location
+                local packetType
 
                 if cmd[1] == "placeat" then
-                    table.insert(LoadedCells[cell].data.packets.place, refIndex)
+                    packetType = "place"
                 elseif cmd[1] == "spawnat" then
-                    table.insert(LoadedCells[cell].data.packets.spawn, refIndex)
-                    table.insert(LoadedCells[cell].data.packets.actorList, refIndex)
+                    packetType = "spawn"
                 end
 
-                LoadedCells[cell]:Save()
+                local count = 1
+                local interval = 1
 
-                tes3mp.InitializeEvent(targetPid)
-                tes3mp.SetEventCell(cell)
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNumIndex(0)
-                tes3mp.SetObjectMpNum(mpNum)
-                tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-                tes3mp.AddWorldObject()
-
-                if cmd[1] == "placeat" then
-                    tes3mp.SendObjectPlace(true)
-                elseif cmd[1] == "spawnat" then
-                    tes3mp.SendObjectSpawn(true)
+                if type(tonumber(cmd[4])) == "number" and tonumber(cmd[4]) > 1 then
+                    count = tonumber(cmd[4])
                 end
+
+                if type(tonumber(cmd[5])) == "number" and tonumber(cmd[5]) > 1 then
+                    interval = tonumber(cmd[5])
+                end                
+
+                local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
+                local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
+
+                ObjectLoops[loopIndex] = {
+                    packetType = packetType,
+                    timerId = timerId,
+                    interval = interval,
+                    count = count,
+                    targetPid = targetPid,
+                    targetName = Players[targetPid].accountName,
+                    refId = refId
+                }
+
+                tes3mp.StartTimer(timerId)
             end
 
         elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
@@ -935,6 +930,10 @@ function OnPlayerSendMessage(pid, message)
     end
 
     return true -- default behavior, chat messages should not
+end
+
+function OnObjectLoopTimeExpiration(loopIndex)
+    myMod.OnObjectLoopTimeExpiration(loopIndex)
 end
 
 function OnPlayerDeath(pid)

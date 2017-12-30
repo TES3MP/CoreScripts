@@ -326,7 +326,7 @@ function BasePlayer:ProcessDeath()
     tes3mp.SendMessage(self.pid, message, true)
 
     self.tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
-    tes3mp.StartTimer(self.tid_resurrect);
+    tes3mp.StartTimer(self.tid_resurrect)
 end
 
 function BasePlayer:Resurrect()
