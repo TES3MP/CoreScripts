@@ -62,6 +62,16 @@ function tableHelper.insertValueIfMissing(t, value)
     end
 end
 
+function tableHelper.getUnusedNumericalIndex(t)
+    local i = 1
+    
+    while t[i] ~= nil do
+        i = i + 1
+    end
+
+    return i
+end
+
 function tableHelper.getIndexByPattern(t, patternToFind)
     for key, value in pairs(t) do
         if string.match(value, patternToFind) ~= nil then
