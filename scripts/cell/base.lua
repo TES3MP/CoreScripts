@@ -164,7 +164,7 @@ end
 
 function BaseCell:InitializeObjectData(refIndex, refId)
 
-    if self.data.objectData[refIndex] == nil then
+    if refIndex ~= nil and refId ~= nil and self.data.objectData[refIndex] == nil then
         self.data.objectData[refIndex] = {}
         self.data.objectData[refIndex].refId = refId
     end
