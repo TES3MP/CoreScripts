@@ -407,6 +407,16 @@ Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
     end
 end
 
+Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(Players[pid].data.location.cell)
+    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.SetPlayerAsObject(pid)
+    tes3mp.AddWorldObject()
+    tes3mp.SendConsoleCommand()
+end
+
 Methods.OnObjectLoopTimeExpiration = function(loopIndex)
     if ObjectLoops[loopIndex] ~= nil then
 

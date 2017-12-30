@@ -840,25 +840,21 @@ function OnPlayerSendMessage(pid, message)
                 timeCounter = tonumber(cmd[2])
             end
 
-        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
-            if myMod.CheckPlayerValidity(pid, cmd[2]) then
-
-                local targetPid = tonumber(cmd[2])
-
-                tes3mp.InitializeEvent(targetPid)
-                tes3mp.SetEventCell(Players[targetPid].data.location.cell)
-                tes3mp.SetEventConsoleCommand(tableHelper.concatenateFromIndex(cmd, 3))
-                tes3mp.SetPlayerAsObject(targetPid)
-                tes3mp.AddWorldObject()
-                tes3mp.SendConsoleCommand()
-            end
-
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then
                 tes3mp.SetHealthCurrent(pid, 0)
                 tes3mp.SendStatsDynamic(pid)
             else
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            end
+
+        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local consoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
+
+                myMod.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
             end
 
         elseif (cmd[1] == "placeat" or cmd[1] == "spawnat") and cmd[2] ~= nil and cmd[3] ~= nil and admin then
