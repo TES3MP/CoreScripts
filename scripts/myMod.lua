@@ -426,7 +426,11 @@ Methods.OnObjectLoopTimeExpiration = function(loopIndex)
 
         if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and Players[pid].accountName == loop.targetName then
         
-            Methods.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+            if loop.packetType == "place" or loop.packetType == "spawn" then
+                Methods.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+            elseif loop.packetType == "console" then
+                Methods.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
+            end
 
             loop.count = loop.count - 1
 

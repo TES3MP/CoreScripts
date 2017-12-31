@@ -80,7 +80,8 @@ local adminhelptext = "Admins only:\
 /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
 /setwait <pid> on/off/default - Enable/disable waiting for player\
-/runconsole <pid> <command> - Run a certain console command on a player\
+/storeconsole <pid> <command> - Store a certain console command for a player\
+/runconsole <pid> (<count>) (<interval>) - Run a stored console command on a player, with optional count and interval\
 /placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
 /spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
 /werewolf <pid> on/off - Set the werewolf state of a particular player"
@@ -848,13 +849,51 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
             end
 
-        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+        elseif cmd[1] == "storeconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
-                local consoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
+                Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
+            end
 
-                myMod.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
+        elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+
+                if Players[targetPid].storedConsoleCommand == nil then
+                    tes3mp.SendMessage(pid, "There is no console command stored for player " .. pid .. ". Please run /storeconsole on them first.\n", false)
+                else
+                    local consoleCommand = Players[targetPid].storedConsoleCommand
+                    myMod.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
+
+                    local count = tonumber(cmd[3])
+
+                    if count ~= nil and count > 1 then
+
+                        count = count - 1
+                        local interval = 1
+
+                        if tonumber(cmd[4]) ~= nil and tonumber(cmd[4]) > 1 then
+                            interval = tonumber(cmd[4])
+                        end
+
+                        local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
+                        local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
+
+                        ObjectLoops[loopIndex] = {
+                            packetType = "console",
+                            timerId = timerId,
+                            interval = interval,
+                            count = count,
+                            targetPid = targetPid,
+                            targetName = Players[targetPid].accountName,
+                            consoleCommand = consoleCommand
+                        }
+
+                        tes3mp.StartTimer(timerId)
+                    end
+                end
             end
 
         elseif (cmd[1] == "placeat" or cmd[1] == "spawnat") and cmd[2] ~= nil and cmd[3] ~= nil and admin then
