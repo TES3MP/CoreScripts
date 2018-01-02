@@ -16,8 +16,11 @@ function BasePlayer:__init(pid, playerName)
         },
         settings = {
             admin = 0,
+            difficulty = "default",
             consoleAllowed = "default",
-            difficulty = "default"
+            bedRestAllowed = "default",
+            wildernessRestAllowed = "default",
+            waitAllowed = "default"
         },
         character = {
             race = "",
@@ -48,13 +51,13 @@ function BasePlayer:__init(pid, playerName)
         },
         customClass = {},
         attributes = {},
-        attributes = {},
         attributeSkillIncreases = {},
         skills = {},
         skillProgress = {},
         equipment = {},
         inventory = {},
         spellbook = {},
+        quickKeys = {},
         shapeshift = {},
         journal = {},
         factionRanks = {},
@@ -135,6 +138,7 @@ function BasePlayer:FinishLogin()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
+        self:LoadQuickKeys()
         self:LoadBooks()
         --self:LoadMap()
         self:LoadShapeshift()
@@ -322,7 +326,7 @@ function BasePlayer:ProcessDeath()
     tes3mp.SendMessage(self.pid, message, true)
 
     self.tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
-    tes3mp.StartTimer(self.tid_resurrect);
+    tes3mp.StartTimer(self.tid_resurrect)
 end
 
 function BasePlayer:Resurrect()
@@ -488,8 +492,26 @@ end
 
 function BasePlayer:SaveAttributes()
     for name in pairs(self.data.attributes) do
+
         local attributeId = tes3mp.GetAttributeId(name)
-        self.data.attributes[name] = tes3mp.GetAttributeBase(self.pid, attributeId)
+
+        local baseValue = tes3mp.GetAttributeBase(self.pid, attributeId)
+        local modifierValue = tes3mp.GetAttributeModifier(self.pid, attributeId)
+
+        if baseValue > config.maxAttributeValue then
+            self:LoadAttributes()
+
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            tes3mp.SendMessage(self.pid, message)
+        elseif (baseValue + modifierValue) > config.maxAttributeValue then
+            tes3mp.ClearAttributeModifier(self.pid, attributeId)
+            tes3mp.SendAttributes(self.pid)
+
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            tes3mp.SendMessage(self.pid, message)
+        else
+            self.data.attributes[name] = baseValue
+        end
     end
 end
 
@@ -512,9 +534,27 @@ end
 
 function BasePlayer:SaveSkills()
     for name in pairs(self.data.skills) do
+
         local skillId = tes3mp.GetSkillId(name)
-        self.data.skills[name] = tes3mp.GetSkillBase(self.pid, skillId)
-        self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+
+        local baseValue = tes3mp.GetSkillBase(self.pid, skillId)
+        local modifierValue = tes3mp.GetSkillModifier(self.pid, skillId)
+
+        if baseValue > config.maxSkillValue then
+            self:LoadSkills()
+
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            tes3mp.SendMessage(self.pid, message)
+        elseif (baseValue + modifierValue) > config.maxSkillValue then
+            tes3mp.ClearSkillModifier(self.pid, skillId)
+            tes3mp.SendSkills(self.pid)
+
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            tes3mp.SendMessage(self.pid, message)
+        else
+            self.data.skills[name] = baseValue
+            self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+        end 
     end
 
     for name in pairs(self.data.attributeSkillIncreases) do
@@ -623,7 +663,11 @@ function BasePlayer:LoadEquipment()
         local currentItem = self.data.equipment[i]
 
         if currentItem ~= nil then
-            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge)
+            if currentItem.enchantmentCharge == nil then
+                currentItem.enchantmentCharge = -1
+            end
+
+            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
         else
             tes3mp.UnequipItem(self.pid, i)
         end
@@ -643,7 +687,8 @@ function BasePlayer:SaveEquipment()
             self.data.equipment[i] = {
                 refId = itemRefId,
                 count = tes3mp.GetEquipmentItemCount(self.pid, i),
-                charge = tes3mp.GetEquipmentItemCharge(self.pid, i)
+                charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
+                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
             }
         end
     end
@@ -662,7 +707,11 @@ function BasePlayer:LoadInventory()
     for index, currentItem in pairs(self.data.inventory) do
 
         if currentItem ~= nil then
-            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge)
+            if currentItem.enchantmentCharge == nil then
+                currentItem.enchantmentCharge = -1
+            end
+
+            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
         end
     end
 
@@ -680,7 +729,8 @@ function BasePlayer:SaveInventory()
             self.data.inventory[i] = {
                 refId = itemRefId,
                 count = tes3mp.GetInventoryItemCount(self.pid, i),
-                charge = tes3mp.GetInventoryItemCharge(self.pid, i)
+                charge = tes3mp.GetInventoryItemCharge(self.pid, i),
+                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, i)
             }
         end
     end
@@ -698,15 +748,7 @@ function BasePlayer:LoadSpellbook()
     for index, currentSpell in pairs(self.data.spellbook) do
 
         if currentSpell ~= nil then
-            if string.find(currentSpell.spellId, "$dynamic") then
-                tes3mp.AddCustomSpell(self.pid, currentSpell.spellId, currentSpell.name)
-                tes3mp.AddCustomSpellData(self.pid, currentSpell.spellId, currentSpell.data.type, currentSpell.data.cost, currentSpell.data.flags)
-                for effectIndex, effect in pairs(currentSpell.effects) do
-                    tes3mp.AddCustomSpellEffect(self.pid, currentSpell.spellId, effect.effectId, effect.skill, effect.attribute, effect.range, effect.area, effect.duration, effect.magnMin, effect.magnMax)
-                end
-            else
-                tes3mp.AddSpell(self.pid, currentSpell.spellId)
-            end
+            tes3mp.AddSpell(self.pid, currentSpell.spellId)
         end
     end
 
@@ -723,33 +765,6 @@ function BasePlayer:AddSpells()
             tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
             local newSpell = {}
             newSpell.spellId = spellId
-
-            if string.find(spellId, "$dynamic") then
-                newSpell.name = tes3mp.GetSpellName(self.pid, i)
-
-                newSpell.data = {}
-                newSpell.data.type = tes3mp.GetSpellType(self.pid, i)
-                newSpell.data.cost = tes3mp.GetSpellCost(self.pid, i)
-                newSpell.data.flags = tes3mp.GetSpellFlags(self.pid, i)
-
-                newSpell.effects = {}
-                
-                for j = 0, tes3mp.GetSpellEffectCount(self.pid, i) - 1 do
-                    local newEffect = {}
-
-                    newEffect.effectId = tes3mp.GetSpellEffectId(self.pid, i, j)
-                    newEffect.skill = tes3mp.GetSpellEffectSkill(self.pid, i, j)
-                    newEffect.attribute = tes3mp.GetSpellEffectAttribute(self.pid, i, j)
-                    newEffect.range = tes3mp.GetSpellEffectRange(self.pid, i, j)
-                    newEffect.area = tes3mp.GetSpellEffectArea(self.pid, i, j)
-                    newEffect.duration = tes3mp.GetSpellEffectDuration(self.pid, i, j)
-                    newEffect.magnMin = tes3mp.GetSpellEffectMagnMin(self.pid, i, j)
-                    newEffect.magnMax = tes3mp.GetSpellEffectMagnMax(self.pid, i, j)
-
-                    table.insert(newSpell.effects, newEffect)
-                end
-            end
-
             table.insert(self.data.spellbook, newSpell)
         end
     end
@@ -777,44 +792,75 @@ function BasePlayer:SetSpells()
     self:AddSpells()
 end
 
-function BasePlayer:SaveJournal()
-    stateHelper:SaveJournal(self.pid, self)
+function BasePlayer:LoadQuickKeys()
+
+    if self.data.quickKeys == nil then
+        self.data.quickKeys = {}
+    end
+
+    tes3mp.InitializeQuickKeyChanges(self.pid)
+
+    for slot, currentQuickKey in pairs(self.data.quickKeys) do
+
+        if currentQuickKey ~= nil then
+            tes3mp.AddQuickKey(self.pid, slot, currentQuickKey.keyType, currentQuickKey.itemId)
+        end
+    end
+
+    tes3mp.SendQuickKeyChanges(self.pid)
+end
+
+function BasePlayer:SaveQuickKeys()
+
+    for i = 0, tes3mp.GetQuickKeyChangesSize(self.pid) - 1 do
+
+        local slot = tes3mp.GetQuickKeySlot(self.pid, i)
+
+        self.data.quickKeys[slot] = {
+            keyType = tes3mp.GetQuickKeyType(self.pid, i),
+            itemId = tes3mp.GetQuickKeyItemId(self.pid, i)
+        }
+    end
 end
 
 function BasePlayer:LoadJournal()
     stateHelper:LoadJournal(self.pid, self)
 end
 
-function BasePlayer:SaveFactionRanks()
-    stateHelper:SaveFactionRanks(self.pid, self)
+function BasePlayer:SaveJournal()
+    stateHelper:SaveJournal(self.pid, self)
 end
 
 function BasePlayer:LoadFactionRanks()
     stateHelper:LoadFactionRanks(self.pid, self)
 end
 
-function BasePlayer:SaveFactionExpulsion()
-    stateHelper:SaveFactionExpulsion(self.pid, self)
+function BasePlayer:SaveFactionRanks()
+    stateHelper:SaveFactionRanks(self.pid, self)
 end
 
 function BasePlayer:LoadFactionExpulsion()
     stateHelper:LoadFactionExpulsion(self.pid, self)
 end
 
-function BasePlayer:SaveFactionReputation()
-    stateHelper:SaveFactionReputation(self.pid, self)
+function BasePlayer:SaveFactionExpulsion()
+    stateHelper:SaveFactionExpulsion(self.pid, self)
 end
 
 function BasePlayer:LoadFactionReputation()
     stateHelper:LoadFactionReputation(self.pid, self)
 end
 
-function BasePlayer:SaveTopics()
-    stateHelper:SaveTopics(self.pid, self)
+function BasePlayer:SaveFactionReputation()
+    stateHelper:SaveFactionReputation(self.pid, self)
 end
 
 function BasePlayer:LoadTopics()
     stateHelper:LoadTopics(self.pid, self)
+end
+
+function BasePlayer:SaveTopics()
+    stateHelper:SaveTopics(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()
@@ -862,23 +908,24 @@ function BasePlayer:LoadMap()
     tes3mp.SendMapChanges(self.pid)
 end
 
-function BasePlayer:GetConsole(state)
-    return self.data.settings.consoleAllowed
-end
-
 function BasePlayer:GetDifficulty(state)
     return self.data.settings.difficulty
 end
 
-function BasePlayer:SetConsole(state)
-    if state == nil or state == "default" then
-        state = config.allowConsole
-        self.data.settings.consoleAllowed = "default"
-    else
-        self.data.settings.consoleAllowed = state
-    end
+function BasePlayer:GetConsoleAllowed(state)
+    return self.data.settings.consoleAllowed
+end
 
-    tes3mp.SetConsoleAllow(self.pid, state)
+function BasePlayer:GetBedRestAllowed(state)
+    return self.data.settings.bedRestAllowed
+end
+
+function BasePlayer:GetWildernessRestAllowed(state)
+    return self.data.settings.wildernessRestAllowed
+end
+
+function BasePlayer:GetWaitAllowed(state)
+    return self.data.settings.waitAllowed
 end
 
 function BasePlayer:SetDifficulty(difficulty)
@@ -893,6 +940,50 @@ function BasePlayer:SetDifficulty(difficulty)
     tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. self.pid)
 end
 
+function BasePlayer:SetConsoleAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowConsole
+        self.data.settings.consoleAllowed = "default"
+    else
+        self.data.settings.consoleAllowed = state
+    end
+
+    tes3mp.SetConsoleAllowed(self.pid, state)
+end
+
+function BasePlayer:SetBedRestAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowBedRest
+        self.data.settings.bedRestAllowed = "default"
+    else
+        self.data.settings.bedRestAllowed = state
+    end
+
+    tes3mp.SetBedRestAllowed(self.pid, state)
+end
+
+function BasePlayer:SetWildernessRestAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowWildernessRest
+        self.data.settings.wildernessRestAllowed = "default"
+    else
+        self.data.settings.wildernessRestAllowed = state
+    end
+
+    tes3mp.SetWildernessRestAllowed(self.pid, state)
+end
+
+function BasePlayer:SetWaitAllowed(state)
+    if state == nil or state == "default" then
+        state = config.allowWait
+        self.data.settings.waitAllowed = "default"
+    else
+        self.data.settings.waitAllowed = state
+    end
+
+    tes3mp.SetWaitAllowed(self.pid, state)
+end
+
 function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
@@ -902,8 +993,11 @@ end
 
 function BasePlayer:LoadSettings()
 
-    self:SetConsole(self.data.settings.consoleAllowed)
     self:SetDifficulty(self.data.settings.difficulty)
+    self:SetConsoleAllowed(self.data.settings.consoleAllowed)
+    self:SetBedRestAllowed(self.data.settings.bedRestAllowed)
+    self:SetWildernessRestAllowed(self.data.settings.wildernessRestAllowed)
+    self:SetWaitAllowed(self.data.settings.waitAllowed)
 
     tes3mp.SendSettings(self.pid)
 end

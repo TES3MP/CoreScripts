@@ -10,19 +10,28 @@ config.databaseType = "json"
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "consoleAllowed", "difficulty", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty", "consoleAllowed", "bedRestAllowed", "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index", "quest", "actorRefId"}
 
 -- Time to login, in seconds
 config.loginTime = 60
 
--- Whether players should be allowed to use the ingame tilde (~) console by default
-config.allowConsole = false
-
 -- The difficulty level used by default
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
 --       though you can use any integer value here
 config.difficulty = 0
+
+-- Whether players should be allowed to use the ingame tilde (~) console by default
+config.allowConsole = false
+
+-- Whether players should be allowed to rest in bed by default
+config.allowBedRest = true
+
+-- Whether players should be allowed to rest in the wilderness by default
+config.allowWildernessRest = true
+
+-- Whether players should be allowed to wait by default
+config.allowWait = true
 
 -- Whether journal entries should be shared across the players on the server or not
 config.shareJournal = true
@@ -69,6 +78,12 @@ config.respawnAtImperialShrine = true
 -- Note: When both this and the Imperial shrine option are enabled, there is a 50%
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
+
+-- The maximum value that any attribute is allowed to have
+config.maxAttributeValue = 150
+
+-- The maximum value that any skill is allowed to have
+config.maxSkillValue = 150
 
 -- The number of days spent in jail as a penalty for dying
 config.deathPenaltyJailDays = 5

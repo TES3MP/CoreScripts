@@ -5,6 +5,7 @@ local Methods = {}
 Players = {}
 LoadedCells = {}
 WorldInstance = nil
+ObjectLoops = {}
 
 Methods.InitializeWorld = function()
     WorldInstance = World()
@@ -63,7 +64,7 @@ Methods.GetChatName = function(pid)
     if Players[pid] ~= nil then
         return Players[pid].name .. " (" .. pid .. ")"
     else
-        return "Unlogged player " .. " (" .. pid .. ")"
+        return "Unlogged player (" .. pid .. ")"
     end
 end
 
@@ -365,6 +366,90 @@ Methods.AuthCheck = function(pid)
     return false
 end
 
+Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
+
+    local cell = tes3mp.GetCell(pid)
+    local location = {
+        posX = tes3mp.GetPosX(pid), posY = tes3mp.GetPosY(pid), posZ = tes3mp.GetPosZ(pid),
+        rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
+    }
+    local mpNum = WorldInstance:GetCurrentMpNum() + 1
+    local refIndex =  0 .. "-" .. mpNum
+
+    WorldInstance:SetCurrentMpNum(mpNum)
+    tes3mp.SetCurrentMpNum(mpNum)
+
+    LoadedCells[cell]:InitializeObjectData(refIndex, refId)
+    LoadedCells[cell].data.objectData[refIndex].location = location
+
+    if packetType == "place" then
+        table.insert(LoadedCells[cell].data.packets.place, refIndex)
+    elseif packetType == "spawn" then
+        table.insert(LoadedCells[cell].data.packets.spawn, refIndex)
+        table.insert(LoadedCells[cell].data.packets.actorList, refIndex)
+    end
+
+    LoadedCells[cell]:Save()
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(cell)
+    tes3mp.SetObjectRefId(refId)
+    tes3mp.SetObjectRefNumIndex(0)
+    tes3mp.SetObjectMpNum(mpNum)
+    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+    tes3mp.AddWorldObject()
+
+    if packetType == "place" then
+        tes3mp.SendObjectPlace(true)
+    elseif packetType == "spawn" then
+        tes3mp.SendObjectSpawn(true)
+    end
+end
+
+Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(Players[pid].data.location.cell)
+    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.SetPlayerAsObject(pid)
+    tes3mp.AddWorldObject()
+    tes3mp.SendConsoleCommand()
+end
+
+Methods.OnObjectLoopTimeExpiration = function(loopIndex)
+    if ObjectLoops[loopIndex] ~= nil then
+
+        local loop = ObjectLoops[loopIndex]
+        local pid = loop.targetPid
+        local loopEnded = false
+
+        if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and Players[pid].accountName == loop.targetName then
+        
+            if loop.packetType == "place" or loop.packetType == "spawn" then
+                Methods.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+            elseif loop.packetType == "console" then
+                Methods.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
+            end
+
+            loop.count = loop.count - 1
+
+            if loop.count > 0 then
+                ObjectLoops[loopIndex] = loop
+                tes3mp.RestartTimer(loop.timerId, loop.interval)
+            else
+                loopEnded = true
+            end
+        else
+            loopEnded = true
+        end
+
+        if loopEnded == true then
+            ObjectLoops[loopIndex] = nil
+        end
+    end
+end
+
 Methods.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:ProcessDeath()
@@ -529,6 +614,12 @@ Methods.OnPlayerSpellbook = function(pid)
         elseif action == actionTypes.spellbook.REMOVE then
             Players[pid]:RemoveSpells()
         end
+    end
+end
+
+Methods.OnPlayerQuickKeys = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        Players[pid]:SaveQuickKeys()
     end
 end
 

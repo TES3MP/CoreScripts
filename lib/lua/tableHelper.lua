@@ -29,6 +29,26 @@ function TableHelper.getTableFromCommaSplit(inputString)
     return newTable
 end
 
+-- Concatenate string values in a table, useful for printing the contents
+-- of certain tables, with an optional delimiter between values
+function TableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
+    local resultString = ""
+
+    if delimiter == nil then
+        delimiter = " "
+    end
+
+    for i = startIndex, #inputTable do
+        resultString = resultString .. t[i]
+
+        if i ~= #inputTable then
+            resultString = resultString .. delimiter
+        end
+    end
+
+    return resultString
+end
+
 -- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
 function TableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkNestedTables)
@@ -65,6 +85,16 @@ function TableHelper.insertValueIfMissing(inputTable, value)
     if TableHelper.containsValue(inputTable, value, false) == false then
         table.insert(inputTable, value)
     end
+end
+
+function TableHelper.getUnusedNumericalIndex(inputTable)
+    local i = 1
+    
+    while inputTable[i] ~= nil do
+        i = i + 1
+    end
+
+    return i
 end
 
 function TableHelper.getIndexByPattern(inputTable, patternToFind)
