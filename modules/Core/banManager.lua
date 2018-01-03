@@ -14,7 +14,7 @@ BanManager.loadBanList = function(filePath)
     if FileUtils.doesFileExist(filePath) == false then
         logMessage(Log.LOG_INFO, "Could not find banlist at " .. filePath)
         logAppend(Log.LOG_INFO, "- Creating new banlist")
-        BanManager.saveBanlist()
+        BanManager.saveBanList()
         return
     end
 
