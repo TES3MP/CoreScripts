@@ -1,38 +1,61 @@
-local tableHelper = {};
+local tableHelper = {}
 
-function tableHelper.getCount(t)
+-- Swap keys with their values in a table, allowing for the easy creation of tables similar to enums
+function tableHelper.enum(inputTable)
+    local newTable = {}
+    for key, value in ipairs(inputTable) do
+        newTable[value] = key
+    end
+    return newTable
+end
+
+function tableHelper.getCount(inputTable)
     local count = 0
-    for key in pairs(t) do count = count + 1 end
+    for key in pairs(inputTable) do count = count + 1 end
     return count
 end
 
-function tableHelper.concatenateFromIndex(t, index, delimiter)
-    local string = ""
+-- Iterate through comma-separated values in a string and turn them into table values
+function tableHelper.getTableFromCommaSplit(inputString)
+
+    local newTable = {}
+
+    for value in string.gmatch(inputString, DefaultPatterns.commaSplit) do
+        table.insert(newTable, value)
+    end
+
+    return newTable
+end
+
+-- Concatenate string values in a table, useful for printing the contents
+-- of certain tables, with an optional delimiter between values
+function tableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
+    local resultString = ""
 
     if delimiter == nil then
         delimiter = " "
     end
 
-    for i = index, #t do
-        string = string .. t[i]
+    for i = startIndex, #inputTable do
+        resultString = resultString .. t[i]
 
-        if i ~= #t then
-            string = string .. delimiter
+        if i ~= #inputTable then
+            resultString = resultString .. delimiter
         end
     end
 
-    return string
+    return resultString
 end
 
 -- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
-function tableHelper.containsKeyValue(t, keyToFind, valueToFind, checkNestedTables)
-    if t[keyToFind] ~= nil then
-        if t[keyToFind] == valueToFind then
+function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkNestedTables)
+    if inputTable[keyToFind] ~= nil then
+        if inputTable[keyToFind] == valueToFind then
             return true
         end
     elseif checkNestedTables == true then
-        for key, value in pairs(t) do
+        for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValue(value, keyToFind, valueToFind, true) then
                 return true
             end
@@ -43,8 +66,8 @@ end
 
 -- Check whether a table contains a certain value, optionally checking inside
 -- nested tables
-function tableHelper.containsValue(t, valueToFind, checkNestedTables)
-    for key, value in pairs(t) do
+function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
+    for key, value in pairs(inputTable) do
         if checkNestedTables == true and type(value) == "table" then
             if tableHelper.containsValue(value, valueToFind, true) == true then
                 return true
@@ -56,24 +79,24 @@ function tableHelper.containsValue(t, valueToFind, checkNestedTables)
     return false
 end
 
-function tableHelper.insertValueIfMissing(t, value)
-    if tableHelper.containsValue(t, value, false) == false then
-        table.insert(t, value)
+function tableHelper.insertValueIfMissing(inputTable, value)
+    if tableHelper.containsValue(inputTable, value, false) == false then
+        table.insert(inputTable, value)
     end
 end
 
-function tableHelper.getUnusedNumericalIndex(t)
+function tableHelper.getUnusedNumericalIndex(inputTable)
     local i = 1
     
-    while t[i] ~= nil do
+    while inputTable[i] ~= nil do
         i = i + 1
     end
 
     return i
 end
 
-function tableHelper.getIndexByPattern(t, patternToFind)
-    for key, value in pairs(t) do
+function tableHelper.getIndexByPattern(inputTable, patternToFind)
+    for key, value in pairs(inputTable) do
         if string.match(value, patternToFind) ~= nil then
             return key
         end
@@ -81,8 +104,8 @@ function tableHelper.getIndexByPattern(t, patternToFind)
     return nil
 end
 
-function tableHelper.getIndexByNestedKeyValue(t, keyToFind, valueToFind)
-    for key, value in pairs(t) do
+function tableHelper.getIndexByNestedKeyValue(inputTable, keyToFind, valueToFind)
+    for key, value in pairs(inputTable) do
         if type(value) == "table" then
             if tableHelper.containsKeyValue(value, keyToFind, valueToFind) == true then
                 return key
@@ -96,37 +119,37 @@ end
 -- (useful for numerical arrays because they retain nil values)
 --
 -- Based on http://stackoverflow.com/a/28302975
-function tableHelper.cleanNils(t)
+function tableHelper.cleanNils(inputTable)
 
     local newTable = {}
     
-    for key, value in pairs(t) do
+    for key, value in pairs(inputTable) do
         if type(value) == "table" then
             tableHelper.cleanNils(value)
         end
         
         if type(key) == "number" then
             newTable[#newTable + 1] = value
-            t[key] = nil
+            inputTable[key] = nil
         end
     end
 
-    tableHelper.merge(t, newTable)
+    tableHelper.merge(inputTable, newTable)
 end
 
 -- Set values to nil here instead of using table.remove(), so this method can be used on
 -- a table while iterating through it
-function tableHelper.removeValue(t, valueToFind)
+function tableHelper.removeValue(inputTable, valueToFind)
 
-    tableHelper.replaceValue(t, valueToFind, nil)
+    tableHelper.replaceValue(inputTable, valueToFind, nil)
 end
 
-function tableHelper.replaceValue(t, valueToFind, newValue)
-    for key, value in pairs(t) do
+function tableHelper.replaceValue(inputTable, valueToFind, newValue)
+    for key, value in pairs(inputTable) do
         if type(value) == "table" then
             tableHelper.replaceValue(value, valueToFind, newValue)
         elseif value == valueToFind then
-            t[key] = newValue
+            inputTable[key] = newValue
         end
     end
 end
@@ -150,11 +173,11 @@ end
 
 -- Converts string keys containing numbers into numerical keys,
 -- useful for JSON tables
-function tableHelper.fixNumericalKeys(t)
+function tableHelper.fixNumericalKeys(inputTable)
 
     local newTable = {}
 
-    for key, value in pairs(t) do
+    for key, value in pairs(inputTable) do
 
         if type(value) == "table" then
             tableHelper.fixNumericalKeys(value)
@@ -162,22 +185,22 @@ function tableHelper.fixNumericalKeys(t)
 
         if type(key) ~= "number" and type(tonumber(key)) == "number" then
             newTable[tonumber(key)] = value
-            t[key] = nil
+            inputTable[key] = nil
         end
     end
 
-    tableHelper.merge(t, newTable)
+    tableHelper.merge(inputTable, newTable)
 end
 
 -- Checks whether the table contains only numerical keys, though they
 -- don't have to be consecutive
-function tableHelper.usesNumericalKeys(t)
+function tableHelper.usesNumericalKeys(inputTable)
 
-    if tableHelper.getCount(t) == 0 then
+    if tableHelper.getCount(inputTable) == 0 then
         return false
     end
 
-    for key, value in pairs(t) do
+    for key, value in pairs(inputTable) do
         if type(key) ~= "number" then
             return false
         end
@@ -187,13 +210,13 @@ function tableHelper.usesNumericalKeys(t)
 end
 
 -- Checks whether the table contains only numerical values
-function tableHelper.usesNumericalValues(t)
+function tableHelper.usesNumericalValues(inputTable)
 
-    if tableHelper.getCount(t) == 0 then
+    if tableHelper.getCount(inputTable) == 0 then
         return false
     end
 
-    for key, value in pairs(t) do
+    for key, value in pairs(inputTable) do
         if type(value) ~= "number" then
             return false
         end
@@ -203,8 +226,8 @@ function tableHelper.usesNumericalValues(t)
 end
 
 -- Checks whether there are any items in the table
-function tableHelper.isEmpty(t)
-    if next(t) == nil then
+function tableHelper.isEmpty(inputTable)
+    if next(inputTable) == nil then
         return true
     end
 
@@ -214,36 +237,36 @@ end
 -- Checks whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
-function tableHelper.isArray(t)
-    local i = 0
-    for _ in pairs(t) do
-        i = i + 1
-        if t[i] == nil then return false end
+function tableHelper.isArray(inputTable)
+    local index = 0
+    for _ in pairs(inputTable) do
+        index = index + 1
+        if inputTable[index] == nil then return false end
     end
     return true
 end
 
 -- Based on http://lua-users.org/wiki/CopyTable
-function tableHelper.shallowCopy(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == 'table' then
-        copy = {}
-        for orig_key, orig_value in pairs(orig) do
-            copy[orig_key] = orig_value
+function tableHelper.shallowCopy(inputTable)
+    local inputType = type(inputTable)
+    local newTable
+    if inputType == 'table' then
+        newTable = {}
+        for key, value in pairs(inputTable) do
+            newTable[key] = value
         end
     else -- number, string, boolean, etc
-        copy = orig
+        newTable = inputTable
     end
-    return copy
+    return newTable
 end
 
 -- Based on http://stackoverflow.com/a/13398936
-function tableHelper.print(t, indentLevel)
+function tableHelper.print(inputTable, indentLevel)
     local str = ""
     local indentStr = "#"
 
-    if (t == nil) then
+    if (inputTable == nil) then
         return
     end
 
@@ -256,7 +279,7 @@ function tableHelper.print(t, indentLevel)
         indentStr = indentStr .. "\t"
     end
 
-    for index, value in pairs(t) do
+    for index, value in pairs(inputTable) do
         str = str .. indentStr .. index
 
         if type(value) == "boolean" then
