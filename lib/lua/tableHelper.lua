@@ -173,11 +173,17 @@ function TableHelper.merge(t1, t2)
     end
 end
 
--- Converts string keys containing numbers into numerical keys,
--- useful for JSON tables
-function TableHelper.fixNumericalKeys(inputTable)
+-- Because Lua arrays start from index 1, the fixZeroStart argument
+-- can be set to true to increment all of the keys by 1 in tables that
+-- start from 0
+function TableHelper.fixNumericalKeys(inputTable, fixZeroStart)
 
     local newTable = {}
+    local incrementKeys = false
+
+    if inputTable["0"] ~= nil and fixZeroStart then
+        incrementKeys = true
+    end
 
     for key, value in pairs(inputTable) do
 
@@ -186,6 +192,11 @@ function TableHelper.fixNumericalKeys(inputTable)
         end
 
         if type(key) ~= "number" and type(tonumber(key)) == "number" then
+
+            if incrementKeys then
+                key = key + 1
+            end
+
             newTable[tonumber(key)] = value
             inputTable[key] = nil
         end
