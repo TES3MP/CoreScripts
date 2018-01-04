@@ -148,17 +148,20 @@ end
 function LoadPluginList()
     tes3mp.LogMessage(2, "Reading pluginlist.json")
 
-    local pluginList2 = jsonInterface.load("pluginlist.json")
-    for idx, pl in pairs(pluginList2) do
-        idx = tonumber(idx) + 1
-        for n, h in pairs(pl) do
-            pluginList[idx] = {n}
-            io.write(("%d, {%s"):format(idx, n))
-            for _, v in ipairs(h) do
-                io.write((", %X"):format(tonumber(v, 16)))
-                table.insert(pluginList[idx], tonumber(v, 16))
+    local jsonPluginList = jsonInterface.load("pluginlist.json")
+
+    -- Fix numerical keys to print plugins in the correct order
+    tableHelper.fixNumericalKeys(jsonPluginList, true)
+
+    for listIndex, pluginEntry in ipairs(jsonPluginList) do
+        for entryIndex, hashArray in pairs(pluginEntry) do
+            pluginList[listIndex] = {entryIndex}
+            io.write(("%d, {%s"):format(listIndex, entryIndex))
+            for _, hash in ipairs(hashArray) do
+                io.write((", %X"):format(tonumber(hash, 16)))
+                table.insert(pluginList[listIndex], tonumber(hash, 16))
             end
-            table.insert(pluginList[idx], "")
+            table.insert(pluginList[listIndex], "")
             io.write("}\n")
         end
     end
