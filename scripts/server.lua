@@ -220,9 +220,12 @@ function OnServerInit()
 
     LoadBanList()
     LoadPluginList()
+
+    tes3mp.SetPluginEnforcementState(config.enforcePlugins)
 end
 
 function OnServerPostInit()
+
     local consoleRuleString = "allowed"
     if not config.allowConsole then
         consoleRuleString = "not " .. consoleRuleString
@@ -243,6 +246,7 @@ function OnServerPostInit()
         waitRuleString = "not " .. waitRuleString
     end
 
+    tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
     tes3mp.SetRuleString("console", consoleRuleString)
     tes3mp.SetRuleString("bedResting", bedRestRuleString)
