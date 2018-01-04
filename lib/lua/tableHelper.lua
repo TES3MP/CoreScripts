@@ -37,7 +37,7 @@ function tableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
     end
 
     for i = startIndex, #inputTable do
-        resultString = resultString .. t[i]
+        resultString = resultString .. inputTable[i]
 
         if i ~= #inputTable then
             resultString = resultString .. delimiter
@@ -157,16 +157,16 @@ end
 -- Add a 2nd table's key/value pairs to the 1st table
 --
 -- Based on http://stackoverflow.com/a/1283608
-function tableHelper.merge(t1, t2)
-    for key, value in pairs(t2) do
+function tableHelper.merge(mainTable, addedTable)
+    for key, value in pairs(addedTable) do
         if type(value) == "table" then
-            if type(t1[key] or false) == "table" then
-                tableHelper.merge(t1[key] or {}, t2[key] or {})
+            if type(mainTable[key] or false) == "table" then
+                tableHelper.merge(mainTable[key] or {}, addedTable[key] or {})
             else
-                t1[key] = value
+                mainTable[key] = value
             end
         else
-            t1[key] = value
+            mainTable[key] = value
         end
     end
 end
