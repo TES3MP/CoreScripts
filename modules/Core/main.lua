@@ -17,7 +17,7 @@ function loadPluginList()
     local jsonPluginList = JsonInterface.load(getDataFolder() .. "pluginlist.json")
 
     -- Fix numerical keys to print plugins in the correct order
-    TableHelper.fixNumericalKeys(jsonPluginList)
+    TableHelper.fixNumericalKeys(jsonPluginList, true)
 
     for listIndex, pluginEntry in ipairs(jsonPluginList) do
         for entryIndex, hashArray in pairs(pluginEntry) do

@@ -7,7 +7,7 @@
 // English edition
 
 {    
-    "1": {"Morrowind.esm": ["0x7B6AF5B9", "0x34282D67"]},
-    "2": {"Tribunal.esm": ["0xF481F334", "0x211329EF"]},
-    "3": {"Bloodmoon.esm": ["0x43DD2132", "0x9EB62F26"]}
+    "0": {"Morrowind.esm": ["0x7B6AF5B9", "0x34282D67"]},
+    "1": {"Tribunal.esm": ["0xF481F334", "0x211329EF"]},
+    "2": {"Bloodmoon.esm": ["0x43DD2132", "0x9EB62F26"]}
 }

@@ -173,6 +173,9 @@ function TableHelper.merge(t1, t2)
     end
 end
 
+-- Converts string keys containing numbers into numerical keys,
+-- useful for JSON tables
+--
 -- Because Lua arrays start from index 1, the fixZeroStart argument
 -- can be set to true to increment all of the keys by 1 in tables that
 -- start from 0
