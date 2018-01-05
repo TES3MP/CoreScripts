@@ -539,13 +539,18 @@ function BasePlayer:SaveSkills()
 
         local baseValue = tes3mp.GetSkillBase(self.pid, skillId)
         local modifierValue = tes3mp.GetSkillModifier(self.pid, skillId)
+        local maxSkillValue = config.maxSkillValue
 
-        if baseValue > config.maxSkillValue then
+        if name == "Acrobatics" then
+            maxSkillValue = config.maxAcrobaticsValue
+        end
+
+        if baseValue > maxSkillValue then
             self:LoadSkills()
 
             local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
-        elseif (baseValue + modifierValue) > config.maxSkillValue then
+        elseif (baseValue + modifierValue) > maxSkillValue then
             tes3mp.ClearSkillModifier(self.pid, skillId)
             tes3mp.SendSkills(self.pid)
 
