@@ -84,7 +84,7 @@ Event.register(Events.ON_POST_INIT, function()
 end)
 
 Event.register(Events.ON_PLAYER_CONNECT, function(player)
-    player:getSettings():setConsoleAllow(Config.Core.allowConsole)
+    player:getSettings():setConsoleAllowed(Config.Core.allowConsole)
     player:getSettings():setDifficulty(Config.Core.difficulty)
 
     -- Todo: Make this actually change the player's name permanently
