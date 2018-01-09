@@ -194,11 +194,13 @@ function tableHelper.fixNumericalKeys(inputTable, fixZeroStart)
 
         if type(key) ~= "number" and type(tonumber(key)) == "number" then
 
+            local newKey = tonumber(key)
+
             if incrementKeys then
-                key = key + 1
+                newKey = newKey + 1
             end
 
-            newTable[tonumber(key)] = value
+            newTable[newKey] = value
             inputTable[key] = nil
         end
     end
