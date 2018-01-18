@@ -1,5 +1,7 @@
 require("actionTypes")
 local time = require("time")
+questFixer = require("questFixer")
+
 local Methods = {}
 
 Players = {}
@@ -495,10 +497,15 @@ end
 
 Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        Players[pid]:SaveCell()
-        Players[pid]:SaveStatsDynamic()
-        tes3mp.LogMessage(1, "Saving player " .. pid)
-        Players[pid]:Save()
+
+        if questFixer.ValidateCellChange(pid) then
+            Players[pid]:SaveCell()
+            Players[pid]:SaveStatsDynamic()
+            tes3mp.LogMessage(1, "Saving player " .. pid)
+            Players[pid]:Save()
+        else
+            Players[pid]:LoadCell()
+        end
     end
 end
 
