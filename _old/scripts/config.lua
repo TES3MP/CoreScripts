@@ -79,13 +79,18 @@ config.respawnAtImperialShrine = true
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
 
--- The maximum value that any attribute is allowed to have
+-- The maximum value that any attribute except Speed is allowed to have
 config.maxAttributeValue = 150
+
+-- The maximum value that Speed is allowed to have
+-- Note: Speed is given special treatment because of the Boots of Blinding Speed
+config.maxSpeedValue = 365
 
 -- The maximum value that any skill except Acrobatics is allowed to have
 config.maxSkillValue = 150
 
 -- The maximum value that Acrobatics is allowed to have
+-- Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
 config.maxAcrobaticsValue = 1200
 
 -- The number of days spent in jail as a penalty for dying

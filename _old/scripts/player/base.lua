@@ -497,13 +497,18 @@ function BasePlayer:SaveAttributes()
 
         local baseValue = tes3mp.GetAttributeBase(self.pid, attributeId)
         local modifierValue = tes3mp.GetAttributeModifier(self.pid, attributeId)
+        local maxAttributeValue = config.maxAttributeValue
 
-        if baseValue > config.maxAttributeValue then
+        if name == "Speed" then
+            maxAttributeValue = config.maxSpeedValue
+        end
+
+        if baseValue > maxAttributeValue then
             self:LoadAttributes()
 
             local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
-        elseif (baseValue + modifierValue) > config.maxAttributeValue then
+        elseif (baseValue + modifierValue) > maxAttributeValue then
             tes3mp.ClearAttributeModifier(self.pid, attributeId)
             tes3mp.SendAttributes(self.pid)
 
