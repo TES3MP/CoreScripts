@@ -504,6 +504,9 @@ Methods.OnPlayerCellChange = function(pid)
             tes3mp.LogMessage(1, "Saving player " .. pid)
             Players[pid]:Save()
         else
+            Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
+            Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
+            Players[pid].data.location.posZ = tes3mp.GetPreviousCellPosZ(pid)
             Players[pid]:LoadCell()
         end
     end
