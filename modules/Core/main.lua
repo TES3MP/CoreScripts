@@ -1,4 +1,5 @@
 require("color")
+require("equipmentSlots")
 
 DefaultPatterns = require("defaultPatterns")
 FileUtils = require("fileUtils")
