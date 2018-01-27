@@ -375,6 +375,10 @@ function BasePlayer:Resurrect()
         self:SetWerewolfState(false)
     end
 
+    -- Ensure that we unequip deadly items when applicable, to prevent an
+    -- infinite death loop
+    questFixer.UnequipDeadlyItems(self.pid)
+
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
