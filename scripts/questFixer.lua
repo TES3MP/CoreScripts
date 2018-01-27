@@ -43,6 +43,12 @@ function questFixer.ValidateCellChange(pid)
     return true
 end
 
+-- Unequip items that damage the player when worn
+--
+-- Note: Items with constant damage effects like Whitewalker and the Mantle of Woe
+--       are already unequipped by default in the TES3MP client, so this only needs
+--       to account for scripted items that are missed there
+--
 function questFixer.UnequipDeadlyItems(pid)
 
     local itemsFound = 0
