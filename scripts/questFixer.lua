@@ -50,9 +50,7 @@ function questFixer.UnequipDeadlyItems(pid)
     for arrayIndex, itemRefId in pairs(deadlyItems) do
         if tableHelper.containsKeyValue(Players[pid].data.equipment, "refId", itemRefId, true) then
             local itemSlot = tableHelper.getIndexByNestedKeyValue(Players[pid].data.equipment, "refId", itemRefId, true)
-            tableHelper.print(Players[pid].data.equipment)
             Players[pid].data.equipment[itemSlot] = nil
-            tableHelper.print(Players[pid].data.equipment)
             itemsFound = itemsFound + 1
         end
     end
