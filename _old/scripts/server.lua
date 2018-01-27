@@ -861,6 +861,8 @@ function OnPlayerSendMessage(pid, message)
 
                 local targetPid = tonumber(cmd[2])
                 Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
+
+                tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid, false)
             end
 
         elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
@@ -869,7 +871,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetPid = tonumber(cmd[2])
 
                 if Players[targetPid].storedConsoleCommand == nil then
-                    tes3mp.SendMessage(pid, "There is no console command stored for player " .. pid .. ". Please run /storeconsole on them first.\n", false)
+                    tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid .. ". Please run /storeconsole on them first.\n", false)
                 else
                     local consoleCommand = Players[targetPid].storedConsoleCommand
                     myMod.RunConsoleCommandOnPlayer(targetPid, consoleCommand)

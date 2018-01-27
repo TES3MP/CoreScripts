@@ -375,6 +375,10 @@ function BasePlayer:Resurrect()
         self:SetWerewolfState(false)
     end
 
+    -- Ensure that we unequip deadly items when applicable, to prevent an
+    -- infinite death loop
+    questFixer.UnequipDeadlyItems(self.pid)
+
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
@@ -646,22 +650,17 @@ function BasePlayer:SaveCell()
 
     local cell = tes3mp.GetCell(self.pid)
 
-    if cell == "Seyda Neen, Census and Excise Office" then
-        self:LoadCell()
-        tes3mp.MessageBox(self.pid, -1, "The default character generation is not compatible with multiplayer.")
-    else
-        self.data.location.cell = cell
-        self.data.location.posX = tes3mp.GetPosX(self.pid)
-        self.data.location.posY = tes3mp.GetPosY(self.pid)
-        self.data.location.posZ = tes3mp.GetPosZ(self.pid)
-        self.data.location.rotX = tes3mp.GetRotX(self.pid)
-        self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
+    self.data.location.cell = cell
+    self.data.location.posX = tes3mp.GetPosX(self.pid)
+    self.data.location.posY = tes3mp.GetPosY(self.pid)
+    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
+    self.data.location.rotX = tes3mp.GetRotX(self.pid)
+    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 
-        if tes3mp.IsInExterior(self.pid) == true then
+    if tes3mp.IsInExterior(self.pid) == true then
 
-            if tableHelper.containsValue(self.data.mapExplored, cell) == false then
-                table.insert(self.data.mapExplored, cell)
-            end
+        if tableHelper.containsValue(self.data.mapExplored, cell) == false then
+            table.insert(self.data.mapExplored, cell)
         end
     end
 end

@@ -1,8 +1,11 @@
 require("actionTypes")
 require("patterns")
+require("utils")
+
+questFixer = require("questFixer")
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
-require("utils")
+
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
@@ -77,6 +80,9 @@ function BaseCell:AddVisitor(pid)
         end
 
         if shouldSendInfo == true then
+            -- First, fix whatever quest problems exist in this cell
+            questFixer.FixCell(pid, self.description)
+
             self:SendInitialCellData(pid)
         end
 
