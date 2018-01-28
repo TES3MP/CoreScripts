@@ -46,7 +46,9 @@ function BasePlayer:__init(pid, playerName)
             magickaBase = 1,
             magickaCurrent = 1,
             fatigueBase = 1,
-            fatigueCurrent = 1,
+            fatigueCurrent = 1
+        },
+        fame = {
             bounty = 0
         },
         customClass = {},
@@ -589,12 +591,22 @@ function BasePlayer:SaveLevel()
 end
 
 function BasePlayer:LoadBounty()
-    tes3mp.SetBounty(self.pid, self.data.stats.bounty)
+    -- Update players to new bounty location
+    if self.data.fame == nil then
+        self.data.fame = { bounty = 0 }
+    end
+
+    if self.data.stats.bounty ~= nil then
+        self.data.fame.bounty = self.data.stats.bounty
+        self.data.stats.bounty = nil
+    end
+
+    tes3mp.SetBounty(self.pid, self.data.fame.bounty)
     tes3mp.SendBounty(self.pid)
 end
 
 function BasePlayer:SaveBounty()
-    self.data.stats.bounty = tes3mp.GetBounty(self.pid)
+    self.data.fame.bounty = tes3mp.GetBounty(self.pid)
 end
 
 function BasePlayer:LoadShapeshift()
