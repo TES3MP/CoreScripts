@@ -1005,10 +1005,6 @@ function OnPlayerLevel(pid)
     myMod.OnPlayerLevel(pid)
 end
 
-function OnPlayerBounty(pid)
-    myMod.OnPlayerBounty(pid)
-end
-
 function OnPlayerShapeshift(pid)
     myMod.OnPlayerShapeshift(pid)
 end
@@ -1043,6 +1039,10 @@ end
 
 function OnPlayerTopic(pid)
     myMod.OnPlayerTopic(pid)
+end
+
+function OnPlayerBounty(pid)
+    myMod.OnPlayerBounty(pid)
 end
 
 function OnPlayerKillCount(pid)

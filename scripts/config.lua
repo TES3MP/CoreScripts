@@ -48,6 +48,9 @@ config.shareFactionReputation = true
 -- Whether dialogue topics should be shared across the players on the server or not
 config.shareTopics = true
 
+-- Whether crime bounties should be shared across players on the server or not
+config.shareBounty = false
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 

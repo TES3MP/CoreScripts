@@ -99,6 +99,22 @@ function StateHelper:LoadTopics(pid, stateObject)
     tes3mp.SendTopicChanges(pid)
 end
 
+function StateHelper:LoadBounty(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = { bounty = 0 }
+    end
+
+    -- Update old player files to the new format
+    if stateObject.data.stats ~= nil and stateObject.data.stats.bounty ~= nil then
+        stateObject.data.fame.bounty = stateObject.data.stats.bounty
+        stateObject.data.stats.bounty = nil
+    end
+
+    tes3mp.SetBounty(pid, stateObject.data.fame.bounty)
+    tes3mp.SendBounty(pid)
+end
+
 function StateHelper:SaveJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -125,7 +141,7 @@ function StateHelper:SaveJournal(pid, stateObject)
 
         if journalItem.quest == "a1_1_findspymaster" and journalItem.index >= 14 then
             stateObject.data.customVariables.deliveredCaiusPackage = true
-        end 
+        end
     end
 
     stateObject:Save()
@@ -190,6 +206,17 @@ function StateHelper:SaveTopics(pid, stateObject)
             table.insert(stateObject.data.topics, topicId)
         end
     end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveBounty(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = {}
+    end    
+
+    stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
 
     stateObject:Save()
 end

@@ -135,7 +135,6 @@ function BasePlayer:FinishLogin()
         self:LoadAttributes()
         self:LoadSkills()
         self:LoadStatsDynamic()
-        self:LoadBounty()
         self:LoadCell()
         self:LoadInventory()
         self:LoadEquipment()
@@ -174,6 +173,12 @@ function BasePlayer:FinishLogin()
             WorldInstance:LoadTopics(self.pid)
         else
             self:LoadTopics()
+        end
+
+        if config.shareBounty == true then
+            WorldInstance:LoadBounty(self.pid)
+        else
+            self:LoadBounty()
         end
 
         WorldInstance:LoadKills(self.pid)
@@ -590,25 +595,6 @@ function BasePlayer:SaveLevel()
     self.data.stats.level = tes3mp.GetLevel(self.pid)
 end
 
-function BasePlayer:LoadBounty()
-    -- Update players to new bounty location
-    if self.data.fame == nil then
-        self.data.fame = { bounty = 0 }
-    end
-
-    if self.data.stats.bounty ~= nil then
-        self.data.fame.bounty = self.data.stats.bounty
-        self.data.stats.bounty = nil
-    end
-
-    tes3mp.SetBounty(self.pid, self.data.fame.bounty)
-    tes3mp.SendBounty(self.pid)
-end
-
-function BasePlayer:SaveBounty()
-    self.data.fame.bounty = tes3mp.GetBounty(self.pid)
-end
-
 function BasePlayer:LoadShapeshift()
 
     if self.data.shapeshift == nil then
@@ -882,6 +868,14 @@ end
 
 function BasePlayer:SaveTopics()
     stateHelper:SaveTopics(self.pid, self)
+end
+
+function BasePlayer:LoadBounty()
+    stateHelper:LoadBounty(self.pid, self)
+end
+
+function BasePlayer:SaveBounty()
+    stateHelper:SaveBounty(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()
