@@ -1045,6 +1045,10 @@ function OnPlayerBounty(pid)
     myMod.OnPlayerBounty(pid)
 end
 
+function OnPlayerReputation(pid)
+    myMod.OnPlayerReputation(pid)
+end
+
 function OnPlayerKillCount(pid)
     myMod.OnPlayerKillCount(pid)
 end

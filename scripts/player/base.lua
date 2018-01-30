@@ -49,7 +49,8 @@ function BasePlayer:__init(pid, playerName)
             fatigueCurrent = 1
         },
         fame = {
-            bounty = 0
+            bounty = 0,
+            reputation = 0
         },
         customClass = {},
         attributes = {},
@@ -179,6 +180,12 @@ function BasePlayer:FinishLogin()
             WorldInstance:LoadBounty(self.pid)
         else
             self:LoadBounty()
+        end
+
+        if config.shareReputation == true then
+            WorldInstance:LoadReputation(self.pid)
+        else
+            self:LoadReputation()
         end
 
         WorldInstance:LoadKills(self.pid)
@@ -876,6 +883,14 @@ end
 
 function BasePlayer:SaveBounty()
     stateHelper:SaveBounty(self.pid, self)
+end
+
+function BasePlayer:LoadReputation()
+    stateHelper:LoadReputation(self.pid, self)
+end
+
+function BasePlayer:SaveReputation()
+    stateHelper:SaveReputation(self.pid, self)
 end
 
 function BasePlayer:LoadBooks()

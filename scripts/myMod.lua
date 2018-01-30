@@ -708,6 +708,18 @@ Methods.OnPlayerBounty = function(pid)
     end
 end
 
+Methods.OnPlayerReputation = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        if config.shareReputation == true then
+            WorldInstance:SaveReputation(pid)
+            tes3mp.SendReputation(pid, true)
+        else
+            Players[pid]:SaveReputation()
+        end
+    end
+end
+
 Methods.OnPlayerKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveKills(pid)

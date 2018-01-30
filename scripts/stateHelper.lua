@@ -102,7 +102,9 @@ end
 function StateHelper:LoadBounty(pid, stateObject)
 
     if stateObject.data.fame == nil then
-        stateObject.data.fame = { bounty = 0 }
+        stateObject.data.fame = { bounty = 0, reputation = 0 }
+    elseif stateObject.data.fame.bounty == nil then
+        stateObject.data.fame.bounty = 0
     end
 
     -- Update old player files to the new format
@@ -113,6 +115,18 @@ function StateHelper:LoadBounty(pid, stateObject)
 
     tes3mp.SetBounty(pid, stateObject.data.fame.bounty)
     tes3mp.SendBounty(pid)
+end
+
+function StateHelper:LoadReputation(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = { bounty = 0, reputation = 0 }
+    elseif stateObject.data.fame.reputation == nil then
+        stateObject.data.fame.reputation = 0
+    end
+
+    tes3mp.SetReputation(pid, stateObject.data.fame.reputation)
+    tes3mp.SendReputation(pid)
 end
 
 function StateHelper:SaveJournal(pid, stateObject)
@@ -217,6 +231,17 @@ function StateHelper:SaveBounty(pid, stateObject)
     end    
 
     stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveReputation(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = {}
+    end    
+
+    stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
 
     stateObject:Save()
 end

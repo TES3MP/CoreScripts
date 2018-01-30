@@ -9,7 +9,8 @@ function BaseWorld:__init(test)
             currentMpNum = 0
         },
         fame = {
-            bounty = 0
+            bounty = 0,
+            reputation = 0
         },
         journal = {},
         factionRanks = {},
@@ -58,6 +59,10 @@ function BaseWorld:LoadBounty(pid)
     stateHelper:LoadBounty(pid, self)
 end
 
+function BaseWorld:LoadReputation(pid)
+    stateHelper:LoadReputation(pid, self)
+end
+
 function BaseWorld:LoadKills(pid)
 
     tes3mp.InitializeKillChanges(pid)
@@ -92,6 +97,10 @@ end
 
 function BaseWorld:SaveBounty(pid)
     stateHelper:SaveBounty(pid, self)
+end
+
+function BaseWorld:SaveReputation(pid)
+    stateHelper:SaveReputation(pid, self)
 end
 
 function BaseWorld:SaveKills(pid)

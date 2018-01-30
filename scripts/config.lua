@@ -51,6 +51,9 @@ config.shareTopics = true
 -- Whether crime bounties should be shared across players on the server or not
 config.shareBounty = false
 
+-- Whether reputation should be shared across players on the server or not
+config.shareReputation = true
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 
