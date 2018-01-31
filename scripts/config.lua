@@ -102,6 +102,13 @@ config.maxAcrobaticsValue = 1200
 -- The number of days spent in jail as a penalty for dying
 config.deathPenaltyJailDays = 5
 
+-- Whether players' bounties are reset to 0 after dying
+config.bountyResetOnDeath = false
+
+-- Whether players spend time in jail proportional to their bounty after dying
+-- Note: Requires bountyResetOnDeath to be enabled
+config.bountyDeathPenalty = false
+
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
 
