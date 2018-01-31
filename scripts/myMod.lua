@@ -732,6 +732,16 @@ Methods.OnPlayerBook = function(pid)
     end
 end
 
+Methods.OnPlayerMiscellaneous = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        local changeType = tes3mp.GetMiscellaneousChangeType(pid)
+
+        if changeType == actionTypes.miscellaneous.MARK_LOCATION then
+            Players[pid]:SaveMarkLocation()
+        end
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)

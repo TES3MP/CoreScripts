@@ -1057,6 +1057,10 @@ function OnPlayerBook(pid)
     myMod.OnPlayerBook(pid)
 end
 
+function OnPlayerMiscellaneous(pid)
+    myMod.OnPlayerMiscellaneous(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     myMod.OnPlayerEndCharGen(pid)
 end

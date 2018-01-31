@@ -52,6 +52,16 @@ function BasePlayer:__init(pid, playerName)
             bounty = 0,
             reputation = 0
         },
+        miscellaneous = {
+            markLocation = {
+                cell = "",
+                posX = 0,
+                posY = 0,
+                posZ = 0,
+                rotX = 0,
+                rotZ = 0
+            }
+        },
         customClass = {},
         attributes = {},
         attributeSkillIncreases = {},
@@ -144,6 +154,7 @@ function BasePlayer:FinishLogin()
         self:LoadBooks()
         --self:LoadMap()
         self:LoadShapeshift()
+        self:LoadMarkLocation()
         self:LoadSettings()
 
         if config.shareJournal == true then
@@ -920,6 +931,37 @@ function BasePlayer:AddBooks()
             table.insert(self.data.books, bookId)
         end
     end
+end
+
+function BasePlayer:LoadMarkLocation()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    if self.data.miscellaneous.markLocation ~= nil then
+        local markLocation = self.data.miscellaneous.markLocation
+        tes3mp.SetMarkCell(self.pid, markLocation.cell)
+        tes3mp.SetMarkPos(self.pid, markLocation.posX, markLocation.posY, markLocation.posZ)
+        tes3mp.SetMarkRot(self.pid, markLocation.rotX, markLocation.rotZ)
+        tes3mp.SendMarkLocation(self.pid)
+    end
+end
+
+function BasePlayer:SaveMarkLocation()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    self.data.miscellaneous.markLocation = {
+        cell = tes3mp.GetMarkCell(self.pid),
+        posX = tes3mp.GetMarkPosX(self.pid),
+        posY = tes3mp.GetMarkPosY(self.pid),
+        posZ = tes3mp.GetMarkPosZ(self.pid),
+        rotX = tes3mp.GetMarkRotX(self.pid),
+        rotZ = tes3mp.GetMarkRotZ(self.pid)
+    }
 end
 
 function BasePlayer:LoadMap()
