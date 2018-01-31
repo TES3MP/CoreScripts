@@ -8,6 +8,10 @@ function BaseWorld:__init(test)
         general = {
             currentMpNum = 0
         },
+        fame = {
+            bounty = 0,
+            reputation = 0
+        },
         journal = {},
         factionRanks = {},
         factionExpulsion = {},
@@ -31,38 +35,6 @@ function BaseWorld:SetCurrentMpNum(currentMpNum)
     self:Save()
 end
 
-function BaseWorld:SaveJournal(pid)
-    stateHelper:SaveJournal(pid, self)
-end
-
-function BaseWorld:SaveFactionRanks(pid)
-    stateHelper:SaveFactionRanks(pid, self)
-end
-
-function BaseWorld:SaveFactionExpulsion(pid)
-    stateHelper:SaveFactionExpulsion(pid, self)
-end
-
-function BaseWorld:SaveFactionReputation(pid)
-    stateHelper:SaveFactionReputation(pid, self)
-end
-
-function BaseWorld:SaveTopics(pid)
-    stateHelper:SaveTopics(pid, self)
-end
-
-function BaseWorld:SaveKills(pid)
-
-    for i = 0, tes3mp.GetKillChangesSize(pid) - 1 do
-
-        local refId = tes3mp.GetKillRefId(pid, i)
-        local number = tes3mp.GetKillNumber(pid, i)
-        self.data.kills[refId] = number
-    end
-
-    self:Save()
-end
-
 function BaseWorld:LoadJournal(pid)
     stateHelper:LoadJournal(pid, self)
 end
@@ -83,6 +55,14 @@ function BaseWorld:LoadTopics(pid)
     stateHelper:LoadTopics(pid, self)
 end
 
+function BaseWorld:LoadBounty(pid)
+    stateHelper:LoadBounty(pid, self)
+end
+
+function BaseWorld:LoadReputation(pid)
+    stateHelper:LoadReputation(pid, self)
+end
+
 function BaseWorld:LoadKills(pid)
 
     tes3mp.InitializeKillChanges(pid)
@@ -93,6 +73,46 @@ function BaseWorld:LoadKills(pid)
     end
 
     tes3mp.SendKillChanges(pid)
+end
+
+function BaseWorld:SaveJournal(pid)
+    stateHelper:SaveJournal(pid, self)
+end
+
+function BaseWorld:SaveFactionRanks(pid)
+    stateHelper:SaveFactionRanks(pid, self)
+end
+
+function BaseWorld:SaveFactionExpulsion(pid)
+    stateHelper:SaveFactionExpulsion(pid, self)
+end
+
+function BaseWorld:SaveFactionReputation(pid)
+    stateHelper:SaveFactionReputation(pid, self)
+end
+
+function BaseWorld:SaveTopics(pid)
+    stateHelper:SaveTopics(pid, self)
+end
+
+function BaseWorld:SaveBounty(pid)
+    stateHelper:SaveBounty(pid, self)
+end
+
+function BaseWorld:SaveReputation(pid)
+    stateHelper:SaveReputation(pid, self)
+end
+
+function BaseWorld:SaveKills(pid)
+
+    for i = 0, tes3mp.GetKillChangesSize(pid) - 1 do
+
+        local refId = tes3mp.GetKillRefId(pid, i)
+        local number = tes3mp.GetKillNumber(pid, i)
+        self.data.kills[refId] = number
+    end
+
+    self:Save()
 end
 
 return BaseWorld

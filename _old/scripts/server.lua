@@ -213,7 +213,7 @@ function OnServerInit()
 
     local version = tes3mp.GetServerVersion():split(".") -- for future versions
 
-    if tes3mp.GetServerVersion() ~= "0.6.2-hotfixed" then
+    if tes3mp.GetServerVersion() ~= "0.6.3" then
         tes3mp.LogMessage(3, "The server or script is outdated!")
         tes3mp.StopServer(1)
     end
@@ -1005,10 +1005,6 @@ function OnPlayerLevel(pid)
     myMod.OnPlayerLevel(pid)
 end
 
-function OnPlayerBounty(pid)
-    myMod.OnPlayerBounty(pid)
-end
-
 function OnPlayerShapeshift(pid)
     myMod.OnPlayerShapeshift(pid)
 end
@@ -1045,12 +1041,24 @@ function OnPlayerTopic(pid)
     myMod.OnPlayerTopic(pid)
 end
 
+function OnPlayerBounty(pid)
+    myMod.OnPlayerBounty(pid)
+end
+
+function OnPlayerReputation(pid)
+    myMod.OnPlayerReputation(pid)
+end
+
 function OnPlayerKillCount(pid)
     myMod.OnPlayerKillCount(pid)
 end
 
 function OnPlayerBook(pid)
     myMod.OnPlayerBook(pid)
+end
+
+function OnPlayerMiscellaneous(pid)
+    myMod.OnPlayerMiscellaneous(pid)
 end
 
 function OnPlayerEndCharGen(pid)

@@ -483,12 +483,6 @@ Methods.OnPlayerLevel = function(pid)
     end
 end
 
-Methods.OnPlayerBounty = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        Players[pid]:SaveBounty()
-    end
-end
-
 Methods.OnPlayerShapeshift = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveShapeshift()
@@ -687,6 +681,45 @@ Methods.OnPlayerTopic = function(pid)
     end
 end
 
+Methods.OnPlayerBounty = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        if config.shareBounty == true then
+            WorldInstance:SaveBounty(pid)
+
+            -- Bounty packets are special in that they are always sent
+            -- to all players, but only affect their target player on
+            -- any given client
+            --
+            -- To set the same bounty for each LocalPlayer, we need
+            -- to separately set each player as the target and
+            -- send the packet
+            local bountyValue = tes3mp.GetBounty(pid)
+
+            for playerIndex, player in pairs(Players) do
+                if player.pid ~= pid then
+                    tes3mp.SetBounty(player.pid, bountyValue)
+                    tes3mp.SendBounty(player.pid)
+                end
+            end
+        else
+            Players[pid]:SaveBounty()
+        end
+    end
+end
+
+Methods.OnPlayerReputation = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        if config.shareReputation == true then
+            WorldInstance:SaveReputation(pid)
+            tes3mp.SendReputation(pid, true)
+        else
+            Players[pid]:SaveReputation()
+        end
+    end
+end
+
 Methods.OnPlayerKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveKills(pid)
@@ -696,6 +729,16 @@ end
 Methods.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:AddBooks()
+    end
+end
+
+Methods.OnPlayerMiscellaneous = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        local changeType = tes3mp.GetMiscellaneousChangeType(pid)
+
+        if changeType == actionTypes.miscellaneous.MARK_LOCATION then
+            Players[pid]:SaveMarkLocation()
+        end
     end
 end
 

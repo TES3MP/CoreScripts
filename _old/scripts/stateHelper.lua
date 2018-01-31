@@ -1,101 +1,6 @@
 require("actionTypes")
 StateHelper = class("StateHelper")
 
-function StateHelper:SaveJournal(pid, stateObject)
-
-    if stateObject.data.journal == nil then
-        stateObject.data.journal = {}
-    end
-
-    if stateObject.data.customVariables == nil then
-        stateObject.data.customVariables = {}
-    end
-
-    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
-
-        local journalItem = {
-            type = tes3mp.GetJournalItemType(pid, i),
-            index = tes3mp.GetJournalItemIndex(pid, i),
-            quest = tes3mp.GetJournalItemQuest(pid, i)
-        }
-
-        if journalItem.type == actionTypes.journal.ENTRY then
-            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
-        end
-
-        table.insert(stateObject.data.journal, journalItem)
-
-        if journalItem.quest == "a1_1_findspymaster" and journalItem.index >= 14 then
-            stateObject.data.customVariables.deliveredCaiusPackage = true
-        end 
-    end
-
-    stateObject:Save()
-end
-
-function StateHelper:SaveFactionRanks(pid, stateObject)
-
-    if stateObject.data.factionRanks == nil then
-        stateObject.data.factionRanks = {}
-    end
-
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionRanks[factionId] = tes3mp.GetFactionRank(pid, i)
-    end
-
-    stateObject:Save()
-end
-
-function StateHelper:SaveFactionExpulsion(pid, stateObject)
-
-    if stateObject.data.factionExpulsion == nil then
-        stateObject.data.factionExpulsion = {}
-    end
-
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
-    end
-
-    stateObject:Save()
-end
-
-function StateHelper:SaveFactionReputation(pid, stateObject)
-
-    if stateObject.data.factionReputation == nil then
-        stateObject.data.factionReputation = {}
-    end
-
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
-    end
-
-    stateObject:Save()
-end
-
-function StateHelper:SaveTopics(pid, stateObject)
-
-    if stateObject.data.topics == nil then
-        stateObject.data.topics = {}
-    end
-
-    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
-
-        local topicId = tes3mp.GetTopicId(pid, i)
-
-        if tableHelper.containsValue(stateObject.data.topics, topicId) == false then
-            table.insert(stateObject.data.topics, topicId)
-        end
-    end
-
-    stateObject:Save()
-end
-
 function StateHelper:LoadJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -192,6 +97,153 @@ function StateHelper:LoadTopics(pid, stateObject)
     end
 
     tes3mp.SendTopicChanges(pid)
+end
+
+function StateHelper:LoadBounty(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = { bounty = 0, reputation = 0 }
+    elseif stateObject.data.fame.bounty == nil then
+        stateObject.data.fame.bounty = 0
+    end
+
+    -- Update old player files to the new format
+    if stateObject.data.stats ~= nil and stateObject.data.stats.bounty ~= nil then
+        stateObject.data.fame.bounty = stateObject.data.stats.bounty
+        stateObject.data.stats.bounty = nil
+    end
+
+    tes3mp.SetBounty(pid, stateObject.data.fame.bounty)
+    tes3mp.SendBounty(pid)
+end
+
+function StateHelper:LoadReputation(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = { bounty = 0, reputation = 0 }
+    elseif stateObject.data.fame.reputation == nil then
+        stateObject.data.fame.reputation = 0
+    end
+
+    tes3mp.SetReputation(pid, stateObject.data.fame.reputation)
+    tes3mp.SendReputation(pid)
+end
+
+function StateHelper:SaveJournal(pid, stateObject)
+
+    if stateObject.data.journal == nil then
+        stateObject.data.journal = {}
+    end
+
+    if stateObject.data.customVariables == nil then
+        stateObject.data.customVariables = {}
+    end
+
+    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+
+        local journalItem = {
+            type = tes3mp.GetJournalItemType(pid, i),
+            index = tes3mp.GetJournalItemIndex(pid, i),
+            quest = tes3mp.GetJournalItemQuest(pid, i)
+        }
+
+        if journalItem.type == actionTypes.journal.ENTRY then
+            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
+        end
+
+        table.insert(stateObject.data.journal, journalItem)
+
+        if journalItem.quest == "a1_1_findspymaster" and journalItem.index >= 14 then
+            stateObject.data.customVariables.deliveredCaiusPackage = true
+        end
+    end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveFactionRanks(pid, stateObject)
+
+    if stateObject.data.factionRanks == nil then
+        stateObject.data.factionRanks = {}
+    end
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local factionId = tes3mp.GetFactionId(pid, i)
+        stateObject.data.factionRanks[factionId] = tes3mp.GetFactionRank(pid, i)
+    end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveFactionExpulsion(pid, stateObject)
+
+    if stateObject.data.factionExpulsion == nil then
+        stateObject.data.factionExpulsion = {}
+    end
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local factionId = tes3mp.GetFactionId(pid, i)
+        stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
+    end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveFactionReputation(pid, stateObject)
+
+    if stateObject.data.factionReputation == nil then
+        stateObject.data.factionReputation = {}
+    end
+
+    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+
+        local factionId = tes3mp.GetFactionId(pid, i)
+        stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
+    end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveTopics(pid, stateObject)
+
+    if stateObject.data.topics == nil then
+        stateObject.data.topics = {}
+    end
+
+    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
+
+        local topicId = tes3mp.GetTopicId(pid, i)
+
+        if tableHelper.containsValue(stateObject.data.topics, topicId) == false then
+            table.insert(stateObject.data.topics, topicId)
+        end
+    end
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveBounty(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = {}
+    end    
+
+    stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveReputation(pid, stateObject)
+
+    if stateObject.data.fame == nil then
+        stateObject.data.fame = {}
+    end    
+
+    stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
+
+    stateObject:Save()
 end
 
 return StateHelper

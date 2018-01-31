@@ -46,8 +46,21 @@ function BasePlayer:__init(pid, playerName)
             magickaBase = 1,
             magickaCurrent = 1,
             fatigueBase = 1,
-            fatigueCurrent = 1,
-            bounty = 0
+            fatigueCurrent = 1
+        },
+        fame = {
+            bounty = 0,
+            reputation = 0
+        },
+        miscellaneous = {
+            markLocation = {
+                cell = "",
+                posX = 0,
+                posY = 0,
+                posZ = 0,
+                rotX = 0,
+                rotZ = 0
+            }
         },
         customClass = {},
         attributes = {},
@@ -133,7 +146,6 @@ function BasePlayer:FinishLogin()
         self:LoadAttributes()
         self:LoadSkills()
         self:LoadStatsDynamic()
-        self:LoadBounty()
         self:LoadCell()
         self:LoadInventory()
         self:LoadEquipment()
@@ -142,6 +154,7 @@ function BasePlayer:FinishLogin()
         self:LoadBooks()
         --self:LoadMap()
         self:LoadShapeshift()
+        self:LoadMarkLocation()
         self:LoadSettings()
 
         if config.shareJournal == true then
@@ -172,6 +185,18 @@ function BasePlayer:FinishLogin()
             WorldInstance:LoadTopics(self.pid)
         else
             self:LoadTopics()
+        end
+
+        if config.shareBounty == true then
+            WorldInstance:LoadBounty(self.pid)
+        else
+            self:LoadBounty()
+        end
+
+        if config.shareReputation == true then
+            WorldInstance:LoadReputation(self.pid)
+        else
+            self:LoadReputation()
         end
 
         WorldInstance:LoadKills(self.pid)
@@ -382,7 +407,26 @@ function BasePlayer:Resurrect()
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
-        tes3mp.Jail(self.pid, config.deathPenaltyJailDays, true, true, "Recovering", "You've been revived and brought back here, but your skills have been affected by your time spent incapacitated.")
+        local resurrectionText = "You've been revived and brought back here, but your skills have been affected by "
+        local jailTime = config.deathPenaltyJailDays
+
+        if config.bountyResetOnDeath == true then
+            if config.bountyDeathPenalty == true then
+                local currentBounty = tes3mp.GetBounty(self.pid)
+
+                if currentBounty > 0 then
+                    jailTime = jailTime + math.floor(currentBounty / 100)
+                    resurrectionText = resurrectionText .. "your bounty and "
+                end
+            end
+
+            tes3mp.SetBounty(self.pid, 0)
+            tes3mp.SendBounty(self.pid)
+            self:SaveBounty()
+        end
+
+        resurrectionText = resurrectionText .. "your time spent incapacitated.\n"
+        tes3mp.Jail(self.pid, jailTime, true, true, "Recovering", resurrectionText)
     end
 
     tes3mp.SendMessage(self.pid, message, false)
@@ -586,15 +630,6 @@ end
 
 function BasePlayer:SaveLevel()
     self.data.stats.level = tes3mp.GetLevel(self.pid)
-end
-
-function BasePlayer:LoadBounty()
-    tes3mp.SetBounty(self.pid, self.data.stats.bounty)
-    tes3mp.SendBounty(self.pid)
-end
-
-function BasePlayer:SaveBounty()
-    self.data.stats.bounty = tes3mp.GetBounty(self.pid)
 end
 
 function BasePlayer:LoadShapeshift()
@@ -872,6 +907,22 @@ function BasePlayer:SaveTopics()
     stateHelper:SaveTopics(self.pid, self)
 end
 
+function BasePlayer:LoadBounty()
+    stateHelper:LoadBounty(self.pid, self)
+end
+
+function BasePlayer:SaveBounty()
+    stateHelper:SaveBounty(self.pid, self)
+end
+
+function BasePlayer:LoadReputation()
+    stateHelper:LoadReputation(self.pid, self)
+end
+
+function BasePlayer:SaveReputation()
+    stateHelper:SaveReputation(self.pid, self)
+end
+
 function BasePlayer:LoadBooks()
 
     if self.data.books == nil then
@@ -899,6 +950,37 @@ function BasePlayer:AddBooks()
             table.insert(self.data.books, bookId)
         end
     end
+end
+
+function BasePlayer:LoadMarkLocation()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    if self.data.miscellaneous.markLocation ~= nil then
+        local markLocation = self.data.miscellaneous.markLocation
+        tes3mp.SetMarkCell(self.pid, markLocation.cell)
+        tes3mp.SetMarkPos(self.pid, markLocation.posX, markLocation.posY, markLocation.posZ)
+        tes3mp.SetMarkRot(self.pid, markLocation.rotX, markLocation.rotZ)
+        tes3mp.SendMarkLocation(self.pid)
+    end
+end
+
+function BasePlayer:SaveMarkLocation()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    self.data.miscellaneous.markLocation = {
+        cell = tes3mp.GetMarkCell(self.pid),
+        posX = tes3mp.GetMarkPosX(self.pid),
+        posY = tes3mp.GetMarkPosY(self.pid),
+        posZ = tes3mp.GetMarkPosZ(self.pid),
+        rotX = tes3mp.GetMarkRotX(self.pid),
+        rotZ = tes3mp.GetMarkRotZ(self.pid)
+    }
 end
 
 function BasePlayer:LoadMap()
