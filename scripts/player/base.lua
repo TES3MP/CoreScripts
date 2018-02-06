@@ -60,7 +60,8 @@ function BasePlayer:__init(pid, playerName)
                 posZ = 0,
                 rotX = 0,
                 rotZ = 0
-            }
+            },
+            selectedSpell = ""
         },
         customClass = {},
         attributes = {},
@@ -147,6 +148,7 @@ function BasePlayer:FinishLogin()
         self:LoadSkills()
         self:LoadStatsDynamic()
         self:LoadCell()
+        self:LoadSettings()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
@@ -155,7 +157,7 @@ function BasePlayer:FinishLogin()
         --self:LoadMap()
         self:LoadShapeshift()
         self:LoadMarkLocation()
-        self:LoadSettings()
+        self:LoadSelectedSpell()
 
         if config.shareJournal == true then
             WorldInstance:LoadJournal(self.pid)
@@ -1010,6 +1012,27 @@ function BasePlayer:SaveMarkLocation()
         rotX = tes3mp.GetMarkRotX(self.pid),
         rotZ = tes3mp.GetMarkRotZ(self.pid)
     }
+end
+
+function BasePlayer:LoadSelectedSpell()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    if self.data.miscellaneous.selectedSpell ~= nil then
+        tes3mp.SetSelectedSpellId(self.pid, self.data.miscellaneous.selectedSpell)
+        tes3mp.SendSelectedSpell(self.pid)
+    end
+end
+
+function BasePlayer:SaveSelectedSpell()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
 end
 
 function BasePlayer:LoadMap()

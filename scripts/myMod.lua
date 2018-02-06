@@ -750,6 +750,8 @@ Methods.OnPlayerMiscellaneous = function(pid)
 
         if changeType == actionTypes.miscellaneous.MARK_LOCATION then
             Players[pid]:SaveMarkLocation()
+        elseif changeType == actionTypes.miscellaneous.SELECTED_SPELL then
+            Players[pid]:SaveSelectedSpell()
         end
     end
 end
