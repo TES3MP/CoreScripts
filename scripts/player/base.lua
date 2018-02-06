@@ -638,16 +638,30 @@ function BasePlayer:LoadShapeshift()
         self.data.shapeshift = {}
     end
 
-    if self.data.shapeshift.isWerewolf == true then
-        tes3mp.SetWerewolfState(self.pid, true)
-        tes3mp.SendShapeshift(self.pid)
+    if self.data.shapeshift.scale == nil then
+        self.data.shapeshift.scale = 1
     end
+
+    if self.data.shapeshift.isWerewolf == nil then
+        self.data.shapeshift.isWerewolf = false
+    end
+
+    tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
+    tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
+    tes3mp.SendShapeshift(self.pid)
 end
 
 function BasePlayer:SaveShapeshift()
 
     if self.data.shapeshift == nil then
         self.data.shapeshift = {}
+    end
+
+    local newScale = tes3mp.GetScale(self.pid)
+
+    if newScale ~= self.data.shapeshift.scale then
+        tes3mp.LogMessage(1, "Player " .. myMod.GetChatName(self.pid) .. " has changed their scale to " .. newScale)
+        self.data.shapeshift.scale = newScale
     end
 
     self.data.shapeshift.isWerewolf = tes3mp.IsWerewolf(self.pid)
@@ -1079,6 +1093,13 @@ function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
     tes3mp.SetWerewolfState(self.pid, state)
+    tes3mp.SendShapeshift(self.pid)
+end
+
+function BasePlayer:SetScale(scale)
+    self.data.shapeshift.scale = scale
+
+    tes3mp.SetScale(self.pid, scale)
     tes3mp.SendShapeshift(self.pid)
 end
 
