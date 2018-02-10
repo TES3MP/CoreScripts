@@ -93,6 +93,9 @@ config.maxSkillValue = 150
 -- Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
 config.maxAcrobaticsValue = 1200
 
+-- The refIds of items that players are not allowed to equip for balancing reasons
+config.bannedEquipmentItems = { "helseth's ring" }
+
 -- The number of days spent in jail as a penalty for dying
 config.deathPenaltyJailDays = 5
 

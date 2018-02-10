@@ -687,19 +687,34 @@ end
 
 function BasePlayer:SaveEquipment()
 
+    local reloadAtEnd = false
+
     self.data.equipment = {}
 
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, i)
 
         if itemRefId ~= "" then
-            self.data.equipment[i] = {
-                refId = itemRefId,
-                count = tes3mp.GetEquipmentItemCount(self.pid, i),
-                charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
-                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
-            }
+            if tableHelper.containsValue(config.bannedEquipmentItems, itemRefId) then
+                self:Message("You have tried wearing an item that isn't allowed!\n")
+                reloadAtEnd = true
+            else
+                self.data.equipment[i] = {
+                    refId = itemRefId,
+                    count = tes3mp.GetEquipmentItemCount(self.pid, i),
+                    charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
+                    enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
+                }
+            end
         end
+    end
+
+    if reloadAtEnd then
+        -- Disable and enable the player's menus to avoid an inventory view that hasn't
+        -- been properly updated (to be fixed for 0.6.3)
+        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+        self:LoadEquipment()
     end
 end
 
