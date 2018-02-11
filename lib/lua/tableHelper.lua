@@ -87,6 +87,12 @@ function TableHelper.insertValueIfMissing(inputTable, value)
     end
 end
 
+function TableHelper.getAnyValue(inputTable)
+    for key, value in pairs(inputTable) do
+        return value
+    end
+end
+
 function TableHelper.getUnusedNumericalIndex(inputTable)
     local i = 1
     

@@ -80,11 +80,12 @@ local adminhelptext = "Admins only:\
 /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
 /setwait <pid> on/off/default - Enable/disable waiting for player\
+/setscale <pid> <value> - Sets a player's scale\
+/setwerewolf <pid> on/off - Set the werewolf state of a particular player\
 /storeconsole <pid> <command> - Store a certain console command for a player\
 /runconsole <pid> (<count>) (<interval>) - Run a stored console command on a player, with optional count and interval\
 /placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
-/spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
-/werewolf <pid> on/off - Set the werewolf state of a particular player"
+/spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval"
 
 -- Handle commands that only exist based on config options
 if config.allowSuicideCommand == true then
@@ -818,7 +819,29 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "werewolf" and admin then
+        elseif cmd[1] == "setscale" and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local targetName = ""
+                local scale = cmd[3]
+
+                if type(tonumber(scale)) == "number" then
+                    scale = tonumber(scale)
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setscale <pid> <value>.\n", false)
+                     return false
+                end
+
+                Players[targetPid]:SetScale(scale)
+                Players[targetPid]:LoadShapeshift()
+                tes3mp.SendMessage(pid, "Scale for " .. Players[targetPid].name .. " is now " .. scale .. "\n", false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "Your scale is now " .. scale .. "\n", false)
+                end
+            end
+
+        elseif cmd[1] == "setwerewolf" and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
                 local targetPid = tonumber(cmd[2])
@@ -832,7 +855,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWerewolfState(false)
                     state = " disabled.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /werewolf <pid> <on/off>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> <on/off>.\n", false)
                      return false
                 end
 

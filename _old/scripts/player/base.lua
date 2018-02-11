@@ -60,7 +60,8 @@ function BasePlayer:__init(pid, playerName)
                 posZ = 0,
                 rotX = 0,
                 rotZ = 0
-            }
+            },
+            selectedSpell = ""
         },
         customClass = {},
         attributes = {},
@@ -147,6 +148,7 @@ function BasePlayer:FinishLogin()
         self:LoadSkills()
         self:LoadStatsDynamic()
         self:LoadCell()
+        self:LoadSettings()
         self:LoadInventory()
         self:LoadEquipment()
         self:LoadSpellbook()
@@ -155,7 +157,7 @@ function BasePlayer:FinishLogin()
         --self:LoadMap()
         self:LoadShapeshift()
         self:LoadMarkLocation()
-        self:LoadSettings()
+        self:LoadSelectedSpell()
 
         if config.shareJournal == true then
             WorldInstance:LoadJournal(self.pid)
@@ -638,16 +640,30 @@ function BasePlayer:LoadShapeshift()
         self.data.shapeshift = {}
     end
 
-    if self.data.shapeshift.isWerewolf == true then
-        tes3mp.SetWerewolfState(self.pid, true)
-        tes3mp.SendShapeshift(self.pid)
+    if self.data.shapeshift.scale == nil then
+        self.data.shapeshift.scale = 1
     end
+
+    if self.data.shapeshift.isWerewolf == nil then
+        self.data.shapeshift.isWerewolf = false
+    end
+
+    tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
+    tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
+    tes3mp.SendShapeshift(self.pid)
 end
 
 function BasePlayer:SaveShapeshift()
 
     if self.data.shapeshift == nil then
         self.data.shapeshift = {}
+    end
+
+    local newScale = tes3mp.GetScale(self.pid)
+
+    if newScale ~= self.data.shapeshift.scale then
+        tes3mp.LogMessage(1, "Player " .. myMod.GetChatName(self.pid) .. " has changed their scale to " .. newScale)
+        self.data.shapeshift.scale = newScale
     end
 
     self.data.shapeshift.isWerewolf = tes3mp.IsWerewolf(self.pid)
@@ -722,19 +738,34 @@ end
 
 function BasePlayer:SaveEquipment()
 
+    local reloadAtEnd = false
+
     self.data.equipment = {}
 
     for i = 0, tes3mp.GetEquipmentSize() - 1 do
         local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, i)
 
         if itemRefId ~= "" then
-            self.data.equipment[i] = {
-                refId = itemRefId,
-                count = tes3mp.GetEquipmentItemCount(self.pid, i),
-                charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
-                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
-            }
+            if tableHelper.containsValue(config.bannedEquipmentItems, itemRefId) then
+                self:Message("You have tried wearing an item that isn't allowed!\n")
+                reloadAtEnd = true
+            else
+                self.data.equipment[i] = {
+                    refId = itemRefId,
+                    count = tes3mp.GetEquipmentItemCount(self.pid, i),
+                    charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
+                    enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
+                }
+            end
         end
+    end
+
+    if reloadAtEnd then
+        -- Disable and enable the player's menus to avoid an inventory view that hasn't
+        -- been properly updated (to be fixed for 0.6.3)
+        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+        self:LoadEquipment()
     end
 end
 
@@ -983,6 +1014,27 @@ function BasePlayer:SaveMarkLocation()
     }
 end
 
+function BasePlayer:LoadSelectedSpell()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    if self.data.miscellaneous.selectedSpell ~= nil then
+        tes3mp.SetSelectedSpellId(self.pid, self.data.miscellaneous.selectedSpell)
+        tes3mp.SendSelectedSpell(self.pid)
+    end
+end
+
+function BasePlayer:SaveSelectedSpell()
+
+    if self.data.miscellaneous == nil then
+        self.data.miscellaneous = {}
+    end
+
+    self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
+end
+
 function BasePlayer:LoadMap()
 
     if self.data.mapExplored == nil then
@@ -1079,6 +1131,13 @@ function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
     tes3mp.SetWerewolfState(self.pid, state)
+    tes3mp.SendShapeshift(self.pid)
+end
+
+function BasePlayer:SetScale(scale)
+    self.data.shapeshift.scale = scale
+
+    tes3mp.SetScale(self.pid, scale)
     tes3mp.SendShapeshift(self.pid)
 end
 

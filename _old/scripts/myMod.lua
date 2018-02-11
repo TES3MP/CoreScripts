@@ -368,13 +368,8 @@ Methods.AuthCheck = function(pid)
     return false
 end
 
-Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
+Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
 
-    local cell = tes3mp.GetCell(pid)
-    local location = {
-        posX = tes3mp.GetPosX(pid), posY = tes3mp.GetPosY(pid), posZ = tes3mp.GetPosZ(pid),
-        rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
-    }
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local refIndex =  0 .. "-" .. mpNum
 
@@ -393,20 +388,37 @@ Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
 
     LoadedCells[cell]:Save()
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(cell)
-    tes3mp.SetObjectRefId(refId)
-    tes3mp.SetObjectRefNumIndex(0)
-    tes3mp.SetObjectMpNum(mpNum)
-    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-    tes3mp.AddWorldObject()
+    -- Are there any players on the server? If so, initialize the event
+    -- for the first one we find and just send the corresponding packet
+    -- to everyone
+    if tableHelper.getCount(Players) > 0 then
 
-    if packetType == "place" then
-        tes3mp.SendObjectPlace(true)
-    elseif packetType == "spawn" then
-        tes3mp.SendObjectSpawn(true)
+        tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
+        tes3mp.SetEventCell(cell)
+        tes3mp.SetObjectRefId(refId)
+        tes3mp.SetObjectRefNumIndex(0)
+        tes3mp.SetObjectMpNum(mpNum)
+        tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+        tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+        tes3mp.AddWorldObject()
+
+        if packetType == "place" then
+            tes3mp.SendObjectPlace(true)
+        elseif packetType == "spawn" then
+            tes3mp.SendObjectSpawn(true)
+        end
     end
+end
+
+Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
+
+    local cell = tes3mp.GetCell(pid)
+    local location = {
+        posX = tes3mp.GetPosX(pid), posY = tes3mp.GetPosY(pid), posZ = tes3mp.GetPosZ(pid),
+        rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
+    }
+
+    Methods.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
 Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
@@ -738,6 +750,8 @@ Methods.OnPlayerMiscellaneous = function(pid)
 
         if changeType == actionTypes.miscellaneous.MARK_LOCATION then
             Players[pid]:SaveMarkLocation()
+        elseif changeType == actionTypes.miscellaneous.SELECTED_SPELL then
+            Players[pid]:SaveSelectedSpell()
         end
     end
 end
