@@ -15,6 +15,11 @@ function fileHelper.fixFilename(filename)
     filename = string.gsub(filename, ":", ";")
     filename = string.gsub(filename, patterns.invalidFileCharacters, "_")
 
+    -- Also replace periods because of their special meaning, i.e. a file named
+    -- AUX.test.json would not get fixed in the loop below, but would still be
+    -- invalid on Windows
+    filename = string.gsub(filename, "%.", ",")
+
     -- If the filename itself is invalid, add an underline at the start
     if tableHelper.containsValue(fileHelper.invalidFilenames, filename) then
         filename = "_" .. filename
