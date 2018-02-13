@@ -1,6 +1,6 @@
 require("config")
 require("patterns")
-local jsonInterface = require("jsonInterface")
+jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 local BasePlayer = require("player.base")
 
@@ -11,7 +11,13 @@ function Player:__init(pid, playerName)
 
     -- Replace characters not allowed in filenames
     self.accountName = string.gsub(self.accountName, patterns.invalidFileCharacters, "_")
-    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR").."/player/", self.accountName .. ".json")
+
+    -- If the filename itself is invalid, add an underline at the start
+    if tableHelper.containsValue(config.invalidFilenames, self.accountName) then
+        self.accountName = "_" .. self.accountName
+    end
+
+    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR") .. "/player/", self.accountName .. ".json")
 
     if self.accountFile == "invalid" then
         self.hasAccount = false
