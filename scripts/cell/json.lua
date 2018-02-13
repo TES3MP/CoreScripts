@@ -1,6 +1,6 @@
 require("config")
-require("patterns")
 jsonInterface = require("jsonInterface")
+fileHelper = require("fileHelper")
 tableHelper = require("tableHelper")
 local BaseCell = require("cell.base")
 
@@ -9,16 +9,9 @@ local Cell = class("Cell", BaseCell)
 function Cell:__init(cellDescription)
     BaseCell.__init(self, cellDescription)
 
-    -- Replace characters not allowed in filenames
+    -- Ensure filename is valid
     self.cellFile = cellDescription
-    self.cellFile = string.gsub(self.cellFile, ":", ";")
-    self.cellFile = string.gsub(self.cellFile, patterns.invalidFileCharacters, "_")
-
-    -- If the filename itself is invalid, add an underline at the start
-    if tableHelper.containsValue(config.invalidFilenames, self.cellFile) then
-        self.cellFile = "_" .. self.cellFile
-    end
-
+    self.cellFile = fileHelper.fixFilename(self.cellFile)
     self.cellFile = self.cellFile .. ".json"
 
     if self.hasEntry == nil then

@@ -1,4 +1,5 @@
 require("patterns")
+tableHelper = require("tableHelper")
 
 local fileHelper = {}
 
