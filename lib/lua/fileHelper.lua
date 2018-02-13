@@ -8,7 +8,7 @@ fileHelper.invalidFilenames = { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM
     "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7",
     "LPT8", "LPT9" }
 
--- Swap keys with their values in a table, allowing for the easy creation of tables similar to enums
+-- Turn an invalid filename into a valid one
 function fileHelper.fixFilename(filename)
     
     -- Replace characters not allowed in filenames
