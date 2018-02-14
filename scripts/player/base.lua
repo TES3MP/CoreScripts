@@ -17,6 +17,7 @@ function BasePlayer:__init(pid, playerName)
         settings = {
             admin = 0,
             difficulty = "default",
+            physicsFramerate = "default",
             consoleAllowed = "default",
             bedRestAllowed = "default",
             wildernessRestAllowed = "default",
@@ -1051,23 +1052,27 @@ function BasePlayer:LoadMap()
     tes3mp.SendMapChanges(self.pid)
 end
 
-function BasePlayer:GetDifficulty(state)
+function BasePlayer:GetDifficulty()
     return self.data.settings.difficulty
 end
 
-function BasePlayer:GetConsoleAllowed(state)
+function BasePlayer:GetPhysicsFramerate()
+    return self.data.settings.physicsFramerate
+end
+
+function BasePlayer:GetConsoleAllowed()
     return self.data.settings.consoleAllowed
 end
 
-function BasePlayer:GetBedRestAllowed(state)
+function BasePlayer:GetBedRestAllowed()
     return self.data.settings.bedRestAllowed
 end
 
-function BasePlayer:GetWildernessRestAllowed(state)
+function BasePlayer:GetWildernessRestAllowed()
     return self.data.settings.wildernessRestAllowed
 end
 
-function BasePlayer:GetWaitAllowed(state)
+function BasePlayer:GetWaitAllowed()
     return self.data.settings.waitAllowed
 end
 
@@ -1080,7 +1085,19 @@ function BasePlayer:SetDifficulty(difficulty)
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. self.pid)
+    tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. myMod.GetChatName(self.pid))
+end
+
+function BasePlayer:SetPhysicsFramerate(physicsFramerate)
+    if physicsFramerate == nil or physicsFramerate == "default" then
+        physicsFramerate = config.physicsFramerate
+        self.data.settings.physicsFramerate = "default"
+    else
+        self.data.settings.physicsFramerate = physicsFramerate
+    end
+
+    tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
+    tes3mp.LogMessage(3, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. myMod.GetChatName(self.pid))
 end
 
 function BasePlayer:SetConsoleAllowed(state)
@@ -1144,6 +1161,7 @@ end
 function BasePlayer:LoadSettings()
 
     self:SetDifficulty(self.data.settings.difficulty)
+    self:SetPhysicsFramerate(self.data.settings.physicsFramerate)
     self:SetConsoleAllowed(self.data.settings.consoleAllowed)
     self:SetBedRestAllowed(self.data.settings.bedRestAllowed)
     self:SetWildernessRestAllowed(self.data.settings.wildernessRestAllowed)
