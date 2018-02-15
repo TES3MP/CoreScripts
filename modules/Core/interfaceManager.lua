@@ -9,12 +9,12 @@ InterfaceManager.ID = TableHelper.enum {
     "CELLSLIST"
 }
 
-InterfaceManager.showLogin = function(player)
-    player:getGUI():passwordDialog(InterfaceManager.ID.LOGIN, "Enter your password:", "")
+InterfaceManager.showLogin = function(callback, player)
+    player:getGUI():passwordDialog(callback, "Enter your password:", "")
 end
 
-InterfaceManager.showRegistration = function(player)
-    player:getGUI():passwordDialog(InterfaceManager.ID.REGISTER, "Create new password:",
+InterfaceManager.showRegistration = function(callback, player)
+    player:getGUI():passwordDialog(callback, "Create new password:",
         "Warning: the server owner will be able to read your password, so you should use a unique one for each server.")
 end
 

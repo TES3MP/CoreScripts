@@ -36,10 +36,10 @@ EventHandler.allowPlayerConnection = function(player)
 
     if DataManager.hasObjectEntry("player", player.customData.accountName) then
         messageText = messageText .. " log in.\n"
-        InterfaceManager.showLogin(player)
+        InterfaceManager.showLogin(OnGUILogin, player)
     else
         messageText = messageText .. " register.\n"
-        InterfaceManager.showRegistration(player)
+        InterfaceManager.showRegistration(OnGUIRegister, player)
     end
 
     player:message(0, messageText, false)
@@ -60,57 +60,47 @@ EventHandler.onPlayerDisconnect = function(player)
     end
 end
 
-EventHandler.onGUIAction = function(player, guiId, guiData)
 
-    -- The data can be numerical, but we should convert it to a string
-    guiData = tostring(guiData)
-
-    if guiId == InterfaceManager.ID.LOGIN then
-
-        if guiData == nil then
-            player:message(0, "Passwords cannot be blank!\n", false)
-            InterfaceManager.showLogin(player)
-            return true
-        end
-
-        local playerData = DataManager.getTableFromEntry("player", player.customData.accountName)
-
-        -- Just in case the password from the data file is a number, make sure to turn it into a string
-        if tostring(playerData.login.password) ~= guiData then
-            player:message(0, "Incorrect password!\n", false)
-            InterfaceManager.showLogin(player)
-            return true
-        end
-
-        -- Is this player on the banlist? If so, store their new IP and ban them
-        if BanManager.isBanned(player) then
-            player:message(0, player.accountName .. " is banned from this server.\n", true)
-
-            if TableHelper.containsValue(playerData.ipAddresses, player.address) == false then
-                table.insert(playerData.ipAddresses, player.address)
-            end
-
-            DataManager.setEntryFromTable("player", player.customData.accountName, playerData)
-            banAddress(player.address)
-        else
-            DataManager.setPlayerFromTable(player, playerData)
-            player:message(0, "You have successfully logged in.\n", false)
-        end
-
-    elseif guiId == InterfaceManager.ID.REGISTER then
-
-        if guiData == nil then
-            player:message(0, "The password cannot be empty.\n", false)
-            InterfaceManager.showRegistration(player)
-            return true
-        end
-
-        player.customData.login = { password = guiData }
-        player:message(0, "You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
-        player:setCharGenStages(1, 4)
+function OnGUILogin(player, data)
+    if data == nil then
+        InterfaceManager.showLogin(OnGUILogin, player)
     end
 
-    return false
+    local playerData = DataManager.getTableFromEntry("player", player.customData.accountName)
+
+    -- Just in case the password from the data file is a number, make sure to turn it into a string
+    if tostring(playerData.login.password) ~= data then
+        player:message(0, "Incorrect password!\n", false)
+        InterfaceManager.showLogin(OnGUILogin, player)
+        return
+    end
+
+    -- Is this player on the banlist? If so, store their new IP and ban them
+    if BanManager.isBanned(player) then
+        player:message(0, player.accountName .. " is banned from this server.\n", true)
+
+        if TableHelper.containsValue(playerData.ipAddresses, player.address) == false then
+            table.insert(playerData.ipAddresses, player.address)
+        end
+
+        DataManager.setEntryFromTable("player", player.customData.accountName, playerData)
+        banAddress(player.address)
+    else
+        DataManager.setPlayerFromTable(player, playerData)
+        player:message(0, "You have successfully logged in.\n", false)
+    end
+end
+
+function OnGUIRegister(player, data)
+    if data == nil then
+        player:message(0, "The password cannot be empty.\n", false)
+        InterfaceManager.showRegistration(OnGUIRegister, player)
+        return
+    end
+
+    player.customData.login = { password = data }
+    player:message(0, "You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
+    player:setCharGenStages(1, 4)
 end
 
 return EventHandler
