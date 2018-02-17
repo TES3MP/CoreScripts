@@ -98,13 +98,27 @@ Event.register(Events.ON_PLAYER_CONNECT, function(player)
 
     if EventHandler.isPlayerDuplicate(player) then
         EventHandler.denyPlayerName(player)
-        return false -- deny player
+        player:kick() -- deny player
     else
         logMessage(Log.LOG_INFO, "New player with pid (" .. player.pid .. ") connected!")
         EventHandler.allowPlayerConnection(player)
-
-        return true -- accept player
     end
+end)
+
+Event.register(Events.ON_PLAYER_ENDCHARGEN, function(player)
+    local inventory = player:getInventory()
+    inventory:addItem("gold_001", 100, 1, 0)
+    inventory:addItem("Daedric Dagger", 1, 1, 0)
+    inventory:removeItem("common_pants_01", 1)
+    inventory:removeItem("common_shirt_01", 1)
+    inventory:removeItem("common_shoes_01", 1)
+    --[[inventory:addItem("exquisite_shoes_01", 1, 1, 0)
+    inventory:addItem("exquisite_shirt_01", 1, 1, 0)
+    inventory:addItem("exquisite_pants_01", 1, 1, 0)]]
+    inventory:equipItem(slot.Boots, "exquisite_shoes_01", 1, 1, 0)
+    inventory:equipItem(slot.Shirt, "exquisite_shirt_01", 1, 1, 0)
+    inventory:equipItem(slot.Pants, "exquisite_pants_01", 1, 1, 0)
+
 end)
 
 Event.register(Events.ON_PLAYER_DISCONNECT, function(player)
