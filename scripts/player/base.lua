@@ -175,6 +175,8 @@ function BasePlayer:FinishLogin()
         end
 
         WorldInstance:LoadKills(self.pid)
+
+        self:LoadSpecialStates()
     end
 end
 
@@ -731,11 +733,15 @@ function BasePlayer:LoadInventory()
     for index, currentItem in pairs(self.data.inventory) do
 
         if currentItem ~= nil then
-            if currentItem.enchantmentCharge == nil then
-                currentItem.enchantmentCharge = -1
-            end
+            if currentItem.count < 1 then
+                self.data.inventory[index] = nil
+            else
+                if currentItem.enchantmentCharge == nil then
+                    currentItem.enchantmentCharge = -1
+                end
 
-            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
+                tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
+            end
         end
     end
 
@@ -1015,6 +1021,25 @@ function BasePlayer:SetWerewolfState(state)
     tes3mp.SendShapeshift(self.pid)
 end
 
+function BasePlayer:SetConfiscationState(state)
+
+    self.data.customVariables.isConfiscationTarget = state
+
+    if self:IsLoggedIn() then
+
+        if state == true then
+            myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+            myMod.RunConsoleCommandOnPlayer(self.pid, "disableplayercontrols")
+            tes3mp.MessageBox(self.pid, -1, "You are immobilized while an item is being confiscated from you")
+        elseif state == false then
+            self.data.customVariables.isConfiscationTarget = nil
+            myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+            myMod.RunConsoleCommandOnPlayer(self.pid, "enableplayercontrols")
+            tes3mp.MessageBox(self.pid, -1, "You are free to move again")
+        end
+    end
+end
+
 function BasePlayer:LoadSettings()
 
     self:SetDifficulty(self.data.settings.difficulty)
@@ -1024,6 +1049,13 @@ function BasePlayer:LoadSettings()
     self:SetWaitAllowed(self.data.settings.waitAllowed)
 
     tes3mp.SendSettings(self.pid)
+end
+
+function BasePlayer:LoadSpecialStates()
+
+    if self.data.customVariables.isConfiscationTarget ~= nil then
+        self:SetConfiscationState(self.data.customVariables.isConfiscationTarget)
+    end
 end
 
 function BasePlayer:AddCellLoaded(cellDescription)
