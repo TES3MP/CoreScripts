@@ -1162,6 +1162,7 @@ function BasePlayer:SetScale(scale)
 
     tes3mp.SetScale(self.pid, scale)
     tes3mp.SendShapeshift(self.pid)
+end
 
 function BasePlayer:SetConfiscationState(state)
 
