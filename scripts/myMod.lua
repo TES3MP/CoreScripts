@@ -1,3 +1,5 @@
+tableHelper = require("tableHelper")
+inventoryHelper = require("inventoryHelper")
 require("actionTypes")
 local time = require("time")
 questFixer = require("questFixer")
@@ -274,6 +276,7 @@ end
 
 Methods.OnGUIAction = function(pid, idGui, data)
     data = tostring(data) -- data can be numeric, but we should convert this to string
+
     if idGui == GUI.ID.LOGIN then
         if data == nil then
             Players[pid]:Message("Incorrect password!\n")
@@ -308,7 +311,48 @@ Methods.OnGUIAction = function(pid, idGui, data)
         end
         Players[pid]:Registered(data)
         Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
+
+    elseif idGui == GUI.ID.PLAYERSLIST and Players[pid].confiscationTargetName ~= nil then
+
+        local targetName = Players[pid].confiscationTargetName
+        local targetPlayer = Methods.GetPlayerByName(targetName)
+
+        -- Because the window's item index starts from 0 while the Lua table for
+        -- inventories starts from 1, adjust the former here
+        local inventoryItemIndex = data + 1
+        local item = targetPlayer.data.inventory[inventoryItemIndex]
+
+        if item ~= nil then
+        
+            table.insert(Players[pid].data.inventory, item)
+            Players[pid]:LoadInventory()
+            Players[pid]:LoadEquipment()
+
+            -- If the item is equipped by the target, unequip it first
+            if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
+                local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment, item.refId, item.charge)
+                targetPlayer.data.equipment[equipmentItemIndex] = nil
+            end
+
+            targetPlayer.data.inventory[inventoryItemIndex] = nil
+            tableHelper.cleanNils(targetPlayer.data.inventory)
+
+            Players[pid]:Message("You've confiscated " .. item.refId .. " from " .. targetName .. "\n")
+
+            if targetPlayer:IsLoggedIn() then
+                targetPlayer:LoadInventory()
+                targetPlayer:LoadEquipment()
+            end
+        else
+            Players[pid]:Message("Invalid item index\n")
+        end
+
+        targetPlayer:SetConfiscationState(false)
+        targetPlayer:Save()
+
+        Players[pid].confiscationTargetName = nil
     end
+
     return false
 end
 

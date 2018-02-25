@@ -35,7 +35,7 @@ function Player:CreateAccount()
 end
 
 function Player:Save()
-    if self.hasAccount and self.loggedIn then
+    if self.hasAccount then
         jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end
