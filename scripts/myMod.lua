@@ -3,6 +3,7 @@ inventoryHelper = require("inventoryHelper")
 require("actionTypes")
 local time = require("time")
 questFixer = require("questFixer")
+menuHelper = require("menuHelper")
 
 local Methods = {}
 
@@ -10,6 +11,7 @@ Players = {}
 LoadedCells = {}
 WorldInstance = nil
 ObjectLoops = {}
+Menus = {}
 
 Methods.InitializeWorld = function()
     WorldInstance = World()
@@ -351,6 +353,17 @@ Methods.OnGUIAction = function(pid, idGui, data)
         targetPlayer:Save()
 
         Players[pid].confiscationTargetName = nil
+
+    elseif idGui == -1 and Players[pid].currentCustomMenu ~= nil then
+
+        local buttonPressed = tonumber(data) + 1
+        local destination = menuHelper.getButtonDestination(pid, Players[pid].currentCustomMenu, buttonPressed)
+
+        menuHelper.processEffects(pid, destination.effects)
+        menuHelper.displayMenu(pid, destination.targetMenu)
+
+        Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
+        Players[pid].currentCustomMenu = destination.targetMenu
     end
 
     return false
