@@ -1,7 +1,7 @@
 Menus["default crafting origin"] = {
     text = "What would you like to craft?\n\
         White pillow - 1 per 2 folded cloth\
-        Hammock pillow - 25 per 1 bolt of cloth\
+        Hammock pillow - 15 per 1 bolt of cloth\
         Guarskin drum - 1 per 3 guar hides",
     buttons = {
         { caption = "White pillow",
@@ -70,7 +70,7 @@ Menus["default crafting pillow white"] = {
 Menus["default crafting pillow hammock"] = {
     text = "How many would you like to craft?",
     buttons = {
-        { caption = "25",
+        { caption = "15",
             destinations = {
                 menuHelper.destinations.setDefault("lack of materials"),
                 menuHelper.destinations.setConditional("reward generic plural",
@@ -80,11 +80,11 @@ Menus["default crafting pillow hammock"] = {
                 },
                 {
                     menuHelper.effects.removeItem({"misc_clothbolt_01", "misc_clothbolt_02", "misc_clothbolt_03"}, 1),
-                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 25)
+                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 15)
                 })
             }
         },
-        { caption = "100",
+        { caption = "60",
             destinations = {
                 menuHelper.destinations.setDefault("lack of materials"),
                 menuHelper.destinations.setConditional("reward generic plural",
@@ -93,7 +93,7 @@ Menus["default crafting pillow hammock"] = {
                 },
                 {
                     menuHelper.effects.removeItem({"misc_clothbolt_01", "misc_clothbolt_02", "misc_clothbolt_03"}, 4),
-                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 100)
+                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 60)
                 })
             }
         },
