@@ -13,6 +13,10 @@ WorldInstance = nil
 ObjectLoops = {}
 Menus = {}
 
+for _, menuFile in ipairs(config.menuHelperFiles) do
+    require("menu/" .. menuFile)
+end
+
 Methods.InitializeWorld = function()
     WorldInstance = World()
 

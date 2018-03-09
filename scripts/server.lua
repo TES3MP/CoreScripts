@@ -9,6 +9,7 @@ require("time")
 myMod = require("myMod")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
+menuHelper = require("menuHelper")
 
 Database = nil
 Player = nil
@@ -50,6 +51,7 @@ local helptext = "\nCommand list:\
 /list - List all players on the server\
 /anim <animation> - Play an animation on yourself, with a list of valid inputs being provided if you use an invalid one (/a)\
 /speech <type> <index> - Play a certain speech on yourself, with a list of valid inputs being provided if you use invalid ones (/s)\
+/craft - Open up a small crafting menu used as a scripting example\
 /help - Get the list of commands available to regular users\
 /help moderator/admin - Get the list of commands available to moderators or admins, if you are one"
 
@@ -997,6 +999,11 @@ function OnPlayerSendMessage(pid, message)
                     GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
                 end
             end
+
+        elseif cmd[1] == "craft" then
+
+            Players[pid].currentCustomMenu = "default crafting origin"
+            menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
 
         else
             local message = "Not a valid command. Type /help for more info.\n"
