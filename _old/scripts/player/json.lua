@@ -1,6 +1,6 @@
 require("config")
-require("patterns")
-local jsonInterface = require("jsonInterface")
+jsonInterface = require("jsonInterface")
+fileHelper = require("fileHelper")
 tableHelper = require("tableHelper")
 local BasePlayer = require("player.base")
 
@@ -9,9 +9,10 @@ local Player = class("Player", BasePlayer)
 function Player:__init(pid, playerName)
     BasePlayer.__init(self, pid, playerName)
 
-    -- Replace characters not allowed in filenames
-    self.accountName = string.gsub(self.accountName, patterns.invalidFileCharacters, "_")
-    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR").."/player/", self.accountName .. ".json")
+    -- Ensure filename is valid
+    self.accountName = fileHelper.fixFilename(playerName)
+
+    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR") .. "/player/", self.accountName .. ".json")
 
     if self.accountFile == "invalid" then
         self.hasAccount = false
@@ -22,12 +23,19 @@ function Player:__init(pid, playerName)
 end
 
 function Player:CreateAccount()
-    jsonInterface.save("player/" .. self.accountFile, self.data)
-    self.hasAccount = true
+    self.hasAccount = jsonInterface.save("player/" .. self.accountFile, self.data)
+    
+    if self.hasAccount then
+        tes3mp.LogMessage(2, "Successfully created account for " .. self.accountName)
+    else
+        local message = "Failed to create account for " .. self.accountName
+        tes3mp.SendMessage(self.pid, message, true)
+        tes3mp.Kick(self.pid)
+    end
 end
 
 function Player:Save()
-    if self.hasAccount and self.loggedIn then
+    if self.hasAccount then
         jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end

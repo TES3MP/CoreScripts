@@ -9,6 +9,7 @@ require("time")
 myMod = require("myMod")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
+menuHelper = require("menuHelper")
 
 Database = nil
 Player = nil
@@ -50,6 +51,7 @@ local helptext = "\nCommand list:\
 /list - List all players on the server\
 /anim <animation> - Play an animation on yourself, with a list of valid inputs being provided if you use an invalid one (/a)\
 /speech <type> <index> - Play a certain speech on yourself, with a list of valid inputs being provided if you use invalid ones (/s)\
+/craft - Open up a small crafting menu used as a scripting example\
 /help - Get the list of commands available to regular users\
 /help moderator/admin - Get the list of commands available to moderators or admins, if you are one"
 
@@ -62,6 +64,7 @@ local modhelptext = "Moderators only:\
 /unban name <name> - Unban a player name and all IP addresses stored for them\
 /banlist ips/names - Print all banned IPs or all banned player names\
 /ipaddresses <name> - Print all the IP addresses used by a player (/ips)\
+/confiscate <pid> - Open up a window where you can confiscate an item from a player\
 /time <value> - Set the server's time counter\
 /teleport <pid>/all - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
@@ -69,13 +72,14 @@ local modhelptext = "Moderators only:\
 /getpos <pid> - Get player position and cell\
 /setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
 /setskill <pid> <skill> <value> - Set a player's skill to a certain value\
-/superman - Increase acrobatics, athletics and speed\
+/superman - Increase your acrobatics, athletics and speed\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
+/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player\
 /setconsole <pid> on/off/default - Enable/disable in-game console for player\
 /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
@@ -252,6 +256,7 @@ function OnServerPostInit()
 
     tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
+    tes3mp.SetRuleString("physicsFramerate", tostring(config.physicsFramerate))
     tes3mp.SetRuleString("console", consoleRuleString)
     tes3mp.SetRuleString("bedResting", bedRestRuleString)
     tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
@@ -296,6 +301,7 @@ end
 
 function OnPlayerConnect(pid)
     tes3mp.SetDifficulty(pid, config.difficulty)
+    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
     tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
     tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
@@ -327,10 +333,17 @@ function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConn
 end
 
 function OnPlayerDisconnect(pid)
-    tes3mp.LogMessage(1, "Player with pid "..pid.." disconnected.")
+    tes3mp.LogMessage(1, "Player with pid " .. pid .. " disconnected.")
     local message = myMod.GetChatName(pid) .. " left the server.\n"
 
     tes3mp.SendMessage(pid, message, true)
+
+    -- Was this player confiscating from someone? If so, clear that
+    if Players[pid] ~= nil and Players[pid].confiscationTargetName ~= nil then
+        local targetName = Players[pid].confiscationTargetName
+        local targetPlayer = myMod.GetPlayerByName(targetName)
+        targetPlayer:SetConfiscationState(false)
+    end
 
     -- Trigger any necessary script events useful for saving state
     myMod.OnPlayerCellChange(pid)
@@ -702,7 +715,27 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:LoadSettings()
                     tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " .. difficulty .. "\n", true)
                 else
-                    tes3mp.SendMessage(pid, "Not a valid argument. Use /difficulty <pid> <value>.\n", false)
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>.\n", false)
+                    return false
+                end
+            end
+
+        elseif (cmd[1] == "setphysicsfps" or cmd[1] == "setphysicsframerate") and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local physicsFramerate = cmd[3]
+
+                if type(tonumber(physicsFramerate)) == "number" then
+                    physicsFramerate = tonumber(physicsFramerate)
+                end
+
+                if physicsFramerate == "default" or type(physicsFramerate) == "number" then
+                    Players[targetPid]:SetPhysicsFramerate(physicsFramerate)
+                    Players[targetPid]:LoadSettings()
+                    tes3mp.SendMessage(pid, "Physics framerate for " .. Players[targetPid].name .. " is now " .. physicsFramerate .. "\n", true)
+                else
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setphysicsfps <pid> <value>.\n", false)
                     return false
                 end
             end
@@ -992,6 +1025,31 @@ function OnPlayerSendMessage(pid, message)
                 local validList = speechHelper.getValidList(pid)
                 tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n" .. validList .. "\n", false)
             end
+
+        elseif cmd[1] == "confiscate" and moderator then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+
+                if targetPid == pid then
+                    tes3mp.SendMessage(pid, "You can't confiscate from yourself!\n", false)
+                elseif Players[targetPid].data.customVariables.isConfiscationTarget then
+                    tes3mp.SendMessage(pid, "Someone is already confiscating from that player\n", false)
+                else
+                    Players[pid].confiscationTargetName = Players[targetPid].accountName
+
+                    Players[targetPid]:SetConfiscationState(true)
+
+                    tableHelper.cleanNils(Players[targetPid].data.inventory)
+                    GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
+                end
+            end
+
+        elseif cmd[1] == "craft" then
+
+            Players[pid].currentCustomMenu = "default crafting origin"
+            menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
 
         else
             local message = "Not a valid command. Type /help for more info.\n"

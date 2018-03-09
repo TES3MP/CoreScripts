@@ -1,3 +1,5 @@
+tableHelper = require("tableHelper")
+
 GUI = {}
 
 function enum(en)
@@ -68,6 +70,28 @@ local GetLoadedCellList = function()
     return list
 end
 
+local GetPlayerInventoryList = function(pid)
+
+    local list = ""
+    local divider = ""
+    local lastItemIndex = tableHelper.getCount(Players[pid].data.inventory)
+
+    for index, currentItem in ipairs(Players[pid].data.inventory) do
+
+        if index == lastItemIndex then
+            divider = ""
+        else
+            divider = "\n"
+        end
+
+        list = list .. index .. ": " .. currentItem.refId
+        list = list .. " (count: " .. currentItem.count .. ")"
+        list = list .. divider
+    end
+
+    return list
+end
+
 GUI.ShowPlayerList = function(pid)
 
     local playerCount = myMod.GetConnectedPlayerCount()
@@ -90,6 +114,19 @@ GUI.ShowCellList = function(pid)
         label = label .. "cells"
     end
     tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedCellList())
+end
+
+GUI.ShowInventoryList = function(menuId, pid, inventoryPid)
+
+    local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
+    local label = inventoryCount .. " "
+    if inventoryCount == 1 then
+        label = label .. "item"
+    else
+        label = label .. "items"
+    end
+
+    tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
 end
 
 return GUI

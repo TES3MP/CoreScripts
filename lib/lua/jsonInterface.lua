@@ -13,9 +13,15 @@ end
 function JsonInterface.save(filePath, data, keyOrderArray)
 
     local content = json.encode(data, { indent = true, keyorder = keyOrderArray });
-    local file = assert(io.open(filePath, 'w+b'), 'Error loading file: ' .. filePath);
-    file:write(content);
-    file:close();
+    local file = io.open(filePath, 'w+b');
+
+    if file ~= nil then
+        file:write(content);
+        file:close();
+        return true
+    else
+        return false
+    end
 end
 
 return JsonInterface

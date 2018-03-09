@@ -10,8 +10,16 @@ config.databaseType = "json"
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats", "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty", "consoleAllowed", "bedRestAllowed", "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index", "quest", "actorRefId"}
+config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats",
+    "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
+    "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
+    "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
+    "physicsFramerate", "consoleAllowed", "bedRestAllowed", "wildernessRestAllowed", "waitAllowed",
+    "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX",
+    "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase",
+    "fatigueCurrent"}
+config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index",
+    "quest", "actorRefId"}
 
 -- Time to login, in seconds
 config.loginTime = 60
@@ -20,6 +28,11 @@ config.loginTime = 60
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
 --       though you can use any integer value here
 config.difficulty = 0
+
+-- The physics framerate used by default
+-- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
+--       system requirements that make a default of 30 more appropriate.
+config.physicsFramerate = 30
 
 -- Whether players should be allowed to use the ingame tilde (~) console by default
 config.allowConsole = false
@@ -114,6 +127,13 @@ config.bountyDeathPenalty = false
 
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
+
+-- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
+-- to prevent other menu inputs from being taken into account for them
+config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
+
+-- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
+config.menuHelperFiles = { "defaultCrafting" }
 
 -- Whether time should be synchronized across clients
 -- Valid values: 0, 1
