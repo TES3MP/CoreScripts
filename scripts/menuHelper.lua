@@ -6,10 +6,15 @@ menuHelper.conditions = {}
 menuHelper.effects = {}
 menuHelper.destinations = {}
 
-function menuHelper.conditions.requireItem(inputRefId, inputCount)
+function menuHelper.conditions.requireItem(inputRefIds, inputCount)
+
+    if type(inputRefIds) ~= "table" then
+        inputRefIds = { inputRefIds }
+    end
+
     local condition = {
         conditionType = "item",
-        refId = inputRefId,
+        refIds = inputRefIds,
         count = inputCount
     }
 
@@ -47,11 +52,16 @@ function menuHelper.effects.giveItem(inputRefId, inputCount)
     return effect
 end
 
-function menuHelper.effects.removeItem(inputRefId, inputCount)
+function menuHelper.effects.removeItem(inputRefIds, inputCount)
+
+    if type(inputRefIds) ~= "table" then
+        inputRefIds = { inputRefIds }
+    end
+
     local effect = {
         effectType = "item",
         action = "remove",
-        refId = inputRefId,
+        refIds = inputRefIds,
         count = inputCount
     }
 
@@ -112,12 +122,19 @@ function menuHelper.checkCondition(pid, condition)
 
     if condition.conditionType == "item" then
 
-        if inventoryHelper.containsItem(targetPlayer.data.inventory, condition.refId) then
-            local itemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, condition.refId)
-            local item = targetPlayer.data.inventory[itemIndex]
+        local remainingCount = condition.count
 
-            if item.count >= condition.count then
-                return true
+        for _, currentRefId in ipairs(condition.refIds) do
+
+            if inventoryHelper.containsItem(targetPlayer.data.inventory, currentRefId) then
+                local itemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, currentRefId)
+                local item = targetPlayer.data.inventory[itemIndex]
+
+                remainingCount = remainingCount - item.count
+
+                if remainingCount < 1 then
+                    return true
+                end
             end
         end
     elseif condition.conditionType == "attribute" then
@@ -155,21 +172,32 @@ function menuHelper.processEffects(pid, effects)
 
             elseif effect.action == "remove" then
 
-                if inventoryHelper.containsItem(targetPlayer.data.inventory, effect.refId) then
+                local remainingCount = effect.count
 
-                    -- If the item is equipped by the target, unequip it first
-                    if inventoryHelper.containsItem(targetPlayer.data.equipment, effect.refId) then
-                        local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment, effect.refId)
-                        targetPlayer.data.equipment[equipmentItemIndex] = nil
+                for _, currentRefId in ipairs(effect.refIds) do
+
+                    if remainingCount > 0 and inventoryHelper.containsItem(targetPlayer.data.inventory, currentRefId) then
+
+                        -- If the item is equipped by the target, unequip it first
+                        if inventoryHelper.containsItem(targetPlayer.data.equipment, currentRefId) then
+                            local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment, currentRefId)
+                            targetPlayer.data.equipment[equipmentItemIndex] = nil
+                        end
+
+                        local inventoryItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, currentRefId)
+                        local item = targetPlayer.data.inventory[inventoryItemIndex]
+                        item.count = item.count - remainingCount
+                        --remainingCount = remainingCount - item.count
+
+                        if item.count < 0 then
+                            remainingCount = 0 - item.count
+                            item.count = 0
+                        else
+                            remainingCount = 0
+                        end
+
+                        targetPlayer.data.inventory[inventoryItemIndex] = item
                     end
-
-                    local inventoryItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, effect.refId)
-                    local item = targetPlayer.data.inventory[inventoryItemIndex]
-                    item.count = item.count - effect.count
-
-                    if item.count < 0 then item.count = 0 end
-
-                    targetPlayer.data.inventory[inventoryItemIndex] = item
                 end
             end
         elseif effect.effectType == "variable" then
