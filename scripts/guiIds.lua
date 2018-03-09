@@ -116,7 +116,7 @@ GUI.ShowCellList = function(pid)
     tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedCellList())
 end
 
-GUI.ShowInventoryList = function(pid, inventoryPid)
+GUI.ShowInventoryList = function(menuId, pid, inventoryPid)
 
     local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
     local label = inventoryCount .. " "
@@ -126,7 +126,7 @@ GUI.ShowInventoryList = function(pid, inventoryPid)
         label = label .. "items"
     end
 
-    tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetPlayerInventoryList(inventoryPid))
+    tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
 end
 
 return GUI

@@ -1,3 +1,4 @@
+require("config")
 inventoryHelper = require("inventoryHelper")
 
 local menuHelper = {}
@@ -253,7 +254,7 @@ function menuHelper.displayMenu(pid, menuIndex)
         end
     end
 
-    tes3mp.CustomMessageBox(pid, -1,  text, buttonList)
+    tes3mp.CustomMessageBox(pid, config.customMenuIds.menuHelper,  text, buttonList)
 end
 
 return menuHelper

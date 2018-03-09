@@ -102,6 +102,10 @@ config.deathPenaltyJailDays = 5
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
 
+-- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
+-- to prevent other menu inputs from being taken into account for them
+config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
+
 -- Whether time should be synchronized across clients
 -- Valid values: 0, 1
 -- Note: 0 for no time sync, 1 for time sync based on the server's time counter

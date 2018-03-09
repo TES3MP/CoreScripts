@@ -314,7 +314,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
         Players[pid]:Registered(data)
         Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or change it from your client config.\n")
 
-    elseif idGui == GUI.ID.PLAYERSLIST and Players[pid].confiscationTargetName ~= nil then
+    elseif idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
         local targetName = Players[pid].confiscationTargetName
         local targetPlayer = Methods.GetPlayerByName(targetName)
@@ -354,7 +354,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
 
         Players[pid].confiscationTargetName = nil
 
-    elseif idGui == -1 and Players[pid].currentCustomMenu ~= nil then
+    elseif idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
 
         local buttonPressed = tonumber(data) + 1
         local destination = menuHelper.getButtonDestination(pid, Players[pid].currentCustomMenu, buttonPressed)

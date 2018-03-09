@@ -994,7 +994,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetConfiscationState(true)
 
                     tableHelper.cleanNils(Players[targetPid].data.inventory)
-                    GUI.ShowInventoryList(pid, targetPid)
+                    GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
                 end
             end
 
