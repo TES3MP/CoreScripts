@@ -79,7 +79,6 @@ local adminhelptext = "Admins only:\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
-/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player\
 /setconsole <pid> on/off/default - Enable/disable in-game console for player\
 /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
 /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
@@ -89,7 +88,9 @@ local adminhelptext = "Admins only:\
 /storeconsole <pid> <command> - Store a certain console command for a player\
 /runconsole <pid> (<count>) (<interval>) - Run a stored console command on a player, with optional count and interval\
 /placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
-/spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval"
+/spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
+/setloglevel <pid> <value>/default - Set the enforced log level for a particular player\
+/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player"
 
 -- Handle commands that only exist based on config options
 if config.allowSuicideCommand == true then
@@ -256,12 +257,13 @@ function OnServerPostInit()
 
     tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
     tes3mp.SetRuleString("difficulty", tostring(config.difficulty))
-    tes3mp.SetRuleString("physicsFramerate", tostring(config.physicsFramerate))
+    tes3mp.SetRuleString("deathPenaltyJailDays", tostring(config.deathPenaltyJailDays))
     tes3mp.SetRuleString("console", consoleRuleString)
     tes3mp.SetRuleString("bedResting", bedRestRuleString)
     tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
     tes3mp.SetRuleString("waiting", waitRuleString)
-    tes3mp.SetRuleString("deathPenaltyJailDays", tostring(config.deathPenaltyJailDays))
+    tes3mp.SetRuleString("enforcedLogLevel", tostring(config.enforcedLogLevel))
+    tes3mp.SetRuleString("physicsFramerate", tostring(config.physicsFramerate))
     tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
     tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
     tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
@@ -301,11 +303,12 @@ end
 
 function OnPlayerConnect(pid)
     tes3mp.SetDifficulty(pid, config.difficulty)
-    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
     tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
     tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
     tes3mp.SetWaitAllowed(pid, config.allowWait)
+    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
+    tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
     tes3mp.SendSettings(pid)
 
     local playerName = tes3mp.GetName(pid)
@@ -715,27 +718,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:LoadSettings()
                     tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " .. difficulty .. "\n", true)
                 else
-                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>.\n", false)
-                    return false
-                end
-            end
-
-        elseif (cmd[1] == "setphysicsfps" or cmd[1] == "setphysicsframerate") and admin then
-            if myMod.CheckPlayerValidity(pid, cmd[2]) then
-
-                local targetPid = tonumber(cmd[2])
-                local physicsFramerate = cmd[3]
-
-                if type(tonumber(physicsFramerate)) == "number" then
-                    physicsFramerate = tonumber(physicsFramerate)
-                end
-
-                if physicsFramerate == "default" or type(physicsFramerate) == "number" then
-                    Players[targetPid]:SetPhysicsFramerate(physicsFramerate)
-                    Players[targetPid]:LoadSettings()
-                    tes3mp.SendMessage(pid, "Physics framerate for " .. Players[targetPid].name .. " is now " .. physicsFramerate .. "\n", true)
-                else
-                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setphysicsfps <pid> <value>.\n", false)
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>\n", false)
                     return false
                 end
             end
@@ -757,7 +740,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetConsoleAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>\n", false)
                      return false
                 end
 
@@ -785,7 +768,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetBedRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> <on/off/default>\n", false)
                      return false
                 end
 
@@ -813,7 +796,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWildernessRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> <on/off/default>\n", false)
                      return false
                 end
 
@@ -841,7 +824,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWaitAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> <on/off/default>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> <on/off/default>\n", false)
                      return false
                 end
 
@@ -849,6 +832,48 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "Waiting for " .. Players[targetPid].name .. state, false)
                 if targetPid ~= pid then
                     tes3mp.SendMessage(targetPid, "Waiting" .. state, false)
+                end
+            end
+
+        elseif (cmd[1] == "setphysicsfps" or cmd[1] == "setphysicsframerate") and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local physicsFramerate = cmd[3]
+
+                if type(tonumber(physicsFramerate)) == "number" then
+                    physicsFramerate = tonumber(physicsFramerate)
+                end
+
+                if physicsFramerate == "default" or type(physicsFramerate) == "number" then
+                    Players[targetPid]:SetPhysicsFramerate(physicsFramerate)
+                    Players[targetPid]:LoadSettings()
+                    tes3mp.SendMessage(pid, "Physics framerate for " .. Players[targetPid].name
+                        .. " is now " .. physicsFramerate .. "\n", true)
+                else
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setphysicsfps <pid> <value>\n", false)
+                    return false
+                end
+            end
+
+        elseif (cmd[1] == "setloglevel" or cmd[1] == "setenforcedloglevel") and admin then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local logLevel = cmd[3]
+
+                if type(tonumber(logLevel)) == "number" then
+                    logLevel = tonumber(logLevel)
+                end
+
+                if logLevel == "default" or type(logLevel) == "number" then
+                    Players[targetPid]:SetEnforcedLogLevel(logLevel)
+                    Players[targetPid]:LoadSettings()
+                    tes3mp.SendMessage(pid, "Enforced log level for " .. Players[targetPid].name
+                        .. " is now " .. logLevel .. "\n", true)
+                else
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setloglevel <pid> <value>\n", false)
+                    return false
                 end
             end
 

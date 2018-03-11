@@ -17,11 +17,12 @@ function BasePlayer:__init(pid, playerName)
         settings = {
             admin = 0,
             difficulty = "default",
-            physicsFramerate = "default",
             consoleAllowed = "default",
             bedRestAllowed = "default",
             wildernessRestAllowed = "default",
-            waitAllowed = "default"
+            waitAllowed = "default",
+            enforcedLogLevel = "default",
+            physicsFramerate = "default"
         },
         character = {
             race = "",
@@ -1062,9 +1063,6 @@ function BasePlayer:GetDifficulty()
     return self.data.settings.difficulty
 end
 
-function BasePlayer:GetPhysicsFramerate()
-    return self.data.settings.physicsFramerate
-end
 
 function BasePlayer:GetConsoleAllowed()
     return self.data.settings.consoleAllowed
@@ -1082,6 +1080,14 @@ function BasePlayer:GetWaitAllowed()
     return self.data.settings.waitAllowed
 end
 
+function BasePlayer:GetEnforcedLogLevel()
+    return self.data.settings.enforcedLogLevel
+end
+
+function BasePlayer:GetPhysicsFramerate()
+    return self.data.settings.physicsFramerate
+end
+
 function BasePlayer:SetDifficulty(difficulty)
     if difficulty == nil or difficulty == "default" then
         difficulty = config.difficulty
@@ -1092,6 +1098,18 @@ function BasePlayer:SetDifficulty(difficulty)
 
     tes3mp.SetDifficulty(self.pid, difficulty)
     tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. myMod.GetChatName(self.pid))
+end
+
+function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
+    if enforcedLogLevel == nil or enforcedLogLevel == "default" then
+        enforcedLogLevel = config.enforcedLogLevel
+        self.data.settings.enforcedLogLevel = "default"
+    else
+        self.data.settings.enforcedLogLevel = enforcedLogLevel
+    end
+
+    tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
+    tes3mp.LogMessage(3, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. myMod.GetChatName(self.pid))
 end
 
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
@@ -1186,11 +1204,12 @@ end
 function BasePlayer:LoadSettings()
 
     self:SetDifficulty(self.data.settings.difficulty)
-    self:SetPhysicsFramerate(self.data.settings.physicsFramerate)
     self:SetConsoleAllowed(self.data.settings.consoleAllowed)
     self:SetBedRestAllowed(self.data.settings.bedRestAllowed)
     self:SetWildernessRestAllowed(self.data.settings.wildernessRestAllowed)
     self:SetWaitAllowed(self.data.settings.waitAllowed)
+    self:SetEnforcedLogLevel(self.data.settings.enforcedLogLevel)
+    self:SetPhysicsFramerate(self.data.settings.physicsFramerate)
 
     tes3mp.SendSettings(self.pid)
 end
