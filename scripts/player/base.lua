@@ -319,6 +319,10 @@ function BasePlayer:ProcessDeath()
     if deathReason == "suicide" then
         deathReason = "committed suicide"
     else
+        if deathReason == "" then
+            deathReason = "unknown forces"
+        end
+
         deathReason = "was killed by " .. deathReason
     end
 
