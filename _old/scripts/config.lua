@@ -14,12 +14,12 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
     "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
     "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
-    "physicsFramerate", "consoleAllowed", "bedRestAllowed", "wildernessRestAllowed", "waitAllowed",
-    "gender", "race", "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX",
-    "rotZ", "healthBase", "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase",
-    "fatigueCurrent"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type", "index",
-    "quest", "actorRefId"}
+    "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
+    "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
+    "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
+    "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type",
+    "index", "quest", "actorRefId"}
 
 -- Time to login, in seconds
 config.loginTime = 60
@@ -28,11 +28,6 @@ config.loginTime = 60
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
 --       though you can use any integer value here
 config.difficulty = 0
-
--- The physics framerate used by default
--- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
---       system requirements that make a default of 30 more appropriate.
-config.physicsFramerate = 30
 
 -- Whether players should be allowed to use the ingame tilde (~) console by default
 config.allowConsole = false
@@ -146,6 +141,20 @@ config.timeServerMult = 1
 
 -- The initial ingame time on the server
 config.timeServerInitTime = 7
+
+-- The log level enforced on clients by default, determining how much debug information
+-- is displayed in their debug window and logs
+-- Note 1: Set this to -1 to allow clients to use whatever log level they have set in
+--         their client settings
+-- Note 2: If you set this to 0 or 1, clients will be able to read about the movements
+--         and actions of other players that they would otherwise not know about,
+--         while also incurring a framerate loss on highly populated servers
+config.enforcedLogLevel = -1
+
+-- The physics framerate used by default
+-- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
+--       system requirements that make a default of 30 more appropriate.
+config.physicsFramerate = 30
 
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json

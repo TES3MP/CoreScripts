@@ -482,12 +482,35 @@ Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
     Methods.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
+Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
+
+    tes3mp.InitializeEvent(pid)
+    tes3mp.SetEventCell(Players[pid].data.location.cell)
+    tes3mp.SetObjectRefNumIndex(refNumIndex)
+    tes3mp.SetObjectMpNum(mpNum)
+    tes3mp.SetObjectRefId(refId)
+    tes3mp.AddWorldObject()
+    tes3mp.SendObjectDelete()
+end
+
 Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
 
     tes3mp.InitializeEvent(pid)
     tes3mp.SetEventCell(Players[pid].data.location.cell)
     tes3mp.SetEventConsoleCommand(consoleCommand)
     tes3mp.SetPlayerAsObject(pid)
+    tes3mp.AddWorldObject()
+    tes3mp.SendConsoleCommand()
+end
+
+Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
+
+    tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
+    tes3mp.SetEventCell(cellDescription)
+    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.SetObjectRefId(refId)
+    tes3mp.SetObjectRefNumIndex(refNumIndex)
+    tes3mp.SetObjectMpNum(mpNum)
     tes3mp.AddWorldObject()
     tes3mp.SendConsoleCommand()
 end
