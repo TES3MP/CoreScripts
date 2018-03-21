@@ -503,6 +503,18 @@ Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
     tes3mp.SendConsoleCommand()
 end
 
+Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
+
+    tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
+    tes3mp.SetEventCell(cellDescription)
+    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.SetObjectRefId(refId)
+    tes3mp.SetObjectRefNumIndex(refNumIndex)
+    tes3mp.SetObjectMpNum(mpNum)
+    tes3mp.AddWorldObject()
+    tes3mp.SendConsoleCommand()
+end
+
 Methods.OnObjectLoopTimeExpiration = function(loopIndex)
     if ObjectLoops[loopIndex] ~= nil then
 
