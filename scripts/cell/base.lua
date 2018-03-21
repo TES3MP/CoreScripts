@@ -424,7 +424,9 @@ function BaseCell:SaveObjectStates(pid)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refNumIndex = tes3mp.GetObjectRefNumIndex(i)
+        local mpNum = tes3mp.GetObjectMpNum(i)
+        local refIndex = refNumIndex .. "-" .. mpNum
         local refId = tes3mp.GetObjectRefId(i)
         local state = tes3mp.GetObjectState(i)
 
@@ -434,6 +436,21 @@ function BaseCell:SaveObjectStates(pid)
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, refIndex)
+        
+        if state == false then
+            if Players[pid].stateSpam == nil then
+                Players[pid].stateSpam = {}
+            end    
+            if Players[pid].stateSpam[refId] == nil then
+                Players[pid].stateSpam[refId] = 0
+            else    
+                Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
+                if Players[pid].stateSpam[refId] >= 5 then -- If the player gets 5 false object states for the same refid in that cell, delete it.
+                    myMod.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
+                    tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: "..refId.." was causing spam and has been deleted")            
+                end
+            end    
+        end
     end
 end
 

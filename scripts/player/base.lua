@@ -348,6 +348,10 @@ function BasePlayer:ProcessDeath()
     if deathReason == "suicide" then
         deathReason = "committed suicide"
     else
+        if deathReason == "" then
+            deathReason = "unknown forces"
+        end
+
         deathReason = "was killed by " .. deathReason
     end
 
@@ -789,7 +793,11 @@ function BasePlayer:LoadInventory()
             if currentItem.count < 1 then
                 self.data.inventory[index] = nil
             else
-                if currentItem.enchantmentCharge == nil then
+                if currentItem.charge == nil or currentItem.charge < -1 then
+                    currentItem.charge = -1
+                end
+
+                if currentItem.enchantmentCharge == nil or currentItem.enchantmentCharge < -1 then
                     currentItem.enchantmentCharge = -1
                 end
 
