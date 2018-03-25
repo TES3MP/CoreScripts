@@ -217,10 +217,12 @@ end
 
 function OnServerInit()
 
-    local version = tes3mp.GetServerVersion():split(".") -- for future versions
+    local expectedVersionPrefix = "0.6.3"
+    local serverVersion = tes3mp.GetServerVersion()
 
-    if tes3mp.GetServerVersion() ~= "0.6.3" then
-        tes3mp.LogMessage(3, "The server or script is outdated!")
+    if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
+        tes3mp.LogMessage(3, "Version mismatch between server and Core scripts!")
+        tes3mp.LogAppend(3, "- The Core scripts require a server version that starts with " .. expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
 
