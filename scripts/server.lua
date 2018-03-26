@@ -945,7 +945,7 @@ function OnPlayerSendMessage(pid, message)
                 local targetPid = tonumber(cmd[2])
                 Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
 
-                tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid, false)
+                tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid .. "\n", false)
             end
 
         elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
