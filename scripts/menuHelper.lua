@@ -167,8 +167,7 @@ function menuHelper.processEffects(pid, effects)
 
             if effect.action == "give" then
 
-                local item = { refId = effect.refId, count = effect.count, charge = -1 }
-                table.insert(targetPlayer.data.inventory, item)
+                inventoryHelper.addItem(targetPlayer.data.inventory, effect.refId, effect.count, -1, -1)
 
             elseif effect.action == "remove" then
 
@@ -187,7 +186,6 @@ function menuHelper.processEffects(pid, effects)
                         local inventoryItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, currentRefId)
                         local item = targetPlayer.data.inventory[inventoryItemIndex]
                         item.count = item.count - remainingCount
-                        --remainingCount = remainingCount - item.count
 
                         if item.count < 0 then
                             remainingCount = 0 - item.count

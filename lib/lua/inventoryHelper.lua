@@ -34,4 +34,20 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
     return nil
 end
 
+function inventoryHelper.addItem(inventory, inputRefId, inputCount, inputCharge, inputEnchantmentCharge)
+
+    if inventoryHelper.containsItem(inventory, inputRefId, inputCharge, inputEnchantmentCharge) then
+        local index = inventoryHelper.getItemIndex(inventory, inputRefId, inputCharge, inputEnchantmentCharge)
+        inventory[index].count = inventory[index].count + inputCount
+    else
+        local item = {
+            refId = inputRefId,
+            count = inputCount,
+            charge = inputCharge,
+            enchantmentCharge = inputEnchantmentCharge
+        }
+        table.insert(inventory, item)
+    end
+end
+
 return inventoryHelper
