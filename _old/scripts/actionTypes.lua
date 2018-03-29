@@ -3,6 +3,7 @@
 
 actionTypes = {}
 actionTypes.container = { SET = 0, ADD = 1, REMOVE = 2 }
+actionTypes.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3 }
 actionTypes.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
 actionTypes.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 actionTypes.journal = { ENTRY = 0, INDEX = 1 }

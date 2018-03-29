@@ -477,6 +477,7 @@ function BaseCell:SaveContainers(pid)
     tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     local action = tes3mp.GetEventAction()
+    local subAction = tes3mp.GetEventContainerSubAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -511,8 +512,10 @@ function BaseCell:SaveContainers(pid)
 
                 if action == actionTypes.container.ADD then
                     item.count = item.count + itemCount
+
                 elseif action == actionTypes.container.REMOVE then
-                    local newCount = item.count - tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
+                    local actionCount = tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
+                    local newCount = item.count - actionCount
 
                     -- The item will still exist in the container with a lower count
                     if newCount > 0 then
@@ -521,21 +524,20 @@ function BaseCell:SaveContainers(pid)
                     elseif newCount == 0 then
                         inventory[foundIndex] = nil
                     else
-                        tes3mp.LogMessage(2, "Attempt to remove more than possible from item")
+                        actionCount = item.count
+                        tes3mp.LogAppend(2, "- Attempt to remove more than possible from item")
+                        tes3mp.LogAppend(2, "- Removed just " .. actionCount .. " instead")
+                        tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, actionCount)
+                        inventory[foundIndex] = nil
                     end
                 end
             else
                 if action == actionTypes.container.REMOVE then
-                    tes3mp.LogMessage(2, "Attempt to remove non-existent item")
+                    tes3mp.LogAppend(2, "- Attempt to remove non-existent item")
+                    tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, 0)
                 else
-                    local item = {
-                        refId = itemRefId,
-                        count = itemCount,
-                        charge = itemCharge,
-                        enchantmentCharge = itemEnchantmentCharge
-                    }
-
-                    table.insert(inventory, item)
+                    inventoryHelper.addItem(inventory, itemRefId, itemCount,
+                        itemCharge, itemEnchantmentCharge)
                 end
             end
         end
@@ -543,6 +545,8 @@ function BaseCell:SaveContainers(pid)
         tableHelper.cleanNils(inventory)
         self.data.objectData[refIndex].inventory = inventory
     end
+
+    tes3mp.SendContainer(true, true)
 
     self:Save()
 
