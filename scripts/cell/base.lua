@@ -265,6 +265,8 @@ end
 
 function BaseCell:SaveObjectsPlaced(pid)
 
+    local containerRefIndexesRequested = {}
+
     tes3mp.ReadLastEvent()
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
@@ -317,11 +319,18 @@ function BaseCell:SaveObjectsPlaced(pid)
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, refIndex)
+            table.insert(containerRefIndexesRequested, refIndex)
         end
+    end
+
+    if tableHelper.isEmpty(containerRefIndexesRequested) == false then
+        self:RequestContainers(pid, containerRefIndexesRequested)
     end
 end
 
 function BaseCell:SaveObjectsSpawned(pid)
+
+    local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastEvent()
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " .. self.description)
@@ -351,7 +360,12 @@ function BaseCell:SaveObjectsSpawned(pid)
 
             table.insert(self.data.packets.spawn, refIndex)
             table.insert(self.data.packets.actorList, refIndex)
+            table.insert(containerRefIndexesRequested, refIndex)
         end
+    end
+
+    if tableHelper.isEmpty(containerRefIndexesRequested) == false then
+        self:RequestContainers(pid, containerRefIndexesRequested)
     end
 end
 
@@ -1381,7 +1395,7 @@ function BaseCell:SendActorCellChanges(pid)
     end
 end
 
-function BaseCell:RequestContainers(pid)
+function BaseCell:RequestContainers(pid, requestRefIndexes)
 
     self.isRequestingContainers = true
     self.containerRequestPid = pid
@@ -1391,6 +1405,22 @@ function BaseCell:RequestContainers(pid)
 
     -- Set the action to REQUEST
     tes3mp.SetEventAction(3)
+
+    -- If certain refIndexes are specified, iterate through them and
+    -- add them as world objects
+    --
+    -- Otherwise, the client will simply reply with the contents of all
+    -- the containers in this cell
+    if requestRefIndexes ~= nil and type(requestRefIndexes) == "table" then
+        for arrayIndex, refIndex in pairs(requestRefIndexes) do
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+            tes3mp.AddWorldObject()
+        end
+    end
 
     tes3mp.SendContainer()
 end
