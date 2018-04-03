@@ -94,14 +94,14 @@ config.respawnAtImperialShrine = true
 config.respawnAtTribunalTemple = true
 
 -- The maximum value that any attribute except Speed is allowed to have
-config.maxAttributeValue = 150
+config.maxAttributeValue = 200
 
 -- The maximum value that Speed is allowed to have
 -- Note: Speed is given special treatment because of the Boots of Blinding Speed
 config.maxSpeedValue = 365
 
 -- The maximum value that any skill except Acrobatics is allowed to have
-config.maxSkillValue = 150
+config.maxSkillValue = 200
 
 -- The maximum value that Acrobatics is allowed to have
 -- Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
