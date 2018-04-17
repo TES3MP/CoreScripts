@@ -77,6 +77,7 @@ local modhelptext = "Moderators only:\
 
 local adminhelptext = "Admins only:\
 /setrace <pid> <race> - Change a player's race\
+/disguise <pid> <refId> - Set a player's creature disguise, or remove it by using an invalid refId\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -941,6 +942,27 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "Werewolf state for " .. Players[targetPid].name .. state, false)
                 if targetPid ~= pid then
                     tes3mp.SendMessage(targetPid, "Werewolf state" .. state, false)
+                end
+            end
+
+        elseif cmd[1] == "disguise" and admin then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local creatureRefId = tableHelper.concatenateFromIndex(cmd, 3)
+
+                Players[targetPid].data.shapeshift.creatureRefId = creatureRefId
+                tes3mp.SetCreatureRefId(targetPid, creatureRefId)
+                tes3mp.SendShapeshift(targetPid)
+
+                if creatureRefId == "" then
+                    creatureRefId = "nothing"
+                end
+
+                tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " .. creatureRefId, false)
+                if targetPid ~= pid then
+                    tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId, false)
                 end
             end
 
