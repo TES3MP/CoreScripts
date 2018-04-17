@@ -411,6 +411,10 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
+        elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
+            local message = myMod.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+
         elseif cmd[1] == "ban" and moderator then
 
             if cmd[2] == "ip" and cmd[3] ~= nil then
@@ -1046,10 +1050,6 @@ function OnPlayerSendMessage(pid, message)
                     tes3mp.StartTimer(timerId)
                 end
             end
-
-        elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
-            local message = myMod.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-            tes3mp.SendMessage(pid, message, true)
 
         elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
             local isValid = animHelper.playAnimation(pid, cmd[2])
