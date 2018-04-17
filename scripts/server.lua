@@ -76,6 +76,7 @@ local modhelptext = "Moderators only:\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
+/setrace <pid> <race> - Change a player's race\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -628,6 +629,19 @@ function OnPlayerSendMessage(pid, message)
 
             tes3mp.SendAttributes(pid)
             tes3mp.SendSkills(pid)
+
+        elseif cmd[1] == "setrace" and admin then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local newRace = tableHelper.concatenateFromIndex(cmd, 3)
+
+                Players[targetPid].data.character.race = newRace
+                tes3mp.SetRace(targetPid, newRace)
+                tes3mp.SetResetStats(targetPid, false)
+                tes3mp.SendBaseInfo(targetPid)
+            end
 
         elseif cmd[1] == "setattr" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
