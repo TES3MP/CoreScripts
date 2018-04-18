@@ -660,9 +660,14 @@ function BasePlayer:LoadShapeshift()
         self.data.shapeshift.creatureRefId = ""
     end
 
+    if self.data.shapeshift.displayCreatureName == nil then
+        self.data.shapeshift.displayCreatureName = false
+    end
+
     tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
     tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
     tes3mp.SetCreatureRefId(self.pid, self.data.shapeshift.creatureRefId)
+    tes3mp.SetCreatureNameDisplayState(self.pid, self.data.shapeshift.displayCreatureName)
     tes3mp.SendShapeshift(self.pid)
 end
 

@@ -78,6 +78,7 @@ local modhelptext = "Moderators only:\
 local adminhelptext = "Admins only:\
 /setrace <pid> <race> - Change a player's race\
 /disguise <pid> <refId> - Set a player's creature disguise, or remove it by using an invalid refId\
+/usecreaturename <pid> <on/off> - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -964,6 +965,27 @@ function OnPlayerSendMessage(pid, message)
                 if targetPid ~= pid then
                     tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId, false)
                 end
+            end
+
+        elseif cmd[1] == "usecreaturename" and admin then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local nameState
+
+                if cmd[3] == "on" then
+                    nameState = true
+                elseif cmd[3] == "off" then
+                    nameState = false
+                else
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> <on/off>\n", false)
+                     return false
+                end
+
+                Players[targetPid].data.shapeshift.displayCreatureName = nameState
+                tes3mp.SetCreatureNameDisplayState(targetPid, nameState)
+                tes3mp.SendShapeshift(targetPid)
             end
 
         elseif cmd[1] == "time" and moderator then
