@@ -77,6 +77,8 @@ local modhelptext = "Moderators only:\
 
 local adminhelptext = "Admins only:\
 /setrace <pid> <race> - Change a player's race\
+/sethead <pid> <body part id> - Change a player's head\
+/sethair <pid> <body part id> - Change a player's hairstyle\
 /disguise <pid> <refId> - Set a player's creature disguise, or remove it by using an invalid refId\
 /usecreaturename <pid> <on/off> - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
 /addmoderator <pid> - Promote player to moderator\
@@ -625,17 +627,6 @@ function OnPlayerSendMessage(pid, message)
                 end
             end
 
-        elseif cmd[1] == "superman" and moderator then
-            -- Set Speed to 100
-            tes3mp.SetAttributeBase(pid, 4, 100)
-            -- Set Athletics to 100
-            tes3mp.SetSkillBase(pid, 8, 100)
-            -- Set Acrobatics to 400
-            tes3mp.SetSkillBase(pid, 20, 400)
-
-            tes3mp.SendAttributes(pid)
-            tes3mp.SendSkills(pid)
-
         elseif cmd[1] == "setrace" and admin then
 
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
@@ -648,6 +639,43 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SetResetStats(targetPid, false)
                 tes3mp.SendBaseInfo(targetPid)
             end
+
+        elseif cmd[1] == "sethead" and admin then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local newHead = tableHelper.concatenateFromIndex(cmd, 3)
+
+                Players[targetPid].data.character.head = newHead
+                tes3mp.SetHead(targetPid, newHead)
+                tes3mp.SetResetStats(targetPid, false)
+                tes3mp.SendBaseInfo(targetPid)
+            end
+
+        elseif cmd[1] == "sethair" and admin then
+
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local newHair = tableHelper.concatenateFromIndex(cmd, 3)
+
+                Players[targetPid].data.character.hair = newHair
+                tes3mp.SetHair(targetPid, newHair)
+                tes3mp.SetResetStats(targetPid, false)
+                tes3mp.SendBaseInfo(targetPid)
+            end
+
+        elseif cmd[1] == "superman" and moderator then
+            -- Set Speed to 100
+            tes3mp.SetAttributeBase(pid, 4, 100)
+            -- Set Athletics to 100
+            tes3mp.SetSkillBase(pid, 8, 100)
+            -- Set Acrobatics to 400
+            tes3mp.SetSkillBase(pid, 20, 400)
+
+            tes3mp.SendAttributes(pid)
+            tes3mp.SendSkills(pid)
 
         elseif cmd[1] == "setattr" and moderator then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
