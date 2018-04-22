@@ -1170,9 +1170,21 @@ function OnPlayerSendMessage(pid, message)
         end
 
         return false -- commands should be hidden
+
+    -- Check for chat overrides that add extra text
+    else
+        if admin then
+            local message = "[Admin] " .. myMod.GetChatName(pid) .. ": " .. message .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+            return false
+        elseif moderator then
+            local message = "[Mod] " .. myMod.GetChatName(pid) .. ": " .. message .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+            return false
+        end
     end
 
-    return true -- default behavior, chat messages should not
+    return true -- default behavior, regular chat messages should not be overridden
 end
 
 function OnObjectLoopTimeExpiration(loopIndex)
