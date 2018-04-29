@@ -242,6 +242,8 @@ end
 
 function OnServerPostInit()
 
+    tes3mp.SetGameMode(config.gameMode)
+
     local consoleRuleString = "allowed"
     if not config.allowConsole then
         consoleRuleString = "not " .. consoleRuleString

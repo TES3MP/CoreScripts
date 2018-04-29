@@ -1,5 +1,8 @@
 config = {}
 
+-- The game mode displayed for this server in the server browser
+config.gameMode = "Default"
+
 -- Time to login, in seconds
 config.loginTime = 60
 
