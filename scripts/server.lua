@@ -223,11 +223,13 @@ end
 
 function OnServerInit()
 
+    tes3mp.LogMessage(1, "Called \"OnServerInit\"")
+
     local expectedVersionPrefix = "0.6.3"
     local serverVersion = tes3mp.GetServerVersion()
 
     if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
-        tes3mp.LogMessage(3, "Version mismatch between server and Core scripts!")
+        tes3mp.LogAppend(3, "- Version mismatch between server and Core scripts!")
         tes3mp.LogAppend(3, "- The Core scripts require a server version that starts with " .. expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
@@ -242,6 +244,8 @@ function OnServerInit()
 end
 
 function OnServerPostInit()
+
+    tes3mp.LogMessage(1, "Called \"OnServerPostInit\"")
 
     tes3mp.SetGameMode(config.gameMode)
 
@@ -299,6 +303,7 @@ function OnServerPostInit()
 end
 
 function OnServerExit(error)
+    tes3mp.LogMessage(1, "Called \"OnServerExit\"")
     tes3mp.LogMessage(3, tostring(error))
 end
 
@@ -312,6 +317,9 @@ function OnRequestPluginList(id, field)
 end
 
 function OnPlayerConnect(pid)
+
+    tes3mp.LogMessage(1, "Called \"OnPlayerConnect\" for pid " .. pid)
+
     tes3mp.SetDifficulty(pid, config.difficulty)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
     tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
@@ -331,7 +339,7 @@ function OnPlayerConnect(pid)
         myMod.OnPlayerDeny(pid, playerName)
         return false -- deny player
     else
-        tes3mp.LogMessage(1, "New player with pid("..pid..") connected!")
+        tes3mp.LogAppend(1, "- New player is named " .. playerName)
         myMod.OnPlayerConnect(pid, playerName)
         return true -- accept player
     end
@@ -346,7 +354,8 @@ function OnLoginTimeExpiration(pid) -- timer-based event, see myMod.OnPlayerConn
 end
 
 function OnPlayerDisconnect(pid)
-    tes3mp.LogMessage(1, "Player with pid " .. pid .. " disconnected.")
+
+    tes3mp.LogMessage(1, "Called \"OnPlayerDisconnect\" for pid " .. pid)
     local message = myMod.GetChatName(pid) .. " left the server.\n"
 
     tes3mp.SendMessage(pid, message, true)
@@ -1213,15 +1222,17 @@ function OnObjectLoopTimeExpiration(loopIndex)
     myMod.OnObjectLoopTimeExpiration(loopIndex)
 end
 
-function OnPlayerDeath(pid)
-    myMod.OnPlayerDeath(pid)
-end
-
 function OnDeathTimeExpiration(pid)
     myMod.OnDeathTimeExpiration(pid)
 end
 
+function OnPlayerDeath(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerDeath\" for pid " .. pid)
+    myMod.OnPlayerDeath(pid)
+end
+
 function OnPlayerAttribute(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerAttribute\" for pid " .. pid)
     myMod.OnPlayerAttribute(pid)
 end
 
@@ -1230,14 +1241,17 @@ function OnPlayerSkill(pid)
 end
 
 function OnPlayerLevel(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerLevel\" for pid " .. pid)
     myMod.OnPlayerLevel(pid)
 end
 
 function OnPlayerShapeshift(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerShapeshift\" for pid " .. pid)
     myMod.OnPlayerShapeshift(pid)
 end
 
 function OnPlayerCellChange(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerCellChange\" for pid " .. pid)
     myMod.OnPlayerCellChange(pid)
 end
 
@@ -1250,110 +1264,137 @@ function OnPlayerInventory(pid)
 end
 
 function OnPlayerSpellbook(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerSpellbook\" for pid " .. pid)
     myMod.OnPlayerSpellbook(pid)
 end
 
 function OnPlayerQuickKeys(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerQuickKeys\" for pid " .. pid)
     myMod.OnPlayerQuickKeys(pid)
 end
 
 function OnPlayerJournal(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerJournal\" for pid " .. pid)
     myMod.OnPlayerJournal(pid)
 end
 
 function OnPlayerFaction(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerFaction\" for pid " .. pid)
     myMod.OnPlayerFaction(pid)
 end
 
 function OnPlayerTopic(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerTopic\" for pid " .. pid)
     myMod.OnPlayerTopic(pid)
 end
 
 function OnPlayerBounty(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerBounty\" for pid " .. pid)
     myMod.OnPlayerBounty(pid)
 end
 
 function OnPlayerReputation(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerReputation\" for pid " .. pid)
     myMod.OnPlayerReputation(pid)
 end
 
 function OnPlayerKillCount(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerKillCount\" for pid " .. pid)
     myMod.OnPlayerKillCount(pid)
 end
 
 function OnPlayerBook(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerBook\" for pid " .. pid)
     myMod.OnPlayerBook(pid)
 end
 
 function OnPlayerMiscellaneous(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerMiscellaneous\" for pid " .. pid)
     myMod.OnPlayerMiscellaneous(pid)
 end
 
 function OnPlayerEndCharGen(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerEndCharGen\" for pid " .. pid)
     myMod.OnPlayerEndCharGen(pid)
 end
 
 function OnCellLoad(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnCellLoad\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnCellLoad(pid, cellDescription)
 end
 
 function OnCellUnload(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnCellUnload\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnCellUnload(pid, cellDescription)
 end
 
 function OnCellDeletion(cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnCellDeletion\" for cell " .. cellDescription)
     myMod.OnCellDeletion(cellDescription)
 end
 
 function OnActorList(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnActorList\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnActorList(pid, cellDescription)
 end
 
 function OnActorEquipment(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnActorEquipment\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnActorEquipment(pid, cellDescription)
 end
 
 function OnActorCellChange(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnActorCellChange\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnActorCellChange(pid, cellDescription)
 end
 
 function OnObjectPlace(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectPlace\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectPlace(pid, cellDescription)
 end
 
 function OnObjectSpawn(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectSpawn\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectSpawn(pid, cellDescription)
 end
 
 function OnObjectDelete(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectDelete\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectDelete(pid, cellDescription)
 end
 
 function OnObjectLock(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectLock\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectLock(pid, cellDescription)
 end
 
 function OnObjectTrap(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectTrap\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectTrap(pid, cellDescription)
 end
 
 function OnObjectScale(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectScale\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectScale(pid, cellDescription)
 end
 
 function OnObjectState(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnObjectState\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnObjectState(pid, cellDescription)
 end
 
 function OnDoorState(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnDoorState\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnDoorState(pid, cellDescription)
 end
 
 function OnContainer(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnContainer\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnContainer(pid, cellDescription)
 end
 
 function OnGUIAction(pid, idGui, data)
+    tes3mp.LogMessage(0, "Called \"OnGUIAction\" for pid " .. pid)
     if myMod.OnGUIAction(pid, idGui, data) then return end -- if myMod.OnGUIAction is called
 end
 
