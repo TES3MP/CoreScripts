@@ -72,6 +72,7 @@ local modhelptext = "Moderators only:\
 /getpos <pid> - Get player position and cell\
 /setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
 /setskill <pid> <skill> <value> - Set a player's skill to a certain value\
+/setmomentum <pid> <x> <y> <z> - Set a player's momentum to certain values\
 /superman - Increase your acrobatics, athletics and speed\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
@@ -730,6 +731,25 @@ function OnPlayerSendMessage(pid, message)
                     end
                 end
             end
+
+        elseif cmd[1] == "setmomentum" and moderator then
+            if myMod.CheckPlayerValidity(pid, cmd[2]) then
+
+                local targetPid = tonumber(cmd[2])
+                local xValue = tonumber(cmd[3])
+                local yValue = tonumber(cmd[4])
+                local zValue = tonumber(cmd[5])
+                
+                if type(xValue) == "number" and type(yValue) == "number" and
+                   type(zValue) == "number" then
+
+                    tes3mp.SetMomentum(targetPid, xValue, yValue, zValue)
+                    tes3mp.SendMomentum(targetPid)
+                else
+                    tes3mp.SendMessage(pid, "Not a valid argument. Use /setmomentum <pid> <x> <y> <z>\n", false)
+                end
+            end
+
         elseif cmd[1] == "help" then
             if (cmd[2] == "moderator" or cmd[2] == "mod") then
 
