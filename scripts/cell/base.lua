@@ -44,6 +44,34 @@ function BaseCell:__init(cellDescription)
 
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
+
+    self.isExterior = false
+
+    if string.match(cellDescription, patterns.exteriorCell) then
+        self.isExterior = true
+
+        local gridX, gridY
+        _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
+
+        self.gridX = tonumber(gridX)
+        self.gridY = tonumber(gridY)
+    end
+end
+
+function BaseCell:ContainsPosition(posX, posY)
+
+    local cellSize = 8192
+
+    if self.isExterior then
+        local correctGridX = math.floor(posX / cellSize)
+        local correctGridY = math.floor(posY / cellSize)
+
+        if self.gridX ~= correctGridX or self.gridY ~= correctGridY then
+            return false
+        end
+    end
+
+    return true
 end
 
 function BaseCell:HasEntry()
