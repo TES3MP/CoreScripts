@@ -50,6 +50,15 @@ function BaseCell:HasEntry()
     return self.hasEntry
 end
 
+function BaseCell:IsExterior()
+
+    if string.match(self.description, patterns.exteriorCell) then
+        return true
+    end
+
+    return false
+end
+
 function BaseCell:GetVisitorCount()
 
     local visitorCount = 0
