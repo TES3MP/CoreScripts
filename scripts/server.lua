@@ -1313,6 +1313,11 @@ function OnPlayerMiscellaneous(pid)
     myMod.OnPlayerMiscellaneous(pid)
 end
 
+function OnPlayerMap(pid)
+    tes3mp.LogMessage(0, "Called \"OnPlayerMap\" for pid " .. pid)
+    myMod.OnPlayerMap(pid)
+end
+
 function OnPlayerEndCharGen(pid)
     tes3mp.LogMessage(0, "Called \"OnPlayerEndCharGen\" for pid " .. pid)
     myMod.OnPlayerEndCharGen(pid)
