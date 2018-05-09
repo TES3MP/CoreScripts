@@ -319,7 +319,8 @@ function BaseCell:SaveObjectsPlaced(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -377,7 +378,8 @@ function BaseCell:SaveObjectsSpawned(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -859,7 +861,8 @@ function BaseCell:SendObjectsPlaced(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -929,7 +932,8 @@ function BaseCell:SendObjectsSpawned(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -1194,7 +1198,8 @@ function BaseCell:SendActorPositions(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1330,7 +1335,8 @@ function BaseCell:SendActorCellChanges(pid)
                 local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
                 -- Ensure data integrity before proceeeding
-                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                    self:ContainsPosition(location.posX, location.posY) then
 
                     tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                     tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1397,7 +1403,8 @@ function BaseCell:SendActorCellChanges(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and 
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
