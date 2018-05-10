@@ -44,10 +44,47 @@ function BaseCell:__init(cellDescription)
 
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
+
+    self.isExterior = false
+
+    if string.match(cellDescription, patterns.exteriorCell) then
+        self.isExterior = true
+
+        local gridX, gridY
+        _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
+
+        self.gridX = tonumber(gridX)
+        self.gridY = tonumber(gridY)
+    end
+end
+
+function BaseCell:ContainsPosition(posX, posY)
+
+    local cellSize = 8192
+
+    if self.isExterior then
+        local correctGridX = math.floor(posX / cellSize)
+        local correctGridY = math.floor(posY / cellSize)
+
+        if self.gridX ~= correctGridX or self.gridY ~= correctGridY then
+            return false
+        end
+    end
+
+    return true
 end
 
 function BaseCell:HasEntry()
     return self.hasEntry
+end
+
+function BaseCell:IsExterior()
+
+    if string.match(self.description, patterns.exteriorCell) then
+        return true
+    end
+
+    return false
 end
 
 function BaseCell:GetVisitorCount()
@@ -284,7 +321,8 @@ function BaseCell:SaveObjectsPlaced(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -349,7 +387,8 @@ function BaseCell:SaveObjectsSpawned(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -840,7 +879,8 @@ function BaseCell:SendObjectsPlaced(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -910,7 +950,8 @@ function BaseCell:SendObjectsSpawned(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -1175,7 +1216,8 @@ function BaseCell:SendActorPositions(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1311,7 +1353,8 @@ function BaseCell:SendActorCellChanges(pid)
                 local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
                 -- Ensure data integrity before proceeeding
-                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                    self:ContainsPosition(location.posX, location.posY) then
 
                     tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                     tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1378,7 +1421,8 @@ function BaseCell:SendActorCellChanges(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and 
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
