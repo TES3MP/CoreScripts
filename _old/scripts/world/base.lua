@@ -115,4 +115,16 @@ function BaseWorld:SaveKills(pid)
     self:Save()
 end
 
+function BaseWorld:SaveMap(pid)
+
+    for i = 0, tes3mp.GetMapChangesSize(pid) - 1 do
+
+        local cellX = tes3mp.GetMapTileCellX(pid, i)
+        local cellY = tes3mp.GetMapTileCellY(pid, i)
+        local filename = cellX .. ", " .. cellY .. ".png"
+
+        tes3mp.SaveMapTileImageFile(pid, i, os.getenv("MOD_DIR") .. "/map/" .. filename)
+    end
+end
+
 return BaseWorld

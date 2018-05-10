@@ -156,7 +156,6 @@ function BasePlayer:FinishLogin()
         self:LoadSpellbook()
         self:LoadQuickKeys()
         self:LoadBooks()
-        --self:LoadMap()
         self:LoadShapeshift()
         self:LoadMarkLocation()
         self:LoadSelectedSpell()
@@ -206,6 +205,7 @@ function BasePlayer:FinishLogin()
         WorldInstance:LoadKills(self.pid)
 
         self:LoadSpecialStates()
+        self:LoadMap()
     end
 end
 
@@ -656,8 +656,18 @@ function BasePlayer:LoadShapeshift()
         self.data.shapeshift.isWerewolf = false
     end
 
+    if self.data.shapeshift.creatureRefId == nil then
+        self.data.shapeshift.creatureRefId = ""
+    end
+
+    if self.data.shapeshift.displayCreatureName == nil then
+        self.data.shapeshift.displayCreatureName = false
+    end
+
     tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
     tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
+    tes3mp.SetCreatureRefId(self.pid, self.data.shapeshift.creatureRefId)
+    tes3mp.SetCreatureNameDisplayState(self.pid, self.data.shapeshift.displayCreatureName)
     tes3mp.SendShapeshift(self.pid)
 end
 
@@ -1061,7 +1071,15 @@ function BasePlayer:LoadMap()
 
     for index, cellDescription in pairs(self.data.mapExplored) do
 
-        tes3mp.AddCellExplored(self.pid, cellDescription)
+        local filePath = os.getenv("MOD_DIR") .. "/map/" .. cellDescription .. ".png"
+
+        if tes3mp.DoesFileExist(filePath) then
+
+            local cellX, cellY
+            _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
+
+            tes3mp.LoadMapTileImageFile(self.pid, tonumber(cellX), tonumber(cellY), filePath)
+        end
     end
 
     tes3mp.SendMapChanges(self.pid)

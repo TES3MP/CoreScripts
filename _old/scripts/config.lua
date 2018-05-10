@@ -1,25 +1,7 @@
 config = {}
 
--- The type of database or data format used by the server
--- Valid values: json, sqlite3
--- Note: The latter is only partially implemented as of now
-config.databaseType = "json"
-
--- The location of the database file
--- Note: Not applicable when using json
-config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
-
--- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats",
-    "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
-    "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
-    "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
-    "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
-    "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
-    "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
-    "magickaCurrent", "fatigueBase", "fatigueCurrent"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type",
-    "index", "quest", "actorRefId"}
+-- The game mode displayed for this server in the server browser
+config.gameMode = "Default"
 
 -- Time to login, in seconds
 config.loginTime = 60
@@ -94,14 +76,14 @@ config.respawnAtImperialShrine = true
 config.respawnAtTribunalTemple = true
 
 -- The maximum value that any attribute except Speed is allowed to have
-config.maxAttributeValue = 150
+config.maxAttributeValue = 200
 
 -- The maximum value that Speed is allowed to have
 -- Note: Speed is given special treatment because of the Boots of Blinding Speed
 config.maxSpeedValue = 365
 
 -- The maximum value that any skill except Acrobatics is allowed to have
-config.maxSkillValue = 150
+config.maxSkillValue = 200
 
 -- The maximum value that Acrobatics is allowed to have
 -- Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
@@ -162,5 +144,26 @@ config.physicsFramerate = 30
 --          what they're doing. Otherwise, you risk getting corrupt server data from
 --          their usage of unshared plugins.
 config.enforcePlugins = true
+
+-- The type of database or data format used by the server
+-- Valid values: json, sqlite3
+-- Note: The latter is only partially implemented as of now
+config.databaseType = "json"
+
+-- The location of the database file
+-- Note: Not applicable when using json
+config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
+
+-- The order in which table keys should be saved to JSON files
+config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats",
+    "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
+    "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
+    "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
+    "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
+    "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
+    "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
+    "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type",
+    "index", "quest", "actorRefId"}
 
 return config

@@ -840,6 +840,12 @@ Methods.OnPlayerMiscellaneous = function(pid)
     end
 end
 
+Methods.OnPlayerMap = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveMap(pid)
+    end
+end
+
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)

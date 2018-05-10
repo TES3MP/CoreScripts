@@ -44,10 +44,47 @@ function BaseCell:__init(cellDescription)
 
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
+
+    self.isExterior = false
+
+    if string.match(cellDescription, patterns.exteriorCell) then
+        self.isExterior = true
+
+        local gridX, gridY
+        _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
+
+        self.gridX = tonumber(gridX)
+        self.gridY = tonumber(gridY)
+    end
+end
+
+function BaseCell:ContainsPosition(posX, posY)
+
+    local cellSize = 8192
+
+    if self.isExterior then
+        local correctGridX = math.floor(posX / cellSize)
+        local correctGridY = math.floor(posY / cellSize)
+
+        if self.gridX ~= correctGridX or self.gridY ~= correctGridY then
+            return false
+        end
+    end
+
+    return true
 end
 
 function BaseCell:HasEntry()
     return self.hasEntry
+end
+
+function BaseCell:IsExterior()
+
+    if string.match(self.description, patterns.exteriorCell) then
+        return true
+    end
+
+    return false
 end
 
 function BaseCell:GetVisitorCount()
@@ -265,6 +302,8 @@ end
 
 function BaseCell:SaveObjectsPlaced(pid)
 
+    local containerRefIndexesRequested = {}
+
     tes3mp.ReadLastEvent()
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
@@ -282,7 +321,8 @@ function BaseCell:SaveObjectsPlaced(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -317,11 +357,18 @@ function BaseCell:SaveObjectsPlaced(pid)
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, refIndex)
+            table.insert(containerRefIndexesRequested, refIndex)
         end
+    end
+
+    if tableHelper.isEmpty(containerRefIndexesRequested) == false then
+        self:RequestContainers(pid, containerRefIndexesRequested)
     end
 end
 
 function BaseCell:SaveObjectsSpawned(pid)
+
+    local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastEvent()
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " .. self.description)
@@ -340,7 +387,8 @@ function BaseCell:SaveObjectsSpawned(pid)
         }
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
@@ -351,7 +399,12 @@ function BaseCell:SaveObjectsSpawned(pid)
 
             table.insert(self.data.packets.spawn, refIndex)
             table.insert(self.data.packets.actorList, refIndex)
+            table.insert(containerRefIndexesRequested, refIndex)
         end
+    end
+
+    if tableHelper.isEmpty(containerRefIndexesRequested) == false then
+        self:RequestContainers(pid, containerRefIndexesRequested)
     end
 end
 
@@ -826,7 +879,8 @@ function BaseCell:SendObjectsPlaced(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -896,7 +950,8 @@ function BaseCell:SendObjectsSpawned(pid)
         local location = self.data.objectData[refIndex].location
 
         -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
@@ -1161,7 +1216,8 @@ function BaseCell:SendActorPositions(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1297,7 +1353,8 @@ function BaseCell:SendActorCellChanges(pid)
                 local location = LoadedCells[newCellDescription].data.objectData[refIndex].location
 
                 -- Ensure data integrity before proceeeding
-                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+                if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                    self:ContainsPosition(location.posX, location.posY) then
 
                     tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                     tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1364,7 +1421,8 @@ function BaseCell:SendActorCellChanges(pid)
             local location = self.data.objectData[refIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) then
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and 
+                self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
@@ -1381,7 +1439,7 @@ function BaseCell:SendActorCellChanges(pid)
     end
 end
 
-function BaseCell:RequestContainers(pid)
+function BaseCell:RequestContainers(pid, requestRefIndexes)
 
     self.isRequestingContainers = true
     self.containerRequestPid = pid
@@ -1391,6 +1449,22 @@ function BaseCell:RequestContainers(pid)
 
     -- Set the action to REQUEST
     tes3mp.SetEventAction(3)
+
+    -- If certain refIndexes are specified, iterate through them and
+    -- add them as world objects
+    --
+    -- Otherwise, the client will simply reply with the contents of all
+    -- the containers in this cell
+    if requestRefIndexes ~= nil and type(requestRefIndexes) == "table" then
+        for arrayIndex, refIndex in pairs(requestRefIndexes) do
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+            tes3mp.AddWorldObject()
+        end
+    end
 
     tes3mp.SendContainer()
 end
