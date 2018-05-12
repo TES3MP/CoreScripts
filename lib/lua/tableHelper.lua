@@ -27,9 +27,28 @@ function tableHelper.getTableFromCommaSplit(inputString)
     return newTable
 end
 
--- Concatenate string values in a table, useful for printing the contents
--- of certain tables, with an optional delimiter between values
+-- Concatenate the indexes in a table, useful for printing out all the valid
+-- indexes
+function tableHelper.concatenateTableIndexes(inputTable, delimiter)
+
+    local resultString = ""
+
+    if delimiter == nil then
+        delimiter = " "
+    end
+
+    for index, value in pairs(inputTable) do
+
+        resultString = resultString .. index
+    end
+
+    return resultString
+end
+
+-- Concatenate the values in an array, useful for printing out the array's
+-- contents, with an optional delimiter between values
 function tableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
+
     local resultString = ""
 
     if delimiter == nil then
