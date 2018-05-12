@@ -515,6 +515,48 @@ Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, re
     tes3mp.SendConsoleCommand()
 end
 
+Methods.GetCellContainingActor = function(actorRefIndex)
+
+    for cellDescription, cell in pairs(LoadedCells) do
+
+        if tableHelper.containsValue(cell.data.packets.actorList, actorRefIndex) then
+            return cell
+        end
+    end
+    
+    return nil
+end
+
+Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRefIndex)
+
+    local cell = Methods.GetCellContainingActor(actorRefIndex)
+
+    if cell ~= nil then
+
+        tes3mp.InitializeActorList(cell.authority)
+
+        local splitIndex = actorRefIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        tes3mp.SetActorListCell(cell.description)
+        tes3mp.SetActorAIAction(action)
+
+        if targetPid ~= nil then
+            tes3mp.SetActorAITargetToPlayer(targetPid)
+        else
+            local targetSplitIndex = targetActorRefIndex:split("-")
+            tes3mp.SetActorAITargetToActor(targetSplitIndex[1], targetSplitIndex[2])
+        end
+
+        tes3mp.AddActor()
+        tes3mp.SendActorAI()
+
+    else
+        tes3mp.LogAppend(2, "- Could not find actor " .. actorRefIndex .. " in any loaded cell")
+    end
+end
+
 Methods.OnObjectLoopTimeExpiration = function(loopIndex)
     if ObjectLoops[loopIndex] ~= nil then
 

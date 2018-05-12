@@ -2,6 +2,7 @@
 -- currently implemented in packets
 
 actionTypes = {}
+actionTypes.ai = { FOLLOW = 0 }
 actionTypes.container = { SET = 0, ADD = 1, REMOVE = 2 }
 actionTypes.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3 }
 actionTypes.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }

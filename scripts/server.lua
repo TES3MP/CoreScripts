@@ -77,6 +77,7 @@ local modhelptext = "Moderators only:\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
+/setai <refIndex> <action> (<pid>/<refIndex>) - Set an AI action for the actor with a certain refIndex, with an optional target at the end\
 /setrace <pid> <race> - Change a player's race\
 /sethead <pid> <body part id> - Change a player's head\
 /sethair <pid> <body part id> - Change a player's hairstyle\
@@ -1188,6 +1189,33 @@ function OnPlayerSendMessage(pid, message)
                     tableHelper.cleanNils(Players[targetPid].data.inventory)
                     GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
                 end
+            end
+
+        elseif cmd[1] == "setai" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+
+            local actionString = cmd[3]
+            local actionValue
+
+            -- Allow both numerical and string input for actions (i.e. 0 or FOLLOW), but
+            -- convert the latter into the former
+            if type(tonumber(actionString)) == "number" then
+                actionValue = tonumber(actionString)
+            else
+                actionValue = actionTypes.ai[string.upper(actionString)]
+            end
+
+            if actionValue ~= nil then
+                local refIndex = cmd[2]
+                local target = cmd[4]
+
+                if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
+                    myMod.SetAIForActor(refIndex, actionValue, target)
+                else
+                    myMod.SetAIForActor(refIndex, actionValue, nil, target)
+                end
+            else
+                tes3mp.SendMessage(pid, actionString .. " is not a valid AI action. Valid choices are " ..
+                    tableHelper.concatenateTableIndexes(actionTypes.ai, ", ") .. "\n", false)
             end
 
         elseif cmd[1] == "craft" then
