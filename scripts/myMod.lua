@@ -454,14 +454,14 @@ Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
     -- to everyone
     if tableHelper.getCount(Players) > 0 then
 
-        tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
-        tes3mp.SetEventCell(cell)
+        tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+        tes3mp.SetObjectListCell(cell)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNumIndex(0)
         tes3mp.SetObjectMpNum(mpNum)
         tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
         tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         if packetType == "place" then
             tes3mp.SendObjectPlace(true)
@@ -484,34 +484,34 @@ end
 
 Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(Players[pid].data.location.cell)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.SetObjectRefId(refId)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendObjectDelete()
 end
 
 Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(Players[pid].data.location.cell)
-    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
+    tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetPlayerAsObject(pid)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendConsoleCommand()
 end
 
 Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
 
-    tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
-    tes3mp.SetEventCell(cellDescription)
-    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+    tes3mp.SetObjectListCell(cellDescription)
+    tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetObjectRefId(refId)
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendConsoleCommand()
 end
 

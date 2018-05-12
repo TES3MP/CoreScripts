@@ -249,7 +249,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectDelete from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -304,7 +304,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
     local containerRefIndexesRequested = {}
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -370,7 +370,7 @@ function BaseCell:SaveObjectsSpawned(pid)
 
     local containerRefIndexesRequested = {}
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -410,7 +410,7 @@ end
 
 function BaseCell:SaveObjectsLocked(pid)
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectLock from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -430,7 +430,7 @@ end
 
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectTrap from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -448,7 +448,7 @@ end
 
 function BaseCell:SaveObjectsScaled(pid)
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectScale from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -472,7 +472,7 @@ function BaseCell:SaveObjectStates(pid)
         self.data.packets.state = {}
     end
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving ObjectState from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
@@ -509,7 +509,7 @@ end
 
 function BaseCell:SaveDoorStates(pid)
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -526,11 +526,11 @@ end
 
 function BaseCell:SaveContainers(pid)
 
-    tes3mp.ReadLastEvent()
+    tes3mp.ReadLastObjectList()
     tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
-    local action = tes3mp.GetEventAction()
-    local subAction = tes3mp.GetEventContainerSubAction()
+    local action = tes3mp.GetObjectListAction()
+    local subAction = tes3mp.GetObjectListContainerSubAction()
 
     for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -847,8 +847,8 @@ function BaseCell:SendObjectsDeleted(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     -- Objects deleted
     for arrayIndex, refIndex in pairs(self.data.packets.delete) do
@@ -857,7 +857,7 @@ function BaseCell:SendObjectsDeleted(pid)
         tes3mp.SetObjectRefNumIndex(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         objectCount = objectCount + 1
     end
@@ -871,8 +871,8 @@ function BaseCell:SendObjectsPlaced(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.place) do
 
@@ -919,7 +919,7 @@ function BaseCell:SendObjectsPlaced(pid)
             tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
             tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
 
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
 
             objectCount = objectCount + 1
         else
@@ -942,8 +942,8 @@ function BaseCell:SendObjectsSpawned(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.spawn) do
 
@@ -961,7 +961,7 @@ function BaseCell:SendObjectsSpawned(pid)
             tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
             tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
 
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
 
             objectCount = objectCount + 1
         else
@@ -979,8 +979,8 @@ function BaseCell:SendObjectsLocked(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.lock) do
 
@@ -989,7 +989,7 @@ function BaseCell:SendObjectsLocked(pid)
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.SetObjectLockLevel(self.data.objectData[refIndex].lockLevel)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         objectCount = objectCount + 1
     end
@@ -1003,8 +1003,8 @@ function BaseCell:SendObjectTrapsTriggered(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.trap) do
 
@@ -1013,7 +1013,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.SetObjectDisarmState(true)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         objectCount = objectCount + 1
     end
@@ -1027,8 +1027,8 @@ function BaseCell:SendObjectsScaled(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.scale) do
 
@@ -1042,7 +1042,7 @@ function BaseCell:SendObjectsScaled(pid)
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(refId)
             tes3mp.SetObjectScale(scale)
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
 
             objectCount = objectCount + 1
         end
@@ -1061,8 +1061,8 @@ function BaseCell:SendObjectStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.state) do
 
@@ -1076,7 +1076,7 @@ function BaseCell:SendObjectStates(pid)
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(refId)
             tes3mp.SetObjectState(state)
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
 
             objectCount = objectCount + 1
         end
@@ -1091,8 +1091,8 @@ function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
 
@@ -1101,7 +1101,7 @@ function BaseCell:SendDoorStates(pid)
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.SetObjectDoorState(self.data.objectData[refIndex].doorState)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         objectCount = objectCount + 1
     end
@@ -1115,8 +1115,8 @@ function BaseCell:SendContainers(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.container) do
 
@@ -1141,7 +1141,7 @@ function BaseCell:SendContainers(pid)
                 tes3mp.AddContainerItem()
             end
 
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
 
             objectCount = objectCount + 1
         else
@@ -1153,7 +1153,7 @@ function BaseCell:SendContainers(pid)
     if objectCount > 0 then
 
         -- Set the action to SET
-        tes3mp.SetEventAction(0)
+        tes3mp.SetObjectListAction(0)
 
         tes3mp.SendContainer()
     end
@@ -1444,11 +1444,11 @@ function BaseCell:RequestContainers(pid, requestRefIndexes)
     self.isRequestingContainers = true
     self.containerRequestPid = pid
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(self.description)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetEventAction(3)
+    tes3mp.SetObjectListAction(3)
 
     -- If certain refIndexes are specified, iterate through them and
     -- add them as world objects
@@ -1462,7 +1462,7 @@ function BaseCell:RequestContainers(pid, requestRefIndexes)
             tes3mp.SetObjectRefNumIndex(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
         end
     end
 
