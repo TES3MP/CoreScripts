@@ -256,8 +256,8 @@ Methods.OnPlayerConnect = function(pid, playerName)
 
     tes3mp.SendMessage(pid, message, false)
 
-    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLoginTimeExpiration", time.seconds(config.loginTime), "i", pid)
-    tes3mp.StartTimer(Players[pid].tid_login);
+    Players[pid].loginTimerId = tes3mp.CreateTimerEx("OnLoginTimeExpiration", time.seconds(config.loginTime), "i", pid)
+    tes3mp.StartTimer(Players[pid].loginTimerId);
 end
 
 Methods.OnPlayerDeny = function(pid, playerName)

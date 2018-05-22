@@ -181,7 +181,7 @@ function LoadPluginList()
 end
 
 do
-    local tid_ut = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+    local updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
     function UpdateTime()
         local hour = 0
         if config.timeSyncMode == 1 then
@@ -199,10 +199,10 @@ do
             tes3mp.SetDay(pid, day)
         end
 
-        tes3mp.RestartTimer(tid_ut, time.seconds(1));
+        tes3mp.RestartTimer(updateTimerId, time.seconds(1));
     end
     if config.timeSyncMode ~= 0 then
-        tes3mp.StartTimer(tid_ut);
+        tes3mp.StartTimer(updateTimerId);
     end
 end
 

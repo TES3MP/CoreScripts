@@ -108,7 +108,7 @@ function BasePlayer:__init(pid, playerName)
 
     self.pid = pid
     self.loggedIn = false
-    self.tid_login = nil
+    self.loginTimerId = nil
     self.admin = 0
     self.hasAccount = nil -- TODO Check whether account file exists
 
@@ -116,9 +116,9 @@ function BasePlayer:__init(pid, playerName)
 end
 
 function BasePlayer:Destroy()
-    if self.tid_login ~= nil then
-        tes3mp.StopTimer(self.tid_login)
-        self.tid_login = nil
+    if self.loginTimerId ~= nil then
+        tes3mp.StopTimer(self.loginTimerId)
+        self.loginTimerId = nil
     end
 
     self.loggedIn = false
