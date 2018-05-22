@@ -321,15 +321,6 @@ function OnPlayerConnect(pid)
 
     tes3mp.LogMessage(1, "Called \"OnPlayerConnect\" for pid " .. pid)
 
-    tes3mp.SetDifficulty(pid, config.difficulty)
-    tes3mp.SetConsoleAllowed(pid, config.allowConsole)
-    tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
-    tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
-    tes3mp.SetWaitAllowed(pid, config.allowWait)
-    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
-    tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
-    tes3mp.SendSettings(pid)
-
     local playerName = tes3mp.GetName(pid)
 
     if string.len(playerName) > 35 then
