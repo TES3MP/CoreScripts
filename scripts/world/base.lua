@@ -1,7 +1,8 @@
 stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
-BaseWorld.defaultTimeTable = { month = 7, day = 16, hour = 9 }
+BaseWorld.defaultTimeScale = 30
+BaseWorld.defaultTimeTable = { month = 7, day = 16, hour = 9, timeScale = BaseWorld.defaultTimeScale }
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
 function BaseWorld:__init()
@@ -113,6 +114,8 @@ function BaseWorld:LoadTime(pid)
 
     tes3mp.SetDay(pid, self.data.time.day)
     tes3mp.SetHour(pid, self.data.time.hour)
+
+    tes3mp.SetTimeScale(pid, self.data.time.timeScale)
 end
 
 function BaseWorld:LoadTimeForEveryone()

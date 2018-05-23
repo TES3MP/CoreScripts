@@ -112,10 +112,6 @@ config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
 config.menuHelperFiles = { "defaultCrafting" }
 
--- The time multiplier used by the server
--- Note: The default value of 1 is roughly 120 seconds per ingame hour
-config.timeMultiplier = 1
-
 -- The log level enforced on clients by default, determining how much debug information
 -- is displayed in their debug window and logs
 -- Note 1: Set this to -1 to allow clients to use whatever log level they have set in
@@ -155,7 +151,7 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type",
-    "index", "quest", "actorRefId"}
+config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
+    "index", "quest", "actorRefId", "month", "day", "hour", "timeScale"}
 
 return config

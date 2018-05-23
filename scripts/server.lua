@@ -17,6 +17,7 @@ Cell = nil
 World = nil
 
 hourCounter = nil
+frametimeMultiplier = nil
 updateTimerId = nil
 
 banList = {}
@@ -70,6 +71,7 @@ local modhelptext = "Moderators only:\
 /sethour <value> - Set the current hour in the world's time\
 /setday <value> - Set the current day of the month in the world's time\
 /setmonth <value> - Set the current month in the world's time\
+/settimescale <value> - Set the timescale in the world's time (30 by default, which is 120 real seconds per ingame hour)\
 /teleport <pid>/all - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /cells - List all loaded cells on the server\
@@ -205,7 +207,7 @@ do
 
     function UpdateTime()
 
-        hourCounter = hourCounter + (0.0083 * config.timeMultiplier)
+        hourCounter = hourCounter + (0.0083 * frametimeMultiplier)
 
         local hourFloor = math.floor(hourCounter)
 
@@ -219,10 +221,11 @@ do
                 hourCounter = 0
                 hourFloor = 0
 
+                tes3mp.LogMessage(2, "The world time day has been incremented")
                 WorldInstance:IncrementDay()
             end
 
-            tes3mp.LogMessage(2, "Hour floor has gone up and is now " .. hourFloor .. " instead of " .. tostring(previousHourFloor))
+            tes3mp.LogMessage(2, "The world time hour is now " .. hourFloor)
             WorldInstance.data.time.hour = hourFloor
 
             WorldInstance:Save()
@@ -249,6 +252,7 @@ function OnServerInit()
 
     myMod.InitializeWorld()
     hourCounter = WorldInstance.data.time.hour
+    frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
 
     updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
     tes3mp.StartTimer(updateTimerId)
@@ -1067,9 +1071,9 @@ function OnPlayerSendMessage(pid, message)
                 end
 
                 if inputValue >= 0 and inputValue < 24 then
-                    hourCounter = inputValue
                     WorldInstance.data.time.hour = inputValue
                     WorldInstance:LoadTimeForEveryone()
+                    hourCounter = inputValue
                 else
                     tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
                 end
@@ -1098,6 +1102,16 @@ function OnPlayerSendMessage(pid, message)
             if type(inputValue) == "number" then
                 WorldInstance.data.time.month = inputValue
                 WorldInstance:LoadTimeForEveryone()
+            end
+
+        elseif cmd[1] == "settimescale" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+                WorldInstance.data.time.timeScale = inputValue
+                WorldInstance:LoadTimeForEveryone()
+                frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
             end
 
         elseif cmd[1] == "suicide" then
