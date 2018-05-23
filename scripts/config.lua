@@ -112,17 +112,9 @@ config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
 config.menuHelperFiles = { "defaultCrafting" }
 
--- Whether time should be synchronized across clients
--- Valid values: 0, 1
--- Note: 0 for no time sync, 1 for time sync based on the server's time counter
-config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time counter
-
 -- The time multiplier used by the server
 -- Note: The default value of 1 is roughly 120 seconds per ingame hour
-config.timeServerMult = 1
-
--- The initial ingame time on the server
-config.timeServerInitTime = 7
+config.timeMultiplier = 1
 
 -- The log level enforced on clients by default, determining how much debug information
 -- is displayed in their debug window and logs

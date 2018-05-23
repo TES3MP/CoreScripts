@@ -16,9 +16,11 @@ Player = nil
 Cell = nil
 World = nil
 
+hourCounter = nil
+updateTimerId = nil
+
 banList = {}
 pluginList = {}
-timeCounter = config.timeServerInitTime
 
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
@@ -65,7 +67,9 @@ local modhelptext = "Moderators only:\
 /banlist ips/names - Print all banned IPs or all banned player names\
 /ipaddresses <name> - Print all the IP addresses used by a player (/ips)\
 /confiscate <pid> - Open up a window where you can confiscate an item from a player\
-/time <value> - Set the server's time counter\
+/sethour <value> - Set the current hour in the world's time\
+/setday <value> - Set the current day of the month in the world's time\
+/setmonth <value> - Set the current month in the world's time\
 /teleport <pid>/all - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /cells - List all loaded cells on the server\
@@ -181,32 +185,6 @@ function LoadPluginList()
 end
 
 do
-    local updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
-    function UpdateTime()
-        local hour = 0
-        if config.timeSyncMode == 1 then
-            timeCounter = timeCounter + (0.0083 * config.timeServerMult)
-            hour = timeCounter
-        elseif config.timeSyncMode == 2 then
-            -- ToDo: implement like this
-            -- local pid = GetFirstPlayer()
-            -- hour = tes3mp.GetHours(pid)
-        end
-        local day = hour/24
-        hour = math.fmod(hour, 24)
-        for pid,_ in pairs(Players) do
-            tes3mp.SetHour(pid, hour)
-            tes3mp.SetDay(pid, day)
-        end
-
-        tes3mp.RestartTimer(updateTimerId, time.seconds(1));
-    end
-    if config.timeSyncMode ~= 0 then
-        tes3mp.StartTimer(updateTimerId);
-    end
-end
-
-do
     local adminsCounter = 0
     function IncrementAdminCounter()
         adminsCounter = adminsCounter + 1
@@ -219,6 +197,44 @@ do
     function ResetAdminCounter()
         adminsCounter = 0
         tes3mp.SetRuleValue("adminsOnline", adminsCounter)
+    end
+end
+
+do
+    local previousHourFloor = nil
+
+    function UpdateTime()
+
+        hourCounter = hourCounter + (0.0083 * config.timeMultiplier)
+
+        local hourFloor = math.floor(hourCounter)
+
+        if previousHourFloor == nil then
+            previousHourFloor = hourFloor
+
+        elseif hourFloor > previousHourFloor then
+
+            if hourFloor > 23 then
+
+                hourCounter = 0
+                hourFloor = 0
+
+                WorldInstance:IncrementDay()
+            end
+
+            tes3mp.LogMessage(2, "Hour floor has gone up and is now " .. hourFloor .. " instead of " .. tostring(previousHourFloor))
+            WorldInstance.data.time.hour = hourFloor
+
+            WorldInstance:Save()
+
+            previousHourFloor = hourFloor
+        end
+
+        for pid, _ in pairs(Players) do
+            tes3mp.SetHour(pid, hourCounter)
+        end
+
+        tes3mp.RestartTimer(updateTimerId, time.seconds(1))
     end
 end
 
@@ -236,6 +252,11 @@ function OnServerInit()
     end
 
     myMod.InitializeWorld()
+    hourCounter = WorldInstance.data.time.hour
+
+    updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+    tes3mp.StartTimer(updateTimerId)
+
     myMod.PushPlayerList(Players)
 
     LoadBanList()
@@ -1039,9 +1060,48 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendShapeshift(targetPid)
             end
 
-        elseif cmd[1] == "time" and moderator then
-            if type(tonumber(cmd[2])) == "number" then
-                timeCounter = tonumber(cmd[2])
+        elseif cmd[1] == "sethour" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+
+                if inputValue == 24 then
+                    inputValue = 0
+                end
+
+                if inputValue >= 0 and inputValue < 24 then
+                    hourCounter = inputValue
+                    WorldInstance.data.time.hour = inputValue
+                    WorldInstance:LoadTimeForEveryone()
+                else
+                    tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
+                end
+            end
+
+        elseif cmd[1] == "setday" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+
+                local daysInMonth = WorldInstance.monthLengths[WorldInstance.data.time.month]
+
+                if inputValue <= daysInMonth then
+                    WorldInstance.data.time.day = inputValue
+                    WorldInstance:LoadTimeForEveryone()
+                else
+                    tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
+                end
+            end
+
+        elseif cmd[1] == "setmonth" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+                WorldInstance.data.time.month = inputValue
+                WorldInstance:LoadTimeForEveryone()
             end
 
         elseif cmd[1] == "suicide" then

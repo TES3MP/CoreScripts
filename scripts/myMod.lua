@@ -23,6 +23,7 @@ Methods.InitializeWorld = function()
     -- If the world has a data entry, load it
     if WorldInstance:HasEntry() then
         WorldInstance:Load()
+        WorldInstance:EnsureTimeDataExists()
 
         -- Get the current mpNum from the loaded world
         tes3mp.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
@@ -238,6 +239,8 @@ Methods.TestFunction = function()
 end
 
 Methods.OnPlayerConnect = function(pid, playerName)
+
+    WorldInstance:LoadTime(pid)
 
     tes3mp.SetDifficulty(pid, config.difficulty)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
