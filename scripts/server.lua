@@ -230,10 +230,6 @@ do
             previousHourFloor = hourFloor
         end
 
-        for pid, _ in pairs(Players) do
-            tes3mp.SetHour(pid, hourCounter)
-        end
-
         tes3mp.RestartTimer(updateTimerId, time.seconds(1))
     end
 end
