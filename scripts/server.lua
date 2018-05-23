@@ -216,9 +216,9 @@ do
 
         elseif hourFloor > previousHourFloor then
 
-            if hourFloor > 23 then
+            if hourFloor >= 24 then
 
-                hourCounter = 0
+                hourCounter = hourCounter - hourFloor
                 hourFloor = 0
 
                 tes3mp.LogMessage(2, "The world time day has been incremented")
@@ -226,7 +226,7 @@ do
             end
 
             tes3mp.LogMessage(2, "The world time hour is now " .. hourFloor)
-            WorldInstance.data.time.hour = hourFloor
+            WorldInstance.data.time.hour = hourCounter
 
             WorldInstance:Save()
             WorldInstance:LoadTimeForEveryone()
