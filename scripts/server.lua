@@ -229,6 +229,7 @@ do
             WorldInstance.data.time.hour = hourFloor
 
             WorldInstance:Save()
+            WorldInstance:LoadTimeForEveryone()
 
             previousHourFloor = hourFloor
         end

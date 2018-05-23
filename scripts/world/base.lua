@@ -52,8 +52,6 @@ function BaseWorld:IncrementDay()
 
         self.data.time.day = day + 1
     end
-
-    self:LoadTimeForEveryone()
 end
 
 function BaseWorld:GetCurrentMpNum()
