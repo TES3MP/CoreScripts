@@ -109,24 +109,19 @@ function BaseWorld:LoadKills(pid)
     tes3mp.SendKillChanges(pid)
 end
 
-function BaseWorld:LoadTime(pid)
+function BaseWorld:LoadTime(pid, sendToOthers)
 
     -- The first month has an index of 0 in the C++ code, but
     -- table values should be intuitive and range from 1 to 12,
     -- so adjust for that by just going down by 1
-    tes3mp.SetMonth(pid, self.data.time.month - 1)
+    tes3mp.SetMonth(self.data.time.month - 1)
 
-    tes3mp.SetDay(pid, self.data.time.day)
-    tes3mp.SetHour(pid, self.data.time.hour)
+    tes3mp.SetDay(self.data.time.day)
+    tes3mp.SetHour(self.data.time.hour)
 
-    tes3mp.SetTimeScale(pid, self.data.time.timeScale)
-end
+    tes3mp.SetTimeScale(self.data.time.timeScale)
 
-function BaseWorld:LoadTimeForEveryone()
-
-    for pid, _ in pairs(Players) do
-        self:LoadTime(pid)
-    end
+    tes3mp.SendWorldTime(pid, sendToOthers)
 end
 
 function BaseWorld:SaveJournal(pid)

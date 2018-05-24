@@ -229,7 +229,10 @@ do
             WorldInstance.data.time.hour = hourCounter
 
             WorldInstance:Save()
-            WorldInstance:LoadTimeForEveryone()
+
+            if tableHelper.getCount(Players) > 0 then
+                WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
+            end
 
             previousHourFloor = hourFloor
         end

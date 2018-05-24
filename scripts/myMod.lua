@@ -240,7 +240,7 @@ end
 
 Methods.OnPlayerConnect = function(pid, playerName)
 
-    WorldInstance:LoadTime(pid)
+    WorldInstance:LoadTime(pid, false)
 
     tes3mp.SetDifficulty(pid, config.difficulty)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
