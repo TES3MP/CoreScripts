@@ -2,7 +2,7 @@ stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
 BaseWorld.defaultTimeScale = 30
-BaseWorld.defaultTimeTable = { month = 7, day = 16, hour = 9, timeScale = BaseWorld.defaultTimeScale }
+BaseWorld.defaultTimeTable = { month = 7, day = 16, hour = 9, daysPassed = 0, timeScale = BaseWorld.defaultTimeScale }
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
 function BaseWorld:__init()
@@ -39,6 +39,8 @@ function BaseWorld:EnsureTimeDataExists()
 end
 
 function BaseWorld:IncrementDay()
+
+    self.data.time.daysPassed = self.data.time.daysPassed + 1
 
     local day = self.data.time.day
     local month = self.data.time.month
@@ -119,6 +121,7 @@ function BaseWorld:LoadTime(pid, sendToOthers)
     tes3mp.SetDay(self.data.time.day)
     tes3mp.SetHour(self.data.time.hour)
 
+    tes3mp.SetDaysPassed(self.data.time.daysPassed)
     tes3mp.SetTimeScale(self.data.time.timeScale)
 
     tes3mp.SendWorldTime(pid, sendToOthers)
