@@ -1076,7 +1076,7 @@ function OnPlayerSendMessage(pid, message)
 
                 if inputValue >= 0 and inputValue < 24 then
                     WorldInstance.data.time.hour = inputValue
-                    WorldInstance:LoadTimeForEveryone()
+                    WorldInstance:LoadTime(pid, true)
                     hourCounter = inputValue
                 else
                     tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
@@ -1093,7 +1093,7 @@ function OnPlayerSendMessage(pid, message)
 
                 if inputValue <= daysInMonth then
                     WorldInstance.data.time.day = inputValue
-                    WorldInstance:LoadTimeForEveryone()
+                    WorldInstance:LoadTime(pid, true)
                 else
                     tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
                 end
@@ -1105,7 +1105,7 @@ function OnPlayerSendMessage(pid, message)
 
             if type(inputValue) == "number" then
                 WorldInstance.data.time.month = inputValue
-                WorldInstance:LoadTimeForEveryone()
+                WorldInstance:LoadTime(pid, true)
             end
 
         elseif cmd[1] == "settimescale" and moderator then
@@ -1114,7 +1114,7 @@ function OnPlayerSendMessage(pid, message)
 
             if type(inputValue) == "number" then
                 WorldInstance.data.time.timeScale = inputValue
-                WorldInstance:LoadTimeForEveryone()
+                WorldInstance:LoadTime(pid, true)
                 frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
             end
 
