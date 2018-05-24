@@ -46,7 +46,13 @@ function BaseWorld:IncrementDay()
     -- Is the new day higher than the number of days in the current month?
     if day + 1 > self.monthLengths[month] then
 
-        self.data.time.month = month + 1
+        -- Is the new month higher than the number of months in a year?
+        if month + 1 > 12 then
+            self.data.time.month = 1
+        else
+            self.data.time.month = month + 1            
+        end
+
         self.data.time.day = 1
     else
 
