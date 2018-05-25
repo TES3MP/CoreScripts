@@ -1079,6 +1079,7 @@ function OnPlayerSendMessage(pid, message)
 
                 if inputValue >= 0 and inputValue < 24 then
                     WorldInstance.data.time.hour = inputValue
+                    WorldInstance:Save()
                     WorldInstance:LoadTime(pid, true)
                     hourCounter = inputValue
                 else
@@ -1096,6 +1097,7 @@ function OnPlayerSendMessage(pid, message)
 
                 if inputValue <= daysInMonth then
                     WorldInstance.data.time.day = inputValue
+                    WorldInstance:Save()
                     WorldInstance:LoadTime(pid, true)
                 else
                     tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
@@ -1108,6 +1110,7 @@ function OnPlayerSendMessage(pid, message)
 
             if type(inputValue) == "number" then
                 WorldInstance.data.time.month = inputValue
+                WorldInstance:Save()
                 WorldInstance:LoadTime(pid, true)
             end
 
@@ -1117,6 +1120,7 @@ function OnPlayerSendMessage(pid, message)
 
             if type(inputValue) == "number" then
                 WorldInstance.data.time.timeScale = inputValue
+                WorldInstance:Save()
                 WorldInstance:LoadTime(pid, true)
                 frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
             end
