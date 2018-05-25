@@ -11,6 +11,10 @@ config.loginTime = 60
 --       though you can use any integer value here
 config.difficulty = 0
 
+-- The world time used for a newly created world
+config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
+    daysPassed = 0, timeScale = 30 }
+
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false
 

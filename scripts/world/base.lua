@@ -2,7 +2,6 @@ stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
 BaseWorld.defaultTimeScale = 30
-BaseWorld.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9, daysPassed = 0, timeScale = BaseWorld.defaultTimeScale }
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
 function BaseWorld:__init()
@@ -22,7 +21,7 @@ function BaseWorld:__init()
         factionReputation = {},
         topics = {},
         kills = {},
-        time = self.defaultTimeTable,
+        time = config.defaultTimeTable,
         customVariables = {}
     };
 end
@@ -34,7 +33,7 @@ end
 function BaseWorld:EnsureTimeDataExists()
 
     if self.data.time == nil then
-        self.data.time = self.defaultTimeTable
+        self.data.time = config.defaultTimeTable
     end
 end
 
