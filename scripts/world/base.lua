@@ -2,7 +2,7 @@ stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
 BaseWorld.defaultTimeScale = 30
-BaseWorld.defaultTimeTable = { month = 7, day = 16, hour = 9, daysPassed = 0, timeScale = BaseWorld.defaultTimeScale }
+BaseWorld.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9, daysPassed = 0, timeScale = BaseWorld.defaultTimeScale }
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
 function BaseWorld:__init()
@@ -50,6 +50,7 @@ function BaseWorld:IncrementDay()
 
         -- Is the new month higher than the number of months in a year?
         if month + 1 > 12 then
+            self.data.time.year = self.data.time.year + 1
             self.data.time.month = 1
         else
             self.data.time.month = month + 1            
@@ -113,13 +114,15 @@ end
 
 function BaseWorld:LoadTime(pid, sendToOthers)
 
+    tes3mp.SetHour(self.data.time.hour)
+    tes3mp.SetDay(self.data.time.day)
+
     -- The first month has an index of 0 in the C++ code, but
     -- table values should be intuitive and range from 1 to 12,
     -- so adjust for that by just going down by 1
     tes3mp.SetMonth(self.data.time.month - 1)
 
-    tes3mp.SetDay(self.data.time.day)
-    tes3mp.SetHour(self.data.time.hour)
+    tes3mp.SetYear(self.data.time.year)
 
     tes3mp.SetDaysPassed(self.data.time.daysPassed)
     tes3mp.SetTimeScale(self.data.time.timeScale)
