@@ -1269,7 +1269,7 @@ function OnPlayerSendMessage(pid, message)
             if type(tonumber(actionString)) == "number" then
                 actionValue = tonumber(actionString)
             else
-                actionValue = actionTypes.ai[string.upper(actionString)]
+                actionValue = enumerations.ai[string.upper(actionString)]
             end
 
             if actionValue ~= nil then
@@ -1283,7 +1283,7 @@ function OnPlayerSendMessage(pid, message)
                 end
             else
                 tes3mp.SendMessage(pid, actionString .. " is not a valid AI action. Valid choices are " ..
-                    tableHelper.concatenateTableIndexes(actionTypes.ai, ", ") .. "\n", false)
+                    tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n", false)
             end
 
         elseif cmd[1] == "craft" then

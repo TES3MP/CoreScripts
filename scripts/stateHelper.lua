@@ -1,4 +1,4 @@
-require("actionTypes")
+require("enumerations")
 StateHelper = class("StateHelper")
 
 function StateHelper:LoadJournal(pid, stateObject)
@@ -11,7 +11,7 @@ function StateHelper:LoadJournal(pid, stateObject)
 
     for index, journalItem in pairs(stateObject.data.journal) do
 
-        if journalItem.type == actionTypes.journal.ENTRY then
+        if journalItem.type == enumerations.journal.ENTRY then
 
             if journalItem.actorRefId == nil then
                 journalItem.actorRefId = "player"
@@ -33,7 +33,7 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
     end
 
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.RANK)
+    tes3mp.SetFactionChangesAction(pid, enumerations.faction.RANK)
 
     for factionId, rank in pairs(stateObject.data.factionRanks) do
 
@@ -52,7 +52,7 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
     end
 
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.EXPULSION)
+    tes3mp.SetFactionChangesAction(pid, enumerations.faction.EXPULSION)
 
     for factionId, state in pairs(stateObject.data.factionExpulsion) do
 
@@ -71,7 +71,7 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
     end
 
     tes3mp.InitializeFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, actionTypes.faction.REPUTATION)
+    tes3mp.SetFactionChangesAction(pid, enumerations.faction.REPUTATION)
 
     for factionId, reputation in pairs(stateObject.data.factionReputation) do
 
@@ -147,7 +147,7 @@ function StateHelper:SaveJournal(pid, stateObject)
             quest = tes3mp.GetJournalItemQuest(pid, i)
         }
 
-        if journalItem.type == actionTypes.journal.ENTRY then
+        if journalItem.type == enumerations.journal.ENTRY then
             journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
         end
 

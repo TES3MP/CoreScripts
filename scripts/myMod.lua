@@ -1,6 +1,6 @@
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
-require("actionTypes")
+require("enumerations")
 local time = require("time")
 questFixer = require("questFixer")
 menuHelper = require("menuHelper")
@@ -762,11 +762,11 @@ Methods.OnPlayerSpellbook = function(pid)
 
         local action = tes3mp.GetSpellbookChangesAction(pid)
 
-        if action == actionTypes.spellbook.SET then
+        if action == enumerations.spellbook.SET then
             Players[pid]:SetSpells()
-        elseif action == actionTypes.spellbook.ADD then
+        elseif action == enumerations.spellbook.ADD then
             Players[pid]:AddSpells()
-        elseif action == actionTypes.spellbook.REMOVE then
+        elseif action == enumerations.spellbook.REMOVE then
             Players[pid]:RemoveSpells()
         end
     end
@@ -795,21 +795,21 @@ Methods.OnPlayerFaction = function(pid)
 
         local action = tes3mp.GetFactionChangesAction(pid)
 
-        if action == actionTypes.faction.RANK then
+        if action == enumerations.faction.RANK then
             if config.shareFactionRanks == true then
                 WorldInstance:SaveFactionRanks(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionRanks()
             end
-        elseif action == actionTypes.faction.EXPULSION then
+        elseif action == enumerations.faction.EXPULSION then
             if config.shareFactionExpulsion == true then
                 WorldInstance:SaveFactionExpulsion(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionExpulsion()
             end
-        elseif action == actionTypes.faction.REPUTATION then
+        elseif action == enumerations.faction.REPUTATION then
             if config.shareFactionReputation == true then
                 WorldInstance:SaveFactionReputation(pid)
                 tes3mp.SendFactionChanges(pid, true)
@@ -887,9 +887,9 @@ Methods.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
 
-        if changeType == actionTypes.miscellaneous.MARK_LOCATION then
+        if changeType == enumerations.miscellaneous.MARK_LOCATION then
             Players[pid]:SaveMarkLocation()
-        elseif changeType == actionTypes.miscellaneous.SELECTED_SPELL then
+        elseif changeType == enumerations.miscellaneous.SELECTED_SPELL then
             Players[pid]:SaveSelectedSpell()
         end
     end

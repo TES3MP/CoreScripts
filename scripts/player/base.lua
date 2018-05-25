@@ -1,5 +1,5 @@
 require("config")
-require("actionTypes")
+require("enumerations")
 require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
@@ -371,19 +371,19 @@ function BasePlayer:Resurrect()
     if config.respawnAtImperialShrine == true then
         if config.respawnAtTribunalTemple == true then
             if math.random() > 0.5 then
-                currentResurrectType = actionTypes.resurrect.IMPERIAL_SHRINE
+                currentResurrectType = enumerations.resurrect.IMPERIAL_SHRINE
             else
-                currentResurrectType = actionTypes.resurrect.TRIBUNAL_TEMPLE
+                currentResurrectType = enumerations.resurrect.TRIBUNAL_TEMPLE
             end
         else
-            currentResurrectType = actionTypes.resurrect.IMPERIAL_SHRINE
+            currentResurrectType = enumerations.resurrect.IMPERIAL_SHRINE
         end
 
     elseif config.respawnAtTribunalTemple == true then
-        currentResurrectType = actionTypes.resurrect.TRIBUNAL_TEMPLE
+        currentResurrectType = enumerations.resurrect.TRIBUNAL_TEMPLE
 
     elseif config.defaultRespawnCell ~= nil then
-        currentResurrectType = actionTypes.resurrect.REGULAR
+        currentResurrectType = enumerations.resurrect.REGULAR
 
         tes3mp.SetCell(self.pid, config.defaultRespawnCell)
         tes3mp.SendCell(self.pid)
@@ -397,9 +397,9 @@ function BasePlayer:Resurrect()
 
     local message = "You have been revived"
 
-    if currentResurrectType == actionTypes.resurrect.IMPERIAL_SHRINE then
+    if currentResurrectType == enumerations.resurrect.IMPERIAL_SHRINE then
         message = message .. " at the nearest Imperial shrine"
-    elseif currentResurrectType == actionTypes.resurrect.TRIBUNAL_TEMPLE then
+    elseif currentResurrectType == enumerations.resurrect.TRIBUNAL_TEMPLE then
         message = message .. " at the nearest Tribunal temple"
     end
 
@@ -844,7 +844,7 @@ function BasePlayer:LoadSpellbook()
     end
 
     tes3mp.InitializeSpellbookChanges(self.pid)
-    tes3mp.SetSpellbookChangesAction(self.pid, actionTypes.spellbook.SET)
+    tes3mp.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
 
     for index, currentSpell in pairs(self.data.spellbook) do
 

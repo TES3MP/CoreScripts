@@ -1,4 +1,4 @@
-require("actionTypes")
+require("enumerations")
 require("patterns")
 require("utils")
 
@@ -547,7 +547,7 @@ function BaseCell:SaveContainers(pid)
 
         -- If this object's inventory is nil, or if the action is SET,
         -- change the inventory to an empty table
-        if inventory == nil or action == actionTypes.container.SET then
+        if inventory == nil or action == enumerations.container.SET then
             inventory = {}
         end
 
@@ -563,10 +563,10 @@ function BaseCell:SaveContainers(pid)
                 local foundIndex = inventoryHelper.getItemIndex(inventory, itemRefId, itemCharge)
                 local item = inventory[foundIndex]
 
-                if action == actionTypes.container.ADD then
+                if action == enumerations.container.ADD then
                     item.count = item.count + itemCount
 
-                elseif action == actionTypes.container.REMOVE then
+                elseif action == enumerations.container.REMOVE then
                     local actionCount = tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
                     local newCount = item.count - actionCount
 
@@ -585,7 +585,7 @@ function BaseCell:SaveContainers(pid)
                     end
                 end
             else
-                if action == actionTypes.container.REMOVE then
+                if action == enumerations.container.REMOVE then
                     tes3mp.LogAppend(2, "- Attempt to remove non-existent item")
                     tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, 0)
                 else
@@ -603,7 +603,7 @@ function BaseCell:SaveContainers(pid)
 
     self:Save()
 
-    if action == actionTypes.container.SET then
+    if action == enumerations.container.SET then
         self.isRequestingContainers = false
     end
 end
