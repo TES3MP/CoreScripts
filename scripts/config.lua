@@ -11,6 +11,9 @@ config.loginTime = 60
 --       though you can use any integer value here
 config.difficulty = 0
 
+-- Whether the world time should continue passing when there are no players on the server
+config.passTimeWhenEmpty = false
+
 -- Whether players should be allowed to use the ingame tilde (~) console by default
 config.allowConsole = false
 
@@ -152,6 +155,6 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
-    "index", "quest", "actorRefId", "month", "day", "hour", "timeScale"}
+    "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
 
 return config

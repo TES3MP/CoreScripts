@@ -207,34 +207,37 @@ do
 
     function UpdateTime()
 
-        hourCounter = hourCounter + (0.0083 * frametimeMultiplier)
+        if config.passTimeWhenEmpty or tableHelper.getCount(Players) > 0 then
 
-        local hourFloor = math.floor(hourCounter)
+            hourCounter = hourCounter + (0.0083 * frametimeMultiplier)
 
-        if previousHourFloor == nil then
-            previousHourFloor = hourFloor
+            local hourFloor = math.floor(hourCounter)
 
-        elseif hourFloor > previousHourFloor then
+            if previousHourFloor == nil then
+                previousHourFloor = hourFloor
 
-            if hourFloor >= 24 then
+            elseif hourFloor > previousHourFloor then
 
-                hourCounter = hourCounter - hourFloor
-                hourFloor = 0
+                if hourFloor >= 24 then
 
-                tes3mp.LogMessage(2, "The world time day has been incremented")
-                WorldInstance:IncrementDay()
+                    hourCounter = hourCounter - hourFloor
+                    hourFloor = 0
+
+                    tes3mp.LogMessage(2, "The world time day has been incremented")
+                    WorldInstance:IncrementDay()
+                end
+
+                tes3mp.LogMessage(2, "The world time hour is now " .. hourFloor)
+                WorldInstance.data.time.hour = hourCounter
+
+                WorldInstance:Save()
+
+                if tableHelper.getCount(Players) > 0 then
+                    WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
+                end
+
+                previousHourFloor = hourFloor
             end
-
-            tes3mp.LogMessage(2, "The world time hour is now " .. hourFloor)
-            WorldInstance.data.time.hour = hourCounter
-
-            WorldInstance:Save()
-
-            if tableHelper.getCount(Players) > 0 then
-                WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
-            end
-
-            previousHourFloor = hourFloor
         end
 
         tes3mp.RestartTimer(updateTimerId, time.seconds(1))
