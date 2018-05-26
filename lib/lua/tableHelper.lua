@@ -32,6 +32,8 @@ end
 function tableHelper.concatenateTableIndexes(inputTable, delimiter)
 
     local resultString = ""
+    local tableCount = tableHelper.getCount(inputTable)
+    local indexesSoFar = 1
 
     if delimiter == nil then
         delimiter = " "
@@ -40,6 +42,12 @@ function tableHelper.concatenateTableIndexes(inputTable, delimiter)
     for index, value in pairs(inputTable) do
 
         resultString = resultString .. index
+
+        if indexesSoFar < tableCount then
+            resultString = resultString .. delimiter
+        end
+
+        indexesSoFar = indexesSoFar + 1
     end
 
     return resultString
