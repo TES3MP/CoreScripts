@@ -133,6 +133,19 @@ config.enforcedLogLevel = -1
 --       system requirements that make a default of 30 more appropriate.
 config.physicsFramerate = 30
 
+-- Whether players should collide with other actors
+config.enablePlayerCollision = true
+
+-- Whether actors should collide with other actors
+config.enableActorCollision = true
+
+-- Whether placed objects should collide with actors
+config.enablePlacedObjectCollision = false
+
+-- Whether placed object collision (when turned on) resembles actor collision, in that it
+-- prevents players from standing on top of the placed objects without slipping
+config.useActorCollisionForPlacedObjects = false
+
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
