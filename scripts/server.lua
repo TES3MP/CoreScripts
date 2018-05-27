@@ -88,7 +88,7 @@ local adminhelptext = "Admins only:\
 /sethead <pid> <body part id> - Change a player's head\
 /sethair <pid> <body part id> - Change a player's hairstyle\
 /disguise <pid> <refId> - Set a player's creature disguise, or remove it by using an invalid refId\
-/usecreaturename <pid> <on/off> - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
+/usecreaturename <pid> on/off - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -841,7 +841,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetConsoleAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -869,7 +869,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetBedRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -897,7 +897,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWildernessRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -925,7 +925,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWaitAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -1014,7 +1014,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWerewolfState(false)
                     state = " disabled.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> <on/off>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> on/off.\n", false)
                      return false
                 end
 
@@ -1058,7 +1058,7 @@ function OnPlayerSendMessage(pid, message)
                 elseif cmd[3] == "off" then
                     nameState = false
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> <on/off>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> on/off\n", false)
                      return false
                 end
 
@@ -1265,28 +1265,28 @@ function OnPlayerSendMessage(pid, message)
 
         elseif cmd[1] == "setai" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
 
-            local actionString = cmd[3]
-            local actionValue
+            local actionInput = cmd[3]
+            local actionIndex
 
             -- Allow both numerical and string input for actions (i.e. 0 or FOLLOW), but
             -- convert the latter into the former
-            if type(tonumber(actionString)) == "number" then
-                actionValue = tonumber(actionString)
+            if type(tonumber(actionInput)) == "number" then
+                actionIndex = tonumber(actionInput)
             else
-                actionValue = enumerations.ai[string.upper(actionString)]
+                actionIndex = enumerations.ai[string.upper(actionInput)]
             end
 
-            if actionValue ~= nil then
+            if actionIndex ~= nil then
                 local refIndex = cmd[2]
                 local target = cmd[4]
 
                 if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
-                    myMod.SetAIForActor(refIndex, actionValue, target)
+                    myMod.SetAIForActor(refIndex, actionIndex, target)
                 else
-                    myMod.SetAIForActor(refIndex, actionValue, nil, target)
+                    myMod.SetAIForActor(refIndex, actionIndex, nil, target)
                 end
             else
-                tes3mp.SendMessage(pid, actionString .. " is not a valid AI action. Valid choices are " ..
+                tes3mp.SendMessage(pid, actionInput .. " is not a valid AI action. Valid choices are " ..
                     tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n", false)
             end
 
