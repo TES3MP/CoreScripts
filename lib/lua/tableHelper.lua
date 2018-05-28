@@ -29,9 +29,36 @@ function TableHelper.getTableFromCommaSplit(inputString)
     return newTable
 end
 
--- Concatenate string values in a table, useful for printing the contents
--- of certain tables, with an optional delimiter between values
-function TableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
+-- Concatenate the indexes in a table, useful for printing out all the valid
+-- indexes
+function TableHelper.concatenateTableIndexes(inputTable, delimiter)
+
+    local resultString = ""
+    local tableCount = TableHelper.getCount(inputTable)
+    local indexesSoFar = 1
+
+    if delimiter == nil then
+        delimiter = " "
+    end
+
+    for index, value in pairs(inputTable) do
+
+        resultString = resultString .. index
+
+        if indexesSoFar < tableCount then
+            resultString = resultString .. delimiter
+        end
+
+        indexesSoFar = indexesSoFar + 1
+    end
+
+    return resultString
+end
+
+-- Concatenate the values in an array, useful for printing out the array's
+-- contents, with an optional delimiter between values
+function TableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
+
     local resultString = ""
 
     if delimiter == nil then
@@ -47,6 +74,11 @@ function TableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
     end
 
     return resultString
+end
+
+function TableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
+
+    return TableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
 end
 
 -- Check whether a table contains a key/value pair, optionally checking inside

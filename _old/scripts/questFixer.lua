@@ -17,14 +17,14 @@ function questFixer.FixCell(pid, cellDescription)
 
     if refNumDeletionsByCell[cellDescription] ~= nil then
 
-        tes3mp.InitializeEvent(pid)
-        tes3mp.SetEventCell(cellDescription)
+        tes3mp.InitializeObjectList(pid)
+        tes3mp.SetObjectListCell(cellDescription)
 
         for arrayIndex, refNum in pairs(refNumDeletionsByCell[cellDescription]) do
             tes3mp.SetObjectRefNumIndex(refNum)
             tes3mp.SetObjectMpNum(0)
             tes3mp.SetObjectRefId("")
-            tes3mp.AddWorldObject()
+            tes3mp.AddObject()
         end
 
         tes3mp.SendObjectDelete()

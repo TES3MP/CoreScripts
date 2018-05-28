@@ -1,6 +1,6 @@
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
-require("actionTypes")
+require("enumerations")
 local time = require("time")
 questFixer = require("questFixer")
 menuHelper = require("menuHelper")
@@ -23,6 +23,7 @@ Methods.InitializeWorld = function()
     -- If the world has a data entry, load it
     if WorldInstance:HasEntry() then
         WorldInstance:Load()
+        WorldInstance:EnsureTimeDataExists()
 
         -- Get the current mpNum from the loaded world
         tes3mp.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
@@ -238,6 +239,24 @@ Methods.TestFunction = function()
 end
 
 Methods.OnPlayerConnect = function(pid, playerName)
+
+    WorldInstance:LoadTime(pid, false)
+
+    tes3mp.SetDifficulty(pid, config.difficulty)
+    tes3mp.SetConsoleAllowed(pid, config.allowConsole)
+    tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
+    tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
+    tes3mp.SetWaitAllowed(pid, config.allowWait)
+    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
+    tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
+    tes3mp.SendSettings(pid)
+
+    tes3mp.SetPlayerCollisionState(config.enablePlayerCollision)
+    tes3mp.SetActorCollisionState(config.enableActorCollision)
+    tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
+    tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
+    tes3mp.SendWorldCollisionOverride(pid, false)
+
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
 
@@ -256,8 +275,8 @@ Methods.OnPlayerConnect = function(pid, playerName)
 
     tes3mp.SendMessage(pid, message, false)
 
-    Players[pid].tid_login = tes3mp.CreateTimerEx("OnLoginTimeExpiration", time.seconds(config.loginTime), "i", pid)
-    tes3mp.StartTimer(Players[pid].tid_login);
+    Players[pid].loginTimerId = tes3mp.CreateTimerEx("OnLoginTimeExpiration", time.seconds(config.loginTime), "i", pid)
+    tes3mp.StartTimer(Players[pid].loginTimerId);
 end
 
 Methods.OnPlayerDeny = function(pid, playerName)
@@ -454,14 +473,14 @@ Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
     -- to everyone
     if tableHelper.getCount(Players) > 0 then
 
-        tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
-        tes3mp.SetEventCell(cell)
+        tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+        tes3mp.SetObjectListCell(cell)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNumIndex(0)
         tes3mp.SetObjectMpNum(mpNum)
         tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
         tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-        tes3mp.AddWorldObject()
+        tes3mp.AddObject()
 
         if packetType == "place" then
             tes3mp.SendObjectPlace(true)
@@ -484,35 +503,77 @@ end
 
 Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(Players[pid].data.location.cell)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.SetObjectRefId(refId)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendObjectDelete()
 end
 
 Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
 
-    tes3mp.InitializeEvent(pid)
-    tes3mp.SetEventCell(Players[pid].data.location.cell)
-    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.InitializeObjectList(pid)
+    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
+    tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetPlayerAsObject(pid)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendConsoleCommand()
 end
 
 Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
 
-    tes3mp.InitializeEvent(tableHelper.getAnyValue(Players).pid)
-    tes3mp.SetEventCell(cellDescription)
-    tes3mp.SetEventConsoleCommand(consoleCommand)
+    tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+    tes3mp.SetObjectListCell(cellDescription)
+    tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetObjectRefId(refId)
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
-    tes3mp.AddWorldObject()
+    tes3mp.AddObject()
     tes3mp.SendConsoleCommand()
+end
+
+Methods.GetCellContainingActor = function(actorRefIndex)
+
+    for cellDescription, cell in pairs(LoadedCells) do
+
+        if tableHelper.containsValue(cell.data.packets.actorList, actorRefIndex) then
+            return cell
+        end
+    end
+    
+    return nil
+end
+
+Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRefIndex)
+
+    local cell = Methods.GetCellContainingActor(actorRefIndex)
+
+    if cell ~= nil then
+
+        tes3mp.InitializeActorList(cell.authority)
+
+        local splitIndex = actorRefIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        tes3mp.SetActorListCell(cell.description)
+        tes3mp.SetActorAIAction(action)
+
+        if targetPid ~= nil then
+            tes3mp.SetActorAITargetToPlayer(targetPid)
+        else
+            local targetSplitIndex = targetActorRefIndex:split("-")
+            tes3mp.SetActorAITargetToActor(targetSplitIndex[1], targetSplitIndex[2])
+        end
+
+        tes3mp.AddActor()
+        tes3mp.SendActorAI()
+
+    else
+        tes3mp.LogAppend(2, "- Could not find actor " .. actorRefIndex .. " in any loaded cell")
+    end
 end
 
 Methods.OnObjectLoopTimeExpiration = function(loopIndex)
@@ -707,11 +768,11 @@ Methods.OnPlayerSpellbook = function(pid)
 
         local action = tes3mp.GetSpellbookChangesAction(pid)
 
-        if action == actionTypes.spellbook.SET then
+        if action == enumerations.spellbook.SET then
             Players[pid]:SetSpells()
-        elseif action == actionTypes.spellbook.ADD then
+        elseif action == enumerations.spellbook.ADD then
             Players[pid]:AddSpells()
-        elseif action == actionTypes.spellbook.REMOVE then
+        elseif action == enumerations.spellbook.REMOVE then
             Players[pid]:RemoveSpells()
         end
     end
@@ -740,21 +801,21 @@ Methods.OnPlayerFaction = function(pid)
 
         local action = tes3mp.GetFactionChangesAction(pid)
 
-        if action == actionTypes.faction.RANK then
+        if action == enumerations.faction.RANK then
             if config.shareFactionRanks == true then
                 WorldInstance:SaveFactionRanks(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionRanks()
             end
-        elseif action == actionTypes.faction.EXPULSION then
+        elseif action == enumerations.faction.EXPULSION then
             if config.shareFactionExpulsion == true then
                 WorldInstance:SaveFactionExpulsion(pid)
                 tes3mp.SendFactionChanges(pid, true)
             else
                 Players[pid]:SaveFactionExpulsion()
             end
-        elseif action == actionTypes.faction.REPUTATION then
+        elseif action == enumerations.faction.REPUTATION then
             if config.shareFactionReputation == true then
                 WorldInstance:SaveFactionReputation(pid)
                 tes3mp.SendFactionChanges(pid, true)
@@ -832,9 +893,9 @@ Methods.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
 
-        if changeType == actionTypes.miscellaneous.MARK_LOCATION then
+        if changeType == enumerations.miscellaneous.MARK_LOCATION then
             Players[pid]:SaveMarkLocation()
-        elseif changeType == actionTypes.miscellaneous.SELECTED_SPELL then
+        elseif changeType == enumerations.miscellaneous.SELECTED_SPELL then
             Players[pid]:SaveSelectedSpell()
         end
     end

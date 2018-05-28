@@ -11,6 +11,13 @@ config.loginTime = 60
 --       though you can use any integer value here
 config.difficulty = 0
 
+-- The world time used for a newly created world
+config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
+    daysPassed = 0, timeScale = 30 }
+
+-- Whether the world time should continue passing when there are no players on the server
+config.passTimeWhenEmpty = false
+
 -- Whether players should be allowed to use the ingame tilde (~) console by default
 config.allowConsole = false
 
@@ -112,18 +119,6 @@ config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
 config.menuHelperFiles = { "defaultCrafting" }
 
--- Whether time should be synchronized across clients
--- Valid values: 0, 1
--- Note: 0 for no time sync, 1 for time sync based on the server's time counter
-config.timeSyncMode = 1 -- 0 - No time sync, 1 - Time sync based on server time counter
-
--- The time multiplier used by the server
--- Note: The default value of 1 is roughly 120 seconds per ingame hour
-config.timeServerMult = 1
-
--- The initial ingame time on the server
-config.timeServerInitTime = 7
-
 -- The log level enforced on clients by default, determining how much debug information
 -- is displayed in their debug window and logs
 -- Note 1: Set this to -1 to allow clients to use whatever log level they have set in
@@ -137,6 +132,19 @@ config.enforcedLogLevel = -1
 -- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
 --       system requirements that make a default of 30 more appropriate.
 config.physicsFramerate = 30
+
+-- Whether players should collide with other actors
+config.enablePlayerCollision = true
+
+-- Whether actors should collide with other actors
+config.enableActorCollision = true
+
+-- Whether placed objects should collide with actors
+config.enablePlacedObjectCollision = false
+
+-- Whether placed object collision (when turned on) resembles actor collision, in that it
+-- prevents players from standing on top of the placed objects without slipping
+config.useActorCollisionForPlacedObjects = false
 
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
@@ -163,7 +171,7 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
-config.worldKeyOrder = {"general", "topics", "kills", "journal", "customVariables", "type",
-    "index", "quest", "actorRefId"}
+config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
+    "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
 
 return config

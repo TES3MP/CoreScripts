@@ -16,9 +16,12 @@ Player = nil
 Cell = nil
 World = nil
 
+hourCounter = nil
+frametimeMultiplier = nil
+updateTimerId = nil
+
 banList = {}
 pluginList = {}
-timeCounter = config.timeServerInitTime
 
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
@@ -65,7 +68,10 @@ local modhelptext = "Moderators only:\
 /banlist ips/names - Print all banned IPs or all banned player names\
 /ipaddresses <name> - Print all the IP addresses used by a player (/ips)\
 /confiscate <pid> - Open up a window where you can confiscate an item from a player\
-/time <value> - Set the server's time counter\
+/sethour <value> - Set the current hour in the world's time\
+/setday <value> - Set the current day of the month in the world's time\
+/setmonth <value> - Set the current month in the world's time\
+/settimescale <value> - Set the timescale in the world's time (30 by default, which is 120 real seconds per ingame hour)\
 /teleport <pid>/all - Teleport another player to your position (/tp)\
 /teleportto <pid> - Teleport yourself to another player (/tpto)\
 /cells - List all loaded cells on the server\
@@ -77,11 +83,12 @@ local modhelptext = "Moderators only:\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
+/setai <refIndex> <action> (<pid>/<refIndex>) - Set an AI action for the actor with a certain refIndex, with an optional target at the end\
 /setrace <pid> <race> - Change a player's race\
 /sethead <pid> <body part id> - Change a player's head\
 /sethair <pid> <body part id> - Change a player's hairstyle\
 /disguise <pid> <refId> - Set a player's creature disguise, or remove it by using an invalid refId\
-/usecreaturename <pid> <on/off> - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
+/usecreaturename <pid> on/off - Set whether a player disguised as a creature shows up as having that creature's name when hovered over\
 /addmoderator <pid> - Promote player to moderator\
 /removemoderator <pid> - Demote player from moderator\
 /setdifficulty <pid> <value>/default - Set the difficulty for a particular player\
@@ -96,7 +103,8 @@ local adminhelptext = "Admins only:\
 /placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
 /spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
 /setloglevel <pid> <value>/default - Set the enforced log level for a particular player\
-/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player"
+/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player\
+/setcollision <category> on/off (on/off) - Set the collision state for an object category (PLAYER, ACTOR or PLACED_OBJECT), with the third optional argument affecting whether placed objects use actor-like collision"
 
 -- Handle commands that only exist based on config options
 if config.allowSuicideCommand == true then
@@ -180,32 +188,6 @@ function LoadPluginList()
 end
 
 do
-    local tid_ut = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
-    function UpdateTime()
-        local hour = 0
-        if config.timeSyncMode == 1 then
-            timeCounter = timeCounter + (0.0083 * config.timeServerMult)
-            hour = timeCounter
-        elseif config.timeSyncMode == 2 then
-            -- ToDo: implement like this
-            -- local pid = GetFirstPlayer()
-            -- hour = tes3mp.GetHours(pid)
-        end
-        local day = hour/24
-        hour = math.fmod(hour, 24)
-        for pid,_ in pairs(Players) do
-            tes3mp.SetHour(pid, hour)
-            tes3mp.SetDay(pid, day)
-        end
-
-        tes3mp.RestartTimer(tid_ut, time.seconds(1));
-    end
-    if config.timeSyncMode ~= 0 then
-        tes3mp.StartTimer(tid_ut);
-    end
-end
-
-do
     local adminsCounter = 0
     function IncrementAdminCounter()
         adminsCounter = adminsCounter + 1
@@ -218,6 +200,48 @@ do
     function ResetAdminCounter()
         adminsCounter = 0
         tes3mp.SetRuleValue("adminsOnline", adminsCounter)
+    end
+end
+
+do
+    local previousHourFloor = nil
+
+    function UpdateTime()
+
+        if config.passTimeWhenEmpty or tableHelper.getCount(Players) > 0 then
+
+            hourCounter = hourCounter + (0.0083 * frametimeMultiplier)
+
+            local hourFloor = math.floor(hourCounter)
+
+            if previousHourFloor == nil then
+                previousHourFloor = hourFloor
+
+            elseif hourFloor > previousHourFloor then
+
+                if hourFloor >= 24 then
+
+                    hourCounter = hourCounter - hourFloor
+                    hourFloor = 0
+
+                    tes3mp.LogMessage(2, "The world time day has been incremented")
+                    WorldInstance:IncrementDay()
+                end
+
+                tes3mp.LogMessage(2, "The world time hour is now " .. hourFloor)
+                WorldInstance.data.time.hour = hourCounter
+
+                WorldInstance:Save()
+
+                if tableHelper.getCount(Players) > 0 then
+                    WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
+                end
+
+                previousHourFloor = hourFloor
+            end
+        end
+
+        tes3mp.RestartTimer(updateTimerId, time.seconds(1))
     end
 end
 
@@ -235,6 +259,12 @@ function OnServerInit()
     end
 
     myMod.InitializeWorld()
+    hourCounter = WorldInstance.data.time.hour
+    frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
+
+    updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+    tes3mp.StartTimer(updateTimerId)
+
     myMod.PushPlayerList(Players)
 
     LoadBanList()
@@ -283,6 +313,7 @@ function OnServerPostInit()
     tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
     tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
     tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
+    tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
 
     local respawnCell
 
@@ -319,15 +350,6 @@ end
 function OnPlayerConnect(pid)
 
     tes3mp.LogMessage(1, "Called \"OnPlayerConnect\" for pid " .. pid)
-
-    tes3mp.SetDifficulty(pid, config.difficulty)
-    tes3mp.SetConsoleAllowed(pid, config.allowConsole)
-    tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
-    tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
-    tes3mp.SetWaitAllowed(pid, config.allowWait)
-    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
-    tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
-    tes3mp.SendSettings(pid)
 
     local playerName = tes3mp.GetName(pid)
 
@@ -821,7 +843,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetConsoleAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -849,7 +871,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetBedRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -877,7 +899,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWildernessRestAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -905,7 +927,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWaitAllowed("default")
                     state = " reset to default.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> <on/off/default>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> on/off/default\n", false)
                      return false
                 end
 
@@ -994,7 +1016,7 @@ function OnPlayerSendMessage(pid, message)
                     Players[targetPid]:SetWerewolfState(false)
                     state = " disabled.\n"
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> <on/off>.\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> on/off.\n", false)
                      return false
                 end
 
@@ -1038,7 +1060,7 @@ function OnPlayerSendMessage(pid, message)
                 elseif cmd[3] == "off" then
                     nameState = false
                 else
-                     tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> <on/off>\n", false)
+                     tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> on/off\n", false)
                      return false
                 end
 
@@ -1047,10 +1069,100 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendShapeshift(targetPid)
             end
 
-        elseif cmd[1] == "time" and moderator then
-            if type(tonumber(cmd[2])) == "number" then
-                timeCounter = tonumber(cmd[2])
+        elseif cmd[1] == "sethour" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+
+                if inputValue == 24 then
+                    inputValue = 0
+                end
+
+                if inputValue >= 0 and inputValue < 24 then
+                    WorldInstance.data.time.hour = inputValue
+                    WorldInstance:Save()
+                    WorldInstance:LoadTime(pid, true)
+                    hourCounter = inputValue
+                else
+                    tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
+                end
             end
+
+        elseif cmd[1] == "setday" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+
+                local daysInMonth = WorldInstance.monthLengths[WorldInstance.data.time.month]
+
+                if inputValue <= daysInMonth then
+                    WorldInstance.data.time.day = inputValue
+                    WorldInstance:Save()
+                    WorldInstance:LoadTime(pid, true)
+                else
+                    tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
+                end
+            end
+
+        elseif cmd[1] == "setmonth" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+                WorldInstance.data.time.month = inputValue
+                WorldInstance:Save()
+                WorldInstance:LoadTime(pid, true)
+            end
+
+        elseif cmd[1] == "settimescale" and moderator then
+
+            local inputValue = tonumber(cmd[2])
+
+            if type(inputValue) == "number" then
+                WorldInstance.data.time.timeScale = inputValue
+                WorldInstance:Save()
+                WorldInstance:LoadTime(pid, true)
+                frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
+            end
+
+        elseif cmd[1] == "setcollision" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+
+            local collisionState
+
+            if cmd[3] == "on" then
+                collisionState = true
+            elseif cmd[3] == "off" then
+                collisionState = false
+            else
+                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off (on/off)\n", false)
+                 return false
+            end
+
+            local categoryInput = string.upper(cmd[2])
+
+            if enumerations.objectCategories[categoryInput] == 0 then
+                tes3mp.SetPlayerCollisionState(collisionState)
+            elseif enumerations.objectCategories[categoryInput] == 1 then
+                tes3mp.SetActorCollisionState(collisionState)
+            elseif enumerations.objectCategories[categoryInput] == 2 then
+                tes3mp.SetPlacedObjectCollisionState(collisionState)
+
+                if cmd[4] == "on" then
+                    tes3mp.UseActorCollisionForPlacedObjects(true)
+                elseif cmd[4] == "off" then
+                    tes3mp.UseActorCollisionForPlacedObjects(false)
+                end
+            else
+                tes3mp.SendMessage(pid, categoryInput .. " is not a valid object category. Valid choices are " ..
+                    tableHelper.concatenateTableIndexes(enumerations.objectCategories, ", ") .. "\n", false)
+                return false
+            end
+
+            tes3mp.SendWorldCollisionOverride(pid, true)
+            tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
+                " for all newly loaded cells.\n", false)
 
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then
@@ -1188,6 +1300,33 @@ function OnPlayerSendMessage(pid, message)
                     tableHelper.cleanNils(Players[targetPid].data.inventory)
                     GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
                 end
+            end
+
+        elseif cmd[1] == "setai" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+
+            local actionInput = cmd[3]
+            local actionIndex
+
+            -- Allow both numerical and string input for actions (i.e. 0 or FOLLOW), but
+            -- convert the latter into the former
+            if type(tonumber(actionInput)) == "number" then
+                actionIndex = tonumber(actionInput)
+            else
+                actionIndex = enumerations.ai[string.upper(actionInput)]
+            end
+
+            if actionIndex ~= nil then
+                local refIndex = cmd[2]
+                local target = cmd[4]
+
+                if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
+                    myMod.SetAIForActor(refIndex, actionIndex, target)
+                else
+                    myMod.SetAIForActor(refIndex, actionIndex, nil, target)
+                end
+            else
+                tes3mp.SendMessage(pid, actionInput .. " is not a valid AI action. Valid choices are " ..
+                    tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n", false)
             end
 
         elseif cmd[1] == "craft" then

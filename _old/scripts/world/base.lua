@@ -1,7 +1,10 @@
 stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
-function BaseWorld:__init(test)
+BaseWorld.defaultTimeScale = 30
+BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+
+function BaseWorld:__init()
 
     self.data =
     {
@@ -18,12 +21,45 @@ function BaseWorld:__init(test)
         factionReputation = {},
         topics = {},
         kills = {},
+        time = config.defaultTimeTable,
         customVariables = {}
     };
 end
 
 function BaseWorld:HasEntry()
     return self.hasEntry
+end
+
+function BaseWorld:EnsureTimeDataExists()
+
+    if self.data.time == nil then
+        self.data.time = config.defaultTimeTable
+    end
+end
+
+function BaseWorld:IncrementDay()
+
+    self.data.time.daysPassed = self.data.time.daysPassed + 1
+
+    local day = self.data.time.day
+    local month = self.data.time.month
+
+    -- Is the new day higher than the number of days in the current month?
+    if day + 1 > self.monthLengths[month] then
+
+        -- Is the new month higher than the number of months in a year?
+        if month + 1 > 12 then
+            self.data.time.year = self.data.time.year + 1
+            self.data.time.month = 1
+        else
+            self.data.time.month = month + 1            
+        end
+
+        self.data.time.day = 1
+    else
+
+        self.data.time.day = day + 1
+    end
 end
 
 function BaseWorld:GetCurrentMpNum()
@@ -73,6 +109,24 @@ function BaseWorld:LoadKills(pid)
     end
 
     tes3mp.SendKillChanges(pid)
+end
+
+function BaseWorld:LoadTime(pid, sendToOthers)
+
+    tes3mp.SetHour(self.data.time.hour)
+    tes3mp.SetDay(self.data.time.day)
+
+    -- The first month has an index of 0 in the C++ code, but
+    -- table values should be intuitive and range from 1 to 12,
+    -- so adjust for that by just going down by 1
+    tes3mp.SetMonth(self.data.time.month - 1)
+
+    tes3mp.SetYear(self.data.time.year)
+
+    tes3mp.SetDaysPassed(self.data.time.daysPassed)
+    tes3mp.SetTimeScale(self.data.time.timeScale)
+
+    tes3mp.SendWorldTime(pid, sendToOthers)
 end
 
 function BaseWorld:SaveJournal(pid)
