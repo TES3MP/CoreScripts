@@ -103,7 +103,8 @@ local adminhelptext = "Admins only:\
 /placeat <pid> <refId> (<count>) (<interval>) - Place a certain object at a player's location, with optional count and interval\
 /spawnat <pid> <refId> (<count>) (<interval>) - Spawn a certain creature or NPC at a player's location, with optional count and interval\
 /setloglevel <pid> <value>/default - Set the enforced log level for a particular player\
-/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player"
+/setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player\
+/setcollision <category> on/off (on/off) - Set the collision state for an object category (PLAYER, ACTOR or PLACED_OBJECT), with the third optional argument affecting whether placed objects use actor-like collision"
 
 -- Handle commands that only exist based on config options
 if config.allowSuicideCommand == true then
@@ -1125,6 +1126,43 @@ function OnPlayerSendMessage(pid, message)
                 WorldInstance:LoadTime(pid, true)
                 frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
             end
+
+        elseif cmd[1] == "setcollision" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+
+            local collisionState
+
+            if cmd[3] == "on" then
+                collisionState = true
+            elseif cmd[3] == "off" then
+                collisionState = false
+            else
+                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off (on/off)\n", false)
+                 return false
+            end
+
+            local categoryInput = string.upper(cmd[2])
+
+            if enumerations.objectCategories[categoryInput] == 0 then
+                tes3mp.SetPlayerCollisionState(collisionState)
+            elseif enumerations.objectCategories[categoryInput] == 1 then
+                tes3mp.SetActorCollisionState(collisionState)
+            elseif enumerations.objectCategories[categoryInput] == 2 then
+                tes3mp.SetPlacedObjectCollisionState(collisionState)
+
+                if cmd[4] == "on" then
+                    tes3mp.UseActorCollisionForPlacedObjects(true)
+                elseif cmd[4] == "off" then
+                    tes3mp.UseActorCollisionForPlacedObjects(false)
+                end
+            else
+                tes3mp.SendMessage(pid, categoryInput .. " is not a valid object category. Valid choices are " ..
+                    tableHelper.concatenateTableIndexes(enumerations.objectCategories, ", ") .. "\n", false)
+                return false
+            end
+
+            tes3mp.SendWorldCollisionOverride(pid, true)
+            tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
+                " for all newly loaded cells.\n", false)
 
         elseif cmd[1] == "suicide" then
             if config.allowSuicideCommand == true then

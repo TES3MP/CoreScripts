@@ -9,6 +9,7 @@ enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 enumerations.journal = { ENTRY = 0, INDEX = 1 }
 enumerations.miscellaneous = { MARK_LOCATION = 0, SELECTED_SPELL = 1 }
+enumerations.objectCategories = { PLAYER = 0, ACTOR = 1, PLACED_OBJECT = 2 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 
 return enumerations
