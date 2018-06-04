@@ -76,8 +76,8 @@ do
         local day = hour/24
         hour = math.fmod(hour, 24)
 
-        setHour(hour)
-        setDay(day)
+        Worldstate.setHour(hour)
+        Worldstate.setDay(day)
 
         timeTimer:restart(1000)
     end
