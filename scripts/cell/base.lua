@@ -527,6 +527,8 @@ end
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadLastObjectList()
+    tes3mp.CopyLastObjectListToStore()
+
     tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     local action = tes3mp.GetObjectListAction()
@@ -580,14 +582,14 @@ function BaseCell:SaveContainers(pid)
                         actionCount = item.count
                         tes3mp.LogAppend(2, "- Attempt to remove more than possible from item")
                         tes3mp.LogAppend(2, "- Removed just " .. actionCount .. " instead")
-                        tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, actionCount)
+                        tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
                     end
                 end
             else
                 if action == enumerations.container.REMOVE then
                     tes3mp.LogAppend(2, "- Attempt to remove non-existent item")
-                    tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, 0)
+                    tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
                         itemCharge, itemEnchantmentCharge)
@@ -599,7 +601,7 @@ function BaseCell:SaveContainers(pid)
         self.data.objectData[refIndex].inventory = inventory
     end
 
-    tes3mp.SendContainer(true, true)
+    tes3mp.SendContainer(true)
 
     self:Save()
 
