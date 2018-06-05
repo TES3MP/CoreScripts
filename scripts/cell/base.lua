@@ -601,7 +601,21 @@ function BaseCell:SaveContainers(pid)
         self.data.objectData[refIndex].inventory = inventory
     end
 
-    tes3mp.SendContainer(true)
+    -- Is this a player replying to our request for container contents?
+    -- If so, only send the reply to other visitors
+    if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
+        for _, visitorPid in pairs(self.visitors) do
+            if pid ~= visitorPid then
+                tes3mp.SetObjectListPid(visitorPid)
+                tes3mp.SendContainer(false)
+            end
+        end
+    -- Otherwise, send the received packet to everyone, including the
+    -- player who sent it (because no clientside changes will be made
+    -- to the container they're in otherwise)
+    else
+        tes3mp.SendContainer(true)
+    end
 
     self:Save()
 
