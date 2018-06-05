@@ -34,7 +34,7 @@ end
 function Cell:Save()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
-        jsonInterface.save("cell/" .. self.cellFile, self.data)
+        jsonInterface.save("cell/" .. self.cellFile, self.data, config.cellKeyOrder)
     end
 end
 
