@@ -1067,7 +1067,7 @@ function BasePlayer:LoadMap()
         self.data.mapExplored = {}
     end
 
-    tes3mp.InitializeMapChanges(self.pid)
+    tes3mp.ClearMapChanges()
 
     for index, cellDescription in pairs(self.data.mapExplored) do
 
@@ -1078,11 +1078,11 @@ function BasePlayer:LoadMap()
             local cellX, cellY
             _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
 
-            tes3mp.LoadMapTileImageFile(self.pid, tonumber(cellX), tonumber(cellY), filePath)
+            tes3mp.LoadMapTileImageFile(tonumber(cellX), tonumber(cellY), filePath)
         end
     end
 
-    tes3mp.SendMapChanges(self.pid)
+    tes3mp.SendWorldMap(self.pid)
 end
 
 function BasePlayer:GetDifficulty()

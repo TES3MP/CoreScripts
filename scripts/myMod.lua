@@ -901,12 +901,6 @@ Methods.OnPlayerMiscellaneous = function(pid)
     end
 end
 
-Methods.OnPlayerMap = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveMap(pid)
-    end
-end
-
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
@@ -1025,6 +1019,12 @@ Methods.OnContainer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveContainers(pid)
     else
         tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
+    end
+end
+
+Methods.OnWorldMap = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveMap(pid)
     end
 end
 

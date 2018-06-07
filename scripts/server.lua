@@ -1452,11 +1452,6 @@ function OnPlayerMiscellaneous(pid)
     myMod.OnPlayerMiscellaneous(pid)
 end
 
-function OnPlayerMap(pid)
-    tes3mp.LogMessage(0, "Called \"OnPlayerMap\" for pid " .. pid)
-    myMod.OnPlayerMap(pid)
-end
-
 function OnPlayerEndCharGen(pid)
     tes3mp.LogMessage(0, "Called \"OnPlayerEndCharGen\" for pid " .. pid)
     myMod.OnPlayerEndCharGen(pid)
@@ -1535,6 +1530,11 @@ end
 function OnContainer(pid, cellDescription)
     tes3mp.LogMessage(0, "Called \"OnContainer\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnContainer(pid, cellDescription)
+end
+
+function OnWorldMap(pid)
+    tes3mp.LogMessage(0, "Called \"OnWorldMap\" for pid " .. pid)
+    myMod.OnWorldMap(pid)
 end
 
 function OnGUIAction(pid, idGui, data)

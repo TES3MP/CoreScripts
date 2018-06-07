@@ -171,13 +171,15 @@ end
 
 function BaseWorld:SaveMap(pid)
 
-    for i = 0, tes3mp.GetMapChangesSize(pid) - 1 do
+    tes3mp.ReadLastWorldstate()
 
-        local cellX = tes3mp.GetMapTileCellX(pid, i)
-        local cellY = tes3mp.GetMapTileCellY(pid, i)
+    for index = 0, tes3mp.GetMapChangesSize() - 1 do
+
+        local cellX = tes3mp.GetMapTileCellX(index)
+        local cellY = tes3mp.GetMapTileCellY(index)
         local filename = cellX .. ", " .. cellY .. ".png"
 
-        tes3mp.SaveMapTileImageFile(pid, i, os.getenv("MOD_DIR") .. "/map/" .. filename)
+        tes3mp.SaveMapTileImageFile(index, os.getenv("MOD_DIR") .. "/map/" .. filename)
     end
 end
 
