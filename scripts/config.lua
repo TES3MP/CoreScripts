@@ -146,6 +146,10 @@ config.enablePlacedObjectCollision = false
 -- prevents players from standing on top of the placed objects without slipping
 config.useActorCollisionForPlacedObjects = false
 
+-- Disallow players from including the following in their names
+config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
+"faggot", "fellatio", "fuck", "gas the jew", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
+
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know

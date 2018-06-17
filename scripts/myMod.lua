@@ -93,6 +93,20 @@ Methods.IsPlayerNameLoggedIn = function(newName)
     return false
 end
 
+-- Check if the player is using a disallowed name
+Methods.IsPlayerNameAllowed = function(playerName)
+
+    for _, disallowedNameString in pairs(config.disallowedNameStrings) do
+        
+        if string.find(string.lower(playerName), string.lower(disallowedNameString)) ~= nil then
+
+            return false
+        end
+    end
+
+    return true
+end
+
 -- Get the Player object of either an online player or an offline one
 Methods.GetPlayerByName = function(targetName)
     -- Check if the player is online

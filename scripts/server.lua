@@ -357,8 +357,13 @@ function OnPlayerConnect(pid)
         playerName = string.sub(playerName, 0, 35)
     end
 
-    if myMod.IsPlayerNameLoggedIn(playerName) then
-        myMod.OnPlayerDeny(pid, playerName)
+    if myMod.IsPlayerNameAllowed(playerName) == false then
+        local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use a disallowed name.\n"
+        tes3mp.SendMessage(pid, message, true)
+        return false -- deny player        
+    elseif myMod.IsPlayerNameLoggedIn(playerName) then
+        local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
+        tes3mp.SendMessage(pid, message, true)
         return false -- deny player
     else
         tes3mp.LogAppend(1, "- New player is named " .. playerName)
