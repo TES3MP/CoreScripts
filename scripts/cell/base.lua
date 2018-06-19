@@ -245,6 +245,38 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
+-- Iterate through the objects in the ObjectDelete packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsDeleted(pid)
+
+    local isValid = true
+    local rejectedRefIds = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+
+        if tableHelper.containsValue(config.undeletableRefIds, refId) then
+            table.insert(rejectedRefIds, refId)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsDeleted(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectDelete(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .." about " ..
+            tableHelper.concatenateArrayValues(rejectedRefIds, 1, ", "))
+    end
+
+end
+
 function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}

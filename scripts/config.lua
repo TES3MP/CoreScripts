@@ -146,6 +146,9 @@ config.enablePlacedObjectCollision = false
 -- prevents players from standing on top of the placed objects without slipping
 config.useActorCollisionForPlacedObjects = false
 
+-- Prevent certain object refIds from being deleted as a result of player-sent packets
+config.undeletableRefIds = { "m'aiq" }
+
 -- Disallow players from including the following in their names
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
 "faggot", "fellatio", "fuck", "gas the jew", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }

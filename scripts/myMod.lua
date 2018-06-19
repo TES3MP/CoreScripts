@@ -975,7 +975,7 @@ end
 
 Methods.OnObjectDelete = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsDeleted(pid)
+        LoadedCells[cellDescription]:ProcessObjectsDeleted(pid)
     else
         tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
     end
