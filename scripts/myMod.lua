@@ -1043,6 +1043,16 @@ end
 Methods.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveMapTiles(pid)
+
+        if config.shareMapExploration == true then
+            tes3mp.CopyLastWorldstateToStore()
+
+            for otherPid, _ in pairs(Players) do
+                if pid ~= otherPid then
+                    tes3mp.SendWorldMap(otherPid, false)
+                end
+            end
+        end
     end
 end
 
