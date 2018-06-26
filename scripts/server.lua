@@ -320,6 +320,7 @@ function OnServerPostInit()
     tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
     tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
     tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
+    tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
     tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
 
     local respawnCell
