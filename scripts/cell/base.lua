@@ -389,7 +389,11 @@ function BaseCell:SaveObjectsPlaced(pid)
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, refIndex)
-            table.insert(containerRefIndexesRequested, refIndex)
+
+            -- Track objects which have containers so we can request their contents
+            if tes3mp.DoesObjectHaveContainer(i) then
+                table.insert(containerRefIndexesRequested, refIndex)
+            end
         end
     end
 
