@@ -129,6 +129,30 @@ function StateHelper:LoadReputation(pid, stateObject)
     tes3mp.SendReputation(pid)
 end
 
+function StateHelper:LoadMap(pid, stateObject)
+
+    if stateObject.data.mapExplored == nil then
+        stateObject.data.mapExplored = {}
+    end
+
+    tes3mp.ClearMapChanges()
+
+    for index, cellDescription in pairs(stateObject.data.mapExplored) do
+
+        local filePath = os.getenv("MOD_DIR") .. "/map/" .. cellDescription .. ".png"
+
+        if tes3mp.DoesFileExist(filePath) then
+
+            local cellX, cellY
+            _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
+
+            tes3mp.LoadMapTileImageFile(tonumber(cellX), tonumber(cellY), filePath)
+        end
+    end
+
+    tes3mp.SendWorldMap(pid)
+end
+
 function StateHelper:SaveJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -242,6 +266,19 @@ function StateHelper:SaveReputation(pid, stateObject)
     end    
 
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
+
+    stateObject:Save()
+end
+
+function StateHelper:SaveMapExploration(pid, stateObject)
+
+    local cell = tes3mp.GetCell(pid)
+
+    if tes3mp.IsInExterior(pid) == true then
+        if tableHelper.containsValue(stateObject.data.mapExplored, cell) == false then
+            table.insert(stateObject.data.mapExplored, cell)
+        end
+    end
 
     stateObject:Save()
 end

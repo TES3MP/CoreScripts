@@ -51,6 +51,9 @@ config.shareBounty = false
 -- Whether reputation should be shared across players on the server or not
 config.shareReputation = true
 
+-- Whether map exploration should be shared across players on the server or not
+config.shareMapExploration = false
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 

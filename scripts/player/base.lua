@@ -205,7 +205,12 @@ function BasePlayer:FinishLogin()
         WorldInstance:LoadKills(self.pid)
 
         self:LoadSpecialStates()
-        self:LoadMap()
+
+        if config.shareMapExploration == true then
+            WorldInstance:LoadMap(self.pid)
+        else
+            self:LoadMap()
+        end
     end
 end
 
@@ -726,12 +731,7 @@ function BasePlayer:SaveCell()
     self.data.location.rotX = tes3mp.GetRotX(self.pid)
     self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 
-    if tes3mp.IsInExterior(self.pid) == true then
-
-        if tableHelper.containsValue(self.data.mapExplored, cell) == false then
-            table.insert(self.data.mapExplored, cell)
-        end
-    end
+    stateHelper:SaveMapExploration(self.pid, self)
 end
 
 function BasePlayer:LoadEquipment()
@@ -980,6 +980,10 @@ function BasePlayer:SaveReputation()
     stateHelper:SaveReputation(self.pid, self)
 end
 
+function BasePlayer:LoadMap()
+    stateHelper:LoadMap(self.pid, self)
+end
+
 function BasePlayer:LoadBooks()
 
     if self.data.books == nil then
@@ -1061,34 +1065,9 @@ function BasePlayer:SaveSelectedSpell()
     self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
 end
 
-function BasePlayer:LoadMap()
-
-    if self.data.mapExplored == nil then
-        self.data.mapExplored = {}
-    end
-
-    tes3mp.ClearMapChanges()
-
-    for index, cellDescription in pairs(self.data.mapExplored) do
-
-        local filePath = os.getenv("MOD_DIR") .. "/map/" .. cellDescription .. ".png"
-
-        if tes3mp.DoesFileExist(filePath) then
-
-            local cellX, cellY
-            _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
-
-            tes3mp.LoadMapTileImageFile(tonumber(cellX), tonumber(cellY), filePath)
-        end
-    end
-
-    tes3mp.SendWorldMap(self.pid)
-end
-
 function BasePlayer:GetDifficulty()
     return self.data.settings.difficulty
 end
-
 
 function BasePlayer:GetConsoleAllowed()
     return self.data.settings.consoleAllowed

@@ -22,6 +22,7 @@ function BaseWorld:__init()
         topics = {},
         kills = {},
         time = config.defaultTimeTable,
+        mapExplored = {},
         customVariables = {}
     };
 end
@@ -99,6 +100,10 @@ function BaseWorld:LoadReputation(pid)
     stateHelper:LoadReputation(pid, self)
 end
 
+function BaseWorld:LoadMap(pid)
+    stateHelper:LoadMap(pid, self)
+end
+
 function BaseWorld:LoadKills(pid)
 
     tes3mp.InitializeKillChanges(pid)
@@ -169,7 +174,11 @@ function BaseWorld:SaveKills(pid)
     self:Save()
 end
 
-function BaseWorld:SaveMap(pid)
+function BaseWorld:SaveMapExploration(pid)
+    stateHelper:SaveMapExploration(pid, self)
+end
+
+function BaseWorld:SaveMapTiles(pid)
 
     tes3mp.ReadLastWorldstate()
 

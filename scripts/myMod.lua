@@ -668,6 +668,10 @@ Methods.OnPlayerCellChange = function(pid)
             Players[pid]:SaveStatsDynamic()
             tes3mp.LogMessage(1, "Saving player " .. pid)
             Players[pid]:Save()
+
+            if config.shareMapExploration == true then
+                WorldInstance:SaveMapExploration(pid)
+            end
         else
             Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
             Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
@@ -1038,7 +1042,7 @@ end
 
 Methods.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveMap(pid)
+        WorldInstance:SaveMapTiles(pid)
     end
 end
 
