@@ -179,7 +179,7 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 
-config.cellKeyOrder = {"refId", "count", "charge", "enchantmentCharge"}
+config.cellKeyOrder = {"packets", "objectData", "refId", "count", "charge", "enchantmentCharge"}
 
 config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
