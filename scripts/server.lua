@@ -111,6 +111,10 @@ if config.allowSuicideCommand == true then
     helptext = helptext .. "\n/suicide - Commit suicide"
 end
 
+if config.allowFixmeCommand == true then
+    helptext = helptext .. "\n/fixme - Get unstuck from your current location; can only be used once every " .. config.fixmeInterval .. " seconds"
+end
+
 function LoadBanList()
     tes3mp.LogMessage(2, "Reading banlist.json")
     banList = jsonInterface.load("banlist.json")
@@ -1173,6 +1177,33 @@ function OnPlayerSendMessage(pid, message)
             if config.allowSuicideCommand == true then
                 tes3mp.SetHealthCurrent(pid, 0)
                 tes3mp.SendStatsDynamic(pid)
+            else
+                tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            end
+
+        elseif cmd[1] == "fixme" then
+            if config.allowFixmeCommand == true then
+                local currentTime = os.time()
+
+                if Players[pid].data.customVariables.lastFixMe == nil or
+                    currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
+
+                    myMod.RunConsoleCommandOnPlayer(pid, "fixme")
+                    Players[pid].data.customVariables.lastFixMe = currentTime
+                    tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
+                else
+                    local remainingSeconds = Players[pid].data.customVariables.lastFixMe + config.fixmeInterval - currentTime
+                    local message = "Sorry! You can't use /fixme for another "
+
+                    if remainingSeconds > 1 then
+                        message = message .. remainingSeconds .. " seconds"
+                    else
+                        message = message .. " second"
+                    end
+
+                    message = message .. "\n"
+                    tes3mp.SendMessage(pid, message, false)
+                end
             else
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
             end
