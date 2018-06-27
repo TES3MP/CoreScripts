@@ -1107,7 +1107,7 @@ function BasePlayer:SetDifficulty(difficulty)
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(3, "Set difficulty to " .. tostring(difficulty) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " .. myMod.GetChatName(self.pid))
 end
 
 function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
@@ -1119,7 +1119,7 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     end
 
     tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(3, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. myMod.GetChatName(self.pid))
 end
 
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
@@ -1131,7 +1131,7 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     end
 
     tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(3, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. myMod.GetChatName(self.pid))
 end
 
 function BasePlayer:SetConsoleAllowed(state)
