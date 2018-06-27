@@ -46,6 +46,8 @@ function BaseCell:__init(cellDescription)
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
 
+    self.unusableContainerRefIndexes = {}
+
     self.isExterior = false
 
     if string.match(cellDescription, patterns.exteriorCell) then
@@ -251,16 +253,18 @@ end
 function BaseCell:ProcessObjectsDeleted(pid)
 
     local isValid = true
-    local rejectedRefIds = {}
+    local rejectedObjects = {}
 
     tes3mp.ReadLastObjectList()
 
     for index = 0, tes3mp.GetObjectChangesSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-        if tableHelper.containsValue(config.undeletableRefIds, refId) then
-            table.insert(rejectedRefIds, refId)
+        if tableHelper.containsValue(config.undeletableRefIds, refId) or
+            tableHelper.containsValue(self.unusableContainerRefIndexes, refIndex) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
             isValid = false
         end
     end
@@ -273,9 +277,8 @@ function BaseCell:ProcessObjectsDeleted(pid)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .." about " ..
-            tableHelper.concatenateArrayValues(rejectedRefIds, 1, ", "))
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
-
 end
 
 function BaseCell:SaveObjectsDeleted(pid)
@@ -539,7 +542,7 @@ function BaseCell:SaveObjectStates(pid)
                     myMod.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
                     tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: "..refId.." was causing spam and has been deleted")            
                 end
-            end    
+            end
         end
     end
 end
@@ -561,6 +564,44 @@ function BaseCell:SaveDoorStates(pid)
     end
 end
 
+-- Iterate through the objects in the ObjectDelete packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessContainers(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    local subAction = tes3mp.GetObjectListContainerSubAction()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(self.unusableContainerRefIndexes, refIndex) then
+            
+            if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
+                tableHelper.removeValue(self.unusableContainerRefIndexes, refIndex)
+                tes3mp.LogMessage(1, "Making container " .. refIndex .. " usable as a result of request reply")
+            else
+                table.insert(rejectedObjects, refId .. " " .. refIndex)
+                isValid = false
+
+                Players[pid]:Message("That container is currently unusable for synchronization reasons.\n")
+            end
+        end
+    end
+
+    if isValid then
+        self:SaveContainers(pid)
+    else
+        tes3mp.LogMessage(1, "Rejected Container from " .. myMod.GetChatName(pid) .." about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+    end
+end
+
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadLastObjectList()
@@ -576,9 +617,9 @@ function BaseCell:SaveContainers(pid)
         local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
 
-        self:InitializeObjectData(refIndex, refId)
-
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
+
+        self:InitializeObjectData(refIndex, refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.container, refIndex)
 
@@ -814,6 +855,12 @@ function BaseCell:SaveActorDeath(pid)
 
             tableHelper.insertValueIfMissing(self.data.packets.death, refIndex)
 
+            -- Prevent this actor's container from being used until we update
+            -- its contents based on a request to a player
+            --
+            -- This is an unfortunate workaround that needs to be used until
+            -- some changes are made on the C++ side
+            table.insert(self.unusableContainerRefIndexes, refIndex)
             table.insert(containerRefIndexesRequested, refIndex)
         end
     end

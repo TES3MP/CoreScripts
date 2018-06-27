@@ -1042,7 +1042,7 @@ end
 
 Methods.OnContainer = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveContainers(pid)
+        LoadedCells[cellDescription]:ProcessContainers(pid)
     else
         tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
     end
