@@ -111,6 +111,10 @@ if config.allowSuicideCommand == true then
     helptext = helptext .. "\n/suicide - Commit suicide"
 end
 
+if config.allowFixmeCommand == true then
+    helptext = helptext .. "\n/fixme - Get unstuck from your current location; can only be used once every " .. config.fixmeInterval .. " seconds"
+end
+
 function LoadBanList()
     tes3mp.LogMessage(2, "Reading banlist.json")
     banList = jsonInterface.load("banlist.json")
@@ -313,6 +317,10 @@ function OnServerPostInit()
     tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
     tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
     tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
+    tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
+    tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
+    tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
+    tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
     tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
 
     local respawnCell
@@ -357,8 +365,13 @@ function OnPlayerConnect(pid)
         playerName = string.sub(playerName, 0, 35)
     end
 
-    if myMod.IsPlayerNameLoggedIn(playerName) then
-        myMod.OnPlayerDeny(pid, playerName)
+    if myMod.IsPlayerNameAllowed(playerName) == false then
+        local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use a disallowed name.\n"
+        tes3mp.SendMessage(pid, message, true)
+        return false -- deny player        
+    elseif myMod.IsPlayerNameLoggedIn(playerName) then
+        local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
+        tes3mp.SendMessage(pid, message, true)
         return false -- deny player
     else
         tes3mp.LogAppend(1, "- New player is named " .. playerName)
@@ -1172,6 +1185,33 @@ function OnPlayerSendMessage(pid, message)
                 tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
             end
 
+        elseif cmd[1] == "fixme" then
+            if config.allowFixmeCommand == true then
+                local currentTime = os.time()
+
+                if Players[pid].data.customVariables.lastFixMe == nil or
+                    currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
+
+                    myMod.RunConsoleCommandOnPlayer(pid, "fixme")
+                    Players[pid].data.customVariables.lastFixMe = currentTime
+                    tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
+                else
+                    local remainingSeconds = Players[pid].data.customVariables.lastFixMe + config.fixmeInterval - currentTime
+                    local message = "Sorry! You can't use /fixme for another "
+
+                    if remainingSeconds > 1 then
+                        message = message .. remainingSeconds .. " seconds"
+                    else
+                        message = message .. " second"
+                    end
+
+                    message = message .. "\n"
+                    tes3mp.SendMessage(pid, message, false)
+                end
+            else
+                tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            end
+
         elseif cmd[1] == "storeconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
             if myMod.CheckPlayerValidity(pid, cmd[2]) then
 
@@ -1452,11 +1492,6 @@ function OnPlayerMiscellaneous(pid)
     myMod.OnPlayerMiscellaneous(pid)
 end
 
-function OnPlayerMap(pid)
-    tes3mp.LogMessage(0, "Called \"OnPlayerMap\" for pid " .. pid)
-    myMod.OnPlayerMap(pid)
-end
-
 function OnPlayerEndCharGen(pid)
     tes3mp.LogMessage(0, "Called \"OnPlayerEndCharGen\" for pid " .. pid)
     myMod.OnPlayerEndCharGen(pid)
@@ -1535,6 +1570,11 @@ end
 function OnContainer(pid, cellDescription)
     tes3mp.LogMessage(0, "Called \"OnContainer\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnContainer(pid, cellDescription)
+end
+
+function OnWorldMap(pid)
+    tes3mp.LogMessage(0, "Called \"OnWorldMap\" for pid " .. pid)
+    myMod.OnWorldMap(pid)
 end
 
 function OnGUIAction(pid, idGui, data)

@@ -245,6 +245,38 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
+-- Iterate through the objects in the ObjectDelete packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsDeleted(pid)
+
+    local isValid = true
+    local rejectedRefIds = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+
+        if tableHelper.containsValue(config.undeletableRefIds, refId) then
+            table.insert(rejectedRefIds, refId)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsDeleted(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectDelete(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .." about " ..
+            tableHelper.concatenateArrayValues(rejectedRefIds, 1, ", "))
+    end
+
+end
+
 function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
@@ -357,7 +389,11 @@ function BaseCell:SaveObjectsPlaced(pid)
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, refIndex)
-            table.insert(containerRefIndexesRequested, refIndex)
+
+            -- Track objects which have containers so we can request their contents
+            if tes3mp.DoesObjectHaveContainer(i) then
+                table.insert(containerRefIndexesRequested, refIndex)
+            end
         end
     end
 
@@ -527,6 +563,8 @@ end
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadLastObjectList()
+    tes3mp.CopyLastObjectListToStore()
+
     tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
     local action = tes3mp.GetObjectListAction()
@@ -580,14 +618,14 @@ function BaseCell:SaveContainers(pid)
                         actionCount = item.count
                         tes3mp.LogAppend(2, "- Attempt to remove more than possible from item")
                         tes3mp.LogAppend(2, "- Removed just " .. actionCount .. " instead")
-                        tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, actionCount)
+                        tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
                     end
                 end
             else
                 if action == enumerations.container.REMOVE then
                     tes3mp.LogAppend(2, "- Attempt to remove non-existent item")
-                    tes3mp.SetReceivedContainerItemActionCount(objectIndex, itemIndex, 0)
+                    tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
                         itemCharge, itemEnchantmentCharge)
@@ -599,7 +637,21 @@ function BaseCell:SaveContainers(pid)
         self.data.objectData[refIndex].inventory = inventory
     end
 
-    tes3mp.SendContainer(true, true)
+    -- Is this a player replying to our request for container contents?
+    -- If so, only send the reply to other visitors
+    if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
+        for _, visitorPid in pairs(self.visitors) do
+            if pid ~= visitorPid then
+                tes3mp.SetObjectListPid(visitorPid)
+                tes3mp.SendContainer(false)
+            end
+        end
+    -- Otherwise, send the received packet to everyone, including the
+    -- player who sent it (because no clientside changes will be made
+    -- to the container they're in otherwise)
+    else
+        tes3mp.SendContainer(true)
+    end
 
     self:Save()
 

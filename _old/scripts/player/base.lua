@@ -205,7 +205,12 @@ function BasePlayer:FinishLogin()
         WorldInstance:LoadKills(self.pid)
 
         self:LoadSpecialStates()
-        self:LoadMap()
+
+        if config.shareMapExploration == true then
+            WorldInstance:LoadMap(self.pid)
+        else
+            self:LoadMap()
+        end
     end
 end
 
@@ -702,8 +707,13 @@ function BasePlayer:LoadCell()
         rot[0] = self.data.location.rotX
         rot[1] = self.data.location.rotZ
 
-        tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
-        tes3mp.SetRot(self.pid, rot[0], rot[1])
+        if pos[0] ~= nil and pos[1] ~= nil and pos[2] ~= nil then
+            tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+        end
+
+        if rot[0] ~= nil and rot[1] ~= nil then
+            tes3mp.SetRot(self.pid, rot[0], rot[1])
+        end
 
         tes3mp.SendCell(self.pid)
         tes3mp.SendPos(self.pid)
@@ -726,12 +736,7 @@ function BasePlayer:SaveCell()
     self.data.location.rotX = tes3mp.GetRotX(self.pid)
     self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
 
-    if tes3mp.IsInExterior(self.pid) == true then
-
-        if tableHelper.containsValue(self.data.mapExplored, cell) == false then
-            table.insert(self.data.mapExplored, cell)
-        end
-    end
+    stateHelper:SaveMapExploration(self.pid, self)
 end
 
 function BasePlayer:LoadEquipment()
@@ -980,6 +985,10 @@ function BasePlayer:SaveReputation()
     stateHelper:SaveReputation(self.pid, self)
 end
 
+function BasePlayer:LoadMap()
+    stateHelper:LoadMap(self.pid, self)
+end
+
 function BasePlayer:LoadBooks()
 
     if self.data.books == nil then
@@ -1061,34 +1070,9 @@ function BasePlayer:SaveSelectedSpell()
     self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
 end
 
-function BasePlayer:LoadMap()
-
-    if self.data.mapExplored == nil then
-        self.data.mapExplored = {}
-    end
-
-    tes3mp.InitializeMapChanges(self.pid)
-
-    for index, cellDescription in pairs(self.data.mapExplored) do
-
-        local filePath = os.getenv("MOD_DIR") .. "/map/" .. cellDescription .. ".png"
-
-        if tes3mp.DoesFileExist(filePath) then
-
-            local cellX, cellY
-            _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
-
-            tes3mp.LoadMapTileImageFile(self.pid, tonumber(cellX), tonumber(cellY), filePath)
-        end
-    end
-
-    tes3mp.SendMapChanges(self.pid)
-end
-
 function BasePlayer:GetDifficulty()
     return self.data.settings.difficulty
 end
-
 
 function BasePlayer:GetConsoleAllowed()
     return self.data.settings.consoleAllowed

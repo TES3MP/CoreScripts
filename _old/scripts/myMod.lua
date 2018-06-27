@@ -93,6 +93,20 @@ Methods.IsPlayerNameLoggedIn = function(newName)
     return false
 end
 
+-- Check if the player is using a disallowed name
+Methods.IsPlayerNameAllowed = function(playerName)
+
+    for _, disallowedNameString in pairs(config.disallowedNameStrings) do
+        
+        if string.find(string.lower(playerName), string.lower(disallowedNameString)) ~= nil then
+
+            return false
+        end
+    end
+
+    return true
+end
+
 -- Get the Player object of either an online player or an offline one
 Methods.GetPlayerByName = function(targetName)
     -- Check if the player is online
@@ -654,6 +668,10 @@ Methods.OnPlayerCellChange = function(pid)
             Players[pid]:SaveStatsDynamic()
             tes3mp.LogMessage(1, "Saving player " .. pid)
             Players[pid]:Save()
+
+            if config.shareMapExploration == true then
+                WorldInstance:SaveMapExploration(pid)
+            end
         else
             Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
             Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
@@ -901,12 +919,6 @@ Methods.OnPlayerMiscellaneous = function(pid)
     end
 end
 
-Methods.OnPlayerMap = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveMap(pid)
-    end
-end
-
 Methods.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Methods.LoadCellForPlayer(pid, cellDescription)
@@ -967,7 +979,7 @@ end
 
 Methods.OnObjectDelete = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveObjectsDeleted(pid)
+        LoadedCells[cellDescription]:ProcessObjectsDeleted(pid)
     else
         tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
     end
@@ -1025,6 +1037,22 @@ Methods.OnContainer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveContainers(pid)
     else
         tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
+    end
+end
+
+Methods.OnWorldMap = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveMapTiles(pid)
+
+        if config.shareMapExploration == true then
+            tes3mp.CopyLastWorldstateToStore()
+
+            for otherPid, _ in pairs(Players) do
+                if pid ~= otherPid then
+                    tes3mp.SendWorldMap(otherPid, false)
+                end
+            end
+        end
     end
 end
 

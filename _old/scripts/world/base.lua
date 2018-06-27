@@ -22,6 +22,7 @@ function BaseWorld:__init()
         topics = {},
         kills = {},
         time = config.defaultTimeTable,
+        mapExplored = {},
         customVariables = {}
     };
 end
@@ -99,6 +100,10 @@ function BaseWorld:LoadReputation(pid)
     stateHelper:LoadReputation(pid, self)
 end
 
+function BaseWorld:LoadMap(pid)
+    stateHelper:LoadMap(pid, self)
+end
+
 function BaseWorld:LoadKills(pid)
 
     tes3mp.InitializeKillChanges(pid)
@@ -169,15 +174,21 @@ function BaseWorld:SaveKills(pid)
     self:Save()
 end
 
-function BaseWorld:SaveMap(pid)
+function BaseWorld:SaveMapExploration(pid)
+    stateHelper:SaveMapExploration(pid, self)
+end
 
-    for i = 0, tes3mp.GetMapChangesSize(pid) - 1 do
+function BaseWorld:SaveMapTiles(pid)
 
-        local cellX = tes3mp.GetMapTileCellX(pid, i)
-        local cellY = tes3mp.GetMapTileCellY(pid, i)
+    tes3mp.ReadLastWorldstate()
+
+    for index = 0, tes3mp.GetMapChangesSize() - 1 do
+
+        local cellX = tes3mp.GetMapTileCellX(index)
+        local cellY = tes3mp.GetMapTileCellY(index)
         local filename = cellX .. ", " .. cellY .. ".png"
 
-        tes3mp.SaveMapTileImageFile(pid, i, os.getenv("MOD_DIR") .. "/map/" .. filename)
+        tes3mp.SaveMapTileImageFile(index, os.getenv("MOD_DIR") .. "/map/" .. filename)
     end
 end
 

@@ -51,6 +51,9 @@ config.shareBounty = false
 -- Whether reputation should be shared across players on the server or not
 config.shareReputation = true
 
+-- Whether map exploration should be shared across players on the server or not
+config.shareMapExploration = false
+
 -- Time to stay dead before being respawned, in seconds
 config.deathTime = 5
 
@@ -112,6 +115,12 @@ config.bountyDeathPenalty = false
 -- Whether players should be allowed to use the /suicide command
 config.allowSuicideCommand = true
 
+-- Whether players should be allowed to use the /fixme command
+config.allowFixmeCommand = true
+
+-- How many seconds need to pass between uses of the /fixme command by a player
+config.fixmeInterval = 30
+
 -- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
 -- to prevent other menu inputs from being taken into account for them
 config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
@@ -146,6 +155,13 @@ config.enablePlacedObjectCollision = false
 -- prevents players from standing on top of the placed objects without slipping
 config.useActorCollisionForPlacedObjects = false
 
+-- Prevent certain object refIds from being deleted as a result of player-sent packets
+config.undeletableRefIds = { "m'aiq" }
+
+-- Disallow players from including the following in their names
+config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
+"faggot", "fellatio", "fuck", "gas the jew", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
+
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
@@ -171,6 +187,9 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+
+config.cellKeyOrder = {"packets", "objectData", "refId", "count", "charge", "enchantmentCharge"}
+
 config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
 
