@@ -790,6 +790,8 @@ function BaseCell:SaveActorDeath(pid)
         self.data.packets.death = {}
     end
 
+    local containerRefIndexesRequested = {}
+
     tes3mp.ReadLastActorList()
     tes3mp.LogMessage(1, "Saving ActorDeath from " .. myMod.GetChatName(pid) .. " about " .. self.description)
 
@@ -811,7 +813,13 @@ function BaseCell:SaveActorDeath(pid)
             tes3mp.LogAppend(1, "- " .. refIndex .. ", deathReason: " .. deathReason)
 
             tableHelper.insertValueIfMissing(self.data.packets.death, refIndex)
+
+            table.insert(containerRefIndexesRequested, refIndex)
         end
+    end
+
+    if tableHelper.isEmpty(containerRefIndexesRequested) == false then
+        self:RequestContainers(pid, containerRefIndexesRequested)
     end
 
     self:Save()
