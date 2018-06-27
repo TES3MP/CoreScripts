@@ -953,6 +953,14 @@ Methods.OnActorEquipment = function(pid, cellDescription)
     end
 end
 
+Methods.OnActorDeath = function(pid, cellDescription)
+    if LoadedCells[cellDescription] ~= nil then
+        LoadedCells[cellDescription]:SaveActorDeath(pid)
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorDeath for unloaded " .. cellDescription)
+    end
+end
+
 Methods.OnActorCellChange = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorCellChanges(pid)

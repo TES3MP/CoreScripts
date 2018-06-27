@@ -1522,6 +1522,11 @@ function OnActorEquipment(pid, cellDescription)
     myMod.OnActorEquipment(pid, cellDescription)
 end
 
+function OnActorDeath(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnActorDeath\" for pid " .. pid .. " and cell " .. cellDescription)
+    myMod.OnActorDeath(pid, cellDescription)
+end
+
 function OnActorCellChange(pid, cellDescription)
     tes3mp.LogMessage(0, "Called \"OnActorCellChange\" for pid " .. pid .. " and cell " .. cellDescription)
     myMod.OnActorCellChange(pid, cellDescription)

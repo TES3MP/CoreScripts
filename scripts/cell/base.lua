@@ -28,6 +28,7 @@ function BaseCell:__init(cellDescription)
             doorState = {},
             container = {},
             equipment = {},
+            death = {},
             actorList = {},
             position = {},
             statsDynamic = {},
@@ -777,6 +778,39 @@ function BaseCell:SaveActorEquipment(pid)
             end
 
             tableHelper.insertValueIfMissing(self.data.packets.equipment, refIndex)
+        end
+    end
+
+    self:Save()
+end
+
+function BaseCell:SaveActorDeath(pid)
+
+    if self.data.packets.death == nil then
+        self.data.packets.death = {}
+    end
+
+    tes3mp.ReadLastActorList()
+    tes3mp.LogMessage(1, "Saving ActorDeath from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+
+    local actorListSize = tes3mp.GetActorListSize()
+
+    if actorListSize == 0 then
+        return
+    end
+
+    for actorIndex = 0, actorListSize - 1 do
+
+        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+
+        if self:ContainsObject(refIndex) then
+
+            local deathReason = tes3mp.GetActorDeathReason(actorIndex)
+            self.data.objectData[refIndex].deathReason = deathReason
+
+            tes3mp.LogAppend(1, "- " .. refIndex .. ", deathReason: " .. deathReason)
+
+            tableHelper.insertValueIfMissing(self.data.packets.death, refIndex)
         end
     end
 
