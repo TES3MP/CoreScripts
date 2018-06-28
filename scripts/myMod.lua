@@ -269,6 +269,13 @@ Methods.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetActorCollisionState(config.enableActorCollision)
     tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
     tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
+
+    tes3mp.ClearEnforcedCollisionRefIds()
+
+    for _, refId in pairs(config.enforcedCollisionRefIds) do
+        tes3mp.AddEnforcedCollisionRefId(refId)
+    end
+    
     tes3mp.SendWorldCollisionOverride(pid, false)
 
     Players[pid] = Player(pid, playerName)
