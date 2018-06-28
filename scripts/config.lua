@@ -163,6 +163,7 @@ config.useActorCollisionForPlacedObjects = false
 config.undeletableRefIds = { "m'aiq" }
 
 -- Disallow players from including the following in their names
+-- Note: Unfortunately, these are based on real names that players have been using on servers
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
 "faggot", "fellatio", "fuck", "gas the jew", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
 
