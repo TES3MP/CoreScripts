@@ -820,6 +820,8 @@ Methods.OnActorList = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorList for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -830,6 +832,8 @@ Methods.OnActorEquipment = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorEquipment for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -840,6 +844,8 @@ Methods.OnActorCellChange = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorCellChange for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -850,6 +856,8 @@ Methods.OnObjectPlace = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectPlace for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -860,6 +868,8 @@ Methods.OnObjectSpawn = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectSpawn for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -870,6 +880,8 @@ Methods.OnObjectDelete = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -880,6 +892,8 @@ Methods.OnObjectLock = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -890,6 +904,8 @@ Methods.OnObjectTrap = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectTrap for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -900,6 +916,8 @@ Methods.OnObjectScale = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectScale for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -917,6 +935,8 @@ Methods.OnObjectState = function(pid, cellDescription)
         if shouldUnload == true then
             Methods.UnloadCell(cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -927,6 +947,8 @@ Methods.OnDoorState = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent DoorState for unloaded " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
@@ -937,6 +959,8 @@ Methods.OnContainer = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
         end
+    else
+        tes3mp.Kick(pid)
     end
 end
 
