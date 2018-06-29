@@ -50,8 +50,7 @@ function BaseCell:__init(cellDescription)
     if string.match(cellDescription, patterns.exteriorCell) then
         self.isExterior = true
 
-        local gridX, gridY
-        _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
+        local _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
 
         self.gridX = tonumber(gridX)
         self.gridY = tonumber(gridY)
