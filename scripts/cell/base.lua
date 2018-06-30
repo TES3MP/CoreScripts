@@ -435,6 +435,15 @@ function BaseCell:SaveObjectsSpawned(pid)
 
             self.data.objectData[refIndex].location = location
 
+            local summonDuration = tes3mp.GetObjectSummonDuration(i)
+
+            if summonDuration ~= -1 then
+                local summon = {}
+                summon.duration = summonDuration
+                summon.startTime = os.time()
+                self.data.objectData[refIndex].summon = summon                
+            end
+
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
             table.insert(self.data.packets.spawn, refIndex)
@@ -1094,17 +1103,36 @@ function BaseCell:SendObjectsSpawned(pid)
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
-            local splitIndex = refIndex:split("-")
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+            local shouldSkip = false
+            local summon = self.data.objectData[refIndex].summon
 
-            tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-            tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+            if summon ~= nil then
+                local currentTime = os.time()
+                local finishTime = summon.startTime + summon.duration
 
-            tes3mp.AddObject()
+                if currentTime >= finishTime then
+                    self:DeleteObjectData(refIndex)
+                    shouldSkip = true
+                else
+                    local remainingTime = finishTime - currentTime
+                    tes3mp.SetObjectSummonDuration(remainingTime)
+                end
+            end
 
-            objectCount = objectCount + 1
+            if shouldSkip == false then
+
+                local splitIndex = refIndex:split("-")
+                tes3mp.SetObjectRefNumIndex(splitIndex[1])
+                tes3mp.SetObjectMpNum(splitIndex[2])
+                tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
+
+                tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+                tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+
+                tes3mp.AddObject()
+
+                objectCount = objectCount + 1
+            end
         else
             self.data.objectData[refIndex] = nil
             tableHelper.removeValue(self.data.packets.spawn, refIndex)
