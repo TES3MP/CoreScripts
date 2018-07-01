@@ -892,8 +892,6 @@ Methods.OnObjectLock = function(pid, cellDescription)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
         end
-    else
-        tes3mp.Kick(pid)
     end
 end
 
