@@ -435,13 +435,15 @@ function BaseCell:SaveObjectsSpawned(pid)
 
             self.data.objectData[refIndex].location = location
 
-            local summonDuration = tes3mp.GetObjectSummonDuration(i)
+            if tes3mp.GetObjectSummonState(i) then
+                local summonDuration = tes3mp.GetObjectSummonDuration(i)
 
-            if summonDuration ~= -1 then
-                local summon = {}
-                summon.duration = summonDuration
-                summon.startTime = os.time()
-                self.data.objectData[refIndex].summon = summon                
+                if summonDuration > 0 then
+                    local summon = {}
+                    summon.duration = summonDuration
+                    summon.startTime = os.time()
+                    self.data.objectData[refIndex].summon = summon                
+                end
             end
 
             tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
