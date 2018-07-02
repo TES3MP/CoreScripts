@@ -445,7 +445,10 @@ function BaseCell:SaveObjectsSpawned(pid)
                     if isPlayer then
                         tes3mp.LogAppend(1, "- summoned by player")
                     else
-                        tes3mp.LogAppend(1, "- summoned by other actor")
+                        local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
+                            "-" .. tes3mp.GetObjectSummonerMpNum(i)
+                        local summonerRefId = tes3mp.GetObjectSummonerRefId(i)
+                        tes3mp.LogAppend(1, "- summoned by actor " .. summonerRefIndex .. ", refId: " .. summonerRefId)
                     end
 
                     local summon = {}
