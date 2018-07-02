@@ -53,8 +53,7 @@ function BaseCell:__init(cellDescription)
     if string.match(cellDescription, patterns.exteriorCell) then
         self.isExterior = true
 
-        local gridX, gridY
-        _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
+        local _, _, gridX, gridY = string.find(cellDescription, patterns.exteriorCell)
 
         self.gridX = tonumber(gridX)
         self.gridY = tonumber(gridY)
@@ -1155,14 +1154,22 @@ function BaseCell:SendObjectsLocked(pid)
 
     for arrayIndex, refIndex in pairs(self.data.packets.lock) do
 
-        local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
-        tes3mp.SetObjectLockLevel(self.data.objectData[refIndex].lockLevel)
-        tes3mp.AddObject()
+        local refId = self.data.objectData[refIndex].refId
+        local lockLevel = self.data.objectData[refIndex].lockLevel
 
-        objectCount = objectCount + 1
+        if refId ~= nil and lockLevel ~= nil then
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectMpNum(splitIndex[2])
+            tes3mp.SetObjectRefId(refId)
+            tes3mp.SetObjectLockLevel(lockLevel)
+            tes3mp.AddObject()
+
+            objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(self.data.packets.lock, refIndex)
+        end
     end
 
     if objectCount > 0 then
