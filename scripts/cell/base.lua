@@ -432,20 +432,28 @@ function BaseCell:SaveObjectsSpawned(pid)
             local refId = tes3mp.GetObjectRefId(i)
             self:InitializeObjectData(refIndex, refId)
 
+            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
+
             self.data.objectData[refIndex].location = location
 
             if tes3mp.GetObjectSummonState(i) then
                 local summonDuration = tes3mp.GetObjectSummonDuration(i)
 
                 if summonDuration > 0 then
+                    local isPlayer = tes3mp.DoesObjectHavePlayerSummoner(i)
+
+                    if isPlayer then
+                        tes3mp.LogAppend(1, "- summoned by player")
+                    else
+                        tes3mp.LogAppend(1, "- summoned by other actor")
+                    end
+
                     local summon = {}
                     summon.duration = summonDuration
                     summon.startTime = os.time()
                     self.data.objectData[refIndex].summon = summon                
                 end
             end
-
-            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
 
             table.insert(self.data.packets.spawn, refIndex)
             table.insert(self.data.packets.actorList, refIndex)
