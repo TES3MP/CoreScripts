@@ -365,8 +365,12 @@ function BasePlayer:ProcessDeath()
     message = message .. ".\n"
     tes3mp.SendMessage(self.pid, message, true)
 
-    self.tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
-    tes3mp.StartTimer(self.tid_resurrect)
+    if config.playersRespawn then
+        self.tid_resurrect = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
+        tes3mp.StartTimer(self.tid_resurrect)
+    else
+        tes3mp.SendMessage(self.pid, "You have died permanently.", false)
+    end
 end
 
 function BasePlayer:Resurrect()

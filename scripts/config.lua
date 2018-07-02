@@ -54,9 +54,6 @@ config.shareReputation = true
 -- Whether map exploration should be shared across players on the server or not
 config.shareMapExploration = false
 
--- Time to stay dead before being respawned, in seconds
-config.deathTime = 5
-
 -- The cell that newly created players are teleported to
 config.defaultSpawnCell = "-3, -2"
 
@@ -102,7 +99,13 @@ config.maxAcrobaticsValue = 1200
 -- The refIds of items that players are not allowed to equip for balancing reasons
 config.bannedEquipmentItems = { "helseth's ring" }
 
--- The number of days spent in jail as a penalty for dying
+-- Whether players should respawn when dying
+config.playersRespawn = true
+
+-- Time to stay dead before being respawned, in seconds
+config.deathTime = 5
+
+-- The number of days spent in jail as a penalty for dying, when respawning
 config.deathPenaltyJailDays = 5
 
 -- Whether players' bounties are reset to 0 after dying
