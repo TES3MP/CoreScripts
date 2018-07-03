@@ -217,6 +217,18 @@ end
 
 function BaseCell:DeleteObjectData(refIndex)
 
+    if self.data.objectData[refIndex] == nil then
+        return
+    end
+
+    -- Is this a player's summon? If so, remove it from the summons tracked
+    -- for the player
+    local summon = self.data.objectData[refIndex].summon
+
+    if summon.summonerPlayer ~= nil and myMod.IsPlayerNameLoggedIn(summon.summonerPlayer) then
+        myMod.GetPlayerByName(summon.summonerPlayer).summons[refIndex] = nil
+    end
+
     -- Delete all packets associated with an object
     for packetIndex, packetType in pairs(self.data.packets) do
         tableHelper.removeValue(self.data.packets[packetIndex], refIndex)
@@ -440,17 +452,21 @@ function BaseCell:SaveObjectsSpawned(pid)
                 local summonDuration = tes3mp.GetObjectSummonDuration(i)
 
                 if summonDuration > 0 then
+                    local summon = {}
+                    summon.duration = summonDuration
+                    summon.startTime = os.time()
+
                     local isPlayer = tes3mp.DoesObjectHavePlayerSummoner(i)
 
+                    -- It's probably safe to assume this was summoned by the player
+                    -- who sent the packet
                     if isPlayer then
                         tes3mp.LogAppend(1, "- summoned by player")
 
-                        -- It's probably safe to assume this was summoned by the player
-                        -- who sent the packet
-                        local summon = {}
-                        summon.refId = refId
-                        summon.refIndex = refIndex
-                        table.insert(Players[pid].summons, summon)
+                        -- Track the player and the summon for each other
+                        summon.summonerPlayer = Players[pid].accountName
+
+                        Players[pid].summons[refIndex] = refId
                     else
                         local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(i)
@@ -458,9 +474,6 @@ function BaseCell:SaveObjectsSpawned(pid)
                         tes3mp.LogAppend(1, "- summoned by actor " .. summonerRefIndex .. ", refId: " .. summonerRefId)
                     end
 
-                    local summon = {}
-                    summon.duration = summonDuration
-                    summon.startTime = os.time()
                     self.data.objectData[refIndex].summon = summon                
                 end
             end

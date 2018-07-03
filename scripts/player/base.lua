@@ -455,16 +455,16 @@ end
 function BasePlayer:DeleteSummons()
 
     if self.summons ~= nil then
-        for _, summon in pairs(self.summons) do
-            tes3mp.LogAppend(1, "- found summon " .. summon.refIndex .. ", refId " .. summon.refId)
+        for summonRefIndex, summonRefId in pairs(self.summons) do
+            tes3mp.LogAppend(1, "- removing player's summon " .. summonRefIndex .. ", refId " .. summonRefId)
             
-            local cell = myMod.GetCellContainingActor(summon.refIndex)
+            local cell = myMod.GetCellContainingActor(summonRefIndex)
 
             if cell ~= nil then
-                cell:DeleteObjectData(summon.refIndex)
+                cell:DeleteObjectData(summonRefIndex)
 
-                local splitIndex = summon.refIndex:split("-")
-                myMod.DeleteObjectForEveryone(summon.refId, splitIndex[1], splitIndex[2])
+                local splitIndex = summonRefIndex:split("-")
+                myMod.DeleteObjectForEveryone(summonRefId, splitIndex[1], splitIndex[2])
             end
         end
     end
