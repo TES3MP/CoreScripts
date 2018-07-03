@@ -395,11 +395,16 @@ function OnPlayerDisconnect(pid)
 
     tes3mp.SendMessage(pid, message, true)
 
-    -- Was this player confiscating from someone? If so, clear that
-    if Players[pid] ~= nil and Players[pid].confiscationTargetName ~= nil then
-        local targetName = Players[pid].confiscationTargetName
-        local targetPlayer = myMod.GetPlayerByName(targetName)
-        targetPlayer:SetConfiscationState(false)
+    if Players[pid] ~= nil then
+
+        Players[pid]:DeleteSummons()
+
+        -- Was this player confiscating from someone? If so, clear that
+        if Players[pid].confiscationTargetName ~= nil then
+            local targetName = Players[pid].confiscationTargetName
+            local targetPlayer = myMod.GetPlayerByName(targetName)
+            targetPlayer:SetConfiscationState(false)
+        end
     end
 
     -- Trigger any necessary script events useful for saving state

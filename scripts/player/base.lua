@@ -113,6 +113,7 @@ function BasePlayer:__init(pid, playerName)
     self.hasAccount = nil -- TODO Check whether account file exists
 
     self.cellsLoaded = {}
+    self.summons = {}
 end
 
 function BasePlayer:Destroy()
@@ -449,6 +450,24 @@ function BasePlayer:Resurrect()
     end
 
     tes3mp.SendMessage(self.pid, message, false)
+end
+
+function BasePlayer:DeleteSummons()
+
+    if self.summons ~= nil then
+        for _, summon in pairs(self.summons) do
+            tes3mp.LogAppend(1, "- found summon " .. summon.refIndex .. ", refId " .. summon.refId)
+            
+            local cell = myMod.GetCellContainingActor(summon.refIndex)
+
+            if cell ~= nil then
+                cell:DeleteObjectData(summon.refIndex)
+
+                local splitIndex = summon.refIndex:split("-")
+                myMod.DeleteObjectForEveryone(summon.refId, splitIndex[1], splitIndex[2])
+            end
+        end
+    end
 end
 
 function BasePlayer:LoadCharacter()

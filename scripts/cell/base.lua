@@ -444,6 +444,13 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                     if isPlayer then
                         tes3mp.LogAppend(1, "- summoned by player")
+
+                        -- It's probably safe to assume this was summoned by the player
+                        -- who sent the packet
+                        local summon = {}
+                        summon.refId = refId
+                        summon.refIndex = refIndex
+                        table.insert(Players[pid].summons, summon)
                     else
                         local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(i)
