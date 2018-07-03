@@ -166,9 +166,9 @@ config.useActorCollisionForPlacedObjects = false
 config.undeletableRefIds = { "m'aiq" }
 
 -- Disallow players from including the following in their names
--- Note: Unfortunately, these are based on real names that players have been using on servers
+-- Note: Unfortunately, these are based on real names that trolls have been using on servers
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
-"faggot", "fellatio", "fuck", "gas the jew", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
+"faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
@@ -196,7 +196,8 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 
-config.cellKeyOrder = {"packets", "objectData", "refId", "count", "charge", "enchantmentCharge"}
+config.cellKeyOrder = {"packets", "objectData", "location", "summon", "inventory", "refId", "count",
+    "charge", "enchantmentCharge"}
 
 config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
