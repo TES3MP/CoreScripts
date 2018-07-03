@@ -1,4 +1,5 @@
 tableHelper = require("tableHelper")
+fileHelper = require("fileHelper")
 inventoryHelper = require("inventoryHelper")
 require("enumerations")
 local time = require("time")
@@ -82,9 +83,14 @@ end
 -- Check if there is already a player with this name on the server
 Methods.IsPlayerNameLoggedIn = function(newName)
 
+    -- Make sure we also check the account name this new player would end up having
+    local newAccountName = fileHelper.fixFilename(newName)
+
     for pid, player in pairs(Players) do
         if player:IsLoggedIn() then
             if string.lower(player.name) == string.lower(newName) then
+                return true
+            elseif string.lower(player.accountName) == string.lower(newAccountName) then
                 return true
             end
         end
