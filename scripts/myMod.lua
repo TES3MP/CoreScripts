@@ -522,7 +522,7 @@ Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
     Methods.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
-Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
+Methods.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
@@ -530,7 +530,15 @@ Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.SetObjectRefId(refId)
     tes3mp.AddObject()
-    tes3mp.SendObjectDelete()
+    tes3mp.SendObjectDelete(forEveryone)
+end
+
+Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
+    Methods.DeleteObject(pid, refId, refNumIndex, mpNum, false)
+end
+
+Methods.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
+    Methods.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
 end
 
 Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
