@@ -458,15 +458,14 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                     local isPlayer = tes3mp.DoesObjectHavePlayerSummoner(i)
 
-                    -- It's probably safe to assume this was summoned by the player
-                    -- who sent the packet
                     if isPlayer then
-                        tes3mp.LogAppend(1, "- summoned by player")
+                        local summonerPid = tes3mp.GetObjectSummonerPid(i)
+                        tes3mp.LogAppend(1, "- summoned by pid " .. summonerPid)
 
                         -- Track the player and the summon for each other
-                        summon.summonerPlayer = Players[pid].accountName
+                        summon.summonerPlayer = Players[summonerPid].accountName
 
-                        Players[pid].summons[refIndex] = refId
+                        Players[summonerPid].summons[refIndex] = refId
                     else
                         local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(i)
