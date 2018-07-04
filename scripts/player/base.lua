@@ -422,7 +422,7 @@ function BasePlayer:Resurrect()
 
     -- Ensure that we unequip deadly items when applicable, to prevent an
     -- infinite death loop
-    questFixer.UnequipDeadlyItems(self.pid)
+    contentFixer.UnequipDeadlyItems(self.pid)
 
     tes3mp.Resurrect(self.pid, currentResurrectType)
 

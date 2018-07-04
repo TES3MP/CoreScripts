@@ -2,7 +2,7 @@ require("enumerations")
 require("patterns")
 require("utils")
 
-questFixer = require("questFixer")
+contentFixer = require("contentFixer")
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
 
@@ -120,7 +120,7 @@ function BaseCell:AddVisitor(pid)
 
         if shouldSendInfo == true then
             -- First, fix whatever quest problems exist in this cell
-            questFixer.FixCell(pid, self.description)
+            contentFixer.FixCell(pid, self.description)
 
             self:SendInitialCellData(pid)
         end

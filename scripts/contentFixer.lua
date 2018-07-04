@@ -1,7 +1,7 @@
 tableHelper = require("tableHelper")
 require("utils")
 
-local questFixer = {}
+local contentFixer = {}
 
 local refNumDeletionsByCell = {}
 -- Delete Socucius Ergalla
@@ -13,7 +13,7 @@ refNumDeletionsByCell["-2, -10"] = { 297463, 297464, 297465, 297466 }
 
 local deadlyItems = { "keening" }
 
-function questFixer.FixCell(pid, cellDescription)
+function contentFixer.FixCell(pid, cellDescription)
 
     if refNumDeletionsByCell[cellDescription] ~= nil then
 
@@ -31,7 +31,7 @@ function questFixer.FixCell(pid, cellDescription)
     end
 end
 
-function questFixer.ValidateCellChange(pid)
+function contentFixer.ValidateCellChange(pid)
 
     local cell = tes3mp.GetCell(pid)
 
@@ -49,7 +49,7 @@ end
 --       are already unequipped by default in the TES3MP client, so this only needs
 --       to account for scripted items that are missed there
 --
-function questFixer.UnequipDeadlyItems(pid)
+function contentFixer.UnequipDeadlyItems(pid)
 
     local itemsFound = 0
 
@@ -67,4 +67,4 @@ function questFixer.UnequipDeadlyItems(pid)
     end
 end
 
-return questFixer
+return contentFixer

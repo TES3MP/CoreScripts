@@ -3,7 +3,7 @@ fileHelper = require("fileHelper")
 inventoryHelper = require("inventoryHelper")
 require("enumerations")
 local time = require("time")
-questFixer = require("questFixer")
+contentFixer = require("contentFixer")
 menuHelper = require("menuHelper")
 
 local Methods = {}
@@ -684,7 +684,7 @@ end
 Methods.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        if questFixer.ValidateCellChange(pid) then
+        if contentFixer.ValidateCellChange(pid) then
             Players[pid]:SaveCell()
             Players[pid]:SaveStatsDynamic()
             tes3mp.LogMessage(1, "Saving player " .. pid)
