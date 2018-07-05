@@ -225,8 +225,10 @@ function BaseCell:DeleteObjectData(refIndex)
     -- for the player
     local summon = self.data.objectData[refIndex].summon
 
-    if summon.summonerPlayer ~= nil and myMod.IsPlayerNameLoggedIn(summon.summonerPlayer) then
-        myMod.GetPlayerByName(summon.summonerPlayer).summons[refIndex] = nil
+    if summon ~= nil then
+        if summon.summonerPlayer ~= nil and myMod.IsPlayerNameLoggedIn(summon.summonerPlayer) then
+            myMod.GetPlayerByName(summon.summonerPlayer).summons[refIndex] = nil
+        end
     end
 
     -- Delete all packets associated with an object
