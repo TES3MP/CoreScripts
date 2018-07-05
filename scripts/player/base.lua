@@ -347,23 +347,21 @@ end
 
 function BasePlayer:ProcessDeath()
 
-    local deathReason = tes3mp.GetDeathReason(self.pid)
+    local deathReason = "committed suicide"
 
-    tes3mp.LogMessage(1, "Original death reason was " .. deathReason)
-
-    if deathReason == "suicide" then
-        deathReason = "committed suicide"
+    if tes3mp.DoesPlayerHavePlayerKiller(self.pid) then
+        local killerPid = tes3mp.GetPlayerKillerPid(self.pid)
+        deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
     else
-        if deathReason == "" then
-            deathReason = "unknown forces"
-        end
+        local killerName = tes3mp.GetPlayerKillerName(self.pid)
 
-        deathReason = "was killed by " .. deathReason
+        if killerName ~= "" then
+            deathReason = "was killed by " .. killerName
+        end
     end
 
-    local message = ("%s (%d) %s"):format(self.data.login.name, self.pid, deathReason)
+    local message = myMod.GetChatName(self.pid) .. " " .. deathReason .. ".\n"
 
-    message = message .. ".\n"
     tes3mp.SendMessage(self.pid, message, true)
 
     if config.playersRespawn then

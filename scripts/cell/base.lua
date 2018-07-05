@@ -890,8 +890,28 @@ function BaseCell:SaveActorDeath(pid)
 
         if self:ContainsObject(refIndex) then
 
-            local deathReason = tes3mp.GetActorDeathReason(actorIndex)
-            self.data.objectData[refIndex].deathReason = deathReason
+            local deathReason = "committed suicide"
+
+            if tes3mp.DoesActorHavePlayerKiller(actorIndex) then
+                local killerPid = tes3mp.GetActorKillerPid(actorIndex)
+                deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
+
+                self.data.objectData[refIndex].killer = {
+                    player = Players[killerPid].accountName
+                }
+            else
+                local killerName = tes3mp.GetActorKillerName(actorIndex)
+
+                if killerName ~= "" then
+                    deathReason = "was killed by " .. killerName
+
+                    self.data.objectData[refIndex].killer = {
+                        refId = tes3mp.GetActorKillerRefId(actorIndex),
+                        refIndex = tes3mp.GetActorKillerRefNumIndex(actorIndex) ..
+                            "-" .. tes3mp.GetActorKillerMpNum(actorIndex)
+                    }
+                end
+            end
 
             tes3mp.LogAppend(1, "- " .. refIndex .. ", deathReason: " .. deathReason)
 
