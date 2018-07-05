@@ -351,7 +351,10 @@ function BasePlayer:ProcessDeath()
 
     if tes3mp.DoesPlayerHavePlayerKiller(self.pid) then
         local killerPid = tes3mp.GetPlayerKillerPid(self.pid)
-        deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
+
+        if self.pid ~= killerPid then
+            deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
+        end
     else
         local killerName = tes3mp.GetPlayerKillerName(self.pid)
 

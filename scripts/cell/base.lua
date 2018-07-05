@@ -901,14 +901,15 @@ function BaseCell:SaveActorDeath(pid)
                 }
             else
                 local killerName = tes3mp.GetActorKillerName(actorIndex)
+                local killerRefIndex = tes3mp.GetActorKillerRefNumIndex(actorIndex) ..
+                    "-" .. tes3mp.GetActorKillerMpNum(actorIndex)
 
-                if killerName ~= "" then
+                if killerName ~= "" and refIndex ~= killerRefIndex then
                     deathReason = "was killed by " .. killerName
 
                     self.data.objectData[refIndex].killer = {
                         refId = tes3mp.GetActorKillerRefId(actorIndex),
-                        refIndex = tes3mp.GetActorKillerRefNumIndex(actorIndex) ..
-                            "-" .. tes3mp.GetActorKillerMpNum(actorIndex)
+                        refIndex = killerRefIndex
                     }
                 end
             end
