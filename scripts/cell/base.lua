@@ -275,7 +275,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-        if tableHelper.containsValue(config.undeletableRefIds, refId) or
+        if tableHelper.containsValue(config.disallowedDeleteRefIds, refId) or
             tableHelper.containsValue(self.unusableContainerRefIndexes, refIndex) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
             isValid = false

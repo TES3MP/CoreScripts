@@ -163,7 +163,7 @@ config.enforcedCollisionRefIds = { "misc_uni_pillow_01" }
 config.useActorCollisionForPlacedObjects = false
 
 -- Prevent certain object refIds from being deleted as a result of player-sent packets
-config.undeletableRefIds = { "m'aiq" }
+config.disallowedDeleteRefIds = { "m'aiq" }
 
 -- Disallow players from including the following in their names
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers
