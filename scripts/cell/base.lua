@@ -289,7 +289,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
         tes3mp.SendObjectDelete(true)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .." about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -346,6 +346,38 @@ function BaseCell:SaveObjectsDeleted(pid)
     -- Go through every temporary loaded cell and unload it
     for arrayIndex, originalCellDescription in pairs(temporaryLoadedCells) do
         myMod.UnloadCell(originalCellDescription)
+    end
+end
+
+-- Iterate through the objects in the ObjectPlace packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsPlaced(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(config.disallowedPlaceRefIds, refId) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsPlaced(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectPlace(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -416,6 +448,38 @@ function BaseCell:SaveObjectsPlaced(pid)
 
     if tableHelper.isEmpty(containerRefIndexesRequested) == false then
         self:RequestContainers(pid, containerRefIndexesRequested)
+    end
+end
+
+-- Iterate through the objects in the ObjectSpawn packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsSpawned(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(config.disallowedSpawnRefIds, refId) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsSpawned(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectSpawn(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -490,6 +554,38 @@ function BaseCell:SaveObjectsSpawned(pid)
     end
 end
 
+-- Iterate through the objects in the ObjectLock packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsLocked(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(config.disallowedLockRefIds, refId) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsLocked(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectLock(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+    end
+end
+
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadLastObjectList()
@@ -507,6 +603,38 @@ function BaseCell:SaveObjectsLocked(pid)
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, refIndex)
+    end
+end
+
+-- Iterate through the objects in the ObjectTrap packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectTrapsTriggered(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(config.disallowedTrapRefIds, refId) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectTrapsTriggered(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectTrap(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -528,6 +656,39 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
     end
 end
 
+-- Iterate through the objects in the ObjectScaled packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectsScaled(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local scale = tes3mp.GetObjectScale(index)
+
+        if scale >= config.maximumObjectScale then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectsScaled(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectScale(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+    end
+end
+
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadLastObjectList()
@@ -545,6 +706,38 @@ function BaseCell:SaveObjectsScaled(pid)
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, refIndex)
+    end
+end
+
+-- Iterate through the objects in the ObjectState packet and only sync and save them
+-- if all their refIds are valid
+function BaseCell:ProcessObjectStates(pid)
+
+    local isValid = true
+    local rejectedObjects = {}
+
+    tes3mp.ReadLastObjectList()
+
+    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+
+        local refId = tes3mp.GetObjectRefId(index)
+        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+        if tableHelper.containsValue(config.disallowedStateRefIds, refId) then
+            table.insert(rejectedObjects, refId .. " " .. refIndex)
+            isValid = false
+        end
+    end
+
+    if isValid then
+        self:SaveObjectStates(pid)
+
+        tes3mp.CopyLastObjectListToStore()
+        tes3mp.SendObjectState(true)
+
+    else
+        tes3mp.LogMessage(1, "Rejected ObjectState from " .. myMod.GetChatName(pid) .. " about " ..
+            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 

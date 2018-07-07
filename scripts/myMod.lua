@@ -1005,7 +1005,7 @@ end
 Methods.OnObjectPlace = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            LoadedCells[cellDescription]:SaveObjectsPlaced(pid)
+            LoadedCells[cellDescription]:ProcessObjectsPlaced(pid)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectPlace for unloaded " .. cellDescription)
         end
@@ -1017,7 +1017,7 @@ end
 Methods.OnObjectSpawn = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            LoadedCells[cellDescription]:SaveObjectsSpawned(pid)
+            LoadedCells[cellDescription]:ProcessObjectsSpawned(pid)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectSpawn for unloaded " .. cellDescription)
         end
@@ -1041,7 +1041,7 @@ end
 Methods.OnObjectLock = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            LoadedCells[cellDescription]:SaveObjectsLocked(pid)
+            LoadedCells[cellDescription]:ProcessObjectsLocked(pid)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
         end
@@ -1051,7 +1051,7 @@ end
 Methods.OnObjectTrap = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            LoadedCells[cellDescription]:SaveObjectTrapsTriggered(pid)
+            LoadedCells[cellDescription]:ProcessObjectTrapsTriggered(pid)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectTrap for unloaded " .. cellDescription)
         end
@@ -1063,7 +1063,7 @@ end
 Methods.OnObjectScale = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            LoadedCells[cellDescription]:SaveObjectsScaled(pid)
+            LoadedCells[cellDescription]:ProcessObjectsScaled(pid)
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectScale for unloaded " .. cellDescription)
         end
@@ -1081,7 +1081,7 @@ Methods.OnObjectState = function(pid, cellDescription)
             shouldUnload = true
         end
 
-        LoadedCells[cellDescription]:SaveObjectStates(pid)
+        LoadedCells[cellDescription]:ProcessObjectStates(pid)
 
         if shouldUnload == true then
             Methods.UnloadCell(cellDescription)

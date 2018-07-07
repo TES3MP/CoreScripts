@@ -165,6 +165,24 @@ config.useActorCollisionForPlacedObjects = false
 -- Prevent certain object refIds from being deleted as a result of player-sent packets
 config.disallowedDeleteRefIds = { "m'aiq" }
 
+-- Prevent certain object refIds from being placed as a result of player-sent packets
+config.disallowedPlaceRefIds = {}
+
+-- Prevent certain object refIds from being spawned as a result of player-sent packets
+config.disallowedSpawnRefIds = {}
+
+-- Prevent certain object refIds from being locked or unlocked as a result of player-sent packets
+config.disallowedLockRefIds = {}
+
+-- Prevent certain object refIds from being trapped or untrapped as a result of player-sent packets
+config.disallowedTrapRefIds = {}
+
+-- Prevent certain object refIds from being enabled or disabled as a result of player-sent packets
+config.disallowedStateRefIds = {}
+
+-- Prevent object scales from being set this high
+config.maximumObjectScale = 20
+
 -- Disallow players from including the following in their names
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
