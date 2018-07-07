@@ -32,7 +32,6 @@ local modhelptext = "Moderators only:\
 /setattr <pid> <attribute> <value> - Set a player's attribute to a certain value\
 /setskill <pid> <skill> <value> - Set a player's skill to a certain value\
 /setmomentum <pid> <x> <y> <z> - Set a player's momentum to certain values\
-/superman - Increase your acrobatics, athletics and speed\
 /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)"
 
 local adminhelptext = "Admins only:\
@@ -359,17 +358,6 @@ function commandHandler.ProcessCommand(pid, cmd)
             tes3mp.SetResetStats(targetPid, false)
             tes3mp.SendBaseInfo(targetPid)
         end
-
-    elseif cmd[1] == "superman" and moderator then
-        -- Set Speed to 100
-        tes3mp.SetAttributeBase(pid, 4, 100)
-        -- Set Athletics to 100
-        tes3mp.SetSkillBase(pid, 8, 100)
-        -- Set Acrobatics to 400
-        tes3mp.SetSkillBase(pid, 20, 400)
-
-        tes3mp.SendAttributes(pid)
-        tes3mp.SendSkills(pid)
 
     elseif cmd[1] == "setattr" and moderator then
         if myMod.CheckPlayerValidity(pid, cmd[2]) then
