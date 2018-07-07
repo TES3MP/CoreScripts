@@ -1115,6 +1115,31 @@ Methods.OnContainer = function(pid, cellDescription)
     end
 end
 
+Methods.OnVideoPlay = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        if config.shareVideos == true then
+            tes3mp.LogMessage(2, "Sharing VideoPlay from " .. pid)
+
+            tes3mp.ReadLastObjectList()
+
+            for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+                local videoFilename = tes3mp.GetVideoFilename(i)
+                tes3mp.LogAppend(2, "- videoFilename " .. videoFilename)
+            end
+
+            tes3mp.CopyLastObjectListToStore()
+
+            for _, player in pairs(Players) do
+                if player.pid ~= pid then
+                    tes3mp.SetObjectListPid(player.pid)
+                    tes3mp.SendVideoPlay(false)
+                end
+            end
+        end
+    end
+end
+
 Methods.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveMapTiles(pid)

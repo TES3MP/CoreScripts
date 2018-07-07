@@ -54,6 +54,9 @@ config.shareReputation = true
 -- Whether map exploration should be shared across players on the server or not
 config.shareMapExploration = false
 
+-- Whether ingame videos should be played for other players when triggered by one player
+config.shareVideos = true
+
 -- The cell that newly created players are teleported to
 config.defaultSpawnCell = "-3, -2"
 

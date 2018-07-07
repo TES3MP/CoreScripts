@@ -1582,6 +1582,11 @@ function OnContainer(pid, cellDescription)
     myMod.OnContainer(pid, cellDescription)
 end
 
+function OnVideoPlay(pid)
+    tes3mp.LogMessage(0, "Called \"OnVideoPlay\" for pid " .. pid)
+    myMod.OnVideoPlay(pid)
+end
+
 function OnWorldMap(pid)
     tes3mp.LogMessage(0, "Called \"OnWorldMap\" for pid " .. pid)
     myMod.OnWorldMap(pid)
