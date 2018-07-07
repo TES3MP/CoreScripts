@@ -547,14 +547,17 @@ Methods.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
     Methods.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
 end
 
-Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand)
+Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetPlayerAsObject(pid)
     tes3mp.AddObject()
-    tes3mp.SendConsoleCommand()
+
+    -- Depending on what the console command is, you may or may not want to send it
+    -- to all the players; experiment if you're not sure
+    tes3mp.SendConsoleCommand(forEveryone)
 end
 
 Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
@@ -566,7 +569,9 @@ Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, re
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.AddObject()
-    tes3mp.SendConsoleCommand()
+    
+    -- Always send this to everyone
+    tes3mp.SendConsoleCommand(true)
 end
 
 Methods.GetCellContainingActor = function(actorRefIndex)
@@ -828,7 +833,10 @@ Methods.OnPlayerJournal = function(pid)
 
         if config.shareJournal == true then
             WorldInstance:SaveJournal(pid)
-            tes3mp.SendJournalChanges(pid, true)
+
+            -- Send this PlayerJournal packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendJournalChanges(pid, true, true)
         else
             Players[pid]:SaveJournal()
         end
@@ -842,22 +850,29 @@ Methods.OnPlayerFaction = function(pid)
 
         if action == enumerations.faction.RANK then
             if config.shareFactionRanks == true then
+
                 WorldInstance:SaveFactionRanks(pid)
-                tes3mp.SendFactionChanges(pid, true)
+                -- Send this PlayerFaction packet to other players (sendToOthersPlayers is true),
+                -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+                tes3mp.SendFactionChanges(pid, true, true)
             else
                 Players[pid]:SaveFactionRanks()
             end
         elseif action == enumerations.faction.EXPULSION then
             if config.shareFactionExpulsion == true then
+
                 WorldInstance:SaveFactionExpulsion(pid)
-                tes3mp.SendFactionChanges(pid, true)
+                -- As above, send this to everyone other than the original sender
+                tes3mp.SendFactionChanges(pid, true, true)
             else
                 Players[pid]:SaveFactionExpulsion()
             end
         elseif action == enumerations.faction.REPUTATION then
             if config.shareFactionReputation == true then
                 WorldInstance:SaveFactionReputation(pid)
-                tes3mp.SendFactionChanges(pid, true)
+
+                -- As above, send this to everyone other than the original sender
+                tes3mp.SendFactionChanges(pid, true, true)
             else
                 Players[pid]:SaveFactionReputation()
             end
@@ -869,8 +884,11 @@ Methods.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareTopics == true then
+
             WorldInstance:SaveTopics(pid)
-            tes3mp.SendTopicChanges(pid, true)
+            -- Send this PlayerTopic packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendTopicChanges(pid, true, true)
         else
             Players[pid]:SaveTopics()
         end
@@ -908,8 +926,11 @@ Methods.OnPlayerReputation = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareReputation == true then
+
             WorldInstance:SaveReputation(pid)
-            tes3mp.SendReputation(pid, true)
+            -- Send this PlayerReputation packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendReputation(pid, true, true)
         else
             Players[pid]:SaveReputation()
         end
@@ -1130,12 +1151,9 @@ Methods.OnVideoPlay = function(pid)
 
             tes3mp.CopyLastObjectListToStore()
 
-            for _, player in pairs(Players) do
-                if player.pid ~= pid then
-                    tes3mp.SetObjectListPid(player.pid)
-                    tes3mp.SendVideoPlay(false)
-                end
-            end
+            -- Send this VideoPlay packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendVideoPlay(true, true)
         end
     end
 end
@@ -1147,11 +1165,9 @@ Methods.OnWorldMap = function(pid)
         if config.shareMapExploration == true then
             tes3mp.CopyLastWorldstateToStore()
 
-            for otherPid, _ in pairs(Players) do
-                if pid ~= otherPid then
-                    tes3mp.SendWorldMap(otherPid, false)
-                end
-            end
+            -- Send this WorldMap packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendWorldMap(pid, true, true)
         end
     end
 end
