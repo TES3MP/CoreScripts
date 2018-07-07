@@ -35,7 +35,7 @@ function BaseCell:__init(cellDescription)
             cellChangeTo = {},
             cellChangeFrom = {}
         }
-    };
+    }
 
     self.visitors = {}
     self.authority = nil

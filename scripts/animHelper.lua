@@ -1,6 +1,6 @@
 tableHelper = require("tableHelper")
 
-local animHelper = {};
+local animHelper = {}
 
 local defaultAnimNames = { "hit1", "hit2", "hit3", "hit4", "hit5", "idle2", "idle3", "idle4",
     "idle5", "idle6", "idle7", "idle8", "idle9", "pickprobe" }

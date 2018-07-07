@@ -24,7 +24,7 @@ function BaseWorld:__init()
         time = config.defaultTimeTable,
         mapExplored = {},
         customVariables = {}
-    };
+    }
 end
 
 function BaseWorld:HasEntry()

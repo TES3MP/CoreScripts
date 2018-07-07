@@ -1,7 +1,7 @@
 tableHelper = require("tableHelper")
 require("utils")
 
-local speechHelper = {};
+local speechHelper = {}
 
 local speechTypeAliases = { attack = "Atk", flee = "Fle", follower = "Flw", hello = "Hlo", hit = "Hit",
     idle = "Idl", intruder = "int", oppose = "OP", service = "Srv", thief = "Thf", uniform = "uni" }

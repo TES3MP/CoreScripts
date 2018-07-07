@@ -84,7 +84,7 @@ function BasePlayer:__init(pid, playerName)
         mapExplored = {},
         ipAddresses = {},
         customVariables= {}
-    };
+    }
 
     for i = 0, (tes3mp.GetAttributeCount() - 1) do
         local attributeName = tes3mp.GetAttributeName(i)

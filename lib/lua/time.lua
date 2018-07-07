@@ -31,4 +31,4 @@ time.toDays = function(msec)
     return msec / 86400000
 end
 
-return time;
+return time

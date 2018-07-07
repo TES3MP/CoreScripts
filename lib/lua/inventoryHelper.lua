@@ -1,4 +1,4 @@
-local inventoryHelper = {};
+local inventoryHelper = {}
 
 function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge)
     for itemIndex, item in pairs(inventory) do
