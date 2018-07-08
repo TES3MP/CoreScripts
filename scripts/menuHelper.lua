@@ -41,6 +41,15 @@ function menuHelper.conditions.requireSkill(inputName, inputValue)
     return condition
 end
 
+function menuHelper.conditions.requireAdminRank(inputValue)
+    local condition = {
+        conditionType = "adminRank",
+        rankValue = inputValue
+    }
+
+    return condition
+end
+
 function menuHelper.effects.giveItem(inputRefId, inputCount)
     local effect = {
         effectType = "item",
@@ -145,6 +154,11 @@ function menuHelper.checkCondition(pid, condition)
     elseif condition.conditionType == "skill" then
 
         if targetPlayer.data.skills[condition.skillName] >= condition.skillValue then
+            return true
+        end
+    elseif condition.conditionType == "adminRank" then
+
+        if targetPlayer.data.settings.admin >= condition.rankValue then
             return true
         end
     end
