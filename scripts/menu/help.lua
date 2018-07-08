@@ -1,19 +1,23 @@
 Menus["help player"] = {
     text = color.Orange .. "Player command list:\n" ..
         color.Yellow .. "/message <pid> <text>\n" ..
-            color.White .. "Send a private message to a player (/msg)\n" ..
+            color.White .. "Send a private message to a player " ..
+            color.Yellow .. "(/msg)\n" ..
         color.Yellow .. "/me <text>\n" ..
             color.White .. "Send a message written in the third person\n" ..
         color.Yellow .. "/local <text>\n" ..
-            color.White .. "Send a message that only players in your area can read (/l)\n" ..
+            color.White .. "Send a message that only players in your area can read " ..
+            color.Yellow .. "(/l)\n" ..
         color.Yellow .. "/list\n" ..
             color.White .. "List all players on the server\n" ..
         color.Yellow .. "/anim <animation>\n" ..
             color.White .. "Play an animation on yourself, with a list of valid inputs being provided " ..
-            "if you use an invalid one (/a)\n" ..
+            "if you use an invalid one " ..
+            color.Yellow .. "(/a)\n" ..
         color.Yellow .. "/speech <type> <index>\n" ..
             color.White .. "Play a certain speech on yourself, with a list of valid inputs being provided " ..
-            "if you use invalid ones (/s)\n" ..
+            "if you use invalid ones " ..
+            color.Yellow .. "(/s)\n" ..
         color.Yellow .. "/craft\n" ..
             color.White .. "Open up a small crafting menu used as a scripting example\n" ..
         color.Yellow .. "/help\n" ..
@@ -62,7 +66,8 @@ Menus["help moderator"] = {
         color.Yellow .. "/banlist ips/names\n" ..
             color.White .. "Print all banned IPs or all banned player names\n" ..
         color.Yellow .. "/ipaddresses <name>\n" ..
-            color.White .. "Print all the IP addresses used by a player (/ips)\n" ..
+            color.White .. "Print all the IP addresses used by a player " ..
+            color.Yellow .. "(/ips)\n" ..
         color.Yellow .. "/confiscate <pid>\n" ..
             color.White .. "Open up a window where you can confiscate an item from a player\n" ..
         color.Yellow .. "/sethour <value>\n" ..
@@ -75,9 +80,11 @@ Menus["help moderator"] = {
             color.White .. "Set the timescale in the world's time (30 by default, which is 120 real seconds " ..
             "per ingame hour)\n" ..
         color.Yellow .. "/teleport <pid>/all\n" ..
-            color.White .. "Teleport another player to your position (/tp)\n" ..
+            color.White .. "Teleport another player to your position " ..
+            color.Yellow .. "(/tp)\n" ..
         color.Yellow .. "/teleportto <pid>\n" ..
-            color.White .. "Teleport yourself to another player (/tpto)\n" ..
+            color.White .. "Teleport yourself to another player " ..
+            color.Yellow .. "(/tpto)\n" ..
         color.Yellow .. "/cells\n" ..
             color.White .. "List all loaded cells on the server\n" ..
         color.Yellow .. "/getpos <pid>\n" ..
@@ -89,7 +96,8 @@ Menus["help moderator"] = {
         color.Yellow .. "/setmomentum <pid> <x> <y> <z>\n" ..
             color.White .. "Set a player's momentum to certain values\n" ..
         color.Yellow .. "/setauthority <pid> <cell>\n" ..
-            color.White .. "Forcibly set a certain player as the authority of a cell (/setauth)",
+            color.White .. "Forcibly set a certain player as the authority of a cell " ..
+            color.Yellow .. "(/setauth)",
     buttons = {
         { caption = "Admin help",
             destinations = {
