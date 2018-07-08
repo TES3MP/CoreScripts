@@ -25,12 +25,12 @@ Menus["help player"] = {
     buttons = {
         { caption = "Admin help",
             destinations = {
-                menuHelper.destinations.setDefault("help admin")
+                menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Moderator help",
             destinations = {
-                menuHelper.destinations.setDefault("help moderator")
+                menuHelper.destinations.setDefault("help moderator page 1")
             }
         },
         { caption = "Exit", destinations = nil }
@@ -49,8 +49,8 @@ if config.allowFixmeCommand == true then
         config.fixmeInterval .. " seconds"
 end
 
-Menus["help moderator"] = {
-    text = color.Orange .. "Moderator command list:\n" ..
+Menus["help moderator page 1"] = {
+    text = color.Orange .. "Moderator command list page 1:\n" ..
         color.Yellow .. "/kick <pid>\n" ..
             color.White .. "Kick player\n" ..
         color.Yellow .. "/ban ip <ip>\n" ..
@@ -87,7 +87,7 @@ Menus["help moderator"] = {
         },
         { caption = "Admin help",
             destinations = {
-                menuHelper.destinations.setDefault("help admin")
+                menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Player help",
@@ -123,12 +123,12 @@ Menus["help moderator page 2"] = {
     buttons = {
         { caption = "Moderator help page 1",
             destinations = {
-                menuHelper.destinations.setDefault("help moderator")
+                menuHelper.destinations.setDefault("help moderator page 1")
             }
         },
         { caption = "Admin help",
             destinations = {
-                menuHelper.destinations.setDefault("help admin")
+                menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Player help",
@@ -140,8 +140,8 @@ Menus["help moderator page 2"] = {
     }
 }
 
-Menus["help admin"] = {
-    text = color.Orange .. "Admin command list:\n" ..
+Menus["help admin page 1"] = {
+    text = color.Orange .. "Admin command list page 1:\n" ..
         color.Yellow .. "/setai <refIndex> <action> (<pid>/<refIndex>)\n" ..
             color.White .. "Set an AI action for the actor with a certain refIndex, with an optional target " ..
             "at the end\n" ..
@@ -180,7 +180,7 @@ Menus["help admin"] = {
         },
         { caption = "Moderator help",
             destinations = {
-                menuHelper.destinations.setDefault("help moderator")
+                menuHelper.destinations.setDefault("help moderator page 1")
             }
         },
         { caption = "Player help",
@@ -215,12 +215,12 @@ Menus["help admin page 2"] = {
     buttons = {
         { caption = "Admin help page 1",
             destinations = {
-                menuHelper.destinations.setDefault("help admin")
+                menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Moderator help",
             destinations = {
-                menuHelper.destinations.setDefault("help moderator")
+                menuHelper.destinations.setDefault("help moderator page 1")
             }
         },
         { caption = "Player help",
