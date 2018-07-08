@@ -132,7 +132,7 @@ config.fixmeInterval = 30
 config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
 
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
-config.menuHelperFiles = { "defaultCrafting" }
+config.menuHelperFiles = { "help", "defaultCrafting" }
 
 -- The log level enforced on clients by default, determining how much debug information
 -- is displayed in their debug window and logs
