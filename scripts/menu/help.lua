@@ -78,7 +78,29 @@ Menus["help moderator"] = {
             color.White .. "Set the current month in the world's time\n" ..
         color.Yellow .. "/settimescale <value>\n" ..
             color.White .. "Set the timescale in the world's time (30 by default, which is 120 real seconds " ..
-            "per ingame hour)\n" ..
+            "per ingame hour)\n",
+    buttons = {
+        { caption = "Moderator help page 2",
+            destinations = {
+                menuHelper.destinations.setDefault("help moderator page 2")
+            }
+        },
+        { caption = "Admin help",
+            destinations = {
+                menuHelper.destinations.setDefault("help admin")
+            }
+        },
+        { caption = "Player help",
+            destinations = {
+                menuHelper.destinations.setDefault("help player")
+            }
+        },
+        { caption = "Exit", destinations = nil }
+    }
+}
+
+Menus["help moderator page 2"] = {
+    text = color.Orange .. "Moderator command list page 2:\n" ..
         color.Yellow .. "/teleport <pid>/all\n" ..
             color.White .. "Teleport another player to your position " ..
             color.Yellow .. "(/tp)\n" ..
@@ -99,6 +121,11 @@ Menus["help moderator"] = {
             color.White .. "Forcibly set a certain player as the authority of a cell " ..
             color.Yellow .. "(/setauth)",
     buttons = {
+        { caption = "Moderator help page 1",
+            destinations = {
+                menuHelper.destinations.setDefault("help moderator")
+            }
+        },
         { caption = "Admin help",
             destinations = {
                 menuHelper.destinations.setDefault("help admin")
