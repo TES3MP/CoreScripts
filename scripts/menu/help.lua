@@ -9,14 +9,14 @@ Menus["help player"] = {
         /craft - Open up a small crafting menu used as a scripting example\
         /help - Get the list of available commands",
     buttons = {
-        { caption = "Moderator help",
-            destinations = {
-                menuHelper.destinations.setDefault("help moderator")
-            }
-        },
         { caption = "Admin help",
             destinations = {
                 menuHelper.destinations.setDefault("help admin")
+            }
+        },
+        { caption = "Moderator help",
+            destinations = {
+                menuHelper.destinations.setDefault("help moderator")
             }
         },
         { caption = "Exit", destinations = nil }
@@ -56,14 +56,14 @@ Menus["help moderator"] = {
         /setmomentum <pid> <x> <y> <z> - Set a player's momentum to certain values\
         /setauthority <pid> <cell> - Forcibly set a certain player as the authority of a cell (/setauth)",
     buttons = {
-        { caption = "Player help",
-            destinations = {
-                menuHelper.destinations.setDefault("help player")
-            }
-        },
         { caption = "Admin help",
             destinations = {
                 menuHelper.destinations.setDefault("help admin")
+            }
+        },
+        { caption = "Player help",
+            destinations = {
+                menuHelper.destinations.setDefault("help player")
             }
         },
         { caption = "Exit", destinations = nil }
@@ -85,7 +85,29 @@ Menus["help admin"] = {
         /setbedrest <pid> on/off/default - Enable/disable bed resting for player\
         /setwildrest <pid> on/off/default - Enable/disable wilderness resting for player\
         /setwait <pid> on/off/default - Enable/disable waiting for player\
-        /setscale <pid> <value> - Sets a player's scale\
+        /setscale <pid> <value> - Sets a player's scale",
+    buttons = {
+        { caption = "Admin help page 2",
+            destinations = {
+                menuHelper.destinations.setDefault("help admin page 2")
+            }
+        },
+        { caption = "Moderator help",
+            destinations = {
+                menuHelper.destinations.setDefault("help moderator")
+            }
+        },
+        { caption = "Player help",
+            destinations = {
+                menuHelper.destinations.setDefault("help player")
+            }
+        },
+        { caption = "Exit", destinations = nil }
+    }
+}
+
+Menus["help admin page 2"] = {
+    text = "Admin command list page 2:\
         /setwerewolf <pid> on/off - Set the werewolf state of a particular player\
         /storeconsole <pid> <command> - Store a certain console command for a player\
         /runconsole <pid> (<count>) (<interval>) - Run a stored console command on a player, with optional count and interval\
@@ -95,14 +117,19 @@ Menus["help admin"] = {
         /setphysicsfps <pid> <value>/default - Set the physics framerate for a particular player\
         /setcollision <category> on/off (on/off) - Set the collision state for an object category (PLAYER, ACTOR or PLACED_OBJECT), with the third optional argument affecting whether placed objects use actor-like collision",
     buttons = {
-        { caption = "Player help",
+        { caption = "Admin help page 1",
             destinations = {
-                menuHelper.destinations.setDefault("help player")
+                menuHelper.destinations.setDefault("help admin")
             }
         },
         { caption = "Moderator help",
             destinations = {
                 menuHelper.destinations.setDefault("help moderator")
+            }
+        },
+        { caption = "Player help",
+            destinations = {
+                menuHelper.destinations.setDefault("help player")
             }
         },
         { caption = "Exit", destinations = nil }
