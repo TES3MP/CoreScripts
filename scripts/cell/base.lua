@@ -367,7 +367,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-        if tableHelper.containsValue(config.disallowedPlaceRefIds, refId) then
+        if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
             isValid = false
         end
@@ -472,7 +472,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-        if tableHelper.containsValue(config.disallowedSpawnRefIds, refId) then
+        if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
             isValid = false
         end

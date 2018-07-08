@@ -168,11 +168,8 @@ config.useActorCollisionForPlacedObjects = false
 -- Prevent certain object refIds from being deleted as a result of player-sent packets
 config.disallowedDeleteRefIds = { "m'aiq" }
 
--- Prevent certain object refIds from being placed as a result of player-sent packets
-config.disallowedPlaceRefIds = {}
-
--- Prevent certain object refIds from being spawned as a result of player-sent packets
-config.disallowedSpawnRefIds = {}
+-- Prevent certain object refIds from being placed or spawned as a result of player-sent packets
+config.disallowedCreateRefIds = {}
 
 -- Prevent certain object refIds from being locked or unlocked as a result of player-sent packets
 config.disallowedLockRefIds = {}
