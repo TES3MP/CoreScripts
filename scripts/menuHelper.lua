@@ -166,6 +166,25 @@ function menuHelper.checkCondition(pid, condition)
     return false
 end
 
+function menuHelper.checkConditionTable(pid, conditions)
+
+    local conditionCount = table.maxn(conditions)
+    local conditionsMet = 0
+
+    for _, condition in ipairs(conditions) do
+
+        if menuHelper.checkCondition(pid, condition) then
+            conditionsMet = conditionsMet + 1
+        end
+    end
+
+    if conditionsMet == conditionCount then
+        return true
+    end
+
+    return false
+end
+
 function menuHelper.processEffects(pid, effects)
 
     if effects == nil then return end
@@ -256,17 +275,9 @@ function menuHelper.getButtonDestination(pid, menuIndex, buttonIndex)
                 if destination.conditions == nil then
                     defaultDestination = destination
                 else
-                    local conditionCount = table.maxn(destination.conditions)
-                    local conditionsMet = 0
+                    local conditionsMet = menuHelper.checkConditionTable(pid, destination.conditions)
 
-                    for _, condition in ipairs(destination.conditions) do
-
-                        if menuHelper.checkCondition(pid, condition) then
-                            conditionsMet = conditionsMet + 1
-                        end
-                    end
-
-                    if conditionsMet == conditionCount then
+                    if conditionsMet then
                         return destination
                     end
                 end
