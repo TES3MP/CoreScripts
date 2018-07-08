@@ -286,7 +286,11 @@ function BaseCell:ProcessObjectsDeleted(pid)
         self:SaveObjectsDeleted(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectDelete(true)
+        -- Objects can sometimes be deleted clientside without the server's approval and
+        -- sometimes not, but we should always send ObjectDelete packets back to the sender
+        -- for the sake of the latter situations
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectDelete(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .. " about " ..
@@ -373,7 +377,10 @@ function BaseCell:ProcessObjectsPlaced(pid)
         self:SaveObjectsPlaced(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectPlace(true)
+        -- Objects can't be placed clientside without the server's approval, so we send
+        -- the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectPlace(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. myMod.GetChatName(pid) .. " about " ..
@@ -475,7 +482,10 @@ function BaseCell:ProcessObjectsSpawned(pid)
         self:SaveObjectsSpawned(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectSpawn(true)
+        -- Objects can't be spawned clientside without the server's approval, so we send
+        -- the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectSpawn(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " ..
@@ -578,7 +588,10 @@ function BaseCell:ProcessObjectsLocked(pid)
         self:SaveObjectsLocked(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectLock(true)
+        -- Objects can't be locked/unlocked clientside without the server's approval,
+        -- so we send the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectLock(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectLock from " .. myMod.GetChatName(pid) .. " about " ..
@@ -630,7 +643,10 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
         self:SaveObjectTrapsTriggered(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectTrap(true)
+        -- Objects can't be untrapped clientside without the server's approval, so we send
+        -- the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectTrap(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. myMod.GetChatName(pid) .. " about " ..
@@ -681,7 +697,10 @@ function BaseCell:ProcessObjectsScaled(pid)
         self:SaveObjectsScaled(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectScale(true)
+        -- Objects can't be scaled clientside without the server's approval, so we send
+        -- the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectScale(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectScale from " .. myMod.GetChatName(pid) .. " about " ..
@@ -733,7 +752,10 @@ function BaseCell:ProcessObjectStates(pid)
         self:SaveObjectStates(pid)
 
         tes3mp.CopyLastObjectListToStore()
-        tes3mp.SendObjectState(true)
+        -- Objects can't be enabled or disabled clientside without the server's approval,
+        -- so we send the packet to other players and also back to the player who sent it,
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+        tes3mp.SendObjectState(true, false)
 
     else
         tes3mp.LogMessage(1, "Rejected ObjectState from " .. myMod.GetChatName(pid) .. " about " ..
