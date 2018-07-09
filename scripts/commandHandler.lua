@@ -917,8 +917,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             local message = refIndex .. " is now " .. messageAction
 
             if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
-                myMod.SetAIForActor(refIndex, actionIndex, target)
+                target = tonumber(target)
 
+                myMod.SetAIForActor(refIndex, actionIndex, target)
                 Players[pid]:Message(message .. " player " .. Players[target].name .. "\n")
             else
                 local result = myMod.SetAIForActor(refIndex, actionIndex, nil, target)
