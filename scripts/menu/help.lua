@@ -24,11 +24,17 @@ Menus["help player"] = {
             color.White .. "Get the list of available commands",
     buttons = {
         { caption = "Admin help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(2)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Moderator help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(1)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
             }
@@ -81,11 +87,17 @@ Menus["help moderator page 1"] = {
             "per ingame hour)\n",
     buttons = {
         { caption = "Moderator help page 2",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(1)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 2")
             }
         },
         { caption = "Admin help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(2)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
             }
@@ -122,11 +134,17 @@ Menus["help moderator page 2"] = {
             color.Yellow .. "(/setauth)",
     buttons = {
         { caption = "Moderator help page 1",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(1)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
             }
         },
         { caption = "Admin help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(2)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
             }
@@ -174,11 +192,17 @@ Menus["help admin page 1"] = {
             color.White .. "Sets a player's scale",
     buttons = {
         { caption = "Admin help page 2",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(2)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 2")
             }
         },
         { caption = "Moderator help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(1)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
             }
@@ -214,11 +238,17 @@ Menus["help admin page 2"] = {
             "with the third optional argument affecting whether placed objects use actor-like collision",
     buttons = {
         { caption = "Admin help page 1",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(2)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
             }
         },
         { caption = "Moderator help",
+            displayConditions = {
+                menuHelper.conditions.requireAdminRank(1)
+            },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
             }
