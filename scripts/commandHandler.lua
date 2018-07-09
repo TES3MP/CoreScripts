@@ -908,10 +908,26 @@ function commandHandler.ProcessCommand(pid, cmd)
             local refIndex = cmd[2]
             local target = cmd[4]
 
+            local messageAction
+
+            if actionIndex == 0 then
+                messageAction = "following"
+            end
+
+            local message = refIndex .. " is now " .. messageAction
+
             if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
                 myMod.SetAIForActor(refIndex, actionIndex, target)
+
+                Players[pid]:Message(message .. " player " .. Players[target].name)
             else
-                myMod.SetAIForActor(refIndex, actionIndex, nil, target)
+                local result = myMod.SetAIForActor(refIndex, actionIndex, nil, target)
+
+                if result then
+                    Players[pid]:Message(message .. " actor " .. target)
+                else
+                    Players[pid]:Message("Target " .. target .. " is invalid")
+                end
             end
         else
             tes3mp.SendMessage(pid, actionInput .. " is not a valid AI action. Valid choices are " ..

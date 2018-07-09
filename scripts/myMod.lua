@@ -613,8 +613,11 @@ Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRe
         tes3mp.AddActor()
         tes3mp.SendActorAI()
 
+        return true
+
     else
         tes3mp.LogAppend(2, "- Could not find actor " .. actorRefIndex .. " in any loaded cell")
+        return false
     end
 end
 
