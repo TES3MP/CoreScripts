@@ -919,14 +919,14 @@ function commandHandler.ProcessCommand(pid, cmd)
             if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
                 myMod.SetAIForActor(refIndex, actionIndex, target)
 
-                Players[pid]:Message(message .. " player " .. Players[target].name)
+                Players[pid]:Message(message .. " player " .. Players[target].name .. "\n")
             else
                 local result = myMod.SetAIForActor(refIndex, actionIndex, nil, target)
 
                 if result then
-                    Players[pid]:Message(message .. " actor " .. target)
+                    Players[pid]:Message(message .. " actor " .. target .. "\n")
                 else
-                    Players[pid]:Message("Target " .. target .. " is invalid")
+                    Players[pid]:Message("Target " .. target .. " is invalid" .. "\n")
                 end
             end
         else
