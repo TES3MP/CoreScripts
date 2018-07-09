@@ -406,8 +406,10 @@ Methods.OnGUIAction = function(pid, idGui, data)
 
     elseif idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
 
-        local buttonPressed = tonumber(data) + 1
-        local destination = menuHelper.getButtonDestination(pid, Players[pid].currentCustomMenu, buttonPressed)
+        local buttonIndex = tonumber(data) + 1
+        local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
+
+        local destination = menuHelper.getButtonDestination(pid, buttonPressed)
 
         menuHelper.processEffects(pid, destination.effects)
         menuHelper.displayMenu(pid, destination.targetMenu)

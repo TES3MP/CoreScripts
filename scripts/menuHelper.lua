@@ -256,16 +256,15 @@ function menuHelper.processEffects(pid, effects)
     end
 end
 
-function menuHelper.getButtonDestination(pid, menuIndex, buttonIndex)
+function menuHelper.getButtonDestination(pid, buttonPressed)
 
-    if Menus[menuIndex] ~= nil and Menus[menuIndex].buttons[buttonIndex] ~= nil then
+    if buttonPressed ~= nil then
 
-        local button = Menus[menuIndex].buttons[buttonIndex]
         local defaultDestination = {}
 
-        if button.destinations ~= nil then
+        if buttonPressed.destinations ~= nil then
 
-            for _, destination in ipairs(button.destinations) do
+            for _, destination in ipairs(buttonPressed.destinations) do
 
                 if destination.customVariable ~= nil then
                     local customVariable = destination.customVariable
@@ -290,22 +289,50 @@ function menuHelper.getButtonDestination(pid, menuIndex, buttonIndex)
     return {}
 end
 
+function menuHelper.getDisplayedButtons(pid, menuIndex)
+
+    if menuIndex == nil or Menus[menuIndex] == nil then return end
+    local displayedButtons = {}
+
+    for buttonIndex, button in ipairs(Menus[menuIndex].buttons) do
+
+        -- Only display this button if there are no conditions for displaying it, or if
+        -- the conditions for displaying it are met
+        local conditionsMet = true
+
+        if button.displayConditions ~= nil then
+            conditionsMet = menuHelper.checkConditionTable(pid, button.displayConditions)
+        end
+
+        if conditionsMet then
+            table.insert(displayedButtons, button)
+        end
+    end
+
+    return displayedButtons
+end
+
 function menuHelper.displayMenu(pid, menuIndex)
 
     if menuIndex == nil or Menus[menuIndex] == nil then return end
 
     local text = Menus[menuIndex].text
+    local displayedButtons = menuHelper.getDisplayedButtons(pid, menuIndex)
+    local buttonCount = tableHelper.getCount(displayedButtons)
     local buttonList = ""
 
-    for buttonIndex, button in ipairs(Menus[menuIndex].buttons) do
+    for buttonIndex, button in ipairs(displayedButtons) do
+
         buttonList = buttonList .. button.caption
 
-        if buttonIndex < tableHelper.getCount(Menus[menuIndex].buttons) then
+        if buttonIndex < buttonCount then
             buttonList = buttonList .. ";"
         end
     end
 
-    tes3mp.CustomMessageBox(pid, config.customMenuIds.menuHelper,  text, buttonList)
+    Players[pid].displayedMenuButtons = displayedButtons
+
+    tes3mp.CustomMessageBox(pid, config.customMenuIds.menuHelper, text, buttonList)
 end
 
 return menuHelper
