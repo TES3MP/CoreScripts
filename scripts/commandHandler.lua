@@ -727,6 +727,41 @@ function commandHandler.ProcessCommand(pid, cmd)
         tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
             " for all newly loaded cells.\n", false)
 
+    elseif cmd[1] == "overridecollision" and admin then
+
+        local collisionState
+        local refId = cmd[2]
+
+        if refId ~= nil and cmd[3] == "on" then
+            collisionState = true
+        elseif refId ~= nil and cmd[3] == "off" then
+            collisionState = false
+        else
+            Players[pid]:Message("Use /addcollision <refId> on/off\n")
+            return false
+        end
+
+        local message = "A collision-enabling override "
+
+        if tableHelper.containsValue(config.enforcedCollisionRefIds, refId) then
+            if collisionState then
+                message = message .. "is already on"
+            else
+                tableHelper.removeValue(config.enforcedCollisionRefIds, refId)
+                message = message .. "is now off"
+            end
+        else
+            if collisionState then
+                table.insert(config.enforcedCollisionRefIds, refId)
+                message = message .. "is now on"
+            else
+                message = message .. "is already off"
+            end
+        end
+
+        myMod.SendConfigCollisionOverrides(pid, true)
+        Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
+
     elseif cmd[1] == "suicide" then
         if config.allowSuicideCommand == true then
             tes3mp.SetHealthCurrent(pid, 0)

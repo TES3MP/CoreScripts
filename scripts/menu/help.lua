@@ -240,7 +240,9 @@ Menus["help admin page 2"] = {
             color.White .. "Set the physics framerate for a particular player\n" ..
         color.Yellow .. "/setcollision <category> on/off\n" ..
             color.White .. "Set the collision state for an object category (PLAYER, ACTOR or PLACED_OBJECT), " ..
-            "with the third optional argument affecting whether placed objects use actor-like collision",
+            "with the third optional argument affecting whether placed objects use actor-like collision\n" ..
+        color.Yellow .. "/overridecollision <refId> on/off\n" ..
+            color.White .. "Turn a collision-enabling override on and off for a specific refId until the next server restart",
     buttons = {
         { caption = "Admin help page 1",
             displayConditions = {
