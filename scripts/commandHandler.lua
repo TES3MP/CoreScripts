@@ -894,41 +894,53 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif cmd[1] == "setai" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
 
         local actionInput = cmd[3]
-        local actionIndex
+        local actionNumericalId
 
-        -- Allow both numerical and string input for actions (i.e. 0 or FOLLOW), but
+        -- Allow both numerical and string input for actions (i.e. 1 or COMBAT), but
         -- convert the latter into the former
         if type(tonumber(actionInput)) == "number" then
-            actionIndex = tonumber(actionInput)
+            actionNumericalId = tonumber(actionInput)
         else
-            actionIndex = enumerations.ai[string.upper(actionInput)]
+            actionNumericalId = enumerations.ai[string.upper(actionInput)]
         end
 
-        if actionIndex ~= nil then
+        if actionNumericalId ~= nil then
             local refIndex = cmd[2]
             local target = cmd[4]
 
-            local messageAction
-
-            if actionIndex == 0 then
-                messageAction = "following"
-            end
-
-            local message = refIndex .. " is now " .. messageAction
+            local hasPlayerTarget = false
 
             if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
                 target = tonumber(target)
+                hasPlayerTarget = true
+            end
 
-                myMod.SetAIForActor(refIndex, actionIndex, target)
-                Players[pid]:Message(message .. " player " .. Players[target].name .. "\n")
+            local result
+
+            if hasPlayerTarget then
+                result = myMod.SetAIForActor(refIndex, actionNumericalId, target)
             else
-                local result = myMod.SetAIForActor(refIndex, actionIndex, nil, target)
+                result = myMod.SetAIForActor(refIndex, actionNumericalId, nil, target)
+            end
 
-                if result then
-                    Players[pid]:Message(message .. " actor " .. target .. "\n")
-                else
-                    Players[pid]:Message("Target " .. target .. " is invalid" .. "\n")
+            if result then
+
+                local actionName = tableHelper.getIndexByPattern(enumerations.ai, actionNumericalId)
+                local messageAction = enumerations.aiPrintableAction[actionName]
+                local message = refIndex .. " is now " .. messageAction
+
+                if actionName == "COMBAT" or actionName == "ESCORT" or actionName == "FOLLOW" then
+
+                    if hasPlayerTarget then
+                        message = message .. " player " .. Players[target].name
+                    else
+                        message = message .. " actor " .. target
+                    end
                 end
+
+                Players[pid]:Message(message .. "\n")
+            else
+                Players[pid]:Message("Actor " .. refIndex .. " is invalid" .. "\n")
             end
         else
             tes3mp.SendMessage(pid, actionInput .. " is not a valid AI action. Valid choices are " ..

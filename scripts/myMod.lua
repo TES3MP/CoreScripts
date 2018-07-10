@@ -605,7 +605,7 @@ Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRe
 
         if targetPid ~= nil then
             tes3mp.SetActorAITargetToPlayer(targetPid)
-        else
+        elseif targetActorRefIndex ~= nil then
             local targetSplitIndex = targetActorRefIndex:split("-")
             tes3mp.SetActorAITargetToActor(targetSplitIndex[1], targetSplitIndex[2])
         end

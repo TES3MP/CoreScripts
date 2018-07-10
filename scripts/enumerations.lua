@@ -2,7 +2,9 @@
 -- currently implemented in packets
 
 enumerations = {}
-enumerations.ai = { FOLLOW = 0 }
+enumerations.ai = { CANCEL = 0, COMBAT = 1, ESCORT = 2, FOLLOW = 3, TRAVEL = 4, WANDER = 5 }
+enumerations.aiPrintableAction = { CANCEL = "cancelling current AI", COMBAT = "initiating combat with",
+    ESCORT = "escorting", FOLLOW = "following", TRAVEL = "travelling to", WANDER = "wandering around" }
 enumerations.container = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
