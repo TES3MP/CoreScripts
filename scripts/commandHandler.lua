@@ -915,7 +915,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if cell == nil then
 
-                Players[pid]:Message("Could not find actor " .. actorRefIndex .. " in any loaded cell\n")
+                Players[pid]:Message("Could not find actor " .. refIndex .. " in any loaded cell\n")
             else
 
                 local actionName = tableHelper.getIndexByPattern(enumerations.ai, actionNumericalId)
