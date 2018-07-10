@@ -942,14 +942,14 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                 elseif actionNumericalId == enumerations.ai.WANDER then
 
-                    local distance, duration = tonumber(cmd[4]), tonumber(cmd[5])
+                    local distance, duration, shouldRepeat = tonumber(cmd[4]), tonumber(cmd[5]), cmd[6]
 
                     if type(distance) == "number" and type(duration) == "number" then
 
                         myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, nil, nil, nil,
-                            distance, duration)
-                        Players[pid]:Message(message .. " a distance of " .. distance .. " for " ..
-                            duration .. " seconds\n")
+                            distance, duration, shouldRepeat)
+                        Players[pid]:Message(message .. " a distance of " .. distance .. " for a duration of " ..
+                            duration .. "\n")
                     else
                         Players[pid]:Message("Invalid wander parameters! " ..
                             "Use /setai <refIndex> wander <distance> <duration>\n")

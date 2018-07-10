@@ -166,8 +166,8 @@ Menus["help admin page 1"] = {
             color.White .. "Make the actor with a certain refIndex cancel its AI sequence\n" ..
         color.Yellow .. "/setai <refIndex> travel <x> <y> <z>\n" ..
             color.White .. "Make the actor with a certain refIndex travel to certain X, Y and Z coordinates\n" ..
-        color.Yellow .. "/setai <refIndex> wander <distance> <duration>\n" ..
-            color.White .. "Make the actor with a certain refIndex wander for the specified distance and duration\n" ..
+        color.Yellow .. "/setai <refIndex> wander <distance> <duration> true/false\n" ..
+            color.White .. "Make the actor with a certain refIndex wander for the specified distance and duration, with repetition being true or false\n" ..
         color.Yellow .. "/setrace <pid> <race>\n" ..
             color.White .. "Change a player's race\n" ..
         color.Yellow .. "/sethead <pid> <body part id>\n" ..

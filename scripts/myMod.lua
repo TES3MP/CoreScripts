@@ -589,7 +589,7 @@ Methods.GetCellContainingActor = function(actorRefIndex)
 end
 
 Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
-    posX, posY, posZ, distance, duration)
+    posX, posY, posZ, distance, duration, shouldRepeat)
 
     if cell ~= nil and actorRefIndex ~= nil then
 
@@ -614,6 +614,14 @@ Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetA
         elseif duration ~= nil then
             tes3mp.SetActorAIDuration(duration)
         end
+
+        if shouldRepeat == "true" then
+            shouldRepeat = true
+        else
+            shouldRepeat = false
+        end
+
+        tes3mp.SetActorAIRepetition(shouldRepeat)
 
         tes3mp.AddActor()
         tes3mp.SendActorAI()
