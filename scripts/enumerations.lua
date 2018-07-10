@@ -5,7 +5,7 @@ enumerations = {}
 enumerations.ai = { CANCEL = 0, ACTIVATE = 1, COMBAT = 2, ESCORT = 3, FOLLOW = 4, TRAVEL = 5, WANDER = 6 }
 enumerations.aiPrintableAction = { CANCEL = "cancelling current AI", ACTIVATE = "activating",
     COMBAT = "initiating combat with", ESCORT = "escorting", FOLLOW = "following", TRAVEL = "travelling to",
-    WANDER = "wandering around" }
+    WANDER = "wandering" }
 enumerations.container = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }

@@ -588,7 +588,8 @@ Methods.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex, posX, posY, posZ)
+Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
+    posX, posY, posZ, distance, duration)
 
     if cell ~= nil and actorRefIndex ~= nil then
 
@@ -608,13 +609,17 @@ Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetA
             tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
         elseif posX ~= nil and posY ~= nil and posZ ~= nil then
             tes3mp.SetActorAICoordinates(posX, posY, posZ)
+        elseif distance ~= nil then
+            tes3mp.SetActorAIDistance(distance)
+        elseif duration ~= nil then
+            tes3mp.SetActorAIDuration(duration)
         end
 
         tes3mp.AddActor()
         tes3mp.SendActorAI()
 
     else
-        tes3mp.LogAppend(3, "Invalid input for myMod.SetAIForACtor()!")
+        tes3mp.LogAppend(3, "Invalid input for myMod.SetAIForActor()!")
     end
 end
 
