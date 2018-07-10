@@ -1,8 +1,8 @@
 Menus["default crafting origin"] = {
-    text = "What would you like to craft?\n\
-        White pillow - 1 per 2 folded cloth\
-        Hammock pillow - 15 per 1 bolt of cloth\
-        Guarskin drum - 1 per 3 guar hides",
+    text = color.Orange .. "What would you like to craft?\n" ..
+            color.Yellow .. "White pillow" .. color.White .. " - 1 per 2 folded cloth\n" ..
+            color.Yellow .. "Hammock pillow" .. color.White .. " - 15 per 1 bolt of cloth\n" ..
+            color.Yellow .. "Guarskin drum" .. color.White .. " - 1 per 3 guar hides",
     buttons = {
         { caption = "White pillow",
             destinations = {
