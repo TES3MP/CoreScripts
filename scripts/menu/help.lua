@@ -160,9 +160,14 @@ Menus["help moderator page 2"] = {
 
 Menus["help admin page 1"] = {
     text = color.Orange .. "Admin command list page 1:\n" ..
-        color.Yellow .. "/setai <refIndex> <action> (<pid>/<refIndex>)\n" ..
-            color.White .. "Set an AI action for the actor with a certain refIndex, with an optional target " ..
-            "at the end\n" ..
+        color.Yellow .. "/setai <refIndex> activate/combat/follow <pid>/<refIndex>\n" ..
+            color.White .. "Make the actor with a certain refIndex target a player or another refIndex\n" ..
+        color.Yellow .. "/setai <refIndex> cancel\n" ..
+            color.White .. "Make the actor with a certain refIndex cancel its AI sequence\n" ..
+        color.Yellow .. "/setai <refIndex> travel <x> <y> <z>\n" ..
+            color.White .. "Make the actor with a certain refIndex travel to certain X, Y and Z coordinates\n" ..
+        color.Yellow .. "/setai <refIndex> wander <distance> <duration>\n" ..
+            color.White .. "Make the actor with a certain refIndex wander for the specified distance and duration\n" ..
         color.Yellow .. "/setrace <pid> <race>\n" ..
             color.White .. "Change a player's race\n" ..
         color.Yellow .. "/sethead <pid> <body part id>\n" ..
@@ -181,15 +186,7 @@ Menus["help admin page 1"] = {
         color.Yellow .. "/setdifficulty <pid> <value>/default\n" ..
             color.White .. "Set the difficulty for a particular player\n" ..
         color.Yellow .. "/setconsole <pid> on/off/default\n" ..
-            color.White .. "Enable/disable in-game console for player\n" ..
-        color.Yellow .. "/setbedrest <pid> on/off/default\n" ..
-            color.White .. "Enable/disable bed resting for player\n" ..
-        color.Yellow .. "/setwildrest <pid> on/off/default\n" ..
-            color.White .. "Enable/disable wilderness resting for player\n" ..
-        color.Yellow .. "/setwait <pid> on/off/default\n" ..
-            color.White .. "Enable/disable waiting for player\n" ..
-        color.Yellow .. "/setscale <pid> <value>\n" ..
-            color.White .. "Sets a player's scale",
+            color.White .. "Enable/disable in-game console for player\n",
     buttons = {
         { caption = "Admin help page 2",
             displayConditions = {
@@ -218,6 +215,14 @@ Menus["help admin page 1"] = {
 
 Menus["help admin page 2"] = {
     text = color.Orange .. "Admin command list page 2:\n" ..
+        color.Yellow .. "/setbedrest <pid> on/off/default\n" ..
+            color.White .. "Enable/disable bed resting for player\n" ..
+        color.Yellow .. "/setwildrest <pid> on/off/default\n" ..
+            color.White .. "Enable/disable wilderness resting for player\n" ..
+        color.Yellow .. "/setwait <pid> on/off/default\n" ..
+            color.White .. "Enable/disable waiting for player\n" ..
+        color.Yellow .. "/setscale <pid> <value>\n" ..
+            color.White .. "Sets a player's scale\n" ..
         color.Yellow .. "/setwerewolf <pid> on/off\n" ..
             color.White .. "Set the werewolf state of a particular player\n" ..
         color.Yellow .. "/storeconsole <pid> <command>\n" ..
