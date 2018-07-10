@@ -6,7 +6,7 @@ local time = require("time")
 contentFixer = require("contentFixer")
 menuHelper = require("menuHelper")
 
-local Methods = {}
+local myMod = {}
 
 Players = {}
 LoadedCells = {}
@@ -18,7 +18,7 @@ for _, menuFile in ipairs(config.menuHelperFiles) do
     require("menu/" .. menuFile)
 end
 
-Methods.InitializeWorld = function()
+myMod.InitializeWorld = function()
     WorldInstance = World()
 
     -- If the world has a data entry, load it
@@ -35,7 +35,7 @@ Methods.InitializeWorld = function()
     end
 end
 
-Methods.CheckPlayerValidity = function(pid, targetPid)
+myMod.CheckPlayerValidity = function(pid, targetPid)
 
     local valid = false
     local sendMessage = true
@@ -71,7 +71,7 @@ Methods.CheckPlayerValidity = function(pid, targetPid)
 end
 
 -- Get the "Name (pid)" representation of a player used in chat
-Methods.GetChatName = function(pid)
+myMod.GetChatName = function(pid)
 
     if Players[pid] ~= nil then
         return Players[pid].name .. " (" .. pid .. ")"
@@ -81,7 +81,7 @@ Methods.GetChatName = function(pid)
 end
 
 -- Check if there is already a player with this name on the server
-Methods.IsPlayerNameLoggedIn = function(newName)
+myMod.IsPlayerNameLoggedIn = function(newName)
 
     -- Make sure we also check the account name this new player would end up having
     local newAccountName = fileHelper.fixFilename(newName)
@@ -100,7 +100,7 @@ Methods.IsPlayerNameLoggedIn = function(newName)
 end
 
 -- Check if the player is using a disallowed name
-Methods.IsPlayerNameAllowed = function(playerName)
+myMod.IsPlayerNameAllowed = function(playerName)
 
     for _, disallowedNameString in pairs(config.disallowedNameStrings) do
         
@@ -114,7 +114,7 @@ Methods.IsPlayerNameAllowed = function(playerName)
 end
 
 -- Get the Player object of either an online player or an offline one
-Methods.GetPlayerByName = function(targetName)
+myMod.GetPlayerByName = function(targetName)
     -- Check if the player is online
     for iteratorPid, player in pairs(Players) do
 
@@ -134,9 +134,9 @@ Methods.GetPlayerByName = function(targetName)
     end
 end
 
-Methods.BanPlayer = function(pid, targetName)
+myMod.BanPlayer = function(pid, targetName)
     if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
-        local targetPlayer = Methods.GetPlayerByName(targetName)
+        local targetPlayer = myMod.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
             table.insert(banList.playerNames, string.lower(targetName))
@@ -155,12 +155,12 @@ Methods.BanPlayer = function(pid, targetName)
     end
 end
 
-Methods.UnbanPlayer = function(pid, targetName)
+myMod.UnbanPlayer = function(pid, targetName)
     if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
         tableHelper.removeValue(banList.playerNames, string.lower(targetName))
         SaveBanList()
 
-        local targetPlayer = Methods.GetPlayerByName(targetName)
+        local targetPlayer = myMod.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
             tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
@@ -176,8 +176,8 @@ Methods.UnbanPlayer = function(pid, targetName)
     end
 end
 
-Methods.TeleportToPlayer = function(pid, originPid, targetPid)
-    if (not Methods.CheckPlayerValidity(pid, originPid)) or (not Methods.CheckPlayerValidity(pid, targetPid)) then
+myMod.TeleportToPlayer = function(pid, originPid, targetPid)
+    if (not myMod.CheckPlayerValidity(pid, originPid)) or (not myMod.CheckPlayerValidity(pid, targetPid)) then
         return
     elseif tonumber(originPid) == tonumber(targetPid) then
         local message = "You can't teleport to yourself.\n"
@@ -212,7 +212,7 @@ Methods.TeleportToPlayer = function(pid, originPid, targetPid)
     tes3mp.SendMessage(targetPid, targetMessage, false)
 end
 
-Methods.GetConnectedPlayerCount = function()
+myMod.GetConnectedPlayerCount = function()
 
     local playerCount = 0
 
@@ -225,13 +225,13 @@ Methods.GetConnectedPlayerCount = function()
     return playerCount
 end
 
-Methods.GetLoadedCellCount = function()
+myMod.GetLoadedCellCount = function()
 
     return tableHelper.getCount(LoadedCells)
 end
 
-Methods.PrintPlayerPosition = function(pid, targetPid)
-    if not Methods.CheckPlayerValidity(pid, targetPid) then
+myMod.PrintPlayerPosition = function(pid, targetPid)
+    if not myMod.CheckPlayerValidity(pid, targetPid) then
         return
     end
     local message = ""
@@ -249,16 +249,16 @@ Methods.PrintPlayerPosition = function(pid, targetPid)
     tes3mp.SendMessage(pid, message, false)
 end
 
-Methods.PushPlayerList = function(pls)
+myMod.PushPlayerList = function(pls)
     Players = pls
 end
 
-Methods.TestFunction = function()
+myMod.TestFunction = function()
       tes3mp.LogMessage(2, "TestFunction: Test function called")
       tes3mp.LogMessage(2, Players[0])
 end
 
-Methods.OnPlayerConnect = function(pid, playerName)
+myMod.OnPlayerConnect = function(pid, playerName)
 
     WorldInstance:LoadTime(pid, false)
 
@@ -276,12 +276,12 @@ Methods.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
     tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
 
-    Methods.SendConfigCollisionOverrides(pid, false)
+    myMod.SendConfigCollisionOverrides(pid, false)
 
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
 
-    local message = Methods.GetChatName(pid) .. " joined the server.\n"
+    local message = myMod.GetChatName(pid) .. " joined the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
     message = "Welcome " .. playerName .. "\nYou have " .. tostring(config.loginTime) .. " seconds to"
@@ -300,19 +300,19 @@ Methods.OnPlayerConnect = function(pid, playerName)
     tes3mp.StartTimer(Players[pid].loginTimerId)
 end
 
-Methods.OnPlayerDeny = function(pid, playerName)
+myMod.OnPlayerDeny = function(pid, playerName)
     local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
     tes3mp.SendMessage(pid, message, true)
 end
 
-Methods.OnPlayerDisconnect = function(pid)
+myMod.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
 
         -- Unload every cell for this player
         for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
 
-            Methods.UnloadCellForPlayer(pid, loadedCellDescription)
+            myMod.UnloadCellForPlayer(pid, loadedCellDescription)
         end
 
         Players[pid]:Destroy()
@@ -320,7 +320,7 @@ Methods.OnPlayerDisconnect = function(pid)
     end
 end
 
-Methods.OnGUIAction = function(pid, idGui, data)
+myMod.OnGUIAction = function(pid, idGui, data)
     data = tostring(data) -- data can be numeric, but we should convert this to string
 
     if idGui == GUI.ID.LOGIN then
@@ -361,7 +361,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
     elseif idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
         local targetName = Players[pid].confiscationTargetName
-        local targetPlayer = Methods.GetPlayerByName(targetName)
+        local targetPlayer = myMod.GetPlayerByName(targetName)
 
         -- Because the window's item index starts from 0 while the Lua table for
         -- inventories starts from 1, adjust the former here
@@ -415,7 +415,7 @@ Methods.OnGUIAction = function(pid, idGui, data)
     return false
 end
 
-Methods.OnPlayerMessage = function(pid, message)
+myMod.OnPlayerMessage = function(pid, message)
     if message:sub(1,1) ~= '/' then return 1 end
 
     local cmd = (message:sub(2, #message)):split(" ")
@@ -457,7 +457,7 @@ Methods.OnPlayerMessage = function(pid, message)
     return true
 end
 
-Methods.AuthCheck = function(pid)
+myMod.AuthCheck = function(pid)
     if Players[pid]:IsLoggedIn() then
         return true
     end
@@ -471,7 +471,7 @@ Methods.AuthCheck = function(pid)
     return false
 end
 
-Methods.SendConfigCollisionOverrides = function(pid, forEveryone)
+myMod.SendConfigCollisionOverrides = function(pid, forEveryone)
 
     tes3mp.ClearEnforcedCollisionRefIds()
 
@@ -482,7 +482,7 @@ Methods.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
-Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
+myMod.CreateObjectAtLocation = function(cell, location, refId, packetType)
 
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local refIndex =  0 .. "-" .. mpNum
@@ -524,7 +524,7 @@ Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
     end
 end
 
-Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
+myMod.CreateObjectAtPlayer = function(pid, refId, packetType)
 
     local cell = tes3mp.GetCell(pid)
     local location = {
@@ -532,10 +532,10 @@ Methods.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    Methods.CreateObjectAtLocation(cell, location, refId, packetType)
+    myMod.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
-Methods.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
+myMod.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
@@ -546,15 +546,15 @@ Methods.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
     tes3mp.SendObjectDelete(forEveryone)
 end
 
-Methods.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
-    Methods.DeleteObject(pid, refId, refNumIndex, mpNum, false)
+myMod.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
+    myMod.DeleteObject(pid, refId, refNumIndex, mpNum, false)
 end
 
-Methods.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
-    Methods.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
+myMod.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
+    myMod.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
 end
 
-Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
+myMod.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
@@ -567,7 +567,7 @@ Methods.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
+myMod.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
 
     tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
     tes3mp.SetObjectListCell(cellDescription)
@@ -581,7 +581,7 @@ Methods.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, re
     tes3mp.SendConsoleCommand(true)
 end
 
-Methods.GetCellContainingActor = function(actorRefIndex)
+myMod.GetCellContainingActor = function(actorRefIndex)
 
     for cellDescription, cell in pairs(LoadedCells) do
 
@@ -593,7 +593,7 @@ Methods.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
+myMod.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     if cell ~= nil and actorRefIndex ~= nil then
@@ -636,7 +636,7 @@ Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetA
     end
 end
 
-Methods.OnObjectLoopTimeExpiration = function(loopIndex)
+myMod.OnObjectLoopTimeExpiration = function(loopIndex)
     if ObjectLoops[loopIndex] ~= nil then
 
         local loop = ObjectLoops[loopIndex]
@@ -646,9 +646,9 @@ Methods.OnObjectLoopTimeExpiration = function(loopIndex)
         if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and Players[pid].accountName == loop.targetName then
         
             if loop.packetType == "place" or loop.packetType == "spawn" then
-                Methods.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+                myMod.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
             elseif loop.packetType == "console" then
-                Methods.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
+                myMod.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
             end
 
             loop.count = loop.count - 1
@@ -669,44 +669,44 @@ Methods.OnObjectLoopTimeExpiration = function(loopIndex)
     end
 end
 
-Methods.OnPlayerDeath = function(pid)
+myMod.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:ProcessDeath()
     end
 end
 
-Methods.OnDeathTimeExpiration = function(pid)
+myMod.OnDeathTimeExpiration = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:Resurrect()
     end
 end
 
-Methods.OnPlayerAttribute = function(pid)
+myMod.OnPlayerAttribute = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveAttributes()
     end
 end
 
-Methods.OnPlayerSkill = function(pid)
+myMod.OnPlayerSkill = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveSkills()
     end
 end
 
-Methods.OnPlayerLevel = function(pid)
+myMod.OnPlayerLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveLevel()
         Players[pid]:SaveStatsDynamic()
     end
 end
 
-Methods.OnPlayerShapeshift = function(pid)
+myMod.OnPlayerShapeshift = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveShapeshift()
     end
 end
 
-Methods.OnPlayerCellChange = function(pid)
+myMod.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if contentFixer.ValidateCellChange(pid) then
@@ -727,16 +727,16 @@ Methods.OnPlayerCellChange = function(pid)
     end
 end
 
-Methods.IsCellLoaded = function(cellDescription)
+myMod.IsCellLoaded = function(cellDescription)
 
     return LoadedCells[cellDescription] ~= nil
 end
 
-Methods.SetCellAuthority = function(pid, cellDescription)
+myMod.SetCellAuthority = function(pid, cellDescription)
     LoadedCells[cellDescription]:SetAuthority(pid)
 end
 
-Methods.LoadCell = function(cellDescription)
+myMod.LoadCell = function(cellDescription)
 
     -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
@@ -759,9 +759,9 @@ Methods.LoadCell = function(cellDescription)
     end
 end
 
-Methods.LoadCellForPlayer = function(pid, cellDescription)
+myMod.LoadCellForPlayer = function(pid, cellDescription)
 
-    Methods.LoadCell(cellDescription)
+    myMod.LoadCell(cellDescription)
 
     -- Record that this player has the cell loaded
     LoadedCells[cellDescription]:AddVisitor(pid)
@@ -774,12 +774,12 @@ Methods.LoadCellForPlayer = function(pid, cellDescription)
     -- Otherwise, only set this player as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
-        tes3mp.LogMessage(2, "Player " .. Methods.GetChatName(pid) .. " took over authority from player " .. Methods.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
+        tes3mp.LogMessage(2, "Player " .. myMod.GetChatName(pid) .. " took over authority from player " .. myMod.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
     end
 end
 
-Methods.UnloadCell = function(cellDescription)
+myMod.UnloadCell = function(cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
@@ -788,7 +788,7 @@ Methods.UnloadCell = function(cellDescription)
     end
 end
 
-Methods.UnloadCellForPlayer = function(pid, cellDescription)
+myMod.UnloadCellForPlayer = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
@@ -809,25 +809,25 @@ Methods.UnloadCellForPlayer = function(pid, cellDescription)
     end
 end
 
-Methods.OnPlayerEndCharGen = function(pid)
+myMod.OnPlayerEndCharGen = function(pid)
     if Players[pid] ~= nil then
         Players[pid]:EndCharGen()
     end
 end
 
-Methods.OnPlayerEquipment = function(pid)
+myMod.OnPlayerEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveEquipment()
     end
 end
 
-Methods.OnPlayerInventory = function(pid)
+myMod.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveInventory()
     end
 end
 
-Methods.OnPlayerSpellbook = function(pid)
+myMod.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         local action = tes3mp.GetSpellbookChangesAction(pid)
@@ -842,13 +842,13 @@ Methods.OnPlayerSpellbook = function(pid)
     end
 end
 
-Methods.OnPlayerQuickKeys = function(pid)
+myMod.OnPlayerQuickKeys = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:SaveQuickKeys()
     end
 end
 
-Methods.OnPlayerJournal = function(pid)
+myMod.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareJournal == true then
@@ -863,7 +863,7 @@ Methods.OnPlayerJournal = function(pid)
     end
 end
 
-Methods.OnPlayerFaction = function(pid)
+myMod.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         local action = tes3mp.GetFactionChangesAction(pid)
@@ -900,7 +900,7 @@ Methods.OnPlayerFaction = function(pid)
     end
 end
 
-Methods.OnPlayerTopic = function(pid)
+myMod.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareTopics == true then
@@ -915,7 +915,7 @@ Methods.OnPlayerTopic = function(pid)
     end
 end
 
-Methods.OnPlayerBounty = function(pid)
+myMod.OnPlayerBounty = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareBounty == true then
@@ -942,7 +942,7 @@ Methods.OnPlayerBounty = function(pid)
     end
 end
 
-Methods.OnPlayerReputation = function(pid)
+myMod.OnPlayerReputation = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareReputation == true then
@@ -957,19 +957,19 @@ Methods.OnPlayerReputation = function(pid)
     end
 end
 
-Methods.OnPlayerKillCount = function(pid)
+myMod.OnPlayerKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveKills(pid)
     end
 end
 
-Methods.OnPlayerBook = function(pid)
+myMod.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:AddBooks()
     end
 end
 
-Methods.OnPlayerMiscellaneous = function(pid)
+myMod.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
 
@@ -981,182 +981,182 @@ Methods.OnPlayerMiscellaneous = function(pid)
     end
 end
 
-Methods.OnCellLoad = function(pid, cellDescription)
+myMod.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        Methods.LoadCellForPlayer(pid, cellDescription)
+        myMod.LoadCellForPlayer(pid, cellDescription)
     else
         tes3mp.LogMessage(2, "Undefined behavior: invalid player " .. pid .. " loaded cell " .. cellDescription)
     end
 end
 
-Methods.OnCellUnload = function(pid, cellDescription)
+myMod.OnCellUnload = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        Methods.UnloadCellForPlayer(pid, cellDescription)
+        myMod.UnloadCellForPlayer(pid, cellDescription)
     end
 end
 
-Methods.OnCellDeletion = function(cellDescription)
-    Methods.UnloadCell(cellDescription)
+myMod.OnCellDeletion = function(cellDescription)
+    myMod.UnloadCell(cellDescription)
 end
 
-Methods.OnActorList = function(pid, cellDescription)
+myMod.OnActorList = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorList(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorList for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ActorList for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnActorEquipment = function(pid, cellDescription)
+myMod.OnActorEquipment = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorEquipment(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorEquipment for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ActorEquipment for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnActorDeath = function(pid, cellDescription)
+myMod.OnActorDeath = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorDeath(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorDeath for unloaded " .. cellDescription)
+        tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ActorDeath for unloaded " .. cellDescription)
     end
 end
 
-Methods.OnActorCellChange = function(pid, cellDescription)
+myMod.OnActorCellChange = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorCellChanges(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ActorCellChange for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ActorCellChange for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectPlace = function(pid, cellDescription)
+myMod.OnObjectPlace = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsPlaced(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectPlace for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectPlace for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectSpawn = function(pid, cellDescription)
+myMod.OnObjectSpawn = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsSpawned(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectSpawn for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectSpawn for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectDelete = function(pid, cellDescription)
+myMod.OnObjectDelete = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsDeleted(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectDelete for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectLock = function(pid, cellDescription)
+myMod.OnObjectLock = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsLocked(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectLock for unloaded " .. cellDescription)
         end
     end
 end
 
-Methods.OnObjectTrap = function(pid, cellDescription)
+myMod.OnObjectTrap = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectTrapsTriggered(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectTrap for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectTrap for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectScale = function(pid, cellDescription)
+myMod.OnObjectScale = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsScaled(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent ObjectScale for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent ObjectScale for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnObjectState = function(pid, cellDescription)
+myMod.OnObjectState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local shouldUnload = false
 
         if LoadedCells[cellDescription] == nil then
-            Methods.LoadCell(cellDescription)
+            myMod.LoadCell(cellDescription)
             shouldUnload = true
         end
 
         LoadedCells[cellDescription]:ProcessObjectStates(pid)
 
         if shouldUnload == true then
-            Methods.UnloadCell(cellDescription)
+            myMod.UnloadCell(cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnDoorState = function(pid, cellDescription)
+myMod.OnDoorState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveDoorStates(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent DoorState for unloaded " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent DoorState for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnContainer = function(pid, cellDescription)
+myMod.OnContainer = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessContainers(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. Methods.GetChatName(pid) .. " sent Container for " .. cellDescription)
+            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) .. " sent Container for " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
 end
 
-Methods.OnVideoPlay = function(pid)
+myMod.OnVideoPlay = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if config.shareVideos == true then
@@ -1178,7 +1178,7 @@ Methods.OnVideoPlay = function(pid)
     end
 end
 
-Methods.OnWorldMap = function(pid)
+myMod.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveMapTiles(pid)
 
@@ -1192,8 +1192,8 @@ Methods.OnWorldMap = function(pid)
     end
 end
 
-Methods.OnMpNumIncrement = function(currentMpNum)
+myMod.OnMpNumIncrement = function(currentMpNum)
     WorldInstance:SetCurrentMpNum(currentMpNum)
 end
 
-return Methods
+return myMod
