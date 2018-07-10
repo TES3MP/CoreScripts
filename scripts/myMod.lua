@@ -605,7 +605,7 @@ Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetA
             tes3mp.SetActorAITargetToPlayer(targetPid)
         elseif targetActorRefIndex ~= nil then
             local targetSplitIndex = targetActorRefIndex:split("-")
-            tes3mp.SetActorAITargetToActor(targetSplitIndex[1], targetSplitIndex[2])
+            tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
         elseif posX ~= nil and posY ~= nil and posZ ~= nil then
             tes3mp.SetActorAICoordinates(posX, posY, posZ)
         end
