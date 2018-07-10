@@ -934,7 +934,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                     if type(posX) == "number" and type(posY) == "number" and type(posZ) == "number" then
 
                         myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, posX, posY, posZ)
-                        Players[pid]:Message(message .. posX .. " " .. posY .. " " .. posZ .. "\n")
+                        Players[pid]:Message(message .. " " .. posX .. " " .. posY .. " " .. posZ .. "\n")
                     else
                         Players[pid]:Message("Invalid travel coordinates! " ..
                             "Use /setai <refIndex> travel <x> <y> <z>\n")
