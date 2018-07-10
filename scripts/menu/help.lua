@@ -238,7 +238,7 @@ Menus["help admin page 2"] = {
             color.White .. "Set the enforced log level for a particular player\n" ..
         color.Yellow .. "/setphysicsfps <pid> <value>/default\n" ..
             color.White .. "Set the physics framerate for a particular player\n" ..
-        color.Yellow .. "/setcollision <category> on/off (on/off)\n" ..
+        color.Yellow .. "/setcollision <category> on/off\n" ..
             color.White .. "Set the collision state for an object category (PLAYER, ACTOR or PLACED_OBJECT), " ..
             "with the third optional argument affecting whether placed objects use actor-like collision",
     buttons = {

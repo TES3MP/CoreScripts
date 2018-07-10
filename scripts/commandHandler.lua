@@ -689,26 +689,27 @@ function commandHandler.ProcessCommand(pid, cmd)
             frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
         end
 
-    elseif cmd[1] == "setcollision" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+    elseif cmd[1] == "setcollision" and admin then
 
         local collisionState
 
-        if cmd[3] == "on" then
+        if cmd[2] ~= nil and cmd[3] == "on" then
             collisionState = true
-        elseif cmd[3] == "off" then
+        elseif cmd[2] ~= nil and cmd[3] == "off" then
             collisionState = false
         else
-             tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off (on/off)\n", false)
+             tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off\n", false)
              return false
         end
 
         local categoryInput = string.upper(cmd[2])
+        local categoryValue = enumerations.objectCategories[categoryInput]
 
-        if enumerations.objectCategories[categoryInput] == 0 then
+        if categoryValue == enumerations.objectCategories.PLAYER then
             tes3mp.SetPlayerCollisionState(collisionState)
-        elseif enumerations.objectCategories[categoryInput] == 1 then
+        elseif categoryValue == enumerations.objectCategories.ACTOR then
             tes3mp.SetActorCollisionState(collisionState)
-        elseif enumerations.objectCategories[categoryInput] == 2 then
+        elseif categoryValue == enumerations.objectCategories.PLACED_OBJECT then
             tes3mp.SetPlacedObjectCollisionState(collisionState)
 
             if cmd[4] == "on" then
