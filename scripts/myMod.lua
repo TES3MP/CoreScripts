@@ -276,13 +276,7 @@ Methods.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
     tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
 
-    tes3mp.ClearEnforcedCollisionRefIds()
-
-    for _, refId in pairs(config.enforcedCollisionRefIds) do
-        tes3mp.AddEnforcedCollisionRefId(refId)
-    end
-    
-    tes3mp.SendWorldCollisionOverride(pid, false)
+    Methods.SendConfigCollisionOverrides(pid, false)
 
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
@@ -475,6 +469,17 @@ Methods.AuthCheck = function(pid)
 
     Players[pid] = nil
     return false
+end
+
+Methods.SendConfigCollisionOverrides = function(pid, forEveryone)
+
+    tes3mp.ClearEnforcedCollisionRefIds()
+
+    for _, refId in pairs(config.enforcedCollisionRefIds) do
+        tes3mp.AddEnforcedCollisionRefId(refId)
+    end
+    
+    tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
 Methods.CreateObjectAtLocation = function(cell, location, refId, packetType)
