@@ -904,47 +904,66 @@ function commandHandler.ProcessCommand(pid, cmd)
             actionNumericalId = enumerations.ai[string.upper(actionInput)]
         end
 
-        if actionNumericalId ~= nil then
+        if actionNumericalId == nil then
+
+            Players[pid]:Message(actionInput .. " is not a valid AI action. Valid choices are " ..
+                tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n")
+        else
+
             local refIndex = cmd[2]
-            local target = cmd[4]
+            local cell = myMod.GetCellContainingActor(refIndex)
 
-            local hasPlayerTarget = false
+            if cell == nil then
 
-            if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
-                target = tonumber(target)
-                hasPlayerTarget = true
-            end
-
-            local result
-
-            if hasPlayerTarget then
-                result = myMod.SetAIForActor(refIndex, actionNumericalId, target)
+                Players[pid]:Message("Could not find actor " .. actorRefIndex .. " in any loaded cell\n")
             else
-                result = myMod.SetAIForActor(refIndex, actionNumericalId, nil, target)
-            end
-
-            if result then
 
                 local actionName = tableHelper.getIndexByPattern(enumerations.ai, actionNumericalId)
                 local messageAction = enumerations.aiPrintableAction[actionName]
                 local message = refIndex .. " is now " .. messageAction
 
-                if actionName == "COMBAT" or actionName == "ESCORT" or actionName == "FOLLOW" then
+                if actionNumericalId == enumerations.ai.CANCEL then
+
+                    myMod.SetAIForActor(cell, refIndex, actionNumericalId)
+                    Players[pid]:Message(message .. "\n")
+
+                elseif actionNumericalId == enumerations.ai.TRAVEL then
+
+                    local posX, posY, posZ = tonumber(cmd[4]), tonumber(cmd[5]), tonumber(cmd[6])
+
+                    if type(posX) == "number" and type(posY) == "number" and type(posZ) == "number" then
+
+                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, posX, posY, posZ)
+                        Players[pid]:Message(message .. posX .. " " .. posY .. " " .. posZ .. "\n")
+                    else
+                        Players[pid]:Message("Invalid travel coordinates! " ..
+                            "Use /setai <refIndex> travel <x> <y> <z>\n")
+                    end
+
+                elseif cmd[4] ~= nil then
+
+                    local target = cmd[4]
+                    local hasPlayerTarget = false
+
+                    if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
+                        target = tonumber(target)
+                        hasPlayerTarget = true
+                    end
 
                     if hasPlayerTarget then
+                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, target)
                         message = message .. " player " .. Players[target].name
                     else
+                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, target)
                         message = message .. " actor " .. target
                     end
-                end
 
-                Players[pid]:Message(message .. "\n")
-            else
-                Players[pid]:Message("Actor " .. refIndex .. " is invalid" .. "\n")
+                    Players[pid]:Message(message .. "\n")
+                else
+
+                    Players[pid]:Message("Invalid AI action!\n")
+                end
             end
-        else
-            tes3mp.SendMessage(pid, actionInput .. " is not a valid AI action. Valid choices are " ..
-                tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n", false)
         end
 
     elseif cmd[1] == "help" then

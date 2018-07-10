@@ -588,11 +588,9 @@ Methods.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRefIndex)
+Methods.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex, posX, posY, posZ)
 
-    local cell = Methods.GetCellContainingActor(actorRefIndex)
-
-    if cell ~= nil then
+    if cell ~= nil and actorRefIndex ~= nil then
 
         tes3mp.InitializeActorList(cell.authority)
 
@@ -608,16 +606,15 @@ Methods.SetAIForActor = function(actorRefIndex, action, targetPid, targetActorRe
         elseif targetActorRefIndex ~= nil then
             local targetSplitIndex = targetActorRefIndex:split("-")
             tes3mp.SetActorAITargetToActor(targetSplitIndex[1], targetSplitIndex[2])
+        elseif posX ~= nil and posY ~= nil and posZ ~= nil then
+            tes3mp.SetActorAICoordinates(posX, posY, posZ)
         end
 
         tes3mp.AddActor()
         tes3mp.SendActorAI()
 
-        return true
-
     else
-        tes3mp.LogAppend(2, "- Could not find actor " .. actorRefIndex .. " in any loaded cell")
-        return false
+        tes3mp.LogAppend(3, "Invalid input for myMod.SetAIForACtor()!")
     end
 end
 
