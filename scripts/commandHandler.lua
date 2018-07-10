@@ -952,7 +952,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                             duration .. "\n")
                     else
                         Players[pid]:Message("Invalid wander parameters! " ..
-                            "Use /setai <refIndex> wander <distance> <duration>\n")
+                            "Use /setai <refIndex> wander <distance> <duration> true/false\n")
                     end
 
                 elseif cmd[4] ~= nil then
