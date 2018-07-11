@@ -252,7 +252,8 @@ function BasePlayer:EndCharGen()
         tes3mp.SendCell(self.pid)
 
         if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
-            tes3mp.SetPos(self.pid, config.defaultSpawnPos[1], config.defaultSpawnPos[2], config.defaultSpawnPos[3])
+            tes3mp.SetPos(self.pid, config.defaultSpawnPos[1],
+                config.defaultSpawnPos[2], config.defaultSpawnPos[3])
             tes3mp.SetRot(self.pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
             tes3mp.SendPos(self.pid)
         end
@@ -264,7 +265,8 @@ function BasePlayer:EndCharGen()
             table.insert(self.data.inventory, item)
             self:LoadInventory()
             self:LoadEquipment()
-            tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation.\n\nAs a result, you start out with Caius Cosades' package.")
+            tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation." ..
+                "\n\nAs a result, you start out with Caius Cosades' package.")
         end
     end
 end
@@ -368,7 +370,8 @@ function BasePlayer:ProcessDeath()
     tes3mp.SendMessage(self.pid, message, true)
 
     if config.playersRespawn then
-        self.resurrectTimerId = tes3mp.CreateTimerEx("OnDeathTimeExpiration", time.seconds(config.deathTime), "i", self.pid)
+        self.resurrectTimerId = tes3mp.CreateTimerEx("OnDeathTimeExpiration",
+            time.seconds(config.deathTime), "i", self.pid)
         tes3mp.StartTimer(self.resurrectTimerId)
     else
         tes3mp.SendMessage(self.pid, "You have died permanently.", false)
@@ -400,7 +403,8 @@ function BasePlayer:Resurrect()
         tes3mp.SendCell(self.pid)
 
         if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
-            tes3mp.SetPos(self.pid, config.defaultRespawnPos[1], config.defaultRespawnPos[2], config.defaultRespawnPos[3])
+            tes3mp.SetPos(self.pid, config.defaultRespawnPos[1],
+                config.defaultRespawnPos[2], config.defaultRespawnPos[3])
             tes3mp.SetRot(self.pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
             tes3mp.SendPos(self.pid)
         end
@@ -428,7 +432,8 @@ function BasePlayer:Resurrect()
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 then
-        local resurrectionText = "You've been revived and brought back here, but your skills have been affected by "
+        local resurrectionText = "You've been revived and brought back here, " ..
+            "but your skills have been affected by "
         local jailTime = config.deathPenaltyJailDays
 
         if config.bountyResetOnDeath == true then
@@ -457,7 +462,8 @@ function BasePlayer:DeleteSummons()
 
     if self.summons ~= nil then
         for summonRefIndex, summonRefId in pairs(self.summons) do
-            tes3mp.LogAppend(1, "- removing player's summon " .. summonRefIndex .. ", refId " .. summonRefId)
+            tes3mp.LogAppend(1, "- removing player's summon " .. summonRefIndex ..
+                ", refId " .. summonRefId)
             
             local cell = logicHandler.GetCellContainingActor(summonRefIndex)
 
@@ -593,13 +599,15 @@ function BasePlayer:SaveAttributes()
         if baseValue > maxAttributeValue then
             self:LoadAttributes()
 
-            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value " ..
+                "and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
         elseif (baseValue + modifierValue) > maxAttributeValue then
             tes3mp.ClearAttributeModifier(self.pid, attributeId)
             tes3mp.SendAttributes(self.pid)
 
-            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed " ..
+                "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
             self.data.attributes[name] = baseValue
@@ -640,13 +648,15 @@ function BasePlayer:SaveSkills()
         if baseValue > maxSkillValue then
             self:LoadSkills()
 
-            local message = "Your base " .. name .. " has exceeded the maximum allowed value and been reset to its last recorded one.\n"
+            local message = "Your base " .. name .. " has exceeded the maximum allowed value " ..
+                "and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
         elseif (baseValue + modifierValue) > maxSkillValue then
             tes3mp.ClearSkillModifier(self.pid, skillId)
             tes3mp.SendSkills(self.pid)
 
-            local message = "Your " .. name .. " fortification has exceeded the maximum allowed value and been removed.\n"
+            local message = "Your " .. name .. " fortification has exceeded the maximum allowed " ..
+                "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
             self.data.skills[name] = baseValue
@@ -709,7 +719,8 @@ function BasePlayer:SaveShapeshift()
     local newScale = tes3mp.GetScale(self.pid)
 
     if newScale ~= self.data.shapeshift.scale then
-        tes3mp.LogMessage(1, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed their scale to " .. newScale)
+        tes3mp.LogMessage(1, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed " ..
+            "their scale to " .. newScale)
         self.data.shapeshift.scale = newScale
     end
 
@@ -774,7 +785,8 @@ function BasePlayer:LoadEquipment()
                 currentItem.enchantmentCharge = -1
             end
 
-            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
+            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count,
+                currentItem.charge, currentItem.enchantmentCharge)
         else
             tes3mp.UnequipItem(self.pid, i)
         end
@@ -840,7 +852,8 @@ function BasePlayer:LoadInventory()
                     currentItem.enchantmentCharge = -1
                 end
 
-                tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
+                tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count,
+                    currentItem.charge, currentItem.enchantmentCharge)
             end
         end
     end
@@ -1131,7 +1144,8 @@ function BasePlayer:SetDifficulty(difficulty)
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " .. logicHandler.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " ..
+        logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
@@ -1143,7 +1157,8 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     end
 
     tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. logicHandler.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " ..
+        logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
@@ -1155,7 +1170,8 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     end
 
     tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. logicHandler.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " ..
+        logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetConsoleAllowed(state)
