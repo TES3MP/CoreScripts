@@ -226,8 +226,8 @@ function BaseCell:DeleteObjectData(refIndex)
     local summon = self.data.objectData[refIndex].summon
 
     if summon ~= nil then
-        if summon.summonerPlayer ~= nil and myMod.IsPlayerNameLoggedIn(summon.summonerPlayer) then
-            myMod.GetPlayerByName(summon.summonerPlayer).summons[refIndex] = nil
+        if summon.summonerPlayer ~= nil and logicHandler.IsPlayerNameLoggedIn(summon.summonerPlayer) then
+            logicHandler.GetPlayerByName(summon.summonerPlayer).summons[refIndex] = nil
         end
     end
 
@@ -293,7 +293,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
         tes3mp.SendObjectDelete(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -303,7 +303,7 @@ function BaseCell:SaveObjectsDeleted(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -321,7 +321,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
             -- If the new cell is not loaded, load it temporarily
             if LoadedCells[originalCellDescription] == nil then
-                myMod.LoadCell(originalCellDescription)
+                logicHandler.LoadCell(originalCellDescription)
                 table.insert(temporaryLoadedCells, originalCellDescription)
             end
 
@@ -349,7 +349,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
     -- Go through every temporary loaded cell and unload it
     for arrayIndex, originalCellDescription in pairs(temporaryLoadedCells) do
-        myMod.UnloadCell(originalCellDescription)
+        logicHandler.UnloadCell(originalCellDescription)
     end
 end
 
@@ -383,7 +383,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
         tes3mp.SendObjectPlace(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -393,7 +393,7 @@ function BaseCell:SaveObjectsPlaced(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -488,7 +488,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
         tes3mp.SendObjectSpawn(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -498,7 +498,7 @@ function BaseCell:SaveObjectsSpawned(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -594,7 +594,7 @@ function BaseCell:ProcessObjectsLocked(pid)
         tes3mp.SendObjectLock(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -602,7 +602,7 @@ end
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectLock from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -649,7 +649,7 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
         tes3mp.SendObjectTrap(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -657,7 +657,7 @@ end
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -703,7 +703,7 @@ function BaseCell:ProcessObjectsScaled(pid)
         tes3mp.SendObjectScale(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -711,7 +711,7 @@ end
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectScale from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -758,7 +758,7 @@ function BaseCell:ProcessObjectStates(pid)
         tes3mp.SendObjectState(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectState from " .. myMod.GetChatName(pid) .. " about " ..
+        tes3mp.LogMessage(1, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) .. " about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -770,7 +770,7 @@ function BaseCell:SaveObjectStates(pid)
     end
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectState from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -796,7 +796,7 @@ function BaseCell:SaveObjectStates(pid)
             else    
                 Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
                 if Players[pid].stateSpam[refId] >= 5 then -- If the player gets 5 false object states for the same refid in that cell, delete it.
-                    myMod.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
+                    logicHandler.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
                     tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: "..refId.." was causing spam and has been deleted")            
                 end
             end
@@ -854,7 +854,7 @@ function BaseCell:ProcessContainers(pid)
     if isValid then
         self:SaveContainers(pid)
     else
-        tes3mp.LogMessage(1, "Rejected Container from " .. myMod.GetChatName(pid) .." about " ..
+        tes3mp.LogMessage(1, "Rejected Container from " .. logicHandler.GetChatName(pid) .." about " ..
             tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
@@ -864,7 +864,7 @@ function BaseCell:SaveContainers(pid)
     tes3mp.ReadLastObjectList()
     tes3mp.CopyLastObjectListToStore()
 
-    tes3mp.LogMessage(1, "Saving Container from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving Container from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     local action = tes3mp.GetObjectListAction()
     local subAction = tes3mp.GetObjectListContainerSubAction()
@@ -962,7 +962,7 @@ end
 function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorList from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorList from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -1044,7 +1044,7 @@ end
 function BaseCell:SaveActorEquipment(pid)
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
 
@@ -1091,7 +1091,7 @@ function BaseCell:SaveActorDeath(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorDeath from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
 
@@ -1109,7 +1109,7 @@ function BaseCell:SaveActorDeath(pid)
 
             if tes3mp.DoesActorHavePlayerKiller(actorIndex) then
                 local killerPid = tes3mp.GetActorKillerPid(actorIndex)
-                deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
+                deathReason = "was killed by player " .. logicHandler.GetChatName(killerPid)
 
                 self.data.objectData[refIndex].killer = {
                     player = Players[killerPid].accountName
@@ -1155,7 +1155,7 @@ function BaseCell:SaveActorCellChanges(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. myMod.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -1166,7 +1166,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
         -- If the new cell is not loaded, load it temporarily
         if LoadedCells[newCellDescription] == nil then
-            myMod.LoadCell(newCellDescription)
+            logicHandler.LoadCell(newCellDescription)
             table.insert(temporaryLoadedCells, newCellDescription)
         end
 
@@ -1204,7 +1204,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
                     -- If the original cell is not loaded, load it temporarily
                     if LoadedCells[originalCellDescription] == nil then
-                        myMod.LoadCell(originalCellDescription)
+                        logicHandler.LoadCell(originalCellDescription)
                         table.insert(temporaryLoadedCells, originalCellDescription)
                     end
 
@@ -1256,7 +1256,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
     -- Go through every temporary loaded cell and unload it
     for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
-        myMod.UnloadCell(newCellDescription)
+        logicHandler.UnloadCell(newCellDescription)
     end
 
     self:Save()
@@ -1790,7 +1790,7 @@ function BaseCell:SendActorCellChanges(pid)
 
             -- If the new cell is not loaded, load it temporarily
             if LoadedCells[newCellDescription] == nil then
-                myMod.LoadCell(newCellDescription)
+                logicHandler.LoadCell(newCellDescription)
                 table.insert(temporaryLoadedCells, newCellDescription)
             end
 
@@ -1826,7 +1826,7 @@ function BaseCell:SendActorCellChanges(pid)
 
     -- Go through every temporary loaded cell and unload it
     for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
-        myMod.UnloadCell(newCellDescription)
+        logicHandler.UnloadCell(newCellDescription)
     end
 
     -- Make a table of every cell that has sent actors to this cell

@@ -353,7 +353,7 @@ function BasePlayer:ProcessDeath()
         local killerPid = tes3mp.GetPlayerKillerPid(self.pid)
 
         if self.pid ~= killerPid then
-            deathReason = "was killed by player " .. myMod.GetChatName(killerPid)
+            deathReason = "was killed by player " .. logicHandler.GetChatName(killerPid)
         end
     else
         local killerName = tes3mp.GetPlayerKillerName(self.pid)
@@ -363,7 +363,7 @@ function BasePlayer:ProcessDeath()
         end
     end
 
-    local message = myMod.GetChatName(self.pid) .. " " .. deathReason .. ".\n"
+    local message = logicHandler.GetChatName(self.pid) .. " " .. deathReason .. ".\n"
 
     tes3mp.SendMessage(self.pid, message, true)
 
@@ -459,13 +459,13 @@ function BasePlayer:DeleteSummons()
         for summonRefIndex, summonRefId in pairs(self.summons) do
             tes3mp.LogAppend(1, "- removing player's summon " .. summonRefIndex .. ", refId " .. summonRefId)
             
-            local cell = myMod.GetCellContainingActor(summonRefIndex)
+            local cell = logicHandler.GetCellContainingActor(summonRefIndex)
 
             if cell ~= nil then
                 cell:DeleteObjectData(summonRefIndex)
 
                 local splitIndex = summonRefIndex:split("-")
-                myMod.DeleteObjectForEveryone(summonRefId, splitIndex[1], splitIndex[2])
+                logicHandler.DeleteObjectForEveryone(summonRefId, splitIndex[1], splitIndex[2])
             end
         end
     end
@@ -709,7 +709,7 @@ function BasePlayer:SaveShapeshift()
     local newScale = tes3mp.GetScale(self.pid)
 
     if newScale ~= self.data.shapeshift.scale then
-        tes3mp.LogMessage(1, "Player " .. myMod.GetChatName(self.pid) .. " has changed their scale to " .. newScale)
+        tes3mp.LogMessage(1, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed their scale to " .. newScale)
         self.data.shapeshift.scale = newScale
     end
 
@@ -810,8 +810,8 @@ function BasePlayer:SaveEquipment()
     if reloadAtEnd then
         -- Disable and enable the player's menus to avoid an inventory view that hasn't
         -- been properly updated (to be fixed for 0.6.3)
-        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
-        myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
+        logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
+        logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
         self:LoadEquipment()
     end
 end
@@ -1131,7 +1131,7 @@ function BasePlayer:SetDifficulty(difficulty)
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " .. logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
@@ -1143,7 +1143,7 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     end
 
     tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " .. logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
@@ -1155,7 +1155,7 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     end
 
     tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. myMod.GetChatName(self.pid))
+    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " .. logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetConsoleAllowed(state)
@@ -1223,13 +1223,13 @@ function BasePlayer:SetConfiscationState(state)
     if self:IsLoggedIn() then
 
         if state == true then
-            myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
-            myMod.RunConsoleCommandOnPlayer(self.pid, "disableplayercontrols")
+            logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
+            logicHandler.RunConsoleCommandOnPlayer(self.pid, "disableplayercontrols")
             tes3mp.MessageBox(self.pid, -1, "You are immobilized while an item is being confiscated from you")
         elseif state == false then
             self.data.customVariables.isConfiscationTarget = nil
-            myMod.RunConsoleCommandOnPlayer(self.pid, "tm")
-            myMod.RunConsoleCommandOnPlayer(self.pid, "enableplayercontrols")
+            logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
+            logicHandler.RunConsoleCommandOnPlayer(self.pid, "enableplayercontrols")
             tes3mp.MessageBox(self.pid, -1, "You are free to move again")
         end
     end

@@ -52,7 +52,7 @@ local GetLoadedCellList = function()
     local list = ""
     local divider = ""
 
-    local cellCount = myMod.GetLoadedCellCount()
+    local cellCount = logicHandler.GetLoadedCellCount()
     local cellIndex = 0
 
     for key, value in pairs(LoadedCells) do
@@ -94,7 +94,7 @@ end
 
 GUI.ShowPlayerList = function(pid)
 
-    local playerCount = myMod.GetConnectedPlayerCount()
+    local playerCount = logicHandler.GetConnectedPlayerCount()
     local label = playerCount .. " connected "
     if playerCount == 1 then
         label = label .. "player"
@@ -106,7 +106,7 @@ end
 
 GUI.ShowCellList = function(pid)
 
-    local cellCount = myMod.GetLoadedCellCount()
+    local cellCount = logicHandler.GetLoadedCellCount()
     local label = cellCount .. " loaded "
     if cellCount == 1 then
         label = label .. "cell"

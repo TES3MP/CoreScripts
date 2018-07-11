@@ -6,7 +6,7 @@ local time = require("time")
 contentFixer = require("contentFixer")
 menuHelper = require("menuHelper")
 
-local myMod = {}
+local logicHandler = {}
 
 Players = {}
 LoadedCells = {}
@@ -18,7 +18,7 @@ for _, menuFile in ipairs(config.menuHelperFiles) do
     require("menu/" .. menuFile)
 end
 
-myMod.InitializeWorld = function()
+logicHandler.InitializeWorld = function()
     WorldInstance = World()
 
     -- If the world has a data entry, load it
@@ -35,7 +35,7 @@ myMod.InitializeWorld = function()
     end
 end
 
-myMod.CheckPlayerValidity = function(pid, targetPid)
+logicHandler.CheckPlayerValidity = function(pid, targetPid)
 
     local valid = false
     local sendMessage = true
@@ -71,7 +71,7 @@ myMod.CheckPlayerValidity = function(pid, targetPid)
 end
 
 -- Get the "Name (pid)" representation of a player used in chat
-myMod.GetChatName = function(pid)
+logicHandler.GetChatName = function(pid)
 
     if Players[pid] ~= nil then
         return Players[pid].name .. " (" .. pid .. ")"
@@ -81,7 +81,7 @@ myMod.GetChatName = function(pid)
 end
 
 -- Check if there is already a player with this name on the server
-myMod.IsPlayerNameLoggedIn = function(newName)
+logicHandler.IsPlayerNameLoggedIn = function(newName)
 
     -- Make sure we also check the account name this new player would end up having
     local newAccountName = fileHelper.fixFilename(newName)
@@ -100,7 +100,7 @@ myMod.IsPlayerNameLoggedIn = function(newName)
 end
 
 -- Check if the player is using a disallowed name
-myMod.IsPlayerNameAllowed = function(playerName)
+logicHandler.IsPlayerNameAllowed = function(playerName)
 
     for _, disallowedNameString in pairs(config.disallowedNameStrings) do
         
@@ -114,7 +114,7 @@ myMod.IsPlayerNameAllowed = function(playerName)
 end
 
 -- Get the Player object of either an online player or an offline one
-myMod.GetPlayerByName = function(targetName)
+logicHandler.GetPlayerByName = function(targetName)
     -- Check if the player is online
     for iteratorPid, player in pairs(Players) do
 
@@ -134,9 +134,9 @@ myMod.GetPlayerByName = function(targetName)
     end
 end
 
-myMod.BanPlayer = function(pid, targetName)
+logicHandler.BanPlayer = function(pid, targetName)
     if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
-        local targetPlayer = myMod.GetPlayerByName(targetName)
+        local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
             table.insert(banList.playerNames, string.lower(targetName))
@@ -155,12 +155,12 @@ myMod.BanPlayer = function(pid, targetName)
     end
 end
 
-myMod.UnbanPlayer = function(pid, targetName)
+logicHandler.UnbanPlayer = function(pid, targetName)
     if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
         tableHelper.removeValue(banList.playerNames, string.lower(targetName))
         SaveBanList()
 
-        local targetPlayer = myMod.GetPlayerByName(targetName)
+        local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
             tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
@@ -176,8 +176,8 @@ myMod.UnbanPlayer = function(pid, targetName)
     end
 end
 
-myMod.TeleportToPlayer = function(pid, originPid, targetPid)
-    if (not myMod.CheckPlayerValidity(pid, originPid)) or (not myMod.CheckPlayerValidity(pid, targetPid)) then
+logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
+    if (not logicHandler.CheckPlayerValidity(pid, originPid)) or (not logicHandler.CheckPlayerValidity(pid, targetPid)) then
         return
     elseif tonumber(originPid) == tonumber(targetPid) then
         local message = "You can't teleport to yourself.\n"
@@ -212,7 +212,7 @@ myMod.TeleportToPlayer = function(pid, originPid, targetPid)
     tes3mp.SendMessage(targetPid, targetMessage, false)
 end
 
-myMod.GetConnectedPlayerCount = function()
+logicHandler.GetConnectedPlayerCount = function()
 
     local playerCount = 0
 
@@ -225,13 +225,13 @@ myMod.GetConnectedPlayerCount = function()
     return playerCount
 end
 
-myMod.GetLoadedCellCount = function()
+logicHandler.GetLoadedCellCount = function()
 
     return tableHelper.getCount(LoadedCells)
 end
 
-myMod.PrintPlayerPosition = function(pid, targetPid)
-    if not myMod.CheckPlayerValidity(pid, targetPid) then
+logicHandler.PrintPlayerPosition = function(pid, targetPid)
+    if not logicHandler.CheckPlayerValidity(pid, targetPid) then
         return
     end
     local message = ""
@@ -249,16 +249,16 @@ myMod.PrintPlayerPosition = function(pid, targetPid)
     tes3mp.SendMessage(pid, message, false)
 end
 
-myMod.PushPlayerList = function(pls)
+logicHandler.PushPlayerList = function(pls)
     Players = pls
 end
 
-myMod.TestFunction = function()
+logicHandler.TestFunction = function()
       tes3mp.LogMessage(2, "TestFunction: Test function called")
       tes3mp.LogMessage(2, Players[0])
 end
 
-myMod.AuthCheck = function(pid)
+logicHandler.AuthCheck = function(pid)
     if Players[pid]:IsLoggedIn() then
         return true
     end
@@ -272,7 +272,7 @@ myMod.AuthCheck = function(pid)
     return false
 end
 
-myMod.SendConfigCollisionOverrides = function(pid, forEveryone)
+logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 
     tes3mp.ClearEnforcedCollisionRefIds()
 
@@ -283,7 +283,7 @@ myMod.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
-myMod.CreateObjectAtLocation = function(cell, location, refId, packetType)
+logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
 
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local refIndex =  0 .. "-" .. mpNum
@@ -325,7 +325,7 @@ myMod.CreateObjectAtLocation = function(cell, location, refId, packetType)
     end
 end
 
-myMod.CreateObjectAtPlayer = function(pid, refId, packetType)
+logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
 
     local cell = tes3mp.GetCell(pid)
     local location = {
@@ -333,10 +333,10 @@ myMod.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    myMod.CreateObjectAtLocation(cell, location, refId, packetType)
+    logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
-myMod.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
+logicHandler.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
@@ -347,15 +347,15 @@ myMod.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
     tes3mp.SendObjectDelete(forEveryone)
 end
 
-myMod.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
-    myMod.DeleteObject(pid, refId, refNumIndex, mpNum, false)
+logicHandler.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
+    logicHandler.DeleteObject(pid, refId, refNumIndex, mpNum, false)
 end
 
-myMod.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
-    myMod.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
+logicHandler.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
+    logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
 end
 
-myMod.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
+logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
     tes3mp.InitializeObjectList(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
@@ -368,7 +368,7 @@ myMod.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-myMod.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
+logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
 
     tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
     tes3mp.SetObjectListCell(cellDescription)
@@ -382,7 +382,7 @@ myMod.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refI
     tes3mp.SendConsoleCommand(true)
 end
 
-myMod.GetCellContainingActor = function(actorRefIndex)
+logicHandler.GetCellContainingActor = function(actorRefIndex)
 
     for cellDescription, cell in pairs(LoadedCells) do
 
@@ -394,7 +394,7 @@ myMod.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-myMod.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
+logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     if cell ~= nil and actorRefIndex ~= nil then
@@ -433,20 +433,20 @@ myMod.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetAct
         tes3mp.SendActorAI()
 
     else
-        tes3mp.LogAppend(3, "Invalid input for myMod.SetAIForActor()!")
+        tes3mp.LogAppend(3, "Invalid input for logicHandler.SetAIForActor()!")
     end
 end
 
-myMod.IsCellLoaded = function(cellDescription)
+logicHandler.IsCellLoaded = function(cellDescription)
 
     return LoadedCells[cellDescription] ~= nil
 end
 
-myMod.SetCellAuthority = function(pid, cellDescription)
+logicHandler.SetCellAuthority = function(pid, cellDescription)
     LoadedCells[cellDescription]:SetAuthority(pid)
 end
 
-myMod.LoadCell = function(cellDescription)
+logicHandler.LoadCell = function(cellDescription)
 
     -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
@@ -469,9 +469,9 @@ myMod.LoadCell = function(cellDescription)
     end
 end
 
-myMod.LoadCellForPlayer = function(pid, cellDescription)
+logicHandler.LoadCellForPlayer = function(pid, cellDescription)
 
-    myMod.LoadCell(cellDescription)
+    logicHandler.LoadCell(cellDescription)
 
     -- Record that this player has the cell loaded
     LoadedCells[cellDescription]:AddVisitor(pid)
@@ -484,12 +484,12 @@ myMod.LoadCellForPlayer = function(pid, cellDescription)
     -- Otherwise, only set this player as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
-        tes3mp.LogMessage(2, "Player " .. myMod.GetChatName(pid) .. " took over authority from player " .. myMod.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
+        tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) .. " took over authority from player " .. logicHandler.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
     end
 end
 
-myMod.UnloadCell = function(cellDescription)
+logicHandler.UnloadCell = function(cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
@@ -498,7 +498,7 @@ myMod.UnloadCell = function(cellDescription)
     end
 end
 
-myMod.UnloadCellForPlayer = function(pid, cellDescription)
+logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
@@ -519,4 +519,4 @@ myMod.UnloadCellForPlayer = function(pid, cellDescription)
     end
 end
 
-return myMod
+return logicHandler

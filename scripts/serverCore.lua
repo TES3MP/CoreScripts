@@ -6,7 +6,7 @@ require("guiIds")
 require("color")
 require("time")
 
-myMod = require("myMod")
+logicHandler = require("logicHandler")
 eventHandler = require("eventHandler")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
@@ -85,7 +85,7 @@ function LoadBanList()
                 message = message .. ", "
             end
 
-            local targetPlayer = myMod.GetPlayerByName(targetName)
+            local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
             if targetPlayer ~= nil then
 
@@ -196,14 +196,14 @@ function OnServerInit()
         tes3mp.StopServer(1)
     end
 
-    myMod.InitializeWorld()
+    logicHandler.InitializeWorld()
     hourCounter = WorldInstance.data.time.hour
     frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
 
     updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
     tes3mp.StartTimer(updateTimerId)
 
-    myMod.PushPlayerList(Players)
+    logicHandler.PushPlayerList(Players)
 
     LoadBanList()
     LoadPluginList()
@@ -299,11 +299,11 @@ function OnPlayerConnect(pid)
         playerName = string.sub(playerName, 0, 35)
     end
 
-    if myMod.IsPlayerNameAllowed(playerName) == false then
+    if logicHandler.IsPlayerNameAllowed(playerName) == false then
         local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use a disallowed name.\n"
         tes3mp.SendMessage(pid, message, true)
         return false -- deny player        
-    elseif myMod.IsPlayerNameLoggedIn(playerName) then
+    elseif logicHandler.IsPlayerNameLoggedIn(playerName) then
         local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
         tes3mp.SendMessage(pid, message, true)
         return false -- deny player
@@ -315,7 +315,7 @@ function OnPlayerConnect(pid)
 end
 
 function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
-    if myMod.AuthCheck(pid) then
+    if logicHandler.AuthCheck(pid) then
         if Players[pid]:IsModerator() then
             IncrementAdminCounter()
         end
@@ -325,7 +325,7 @@ end
 function OnPlayerDisconnect(pid)
 
     tes3mp.LogMessage(1, "Called \"OnPlayerDisconnect\" for pid " .. pid)
-    local message = myMod.GetChatName(pid) .. " left the server.\n"
+    local message = logicHandler.GetChatName(pid) .. " left the server.\n"
 
     tes3mp.SendMessage(pid, message, true)
 
@@ -336,7 +336,7 @@ function OnPlayerDisconnect(pid)
         -- Was this player confiscating from someone? If so, clear that
         if Players[pid].confiscationTargetName ~= nil then
             local targetName = Players[pid].confiscationTargetName
-            local targetPlayer = myMod.GetPlayerByName(targetName)
+            local targetPlayer = logicHandler.GetPlayerByName(targetName)
             targetPlayer:SetConfiscationState(false)
         end
     end
@@ -353,7 +353,7 @@ end
 
 function OnPlayerSendMessage(pid, message)
     local playerName = tes3mp.GetName(pid)
-    tes3mp.LogMessage(1, myMod.GetChatName(pid) .. ": " .. message)
+    tes3mp.LogMessage(1, logicHandler.GetChatName(pid) .. ": " .. message)
 
     if eventHandler.OnPlayerMessage(pid, message) == false then
         return false
@@ -368,11 +368,11 @@ function OnPlayerSendMessage(pid, message)
     -- Check for chat overrides that add extra text
     else
         if admin then
-            local message = "[Admin] " .. myMod.GetChatName(pid) .. ": " .. message .. "\n"
+            local message = "[Admin] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
             tes3mp.SendMessage(pid, message, true)
             return false
         elseif moderator then
-            local message = "[Mod] " .. myMod.GetChatName(pid) .. ": " .. message .. "\n"
+            local message = "[Mod] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
             tes3mp.SendMessage(pid, message, true)
             return false
         end

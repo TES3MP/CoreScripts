@@ -18,12 +18,12 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
     tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
 
-    myMod.SendConfigCollisionOverrides(pid, false)
+    logicHandler.SendConfigCollisionOverrides(pid, false)
 
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
 
-    local message = myMod.GetChatName(pid) .. " joined the server.\n"
+    local message = logicHandler.GetChatName(pid) .. " joined the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
     message = "Welcome " .. playerName .. "\nYou have " .. tostring(config.loginTime) ..
@@ -51,7 +51,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
         -- Unload every cell for this player
         for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
 
-            myMod.UnloadCellForPlayer(pid, loadedCellDescription)
+            logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
         end
 
         Players[pid]:Destroy()
@@ -101,7 +101,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
     elseif idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
         local targetName = Players[pid].confiscationTargetName
-        local targetPlayer = myMod.GetPlayerByName(targetName)
+        local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         -- Because the window's item index starts from 0 while the Lua table for
         -- inventories starts from 1, adjust the former here
@@ -432,7 +432,7 @@ end
 
 eventHandler.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        myMod.LoadCellForPlayer(pid, cellDescription)
+        logicHandler.LoadCellForPlayer(pid, cellDescription)
     else
         tes3mp.LogMessage(2, "Undefined behavior: invalid player " .. pid ..
             " loaded cell " .. cellDescription)
@@ -441,12 +441,12 @@ end
 
 eventHandler.OnCellUnload = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        myMod.UnloadCellForPlayer(pid, cellDescription)
+        logicHandler.UnloadCellForPlayer(pid, cellDescription)
     end
 end
 
 eventHandler.OnCellDeletion = function(cellDescription)
-    myMod.UnloadCell(cellDescription)
+    logicHandler.UnloadCell(cellDescription)
 end
 
 eventHandler.OnActorList = function(pid, cellDescription)
@@ -454,7 +454,7 @@ eventHandler.OnActorList = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorList(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorList for unloaded " .. cellDescription)
         end
     else
@@ -467,7 +467,7 @@ eventHandler.OnActorEquipment = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorEquipment(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorEquipment for unloaded " .. cellDescription)
         end
     else
@@ -479,7 +479,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorDeath(pid)
     else
-        tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+        tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
             " sent ActorDeath for unloaded " .. cellDescription)
     end
 end
@@ -489,7 +489,7 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveActorCellChanges(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorCellChange for unloaded " .. cellDescription)
         end
     else
@@ -502,7 +502,7 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsPlaced(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectPlace for unloaded " .. cellDescription)
         end
     else
@@ -515,7 +515,7 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsSpawned(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectSpawn for unloaded " .. cellDescription)
         end
     else
@@ -528,7 +528,7 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsDeleted(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectDelete for unloaded " .. cellDescription)
         end
     else
@@ -541,7 +541,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsLocked(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectLock for unloaded " .. cellDescription)
         end
     end
@@ -552,7 +552,7 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectTrapsTriggered(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectTrap for unloaded " .. cellDescription)
         end
     else
@@ -565,7 +565,7 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessObjectsScaled(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectScale for unloaded " .. cellDescription)
         end
     else
@@ -578,14 +578,14 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         local shouldUnload = false
 
         if LoadedCells[cellDescription] == nil then
-            myMod.LoadCell(cellDescription)
+            logicHandler.LoadCell(cellDescription)
             shouldUnload = true
         end
 
         LoadedCells[cellDescription]:ProcessObjectStates(pid)
 
         if shouldUnload == true then
-            myMod.UnloadCell(cellDescription)
+            logicHandler.UnloadCell(cellDescription)
         end
     else
         tes3mp.Kick(pid)
@@ -597,7 +597,7 @@ eventHandler.OnDoorState = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:SaveDoorStates(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent DoorState for unloaded " .. cellDescription)
         end
     else
@@ -610,7 +610,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
             LoadedCells[cellDescription]:ProcessContainers(pid)
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. myMod.GetChatName(pid) ..
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent Container for " .. cellDescription)
         end
     else
@@ -669,9 +669,9 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
             Players[pid].accountName == loop.targetName then
         
             if loop.packetType == "place" or loop.packetType == "spawn" then
-                myMod.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+                logicHandler.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
             elseif loop.packetType == "console" then
-                myMod.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
+                logicHandler.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
             end
 
             loop.count = loop.count - 1

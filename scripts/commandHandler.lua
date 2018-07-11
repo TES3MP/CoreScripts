@@ -16,33 +16,33 @@ function commandHandler.ProcessCommand(pid, cmd)
             tes3mp.SendMessage(pid, "You can't message yourself.\n")
         elseif cmd[3] == nil then
             tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
-        elseif myMod.CheckPlayerValidity(pid, cmd[2]) then
+        elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
-            message = myMod.GetChatName(pid) .. " to " .. myMod.GetChatName(targetPid) .. ": "
+            message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
             message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
             tes3mp.SendMessage(pid, message, false)
             tes3mp.SendMessage(targetPid, message, false)
         end
 
     elseif cmd[1] == "me" and cmd[2] ~= nil then
-        local message = myMod.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+        local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
         tes3mp.SendMessage(pid, message, true)
 
     elseif (cmd[1] == "local" or cmd[1] == "l") and cmd[2] ~= nil then
         local cellDescription = Players[pid].data.location.cell
 
-        if myMod.IsCellLoaded(cellDescription) == true then
+        if logicHandler.IsCellLoaded(cellDescription) == true then
             for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
 
-                local message = myMod.GetChatName(pid) .. " to local area: "
+                local message = logicHandler.GetChatName(pid) .. " to local area: "
                 message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
                 tes3mp.SendMessage(visitorPid, message, false)
             end
         end
 
     elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
-        local message = myMod.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+        local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
         tes3mp.SendMessage(pid, message, true)
 
     elseif cmd[1] == "ban" and moderator then
@@ -61,12 +61,12 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
             local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-            myMod.BanPlayer(pid, targetName)
+            logicHandler.BanPlayer(pid, targetName)
 
-        elseif type(tonumber(cmd[2])) == "number" and myMod.CheckPlayerValidity(pid, cmd[2]) then
+        elseif type(tonumber(cmd[2])) == "number" and logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
-            myMod.BanPlayer(pid, targetName)
+            logicHandler.BanPlayer(pid, targetName)
         else
             tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
         end
@@ -87,7 +87,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         elseif cmd[2] == "name" or cmd[2] == "player" then
             local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-            myMod.UnbanPlayer(pid, targetName)
+            logicHandler.UnbanPlayer(pid, targetName)
         else
             tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
         end
@@ -138,7 +138,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif (cmd[1] == "ipaddresses" or cmd[1] == "ips") and moderator and cmd[2] ~= nil then
         local targetName = tableHelper.concatenateFromIndex(cmd, 2)
-        local targetPlayer = myMod.GetPlayerByName(targetName)
+        local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer == nil then
             tes3mp.SendMessage(pid, "Player " .. targetName .. " does not exist.\n", false)
@@ -165,37 +165,37 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
         if cmd[2] ~= "all" then
-            myMod.TeleportToPlayer(pid, cmd[2], pid)
+            logicHandler.TeleportToPlayer(pid, cmd[2], pid)
         else
             for iteratorPid, player in pairs(Players) do
                 if iteratorPid ~= pid then
                     if player:IsLoggedIn() then
-                        myMod.TeleportToPlayer(pid, iteratorPid, pid)
+                        logicHandler.TeleportToPlayer(pid, iteratorPid, pid)
                     end
                 end
             end
         end
 
     elseif (cmd[1] == "teleportto" or cmd[1] == "tpto") and moderator then
-        myMod.TeleportToPlayer(pid, pid, cmd[2])
+        logicHandler.TeleportToPlayer(pid, pid, cmd[2])
 
     elseif (cmd[1] == "setauthority" or cmd[1] == "setauth") and moderator and #cmd > 2 then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local cellDescription = tableHelper.concatenateFromIndex(cmd, 3)
 
             -- Get rid of quotation marks
             cellDescription = string.gsub(cellDescription, '"', '')
 
-            if myMod.IsCellLoaded(cellDescription) == true then
+            if logicHandler.IsCellLoaded(cellDescription) == true then
                 local targetPid = tonumber(cmd[2])
-                myMod.SetCellAuthority(targetPid, cellDescription)
+                logicHandler.SetCellAuthority(targetPid, cellDescription)
             else
                 tes3mp.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
             end
         end
 
     elseif cmd[1] == "kick" and moderator then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
             local message
@@ -214,7 +214,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "addmoderator" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
             local message
@@ -234,7 +234,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "removemoderator" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
             local message
@@ -255,7 +255,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "setrace" and admin then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local newRace = tableHelper.concatenateFromIndex(cmd, 3)
@@ -268,7 +268,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "sethead" and admin then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local newHead = tableHelper.concatenateFromIndex(cmd, 3)
@@ -281,7 +281,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "sethair" and admin then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local newHair = tableHelper.concatenateFromIndex(cmd, 3)
@@ -293,7 +293,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setattr" and moderator then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
 
@@ -319,7 +319,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setskill" and moderator then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
             local targetName = Players[targetPid].name
 
@@ -345,7 +345,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setmomentum" and moderator then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local xValue = tonumber(cmd[3])
@@ -366,10 +366,10 @@ function commandHandler.ProcessCommand(pid, cmd)
         tes3mp.SetExterior(pid, cmd[2], cmd[3])
 
     elseif cmd[1] == "getpos" and moderator then
-        myMod.PrintPlayerPosition(pid, cmd[2])
+        logicHandler.PrintPlayerPosition(pid, cmd[2])
 
     elseif (cmd[1] == "setdifficulty" or cmd[1] == "setdiff") and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local difficulty = cmd[3]
@@ -389,7 +389,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setconsole" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -417,7 +417,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setbedrest" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -445,7 +445,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "setwildernessrest" or cmd[1] == "setwildrest") and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -473,7 +473,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setwait" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -501,7 +501,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "setphysicsfps" or cmd[1] == "setphysicsframerate") and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local physicsFramerate = cmd[3]
@@ -522,7 +522,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "setloglevel" or cmd[1] == "setenforcedloglevel") and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local logLevel = cmd[3]
@@ -543,7 +543,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setscale" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -565,7 +565,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "setwerewolf" and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local targetName = ""
@@ -591,7 +591,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "disguise" and admin then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local creatureRefId = tableHelper.concatenateFromIndex(cmd, 3)
@@ -612,7 +612,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "usecreaturename" and admin then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local nameState
@@ -759,7 +759,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
-        myMod.SendConfigCollisionOverrides(pid, true)
+        logicHandler.SendConfigCollisionOverrides(pid, true)
         Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
 
     elseif cmd[1] == "suicide" then
@@ -777,7 +777,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             if Players[pid].data.customVariables.lastFixMe == nil or
                 currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
 
-                myMod.RunConsoleCommandOnPlayer(pid, "fixme")
+                logicHandler.RunConsoleCommandOnPlayer(pid, "fixme")
                 Players[pid].data.customVariables.lastFixMe = currentTime
                 tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
             else
@@ -798,7 +798,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "storeconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
@@ -807,7 +807,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
 
@@ -815,7 +815,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid .. ". Please run /storeconsole on them first.\n", false)
             else
                 local consoleCommand = Players[targetPid].storedConsoleCommand
-                myMod.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
+                logicHandler.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
 
                 local count = tonumber(cmd[3])
 
@@ -847,7 +847,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "placeat" or cmd[1] == "spawnat") and cmd[2] ~= nil and cmd[3] ~= nil and admin then
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
             local refId = cmd[3]
@@ -859,7 +859,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 packetType = "spawn"
             end
 
-            myMod.CreateObjectAtPlayer(targetPid, refId, packetType)
+            logicHandler.CreateObjectAtPlayer(targetPid, refId, packetType)
 
             local count = tonumber(cmd[4])
 
@@ -909,7 +909,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "confiscate" and moderator then
 
-        if myMod.CheckPlayerValidity(pid, cmd[2]) then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
 
@@ -947,7 +947,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         else
 
             local refIndex = cmd[2]
-            local cell = myMod.GetCellContainingActor(refIndex)
+            local cell = logicHandler.GetCellContainingActor(refIndex)
 
             if cell == nil then
 
@@ -960,7 +960,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                 if actionNumericalId == enumerations.ai.CANCEL then
 
-                    myMod.SetAIForActor(cell, refIndex, actionNumericalId)
+                    logicHandler.SetAIForActor(cell, refIndex, actionNumericalId)
                     Players[pid]:Message(message .. "\n")
 
                 elseif actionNumericalId == enumerations.ai.TRAVEL then
@@ -969,7 +969,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                     if type(posX) == "number" and type(posY) == "number" and type(posZ) == "number" then
 
-                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, posX, posY, posZ)
+                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, posX, posY, posZ)
                         Players[pid]:Message(message .. " " .. posX .. " " .. posY .. " " .. posZ .. "\n")
                     else
                         Players[pid]:Message("Invalid travel coordinates! " ..
@@ -982,7 +982,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                     if type(distance) == "number" and type(duration) == "number" then
 
-                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, nil, nil, nil,
+                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, nil, nil, nil,
                             distance, duration, shouldRepeat)
                         Players[pid]:Message(message .. " a distance of " .. distance .. " for a duration of " ..
                             duration .. "\n")
@@ -996,16 +996,16 @@ function commandHandler.ProcessCommand(pid, cmd)
                     local target = cmd[4]
                     local hasPlayerTarget = false
 
-                    if type(tonumber(target)) == "number" and myMod.CheckPlayerValidity(pid, target) then
+                    if type(tonumber(target)) == "number" and logicHandler.CheckPlayerValidity(pid, target) then
                         target = tonumber(target)
                         hasPlayerTarget = true
                     end
 
                     if hasPlayerTarget then
-                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, target)
+                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, target)
                         message = message .. " player " .. Players[target].name
                     else
-                        myMod.SetAIForActor(cell, refIndex, actionNumericalId, nil, target)
+                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, target)
                         message = message .. " actor " .. target
                     end
 
