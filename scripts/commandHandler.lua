@@ -42,7 +42,8 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
-        local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText .. ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+        local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
+            ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
         tes3mp.SendMessage(pid, message, true)
 
     elseif cmd[1] == "ban" and moderator then
@@ -311,7 +312,8 @@ function commandHandler.ProcessCommand(pid, cmd)
                     tes3mp.SetAttributeBase(targetPid, attrId, value)
                     tes3mp.SendAttributes(targetPid)
 
-                    local message = targetName.."'s "..tes3mp.GetAttributeName(attrId).." is now "..value.."\n"
+                    local message = targetName .. "'s " .. tes3mp.GetAttributeName(attrId) ..
+                        " is now " .. value .. "\n"
                     tes3mp.SendMessage(pid, message, true)
                     Players[targetPid]:SaveAttributes()
                 end
@@ -337,7 +339,8 @@ function commandHandler.ProcessCommand(pid, cmd)
                     tes3mp.SetSkillBase(targetPid, skillId, value)
                     tes3mp.SendSkills(targetPid)
 
-                    local message = targetName.."'s "..tes3mp.GetSkillName(skillId).." is now "..value.."\n"
+                    local message = targetName .. "'s " .. tes3mp.GetSkillName(skillId) ..
+                        " is now " .. value .. "\n"
                     tes3mp.SendMessage(pid, message, true)
                     Players[targetPid]:SaveSkills()
                 end
@@ -381,7 +384,8 @@ function commandHandler.ProcessCommand(pid, cmd)
             if difficulty == "default" or type(difficulty) == "number" then
                 Players[targetPid]:SetDifficulty(difficulty)
                 Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " .. difficulty .. "\n", true)
+                tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " ..
+                    difficulty .. "\n", true)
             else
                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>\n", false)
                 return false
@@ -781,7 +785,8 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[pid].data.customVariables.lastFixMe = currentTime
                 tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
             else
-                local remainingSeconds = Players[pid].data.customVariables.lastFixMe + config.fixmeInterval - currentTime
+                local remainingSeconds = Players[pid].data.customVariables.lastFixMe +
+                    config.fixmeInterval - currentTime
                 local message = "Sorry! You can't use /fixme for another "
 
                 if remainingSeconds > 1 then
@@ -812,7 +817,8 @@ function commandHandler.ProcessCommand(pid, cmd)
             local targetPid = tonumber(cmd[2])
 
             if Players[targetPid].storedConsoleCommand == nil then
-                tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid .. ". Please run /storeconsole on them first.\n", false)
+                tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid ..
+                    ". Please run /storeconsole on them first.\n", false)
             else
                 local consoleCommand = Players[targetPid].storedConsoleCommand
                 logicHandler.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
@@ -896,15 +902,18 @@ function commandHandler.ProcessCommand(pid, cmd)
             
         if isValid == false then
             local validList = animHelper.getValidList(pid)
-            tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" .. validList .. "\n", false)
+            tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
+                validList .. "\n", false)
         end
 
-    elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+    elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and
+        type(tonumber(cmd[3])) == "number" then
         local isValid = speechHelper.playSpeech(pid, cmd[2], tonumber(cmd[3]))
             
         if isValid == false then
             local validList = speechHelper.getValidList(pid)
-            tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n" .. validList .. "\n", false)
+            tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
+                .. validList .. "\n", false)
         end
 
     elseif cmd[1] == "confiscate" and moderator then
