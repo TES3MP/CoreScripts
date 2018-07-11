@@ -142,7 +142,8 @@ logicHandler.BanPlayer = function(pid, targetName)
             table.insert(banList.playerNames, string.lower(targetName))
             SaveBanList()
 
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now banned.\n", false)
+            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
+                " are now banned.\n", false)
 
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                 tes3mp.BanAddress(ipAddress)
@@ -163,13 +164,15 @@ logicHandler.UnbanPlayer = function(pid, targetName)
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.\n", false)
+            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
+                " are now unbanned.\n", false)
 
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                 tes3mp.UnbanAddress(ipAddress)
             end
         else
-            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server, but has been removed from the ban list.\n", false)
+            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server, " ..
+                "but has been removed from the ban list.\n", false)
         end
     else
         tes3mp.SendMessage(pid, targetName .. " is not banned.\n", false)
@@ -177,7 +180,8 @@ logicHandler.UnbanPlayer = function(pid, targetName)
 end
 
 logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
-    if (not logicHandler.CheckPlayerValidity(pid, originPid)) or (not logicHandler.CheckPlayerValidity(pid, targetPid)) then
+    if (not logicHandler.CheckPlayerValidity(pid, originPid)) or
+        (not logicHandler.CheckPlayerValidity(pid, targetPid)) then
         return
     elseif tonumber(originPid) == tonumber(targetPid) then
         local message = "You can't teleport to yourself.\n"
@@ -206,7 +210,8 @@ logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
     tes3mp.SetRot(originPid, targetRot[0], targetRot[1])
     tes3mp.SendPos(originPid)
 
-    local originMessage = "You have been teleported to " .. targetPlayerName .. "'s location. (" .. targetCell .. ")\n"
+    local originMessage = "You have been teleported to " .. targetPlayerName ..
+        "'s location. (" .. targetCell .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
     tes3mp.SendMessage(originPid, originMessage, false)
     tes3mp.SendMessage(targetPid, targetMessage, false)
@@ -245,7 +250,8 @@ logicHandler.PrintPlayerPosition = function(pid, targetPid)
     targetPos[2] = tes3mp.GetPosZ(targetPid)
     targetCell = tes3mp.GetCell(targetPid)
 
-    message = targetPlayerName.." ("..targetPid..") is in "..targetCell.." at ["..targetPos[0].." "..targetPos[1].." "..targetPos[2].."]\n"
+    message = targetPlayerName .. " (" .. targetPid .. ") is in " .. targetCell .. " at [" .. targetPos[0] ..
+        " " .. targetPos[1] .. " " .. targetPos[2] .. "]\n"
     tes3mp.SendMessage(pid, message, false)
 end
 
@@ -484,7 +490,9 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
     -- Otherwise, only set this player as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
-        tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) .. " took over authority from player " .. logicHandler.GetChatName(authPid) .. " in " .. cellDescription .. " for latency reasons")
+        tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
+            " took over authority from player " .. logicHandler.GetChatName(authPid) ..
+            " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
     end
 end
