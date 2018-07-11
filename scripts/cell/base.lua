@@ -5,6 +5,7 @@ require("utils")
 contentFixer = require("contentFixer")
 tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
+packetBuilder = require("packetBuilder")
 
 local BaseCell = class("BaseCell")
 
@@ -1794,6 +1795,63 @@ function BaseCell:SendActorEquipment(pid)
     end
 end
 
+function BaseCell:SendActorAI(pid)
+
+    if self.data.packets.ai == nil then
+        self.data.packets.ai = {}
+    end
+
+    local actorCount = 0
+
+    tes3mp.InitializeActorList(pid)
+    tes3mp.SetActorListCell(self.description)
+
+    for arrayIndex, refIndex in pairs(self.data.packets.ai) do
+
+        local splitIndex = refIndex:split("-")
+        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        if self:ContainsObject(refIndex) and self.data.objectData[refIndex].ai ~= nil then
+            local ai = self.data.objectData[refIndex].ai
+            local targetPid
+
+            if ai.targetPlayer ~= nil then
+                if logicHandler.IsPlayerNameLoggedIn(ai.targetPlayer) then
+                    targetPid = logicHandler.GetPlayerByName(ai.targetPlayer).pid
+                end
+            end
+
+            local isValid = true
+
+            -- Don't allow untargeted packets that require targets
+            if targetPid == nil and ai.targetRefIndex == nil then
+                if ai.action == enumerations.ai.ACTIVATE or ai.action == enumerations.ai.COMBAT or
+                    ai.action == enumerations.ai.ESCORT or ai.action == enumerations.ai.FOLLOW then
+
+                    isValid = false
+                    tes3mp.LogAppend(2, "- Could not find valid AI target for actor " .. refIndex)
+                end
+            end
+
+            if isValid then
+                packetBuilder.AddAIActorToPacket(refIndex, ai.action, targetPid, ai.targetRefIndex,
+                    ai.posX, ai.posY, ai.posZ, ai.distance, ai.duration, ai.shouldRepeat)
+
+                actorCount = actorCount + 1
+            end
+        else
+            tes3mp.LogAppend(3, "- Had AI packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(self.data.packets.equipment, refIndex)
+        end
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorAI()
+    end
+end
+
 function BaseCell:SendActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
@@ -1985,6 +2043,7 @@ function BaseCell:SendInitialCellData(pid)
         tes3mp.LogAppend(1, "- Had actor data")
         self:SendActorCellChanges(pid)
         self:SendActorEquipment(pid)
+        self:SendActorAI(pid)
     elseif self.isRequestingActorList == false then
         tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
