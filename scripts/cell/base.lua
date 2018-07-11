@@ -293,8 +293,8 @@ function BaseCell:ProcessObjectsDeleted(pid)
         tes3mp.SendObjectDelete(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -303,7 +303,8 @@ function BaseCell:SaveObjectsDeleted(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -335,7 +336,8 @@ function BaseCell:SaveObjectsDeleted(pid)
 
         else
             -- Check whether this is a placed or spawned object
-            local wasPlacedHere = tableHelper.containsValue(self.data.packets.place, refIndex) or tableHelper.containsValue(self.data.packets.spawn, refIndex)
+            local wasPlacedHere = tableHelper.containsValue(self.data.packets.place, refIndex) or
+                tableHelper.containsValue(self.data.packets.spawn, refIndex)
 
             self:DeleteObjectData(refIndex)
 
@@ -383,8 +385,8 @@ function BaseCell:ProcessObjectsPlaced(pid)
         tes3mp.SendObjectPlace(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -393,7 +395,8 @@ function BaseCell:SaveObjectsPlaced(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -442,7 +445,9 @@ function BaseCell:SaveObjectsPlaced(pid)
 
             self.data.objectData[refIndex].location = location
 
-            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge .. ", goldValue: " .. goldValue)
+            tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId .. ", count: " .. count ..
+                ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
+                ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, refIndex)
 
@@ -488,8 +493,8 @@ function BaseCell:ProcessObjectsSpawned(pid)
         tes3mp.SendObjectSpawn(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -498,7 +503,8 @@ function BaseCell:SaveObjectsSpawned(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -546,7 +552,8 @@ function BaseCell:SaveObjectsSpawned(pid)
                         local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(i)
                         local summonerRefId = tes3mp.GetObjectSummonerRefId(i)
-                        tes3mp.LogAppend(1, "- summoned by actor " .. summonerRefIndex .. ", refId: " .. summonerRefId)
+                        tes3mp.LogAppend(1, "- summoned by actor " .. summonerRefIndex ..
+                            ", refId: " .. summonerRefId)
                     end
 
                     self.data.objectData[refIndex].summon = summon                
@@ -594,15 +601,16 @@ function BaseCell:ProcessObjectsLocked(pid)
         tes3mp.SendObjectLock(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -649,15 +657,16 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
         tes3mp.SendObjectTrap(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -703,15 +712,16 @@ function BaseCell:ProcessObjectsScaled(pid)
         tes3mp.SendObjectScale(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -758,8 +768,8 @@ function BaseCell:ProcessObjectStates(pid)
         tes3mp.SendObjectState(true, false)
 
     else
-        tes3mp.LogMessage(1, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) .. " about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        tes3mp.LogMessage(1, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) ..
+            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -770,7 +780,8 @@ function BaseCell:SaveObjectStates(pid)
     end
 
     tes3mp.ReadLastObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for i = 0, tes3mp.GetObjectChangesSize() - 1 do
 
@@ -795,9 +806,11 @@ function BaseCell:SaveObjectStates(pid)
                 Players[pid].stateSpam[refId] = 0
             else    
                 Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
-                if Players[pid].stateSpam[refId] >= 5 then -- If the player gets 5 false object states for the same refid in that cell, delete it.
+                -- If the player gets 5 false object states for the same refid in that cell, delete it
+                if Players[pid].stateSpam[refId] >= 5 then
                     logicHandler.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
-                    tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: "..refId.." was causing spam and has been deleted")            
+                    tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: " .. refId ..
+                        " was causing spam and has been deleted")            
                 end
             end
         end
@@ -864,7 +877,8 @@ function BaseCell:SaveContainers(pid)
     tes3mp.ReadLastObjectList()
     tes3mp.CopyLastObjectListToStore()
 
-    tes3mp.LogMessage(1, "Saving Container from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving Container from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     local action = tes3mp.GetObjectListAction()
     local subAction = tes3mp.GetObjectListContainerSubAction()
@@ -962,7 +976,8 @@ end
 function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorList from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorList from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -1044,7 +1059,8 @@ end
 function BaseCell:SaveActorEquipment(pid)
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
 
@@ -1091,7 +1107,8 @@ function BaseCell:SaveActorDeath(pid)
     local containerRefIndexesRequested = {}
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
 
@@ -1155,7 +1172,8 @@ function BaseCell:SaveActorCellChanges(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadLastActorList()
-    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) .. " about " .. self.description)
+    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
+        " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
@@ -1214,7 +1232,8 @@ function BaseCell:SaveActorCellChanges(pid)
                         tes3mp.LogAppend(1, "-- This is now referenced in its original cell " .. originalCellDescription)
                         originalCell.data.objectData[refIndex].cellChangeTo = newCellDescription
                     else
-                        tes3mp.LogAppend(3, "-- It does not exist in its original cell " .. originalCellDescription .. "! Please report this to a developer")
+                        tes3mp.LogAppend(3, "-- It does not exist in its original cell " .. originalCellDescription ..
+                            "! Please report this to a developer")
                     end
                 end
 
@@ -1591,7 +1610,8 @@ function BaseCell:SendContainers(pid)
 
             objectCount = objectCount + 1
         else
-            tes3mp.LogAppend(3, "- Had container packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had container packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.container, refIndex)
         end
     end
@@ -1623,7 +1643,8 @@ function BaseCell:SendActorList(pid)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had actorList packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had actorList packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.actorList, refIndex)
         end
     end
@@ -1673,7 +1694,8 @@ function BaseCell:SendActorPositions(pid)
                 actorCount = actorCount + 1
             end
         else
-            tes3mp.LogAppend(3, "- Had position packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had position packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.position, refIndex)
         end
     end
@@ -1713,7 +1735,8 @@ function BaseCell:SendActorStatsDynamic(pid)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had statsDynamic packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had statsDynamic packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.statsDynamic, refIndex)
         end
     end
@@ -1748,7 +1771,8 @@ function BaseCell:SendActorEquipment(pid)
                         currentItem.enchantmentCharge = -1
                     end
 
-                    tes3mp.EquipActorItem(itemIndex, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge)
+                    tes3mp.EquipActorItem(itemIndex, currentItem.refId, currentItem.count,
+                        currentItem.charge, currentItem.enchantmentCharge)
                 else
                     tes3mp.UnequipActorItem(itemIndex)
                 end
@@ -1758,7 +1782,8 @@ function BaseCell:SendActorEquipment(pid)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had equipment packet recorded for " .. refIndex .. ", but no matching object data! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had equipment packet recorded for " .. refIndex ..
+                ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.equipment, refIndex)
         end
     end
@@ -1810,12 +1835,14 @@ function BaseCell:SendActorCellChanges(pid)
                     actorCount = actorCount + 1
                 end
             else
-                tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description .. " to  " .. newCellDescription .. " with no position data! Please report this to a developer")
+                tes3mp.LogAppend(3, "- Tried to move " .. refIndex .. " from " .. self.description ..
+                    " to  " .. newCellDescription .. " with no position data!")
                 self.data.objectData[refIndex] = nil
                 tableHelper.removeValue(self.data.packets.cellChangeTo, refIndex)
             end
         else
-            tes3mp.LogAppend(3, "- Had cellChangeTo packet recorded for " .. refIndex .. ", but no matching cell description! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had cellChangeTo packet recorded for " .. refIndex ..
+                ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeTo, refIndex)
         end
     end
@@ -1843,7 +1870,8 @@ function BaseCell:SendActorCellChanges(pid)
 
             table.insert(cellChangesFrom[originalCellDescription], refIndex)
         else
-            tes3mp.LogAppend(3, "- Had cellChangeFrom packet recorded for " .. refIndex .. ", but no matching cell description! Please report this to a developer")
+            tes3mp.LogAppend(3, "- Had cellChangeFrom packet recorded for " .. refIndex ..
+                ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeFrom, refIndex)
         end
     end
