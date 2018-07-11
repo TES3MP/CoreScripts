@@ -187,7 +187,7 @@ function OnServerInit()
 
     tes3mp.LogMessage(1, "Called \"OnServerInit\"")
 
-    local expectedVersionPrefix = "0.6.3"
+    local expectedVersionPrefix = "0.7.0"
     local serverVersion = tes3mp.GetServerVersion()
 
     if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
