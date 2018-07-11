@@ -13,7 +13,10 @@ packetBuilder.AddAIActorToPacket = function(actorRefIndex, action, targetPid, ta
         tes3mp.SetActorAITargetToPlayer(targetPid)
     elseif targetRefIndex ~= nil then
         local targetSplitIndex = targetRefIndex:split("-")
-        tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
+
+        if targetSplitIndex[2] ~= nil then
+            tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
+        end
     elseif posX ~= nil and posY ~= nil and posZ ~= nil then
         tes3mp.SetActorAICoordinates(posX, posY, posZ)
     elseif distance ~= nil then
