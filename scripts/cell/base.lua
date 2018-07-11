@@ -1803,6 +1803,11 @@ function BaseCell:SendActorAI(pid)
 
     local actorCount = 0
 
+    -- These packets only need to be sent to the new visitor, unless the
+    -- new visitor is the target of some of them, in which case those
+    -- need to be tracked and sent separately to all the cell's visitors
+    local sharedPacketRefIndexes = {}
+
     tes3mp.InitializeActorList(pid)
     tes3mp.SetActorListCell(self.description)
 
@@ -1835,10 +1840,17 @@ function BaseCell:SendActorAI(pid)
             end
 
             if isValid then
-                packetBuilder.AddAIActorToPacket(refIndex, ai.action, targetPid, ai.targetRefIndex,
-                    ai.posX, ai.posY, ai.posZ, ai.distance, ai.duration, ai.shouldRepeat)
+                -- Is this new visitor the target of one of the actors? If so, we'll
+                -- send a separate packet to every cell visitor with just that at
+                -- the end
+                if pid == targetPid then
+                    table.insert(sharedPacketRefIndexes, refIndex)
+                else
+                    packetBuilder.AddAIActorToPacket(refIndex, ai.action, targetPid, ai.targetRefIndex,
+                        ai.posX, ai.posY, ai.posZ, ai.distance, ai.duration, ai.shouldRepeat)
 
-                actorCount = actorCount + 1
+                    actorCount = actorCount + 1
+                end
             end
         else
             tes3mp.LogAppend(3, "- Had AI packet recorded for " .. refIndex ..
@@ -1847,8 +1859,29 @@ function BaseCell:SendActorAI(pid)
         end
     end
 
+    -- Send the packets meant for just this new visitor
     if actorCount > 0 then
-        tes3mp.SendActorAI()
+        tes3mp.SendActorAI(false)
+    end
+
+    -- Send the packets targeting this visitor that all the visitors
+    -- need to have
+    if tableHelper.getCount(sharedPacketRefIndexes) > 0 then
+        
+        tes3mp.InitializeActorList(pid)
+        tes3mp.SetActorListCell(self.description)
+
+        for arrayIndex, refIndex in pairs(sharedPacketRefIndexes) do
+
+            local splitIndex = refIndex:split("-")
+            tes3mp.SetActorRefNumIndex(splitIndex[1])
+            tes3mp.SetActorMpNum(splitIndex[2])
+            local ai = self.data.objectData[refIndex].ai
+            packetBuilder.AddAIActorToPacket(refIndex, ai.action, pid, nil,
+                nil, nil, nil, ai.distance, ai.duration)
+        end
+
+        tes3mp.SendActorAI(true)
     end
 end
 
