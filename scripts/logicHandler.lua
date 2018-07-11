@@ -414,14 +414,17 @@ logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, ta
         tableHelper.insertValueIfMissing(cell.data.packets.ai, actorRefIndex)
         cell:Save()
 
-        -- Send packet to the cell's current authority
+        -- Initialize the packet for the current cell authority
         tes3mp.InitializeActorList(cell.authority)
         tes3mp.SetActorListCell(cell.description)
 
         packetBuilder.AddAIActorToPacket(actorRefIndex, action, targetPid, targetRefIndex,
             posX, posY, posZ, distance, duration, shouldRepeat)
 
-        tes3mp.SendActorAI()
+        -- If the cell authority leaves, we want the new cell authority to resume
+        -- this AI package, so we send the packet to all of the cell's visitors
+        -- i.e. sendToOtherVisitors is true
+        tes3mp.SendActorAI(true)
 
     else
         tes3mp.LogAppend(3, "Invalid input for logicHandler.SetAIForActor()!")
