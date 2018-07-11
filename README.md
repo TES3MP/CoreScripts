@@ -1,7 +1,5 @@
 # CoreScripts
 
-In order to enable scripts you need to change 2 lines in your tes3mp-server.cfg:
-```INI
-plugins = server.lua
-home = full-path-to-git-dir
-```
+These are the scripts used to implement most of the essential server logic in TES3MP, including gameplay adjustments for multiplayer as well as state saving and loading.
+
+* TES3MP version: 0.7.0
