@@ -42,11 +42,6 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     tes3mp.StartTimer(Players[pid].loginTimerId)
 end
 
-eventHandler.OnPlayerDeny = function(pid, playerName)
-    local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
-    tes3mp.SendMessage(pid, message, true)
-end
-
 eventHandler.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
