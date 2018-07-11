@@ -208,15 +208,18 @@ function menuHelper.processEffects(pid, effects)
 
                 for _, currentRefId in ipairs(effect.refIds) do
 
-                    if remainingCount > 0 and inventoryHelper.containsItem(targetPlayer.data.inventory, currentRefId) then
+                    if remainingCount > 0 and inventoryHelper.containsItem(targetPlayer.data.inventory,
+                        currentRefId) then
 
                         -- If the item is equipped by the target, unequip it first
                         if inventoryHelper.containsItem(targetPlayer.data.equipment, currentRefId) then
-                            local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment, currentRefId)
+                            local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment,
+                                currentRefId)
                             targetPlayer.data.equipment[equipmentItemIndex] = nil
                         end
 
-                        local inventoryItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory, currentRefId)
+                        local inventoryItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.inventory,
+                            currentRefId)
                         local item = targetPlayer.data.inventory[inventoryItemIndex]
                         item.count = item.count - remainingCount
 

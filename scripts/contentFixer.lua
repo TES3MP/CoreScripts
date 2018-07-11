@@ -36,7 +36,8 @@ function contentFixer.ValidateCellChange(pid)
     local cell = tes3mp.GetCell(pid)
 
     if cell == "Seyda Neen, Census and Excise Office" then
-        tes3mp.MessageBox(pid, -1, "Everything from the default character generation is currently broken in multiplayer. You'll have to avoid that area for now.")
+        tes3mp.MessageBox(pid, -1, "Everything from the default character generation is currently " ..
+            "broken in multiplayer. You'll have to avoid that area for now.")
         return false
     end
 
