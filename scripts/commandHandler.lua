@@ -987,9 +987,15 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                 elseif actionNumericalId == enumerations.ai.WANDER then
 
-                    local distance, duration, shouldRepeat = tonumber(cmd[4]), tonumber(cmd[5]), cmd[6]
+                    local distance, duration = tonumber(cmd[4]), tonumber(cmd[5])
 
                     if type(distance) == "number" and type(duration) == "number" then
+
+                        if cmd[6] == "true" then
+                            shouldRepeat = true
+                        else
+                            shouldRepeat = false
+                        end
 
                         logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, nil, nil, nil,
                             distance, duration, shouldRepeat)

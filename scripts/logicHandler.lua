@@ -1,10 +1,12 @@
+require("enumerations")
+
 tableHelper = require("tableHelper")
 fileHelper = require("fileHelper")
 inventoryHelper = require("inventoryHelper")
-require("enumerations")
-local time = require("time")
 contentFixer = require("contentFixer")
 menuHelper = require("menuHelper")
+dataTableBuilder = require("dataTableBuilder")
+packetBuilder = require("packetBuilder")
 
 local logicHandler = {}
 
@@ -400,42 +402,25 @@ logicHandler.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetActorRefIndex,
+logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetRefIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     if cell ~= nil and actorRefIndex ~= nil then
 
+        -- Save this AI package to the actor's objectData in its cell
+        local ai = dataTableBuilder.BuildAIData(action, targetPid, targetRefIndex,
+            posX, posY, posZ, distance, duration, shouldRepeat)
+        cell.data.objectData[actorRefIndex].ai = ai
+        tableHelper.insertValueIfMissing(cell.data.packets.ai, actorRefIndex)
+        cell:Save()
+
+        -- Send packet to the cell's current authority
         tes3mp.InitializeActorList(cell.authority)
-
-        local splitIndex = actorRefIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
-
         tes3mp.SetActorListCell(cell.description)
-        tes3mp.SetActorAIAction(action)
 
-        if targetPid ~= nil then
-            tes3mp.SetActorAITargetToPlayer(targetPid)
-        elseif targetActorRefIndex ~= nil then
-            local targetSplitIndex = targetActorRefIndex:split("-")
-            tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
-        elseif posX ~= nil and posY ~= nil and posZ ~= nil then
-            tes3mp.SetActorAICoordinates(posX, posY, posZ)
-        elseif distance ~= nil then
-            tes3mp.SetActorAIDistance(distance)
-        elseif duration ~= nil then
-            tes3mp.SetActorAIDuration(duration)
-        end
+        packetBuilder.AddAIActorToPacket(actorRefIndex, action, targetPid, targetRefIndex,
+            posX, posY, posZ, distance, duration, shouldRepeat)
 
-        if shouldRepeat == "true" then
-            shouldRepeat = true
-        else
-            shouldRepeat = false
-        end
-
-        tes3mp.SetActorAIRepetition(shouldRepeat)
-
-        tes3mp.AddActor()
         tes3mp.SendActorAI()
 
     else

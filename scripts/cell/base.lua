@@ -28,6 +28,7 @@ function BaseCell:__init(cellDescription)
             doorState = {},
             container = {},
             equipment = {},
+            ai = {},
             death = {},
             actorList = {},
             position = {},
