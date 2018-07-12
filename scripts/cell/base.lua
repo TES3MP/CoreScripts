@@ -272,7 +272,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -308,7 +308,7 @@ function BaseCell:SaveObjectsDeleted(pid)
     tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
@@ -366,7 +366,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -400,7 +400,7 @@ function BaseCell:SaveObjectsPlaced(pid)
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
@@ -474,7 +474,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -508,7 +508,7 @@ function BaseCell:SaveObjectsSpawned(pid)
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
@@ -582,7 +582,7 @@ function BaseCell:ProcessObjectsLocked(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -614,7 +614,7 @@ function BaseCell:SaveObjectsLocked(pid)
     tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
@@ -638,7 +638,7 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -670,7 +670,7 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
     tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
@@ -692,7 +692,7 @@ function BaseCell:ProcessObjectsScaled(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -725,7 +725,7 @@ function BaseCell:SaveObjectsScaled(pid)
     tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
@@ -749,7 +749,7 @@ function BaseCell:ProcessObjectStates(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -785,7 +785,7 @@ function BaseCell:SaveObjectStates(pid)
     tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refNumIndex = tes3mp.GetObjectRefNumIndex(i)
         local mpNum = tes3mp.GetObjectMpNum(i)
@@ -823,7 +823,7 @@ function BaseCell:SaveDoorStates(pid)
 
     tes3mp.ReadLastObjectList()
 
-    for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for i = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
@@ -847,7 +847,7 @@ function BaseCell:ProcessContainers(pid)
 
     local subAction = tes3mp.GetObjectListContainerSubAction()
 
-    for index = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
         local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
@@ -885,7 +885,7 @@ function BaseCell:SaveContainers(pid)
     local action = tes3mp.GetObjectListAction()
     local subAction = tes3mp.GetObjectListContainerSubAction()
 
-    for objectIndex = 0, tes3mp.GetObjectChangesSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
@@ -1300,7 +1300,8 @@ function BaseCell:SendObjectsDeleted(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     -- Objects deleted
@@ -1324,7 +1325,8 @@ function BaseCell:SendObjectsPlaced(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.place) do
@@ -1395,7 +1397,8 @@ function BaseCell:SendObjectsSpawned(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.spawn) do
@@ -1451,7 +1454,8 @@ function BaseCell:SendObjectsLocked(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.lock) do
@@ -1483,7 +1487,8 @@ function BaseCell:SendObjectTrapsTriggered(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.trap) do
@@ -1507,7 +1512,8 @@ function BaseCell:SendObjectsScaled(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.scale) do
@@ -1541,7 +1547,8 @@ function BaseCell:SendObjectStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.state) do
@@ -1571,7 +1578,8 @@ function BaseCell:SendDoorStates(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
@@ -1595,7 +1603,8 @@ function BaseCell:SendContainers(pid)
 
     local objectCount = 0
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.container) do
@@ -1644,7 +1653,8 @@ function BaseCell:SendActorList(pid)
 
     local actorCount = 0
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.actorList) do
@@ -1675,7 +1685,8 @@ end
 
 function BaseCell:SendActorAuthority(pid)
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     tes3mp.SendActorAuthority()
@@ -1685,7 +1696,8 @@ function BaseCell:SendActorPositions(pid)
 
     local actorCount = 0
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.position) do
@@ -1724,7 +1736,8 @@ function BaseCell:SendActorStatsDynamic(pid)
 
     local actorCount = 0
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.statsDynamic) do
@@ -1765,7 +1778,8 @@ function BaseCell:SendActorEquipment(pid)
 
     local actorCount = 0
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.equipment) do
@@ -1821,7 +1835,8 @@ function BaseCell:SendActorAI(pid)
     -- need to be tracked and sent separately to all the cell's visitors
     local sharedPacketRefIndexes = {}
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.ai) do
@@ -1881,7 +1896,8 @@ function BaseCell:SendActorAI(pid)
     -- need to have
     if tableHelper.getCount(sharedPacketRefIndexes) > 0 then
         
-        tes3mp.InitializeActorList(pid)
+        tes3mp.ClearActorList()
+        tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(self.description)
 
         for arrayIndex, refIndex in pairs(sharedPacketRefIndexes) do
@@ -1904,7 +1920,8 @@ function BaseCell:SendActorCellChanges(pid)
     local actorCount = 0
 
     -- Move actors originally from this cell to other cells
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     for arrayIndex, refIndex in pairs(self.data.packets.cellChangeTo) do
@@ -1986,7 +2003,8 @@ function BaseCell:SendActorCellChanges(pid)
     -- Send a cell change packet for every cell that has sent actors to this cell
     for originalCellDescription, actorArray in pairs(cellChangesFrom) do
 
-        tes3mp.InitializeActorList(pid)
+        tes3mp.ClearActorList()
+        tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(originalCellDescription)
 
         for arrayIndex, refIndex in pairs(actorArray) do
@@ -2023,7 +2041,8 @@ function BaseCell:RequestContainers(pid, requestRefIndexes)
     self.isRequestingContainers = true
     self.containerRequestPid = pid
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
     -- Set the action to REQUEST
@@ -2053,7 +2072,8 @@ function BaseCell:RequestActorList(pid)
     self.isRequestingActorList = true
     self.actorListRequestPid = pid
 
-    tes3mp.InitializeActorList(pid)
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
     -- Set the action to REQUEST

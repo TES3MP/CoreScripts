@@ -316,7 +316,9 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
     -- to everyone
     if tableHelper.getCount(Players) > 0 then
 
-        tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+        local pid = tableHelper.getAnyValue(Players).pid
+        tes3mp.ClearObjectList()
+        tes3mp.SetObjectListPid(pid)
         tes3mp.SetObjectListCell(cell)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNumIndex(0)
@@ -346,7 +348,8 @@ end
 
 logicHandler.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
     tes3mp.SetObjectRefNumIndex(refNumIndex)
     tes3mp.SetObjectMpNum(mpNum)
@@ -365,7 +368,8 @@ end
 
 logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
-    tes3mp.InitializeObjectList(pid)
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetPlayerAsObject(pid)
@@ -378,7 +382,9 @@ end
 
 logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
 
-    tes3mp.InitializeObjectList(tableHelper.getAnyValue(Players).pid)
+    local pid = tableHelper.getAnyValue(Players).pid
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetObjectRefId(refId)
@@ -387,7 +393,8 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.AddObject()
     
     -- Always send this to everyone
-    tes3mp.SendConsoleCommand(true)
+    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+    tes3mp.SendConsoleCommand(true, false)
 end
 
 logicHandler.GetCellContainingActor = function(actorRefIndex)
@@ -415,7 +422,9 @@ logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, ta
         cell:Save()
 
         -- Initialize the packet for the current cell authority
-        tes3mp.InitializeActorList(cell.authority)
+        local pid = cell.authority
+        tes3mp.ClearActorList()
+        tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(cell.description)
 
         packetBuilder.AddAIActorToPacket(actorRefIndex, action, targetPid, targetRefIndex,
@@ -423,8 +432,8 @@ logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, ta
 
         -- If the cell authority leaves, we want the new cell authority to resume
         -- this AI package, so we send the packet to all of the cell's visitors
-        -- i.e. sendToOtherVisitors is true
-        tes3mp.SendActorAI(true)
+        -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is false
+        tes3mp.SendActorAI(true, false)
 
     else
         tes3mp.LogAppend(3, "Invalid input for logicHandler.SetAIForActor()!")

@@ -639,7 +639,7 @@ eventHandler.OnVideoPlay = function(pid)
 
             tes3mp.ReadLastObjectList()
 
-            for i = 0, tes3mp.GetObjectChangesSize() - 1 do
+            for i = 0, tes3mp.GetObjectListSize() - 1 do
                 local videoFilename = tes3mp.GetVideoFilename(i)
                 tes3mp.LogAppend(2, "- videoFilename " .. videoFilename)
             end
