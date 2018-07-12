@@ -637,14 +637,14 @@ eventHandler.OnVideoPlay = function(pid)
         if config.shareVideos == true then
             tes3mp.LogMessage(2, "Sharing VideoPlay from " .. pid)
 
-            tes3mp.ReadLastObjectList()
+            tes3mp.ReadReceivedObjectList()
 
             for i = 0, tes3mp.GetObjectListSize() - 1 do
                 local videoFilename = tes3mp.GetVideoFilename(i)
                 tes3mp.LogAppend(2, "- videoFilename " .. videoFilename)
             end
 
-            tes3mp.CopyLastObjectListToStore()
+            tes3mp.CopyReceivedObjectListToStore()
 
             -- Send this VideoPlay packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
@@ -658,7 +658,7 @@ eventHandler.OnWorldMap = function(pid)
         WorldInstance:SaveMapTiles(pid)
 
         if config.shareMapExploration == true then
-            tes3mp.CopyLastWorldstateToStore()
+            tes3mp.CopyReceivedWorldstateToStore()
 
             -- Send this WorldMap packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)

@@ -270,7 +270,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -287,7 +287,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
     if isValid then
         self:SaveObjectsDeleted(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can sometimes be deleted clientside without the server's approval and
         -- sometimes not, but we should always send ObjectDelete packets back to the sender
         -- for the sake of the latter situations
@@ -304,7 +304,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -364,7 +364,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -380,7 +380,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
     if isValid then
         self:SaveObjectsPlaced(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be placed clientside without the server's approval, so we send
         -- the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -396,7 +396,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
     local containerRefIndexesRequested = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -472,7 +472,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -488,7 +488,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
     if isValid then
         self:SaveObjectsSpawned(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be spawned clientside without the server's approval, so we send
         -- the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -504,7 +504,7 @@ function BaseCell:SaveObjectsSpawned(pid)
 
     local containerRefIndexesRequested = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -580,7 +580,7 @@ function BaseCell:ProcessObjectsLocked(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -596,7 +596,7 @@ function BaseCell:ProcessObjectsLocked(pid)
     if isValid then
         self:SaveObjectsLocked(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be locked/unlocked clientside without the server's approval,
         -- so we send the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -610,7 +610,7 @@ end
 
 function BaseCell:SaveObjectsLocked(pid)
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -636,7 +636,7 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -652,7 +652,7 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
     if isValid then
         self:SaveObjectTrapsTriggered(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be untrapped clientside without the server's approval, so we send
         -- the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -666,7 +666,7 @@ end
 
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -690,7 +690,7 @@ function BaseCell:ProcessObjectsScaled(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -707,7 +707,7 @@ function BaseCell:ProcessObjectsScaled(pid)
     if isValid then
         self:SaveObjectsScaled(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be scaled clientside without the server's approval, so we send
         -- the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -721,7 +721,7 @@ end
 
 function BaseCell:SaveObjectsScaled(pid)
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -747,7 +747,7 @@ function BaseCell:ProcessObjectStates(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -763,7 +763,7 @@ function BaseCell:ProcessObjectStates(pid)
     if isValid then
         self:SaveObjectStates(pid)
 
-        tes3mp.CopyLastObjectListToStore()
+        tes3mp.CopyReceivedObjectListToStore()
         -- Objects can't be enabled or disabled clientside without the server's approval,
         -- so we send the packet to other players and also back to the player who sent it,
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
@@ -781,7 +781,7 @@ function BaseCell:SaveObjectStates(pid)
         self.data.packets.state = {}
     end
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
     tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -821,7 +821,7 @@ end
 
 function BaseCell:SaveDoorStates(pid)
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -843,7 +843,7 @@ function BaseCell:ProcessContainers(pid)
     local isValid = true
     local rejectedObjects = {}
 
-    tes3mp.ReadLastObjectList()
+    tes3mp.ReadReceivedObjectList()
 
     local subAction = tes3mp.GetObjectListContainerSubAction()
 
@@ -876,8 +876,8 @@ end
 
 function BaseCell:SaveContainers(pid)
 
-    tes3mp.ReadLastObjectList()
-    tes3mp.CopyLastObjectListToStore()
+    tes3mp.ReadReceivedObjectList()
+    tes3mp.CopyReceivedObjectListToStore()
 
     tes3mp.LogMessage(1, "Saving Container from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
@@ -974,7 +974,7 @@ end
 
 function BaseCell:SaveActorList(pid)
 
-    tes3mp.ReadLastActorList()
+    tes3mp.ReadReceivedActorList()
     tes3mp.LogMessage(1, "Saving ActorList from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -1057,7 +1057,7 @@ end
 
 function BaseCell:SaveActorEquipment(pid)
 
-    tes3mp.ReadLastActorList()
+    tes3mp.ReadReceivedActorList()
     tes3mp.LogMessage(1, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -1101,8 +1101,8 @@ end
 -- based on this server's options
 function BaseCell:ProcessActorAI(pid)
 
-    tes3mp.ReadLastActorList()
-    tes3mp.CopyLastActorListToStore()
+    tes3mp.ReadReceivedActorList()
+    tes3mp.CopyReceivedActorListToStore()
     -- Actor AI packages are currently enabled unilaterally on the client
     -- that has sent them, so we only need to send them to other players,
     -- and can skip the original sender
@@ -1118,7 +1118,7 @@ function BaseCell:SaveActorDeath(pid)
 
     local containerRefIndexesRequested = {}
 
-    tes3mp.ReadLastActorList()
+    tes3mp.ReadReceivedActorList()
     tes3mp.LogMessage(1, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
@@ -1183,7 +1183,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
 
-    tes3mp.ReadLastActorList()
+    tes3mp.ReadReceivedActorList()
     tes3mp.LogMessage(1, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 

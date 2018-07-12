@@ -180,7 +180,7 @@ end
 
 function BaseWorld:SaveMapTiles(pid)
 
-    tes3mp.ReadLastWorldstate()
+    tes3mp.ReadReceivedWorldstate()
 
     for index = 0, tes3mp.GetMapChangesSize() - 1 do
 
