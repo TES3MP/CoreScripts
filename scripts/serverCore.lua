@@ -506,6 +506,11 @@ function OnActorEquipment(pid, cellDescription)
     eventHandler.OnActorEquipment(pid, cellDescription)
 end
 
+function OnActorAI(pid, cellDescription)
+    tes3mp.LogMessage(0, "Called \"OnActorAI\" for pid " .. pid .. " and cell " .. cellDescription)
+    eventHandler.OnActorAI(pid, cellDescription)
+end
+
 function OnActorDeath(pid, cellDescription)
     tes3mp.LogMessage(0, "Called \"OnActorDeath\" for pid " .. pid .. " and cell " .. cellDescription)
     eventHandler.OnActorDeath(pid, cellDescription)

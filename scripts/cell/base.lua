@@ -1100,6 +1100,19 @@ function BaseCell:SaveActorEquipment(pid)
     self:Save()
 end
 
+-- Iterate through the actors in the ActorAI packet and only sync and save them
+-- based on this server's options
+function BaseCell:ProcessActorAI(pid)
+
+    tes3mp.ReadLastActorList()
+    tes3mp.CopyLastActorListToStore()
+    -- Actor AI packages are currently enabled unilaterally on the client
+    -- that has sent them, so we only need to send them to other players,
+    -- and can skip the original sender
+    -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is true
+    tes3mp.SendActorAI(true, true)
+end
+
 function BaseCell:SaveActorDeath(pid)
 
     if self.data.packets.death == nil then

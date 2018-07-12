@@ -475,6 +475,19 @@ eventHandler.OnActorEquipment = function(pid, cellDescription)
     end
 end
 
+eventHandler.OnActorAI = function(pid, cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        if LoadedCells[cellDescription] ~= nil then
+            LoadedCells[cellDescription]:ProcessActorAI(pid)
+        else
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+                " sent ActorAI for unloaded " .. cellDescription)
+        end
+    else
+        tes3mp.Kick(pid)
+    end
+end
+
 eventHandler.OnActorDeath = function(pid, cellDescription)
     if LoadedCells[cellDescription] ~= nil then
         LoadedCells[cellDescription]:SaveActorDeath(pid)
