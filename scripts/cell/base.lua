@@ -954,18 +954,15 @@ function BaseCell:SaveContainers(pid)
 
     -- Is this a player replying to our request for container contents?
     -- If so, only send the reply to other visitors
+    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
     if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
-        for _, visitorPid in pairs(self.visitors) do
-            if pid ~= visitorPid then
-                tes3mp.SetObjectListPid(visitorPid)
-                tes3mp.SendContainer(false)
-            end
-        end
+        tes3mp.SendContainer(true, true)
     -- Otherwise, send the received packet to everyone, including the
     -- player who sent it (because no clientside changes will be made
     -- to the container they're in otherwise)
+    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
     else
-        tes3mp.SendContainer(true)
+        tes3mp.SendContainer(true, false)
     end
 
     self:Save()
