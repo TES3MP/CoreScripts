@@ -4,7 +4,7 @@ packetBuilder.AddAIActorToPacket = function(actorRefIndex, action, targetPid, ta
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     local splitIndex = actorRefIndex:split("-")
-    tes3mp.SetActorRefNumIndex(splitIndex[1])
+    tes3mp.SetActorRefNum(splitIndex[1])
     tes3mp.SetActorMpNum(splitIndex[2])
 
     tes3mp.SetActorAIAction(action)

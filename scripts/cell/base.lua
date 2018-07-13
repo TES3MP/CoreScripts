@@ -275,7 +275,7 @@ function BaseCell:ProcessObjectsDeleted(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedDeleteRefIds, refId) or
             tableHelper.containsValue(self.unusableContainerRefIndexes, refIndex) then
@@ -310,7 +310,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
 
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
@@ -369,7 +369,7 @@ function BaseCell:ProcessObjectsPlaced(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
@@ -402,7 +402,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
         local location = {
             posX = tes3mp.GetObjectPosX(i),
@@ -477,7 +477,7 @@ function BaseCell:ProcessObjectsSpawned(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
@@ -510,7 +510,7 @@ function BaseCell:SaveObjectsSpawned(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
 
         local location = {
             posX = tes3mp.GetObjectPosX(i),
@@ -551,7 +551,7 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                         Players[summonerPid].summons[refIndex] = refId
                     else
-                        local summonerRefIndex = tes3mp.GetObjectSummonerRefNumIndex(i) ..
+                        local summonerRefIndex = tes3mp.GetObjectSummonerRefNum(i) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(i)
                         local summonerRefId = tes3mp.GetObjectSummonerRefId(i)
                         tes3mp.LogAppend(1, "- summoned by actor " .. summonerRefIndex ..
@@ -585,7 +585,7 @@ function BaseCell:ProcessObjectsLocked(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedLockRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
@@ -616,7 +616,7 @@ function BaseCell:SaveObjectsLocked(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
         local lockLevel = tes3mp.GetObjectLockLevel(i)
 
@@ -641,7 +641,7 @@ function BaseCell:ProcessObjectTrapsTriggered(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedTrapRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
@@ -672,7 +672,7 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
 
         self:InitializeObjectData(refIndex, refId)
@@ -695,7 +695,7 @@ function BaseCell:ProcessObjectsScaled(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
         local scale = tes3mp.GetObjectScale(index)
 
         if scale >= config.maximumObjectScale then
@@ -727,7 +727,7 @@ function BaseCell:SaveObjectsScaled(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
         local scale = tes3mp.GetObjectScale(i)
 
@@ -752,7 +752,7 @@ function BaseCell:ProcessObjectStates(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(config.disallowedStateRefIds, refId) then
             table.insert(rejectedObjects, refId .. " " .. refIndex)
@@ -787,9 +787,9 @@ function BaseCell:SaveObjectStates(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refNumIndex = tes3mp.GetObjectRefNumIndex(i)
+        local refNum = tes3mp.GetObjectRefNum(i)
         local mpNum = tes3mp.GetObjectMpNum(i)
-        local refIndex = refNumIndex .. "-" .. mpNum
+        local refIndex = refNum .. "-" .. mpNum
         local refId = tes3mp.GetObjectRefId(i)
         local state = tes3mp.GetObjectState(i)
 
@@ -810,7 +810,7 @@ function BaseCell:SaveObjectStates(pid)
                 Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
                 -- If the player gets 5 false object states for the same refid in that cell, delete it
                 if Players[pid].stateSpam[refId] >= 5 then
-                    logicHandler.DeleteObjectForPlayer(pid, refId, refNumIndex, mpNum)
+                    logicHandler.DeleteObjectForPlayer(pid, refId, refNum, mpNum)
                     tes3mp.LogMessage(1, "- " .. refIndex .. " with refId: " .. refId ..
                         " was causing spam and has been deleted")            
                 end
@@ -825,7 +825,7 @@ function BaseCell:SaveDoorStates(pid)
 
     for i = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local refIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
         local refId = tes3mp.GetObjectRefId(i)
         local doorState = tes3mp.GetObjectDoorState(i)
 
@@ -850,7 +850,7 @@ function BaseCell:ProcessContainers(pid)
     for index = 0, tes3mp.GetObjectListSize() - 1 do
 
         local refId = tes3mp.GetObjectRefId(index)
-        local refIndex = tes3mp.GetObjectRefNumIndex(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        local refIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
         if tableHelper.containsValue(self.unusableContainerRefIndexes, refIndex) then
             
@@ -887,7 +887,7 @@ function BaseCell:SaveContainers(pid)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refIndex = tes3mp.GetObjectRefNumIndex(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
 
         tes3mp.LogAppend(1, "- " .. refIndex .. ", refId: " .. refId)
@@ -980,7 +980,7 @@ function BaseCell:SaveActorList(pid)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        local refIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         local refId = tes3mp.GetActorRefId(actorIndex)
 
         self:InitializeObjectData(refIndex, refId)
@@ -1005,7 +1005,7 @@ function BaseCell:SaveActorPositions()
 
     for i = 0, actorListSize - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
+        local refIndex = tes3mp.GetActorRefNum(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
         if tes3mp.DoesActorHavePosition(i) == true and self:ContainsObject(refIndex) then
 
@@ -1034,7 +1034,7 @@ function BaseCell:SaveActorStatsDynamic()
 
     for i = 0, actorListSize - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(i) .. "-" .. tes3mp.GetActorMpNum(i)
+        local refIndex = tes3mp.GetActorRefNum(i) .. "-" .. tes3mp.GetActorMpNum(i)
 
         if tes3mp.DoesActorHaveStatsDynamic(i) == true and self:ContainsObject(refIndex) then
 
@@ -1069,7 +1069,7 @@ function BaseCell:SaveActorEquipment(pid)
 
     for actorIndex = 0, actorListSize - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        local refIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         tes3mp.LogAppend(1, "- " .. refIndex)
 
         if self:ContainsObject(refIndex) then
@@ -1130,7 +1130,7 @@ function BaseCell:SaveActorDeath(pid)
 
     for actorIndex = 0, actorListSize - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        local refIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
 
         if self:ContainsObject(refIndex) then
 
@@ -1145,7 +1145,7 @@ function BaseCell:SaveActorDeath(pid)
                 }
             else
                 local killerName = tes3mp.GetActorKillerName(actorIndex)
-                local killerRefIndex = tes3mp.GetActorKillerRefNumIndex(actorIndex) ..
+                local killerRefIndex = tes3mp.GetActorKillerRefNum(actorIndex) ..
                     "-" .. tes3mp.GetActorKillerMpNum(actorIndex)
 
                 if killerName ~= "" and refIndex ~= killerRefIndex then
@@ -1189,7 +1189,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
 
-        local refIndex = tes3mp.GetActorRefNumIndex(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+        local refIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         local newCellDescription = tes3mp.GetActorCell(actorIndex)
 
         tes3mp.LogAppend(1, "- " .. refIndex .. " moved to " .. newCellDescription)
@@ -1305,7 +1305,7 @@ function BaseCell:SendObjectsDeleted(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.delete) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.AddObject()
@@ -1335,7 +1335,7 @@ function BaseCell:SendObjectsPlaced(pid)
             self:ContainsPosition(location.posX, location.posY) then
 
             local splitIndex = refIndex:split("-")
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
@@ -1425,7 +1425,7 @@ function BaseCell:SendObjectsSpawned(pid)
             if shouldSkip == false then
 
                 local splitIndex = refIndex:split("-")
-                tes3mp.SetObjectRefNumIndex(splitIndex[1])
+                tes3mp.SetObjectRefNum(splitIndex[1])
                 tes3mp.SetObjectMpNum(splitIndex[2])
                 tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
 
@@ -1463,7 +1463,7 @@ function BaseCell:SendObjectsLocked(pid)
         if refId ~= nil and lockLevel ~= nil then
 
             local splitIndex = refIndex:split("-")
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(refId)
             tes3mp.SetObjectLockLevel(lockLevel)
@@ -1491,7 +1491,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.trap) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.SetObjectDisarmState(true)
@@ -1521,7 +1521,7 @@ function BaseCell:SendObjectsScaled(pid)
 
         if refId ~= nil and scale ~= nil then
 
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(refId)
             tes3mp.SetObjectScale(scale)
@@ -1556,7 +1556,7 @@ function BaseCell:SendObjectStates(pid)
 
         if refId ~= nil and state ~= nil then
 
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(refId)
             tes3mp.SetObjectState(state)
@@ -1582,7 +1582,7 @@ function BaseCell:SendDoorStates(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.doorState) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
         tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
         tes3mp.SetObjectDoorState(self.data.objectData[refIndex].doorState)
@@ -1607,7 +1607,7 @@ function BaseCell:SendContainers(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.container) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetObjectRefNumIndex(splitIndex[1])
+        tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) and self.data.objectData[refIndex].inventory ~= nil then
@@ -1657,7 +1657,7 @@ function BaseCell:SendActorList(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.actorList) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) then
@@ -1700,7 +1700,7 @@ function BaseCell:SendActorPositions(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.position) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) then
@@ -1740,7 +1740,7 @@ function BaseCell:SendActorStatsDynamic(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.statsDynamic) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) and self.data.objectData[refIndex].stats ~= nil then
@@ -1782,7 +1782,7 @@ function BaseCell:SendActorEquipment(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.equipment) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) and self.data.objectData[refIndex].equipment ~= nil then
@@ -1839,7 +1839,7 @@ function BaseCell:SendActorAI(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.ai) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(refIndex) and self.data.objectData[refIndex].ai ~= nil then
@@ -1900,7 +1900,7 @@ function BaseCell:SendActorAI(pid)
         for arrayIndex, refIndex in pairs(sharedPacketRefIndexes) do
 
             local splitIndex = refIndex:split("-")
-            tes3mp.SetActorRefNumIndex(splitIndex[1])
+            tes3mp.SetActorRefNum(splitIndex[1])
             tes3mp.SetActorMpNum(splitIndex[2])
             local ai = self.data.objectData[refIndex].ai
             packetBuilder.AddAIActorToPacket(refIndex, ai.action, pid, nil,
@@ -1924,7 +1924,7 @@ function BaseCell:SendActorCellChanges(pid)
     for arrayIndex, refIndex in pairs(self.data.packets.cellChangeTo) do
 
         local splitIndex = refIndex:split("-")
-        tes3mp.SetActorRefNumIndex(splitIndex[1])
+        tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         local newCellDescription = self.data.objectData[refIndex].cellChangeTo
@@ -2007,7 +2007,7 @@ function BaseCell:SendActorCellChanges(pid)
         for arrayIndex, refIndex in pairs(actorArray) do
 
             local splitIndex = refIndex:split("-")
-            tes3mp.SetActorRefNumIndex(splitIndex[1])
+            tes3mp.SetActorRefNum(splitIndex[1])
             tes3mp.SetActorMpNum(splitIndex[2])
 
             tes3mp.SetActorCell(self.description)
@@ -2054,7 +2054,7 @@ function BaseCell:RequestContainers(pid, requestRefIndexes)
         for arrayIndex, refIndex in pairs(requestRefIndexes) do
 
             local splitIndex = refIndex:split("-")
-            tes3mp.SetObjectRefNumIndex(splitIndex[1])
+            tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
             tes3mp.SetObjectRefId(self.data.objectData[refIndex].refId)
             tes3mp.AddObject()

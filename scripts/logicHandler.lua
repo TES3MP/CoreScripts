@@ -321,7 +321,7 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         tes3mp.SetObjectListPid(pid)
         tes3mp.SetObjectListCell(cell)
         tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectRefNumIndex(0)
+        tes3mp.SetObjectRefNum(0)
         tes3mp.SetObjectMpNum(mpNum)
         tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
         tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
@@ -346,24 +346,24 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
     logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
-logicHandler.DeleteObject = function(pid, refId, refNumIndex, mpNum, forEveryone)
+logicHandler.DeleteObject = function(pid, refId, refNum, mpNum, forEveryone)
 
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(Players[pid].data.location.cell)
-    tes3mp.SetObjectRefNumIndex(refNumIndex)
+    tes3mp.SetObjectRefNum(refNum)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.SetObjectRefId(refId)
     tes3mp.AddObject()
     tes3mp.SendObjectDelete(forEveryone)
 end
 
-logicHandler.DeleteObjectForPlayer = function(pid, refId, refNumIndex, mpNum)
-    logicHandler.DeleteObject(pid, refId, refNumIndex, mpNum, false)
+logicHandler.DeleteObjectForPlayer = function(pid, refId, refNum, mpNum)
+    logicHandler.DeleteObject(pid, refId, refNum, mpNum, false)
 end
 
-logicHandler.DeleteObjectForEveryone = function(refId, refNumIndex, mpNum)
-    logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNumIndex, mpNum, true)
+logicHandler.DeleteObjectForEveryone = function(refId, refNum, mpNum)
+    logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNum, mpNum, true)
 end
 
 logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
@@ -380,7 +380,7 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNumIndex, mpNum)
+logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNum, mpNum)
 
     local pid = tableHelper.getAnyValue(Players).pid
     tes3mp.ClearObjectList()
@@ -388,7 +388,7 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
     tes3mp.SetObjectRefId(refId)
-    tes3mp.SetObjectRefNumIndex(refNumIndex)
+    tes3mp.SetObjectRefNum(refNum)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.AddObject()
     

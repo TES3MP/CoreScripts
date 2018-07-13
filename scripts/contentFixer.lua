@@ -22,7 +22,7 @@ function contentFixer.FixCell(pid, cellDescription)
         tes3mp.SetObjectListCell(cellDescription)
 
         for arrayIndex, refNum in pairs(refNumDeletionsByCell[cellDescription]) do
-            tes3mp.SetObjectRefNumIndex(refNum)
+            tes3mp.SetObjectRefNum(refNum)
             tes3mp.SetObjectMpNum(0)
             tes3mp.SetObjectRefId("")
             tes3mp.AddObject()
