@@ -1,9 +1,9 @@
 packetBuilder = {}
 
-packetBuilder.AddAIActorToPacket = function(actorRefIndex, action, targetPid, targetRefIndex,
+packetBuilder.AddAIActorToPacket = function(actorUniqueIndex, action, targetPid, targetUniqueIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
-    local splitIndex = actorRefIndex:split("-")
+    local splitIndex = actorUniqueIndex:split("-")
     tes3mp.SetActorRefNum(splitIndex[1])
     tes3mp.SetActorMpNum(splitIndex[2])
 
@@ -11,8 +11,8 @@ packetBuilder.AddAIActorToPacket = function(actorRefIndex, action, targetPid, ta
 
     if targetPid ~= nil then
         tes3mp.SetActorAITargetToPlayer(targetPid)
-    elseif targetRefIndex ~= nil then
-        local targetSplitIndex = targetRefIndex:split("-")
+    elseif targetUniqueIndex ~= nil then
+        local targetSplitIndex = targetUniqueIndex:split("-")
 
         if targetSplitIndex[2] ~= nil then
             tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])

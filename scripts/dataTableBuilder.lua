@@ -1,6 +1,6 @@
 dataTableBuilder = {}
 
-dataTableBuilder.BuildAIData = function(action, targetPid, targetRefIndex,
+dataTableBuilder.BuildAIData = function(action, targetPid, targetUniqueIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     local ai = {}
@@ -13,7 +13,7 @@ dataTableBuilder.BuildAIData = function(action, targetPid, targetRefIndex,
     if targetPid ~= nil then
         ai.targetPlayer = Players[targetPid].accountName
     else
-        ai.targetRefIndex = targetRefIndex
+        ai.targetUniqueIndex = targetUniqueIndex
     end
 
     return ai

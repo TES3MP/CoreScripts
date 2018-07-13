@@ -160,14 +160,14 @@ Menus["help moderator page 2"] = {
 
 Menus["help admin page 1"] = {
     text = color.Orange .. "Admin command list page 1:\n" ..
-        color.Yellow .. "/setai <refIndex> activate/combat/follow <pid>/<refIndex>\n" ..
-            color.White .. "Make the actor with a certain refIndex target a player or another refIndex\n" ..
-        color.Yellow .. "/setai <refIndex> cancel\n" ..
-            color.White .. "Make the actor with a certain refIndex cancel its AI sequence\n" ..
-        color.Yellow .. "/setai <refIndex> travel <x> <y> <z>\n" ..
-            color.White .. "Make the actor with a certain refIndex travel to certain X, Y and Z coordinates\n" ..
-        color.Yellow .. "/setai <refIndex> wander <distance> <duration> true/false\n" ..
-            color.White .. "Make the actor with a certain refIndex wander for the specified distance and duration, with repetition being true or false\n" ..
+        color.Yellow .. "/setai <uniqueIndex> activate/combat/follow <pid>/<uniqueIndex>\n" ..
+            color.White .. "Make the actor with a certain uniqueIndex target a player or another uniqueIndex\n" ..
+        color.Yellow .. "/setai <uniqueIndex> cancel\n" ..
+            color.White .. "Make the actor with a certain uniqueIndex cancel its AI sequence\n" ..
+        color.Yellow .. "/setai <uniqueIndex> travel <x> <y> <z>\n" ..
+            color.White .. "Make the actor with a certain uniqueIndex travel to certain X, Y and Z coordinates\n" ..
+        color.Yellow .. "/setai <uniqueIndex> wander <distance> <duration> true/false\n" ..
+            color.White .. "Make the actor with a certain uniqueIndex wander for the specified distance and duration, with repetition being true or false\n" ..
         color.Yellow .. "/setrace <pid> <race>\n" ..
             color.White .. "Change a player's race\n" ..
         color.Yellow .. "/sethead <pid> <body part id>\n" ..

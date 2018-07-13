@@ -294,19 +294,19 @@ end
 logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
 
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
-    local refIndex =  0 .. "-" .. mpNum
+    local uniqueIndex =  0 .. "-" .. mpNum
 
     WorldInstance:SetCurrentMpNum(mpNum)
     tes3mp.SetCurrentMpNum(mpNum)
 
-    LoadedCells[cell]:InitializeObjectData(refIndex, refId)
-    LoadedCells[cell].data.objectData[refIndex].location = location
+    LoadedCells[cell]:InitializeObjectData(uniqueIndex, refId)
+    LoadedCells[cell].data.objectData[uniqueIndex].location = location
 
     if packetType == "place" then
-        table.insert(LoadedCells[cell].data.packets.place, refIndex)
+        table.insert(LoadedCells[cell].data.packets.place, uniqueIndex)
     elseif packetType == "spawn" then
-        table.insert(LoadedCells[cell].data.packets.spawn, refIndex)
-        table.insert(LoadedCells[cell].data.packets.actorList, refIndex)
+        table.insert(LoadedCells[cell].data.packets.spawn, uniqueIndex)
+        table.insert(LoadedCells[cell].data.packets.actorList, uniqueIndex)
     end
 
     LoadedCells[cell]:Save()
@@ -397,11 +397,11 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SendConsoleCommand(true, false)
 end
 
-logicHandler.GetCellContainingActor = function(actorRefIndex)
+logicHandler.GetCellContainingActor = function(actorUniqueIndex)
 
     for cellDescription, cell in pairs(LoadedCells) do
 
-        if tableHelper.containsValue(cell.data.packets.actorList, actorRefIndex) then
+        if tableHelper.containsValue(cell.data.packets.actorList, actorUniqueIndex) then
             return cell
         end
     end
@@ -409,16 +409,16 @@ logicHandler.GetCellContainingActor = function(actorRefIndex)
     return nil
 end
 
-logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, targetRefIndex,
+logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid, targetUniqueIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
-    if cell ~= nil and actorRefIndex ~= nil then
+    if cell ~= nil and actorUniqueIndex ~= nil then
 
         -- Save this AI package to the actor's objectData in its cell
-        local ai = dataTableBuilder.BuildAIData(action, targetPid, targetRefIndex,
+        local ai = dataTableBuilder.BuildAIData(action, targetPid, targetUniqueIndex,
             posX, posY, posZ, distance, duration, shouldRepeat)
-        cell.data.objectData[actorRefIndex].ai = ai
-        tableHelper.insertValueIfMissing(cell.data.packets.ai, actorRefIndex)
+        cell.data.objectData[actorUniqueIndex].ai = ai
+        tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
         cell:Save()
 
         -- Initialize the packet for the current cell authority
@@ -427,7 +427,7 @@ logicHandler.SetAIForActor = function(cell, actorRefIndex, action, targetPid, ta
         tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(cell.description)
 
-        packetBuilder.AddAIActorToPacket(actorRefIndex, action, targetPid, targetRefIndex,
+        packetBuilder.AddAIActorToPacket(actorUniqueIndex, action, targetPid, targetUniqueIndex,
             posX, posY, posZ, distance, duration, shouldRepeat)
 
         -- If the cell authority leaves, we want the new cell authority to resume

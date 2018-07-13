@@ -955,21 +955,21 @@ function commandHandler.ProcessCommand(pid, cmd)
                 tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n")
         else
 
-            local refIndex = cmd[2]
-            local cell = logicHandler.GetCellContainingActor(refIndex)
+            local uniqueIndex = cmd[2]
+            local cell = logicHandler.GetCellContainingActor(uniqueIndex)
 
             if cell == nil then
 
-                Players[pid]:Message("Could not find actor " .. refIndex .. " in any loaded cell\n")
+                Players[pid]:Message("Could not find actor " .. uniqueIndex .. " in any loaded cell\n")
             else
 
                 local actionName = tableHelper.getIndexByPattern(enumerations.ai, actionNumericalId)
                 local messageAction = enumerations.aiPrintableAction[actionName]
-                local message = refIndex .. " is now " .. messageAction
+                local message = uniqueIndex .. " is now " .. messageAction
 
                 if actionNumericalId == enumerations.ai.CANCEL then
 
-                    logicHandler.SetAIForActor(cell, refIndex, actionNumericalId)
+                    logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId)
                     Players[pid]:Message(message .. "\n")
 
                 elseif actionNumericalId == enumerations.ai.TRAVEL then
@@ -978,11 +978,11 @@ function commandHandler.ProcessCommand(pid, cmd)
 
                     if type(posX) == "number" and type(posY) == "number" and type(posZ) == "number" then
 
-                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, posX, posY, posZ)
+                        logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, nil, posX, posY, posZ)
                         Players[pid]:Message(message .. " " .. posX .. " " .. posY .. " " .. posZ .. "\n")
                     else
                         Players[pid]:Message("Invalid travel coordinates! " ..
-                            "Use /setai <refIndex> travel <x> <y> <z>\n")
+                            "Use /setai <uniqueIndex> travel <x> <y> <z>\n")
                     end
 
                 elseif actionNumericalId == enumerations.ai.WANDER then
@@ -997,13 +997,13 @@ function commandHandler.ProcessCommand(pid, cmd)
                             shouldRepeat = false
                         end
 
-                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, nil, nil, nil, nil,
+                        logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, nil, nil, nil, nil,
                             distance, duration, shouldRepeat)
                         Players[pid]:Message(message .. " a distance of " .. distance .. " for a duration of " ..
                             duration .. "\n")
                     else
                         Players[pid]:Message("Invalid wander parameters! " ..
-                            "Use /setai <refIndex> wander <distance> <duration> true/false\n")
+                            "Use /setai <uniqueIndex> wander <distance> <duration> true/false\n")
                     end
 
                 elseif cmd[4] ~= nil then
@@ -1017,10 +1017,10 @@ function commandHandler.ProcessCommand(pid, cmd)
                     end
 
                     if hasPlayerTarget then
-                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, target)
+                        logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, target)
                         message = message .. " player " .. Players[target].name
                     else
-                        logicHandler.SetAIForActor(cell, refIndex, actionNumericalId, nil, target)
+                        logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, target)
                         message = message .. " actor " .. target
                     end
 
