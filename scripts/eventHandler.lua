@@ -94,7 +94,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
             GUI.ShowRegister(pid)
             return true
         end
-        Players[pid]:Registered(data)
+        Players[pid]:Register(data)
         Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or " ..
             "change it from your client config.\n")
 
@@ -173,7 +173,7 @@ eventHandler.OnPlayerMessage = function(pid, message)
             Players[pid]:Message("Incorrect password!\n")
             return false
         end
-        Players[pid]:Registered(cmd[2])
+        Players[pid]:Register(cmd[2])
         return false
     elseif cmd[1] == "login" then
         if Players[pid]:IsLoggedIn() then

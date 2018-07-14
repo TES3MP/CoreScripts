@@ -131,9 +131,9 @@ function BasePlayer:Kick()
     tes3mp.Kick(self.pid)
 end
 
-function BasePlayer:Registered(passw)
+function BasePlayer:Register(password)
     self.loggedIn = true
-    self.data.login.password = passw
+    self.data.login.password = password
     self.data.settings.consoleAllowed = "default"
     if self.hasAccount == false then -- create account
         tes3mp.SetCharGenStage(self.pid, 1, 4)
