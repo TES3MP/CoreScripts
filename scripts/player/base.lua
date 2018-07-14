@@ -728,34 +728,41 @@ function BasePlayer:SaveShapeshift()
 end
 
 function BasePlayer:LoadCell()
-    local newCell = self.data.location.cell
 
-    if newCell ~= nil then
+    if self.data.location ~= nil then
+        local newCell = self.data.location.cell
 
-        tes3mp.SetCell(self.pid, newCell)
+        if newCell ~= nil then
 
-        local pos = {0, 0, 0}
-        local rot = {0, 0}
-        pos[0] = self.data.location.posX
-        pos[1] = self.data.location.posY
-        pos[2] = self.data.location.posZ
-        rot[0] = self.data.location.rotX
-        rot[1] = self.data.location.rotZ
+            tes3mp.SetCell(self.pid, newCell)
 
-        if pos[0] ~= nil and pos[1] ~= nil and pos[2] ~= nil then
-            tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+            local pos = {0, 0, 0}
+            local rot = {0, 0}
+            pos[0] = self.data.location.posX
+            pos[1] = self.data.location.posY
+            pos[2] = self.data.location.posZ
+            rot[0] = self.data.location.rotX
+            rot[1] = self.data.location.rotZ
+
+            if pos[0] ~= nil and pos[1] ~= nil and pos[2] ~= nil then
+                tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+            end
+
+            if rot[0] ~= nil and rot[1] ~= nil then
+                tes3mp.SetRot(self.pid, rot[0], rot[1])
+            end
+
+            tes3mp.SendCell(self.pid)
+            tes3mp.SendPos(self.pid)
         end
-
-        if rot[0] ~= nil and rot[1] ~= nil then
-            tes3mp.SetRot(self.pid, rot[0], rot[1])
-        end
-
-        tes3mp.SendCell(self.pid)
-        tes3mp.SendPos(self.pid)
     end
 end
 
 function BasePlayer:SaveCell()
+
+    if self.data.location == nil then
+        self.data.location = {}
+    end
 
     -- Keep this around to update old player files
     if self.data.mapExplored == nil then
