@@ -1,5 +1,7 @@
 local eventHandler = {}
 
+commandHandler = require("commandHandler")
+
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
     WorldInstance:LoadTime(pid, false)
@@ -157,47 +159,40 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
     return false
 end
 
-eventHandler.OnPlayerMessage = function(pid, message)
-    if message:sub(1,1) ~= '/' then return 1 end
+eventHandler.OnPlayerSendMessage = function(pid, message)
+    local playerName = tes3mp.GetName(pid)
+    tes3mp.LogMessage(1, logicHandler.GetChatName(pid) .. ": " .. message)
 
-    local cmd = (message:sub(2, #message)):split(" ")
-
-    if cmd[1] == "register" or cmd[1] == "reg" then
-        if Players[pid]:IsLoggedIn() then
-            Players[pid]:Message("You are already logged in.\n")
-            return false
-        elseif Players[pid]:HasAccount() then
-            Players[pid]:Message("You already have an account. Try \"/login password\".\n")
-            return false
-        elseif cmd[2] == nil then
-            Players[pid]:Message("Incorrect password!\n")
-            return false
-        end
-        Players[pid]:Register(cmd[2])
-        return false
-    elseif cmd[1] == "login" then
-        if Players[pid]:IsLoggedIn() then
-            Players[pid]:Message("You are already logged in.\n")
-            return false
-        elseif not Players[pid]:HasAccount() then
-            Players[pid]:Message("You do not have an account. Try \"/register password\".\n")
-            return 0
-        elseif cmd[2] == nil then
-            Players[pid]:Message("Password cannot be empty\n")
-            return false
-        end
-        Players[pid]:Load()
-        -- Just in case the password from the data file is a number, make sure to turn it
-        -- into a string
-        if tostring(Players[pid].data.login.password) ~= cmd[2] then
-            Players[pid]:Message("Incorrect password!\n")
-            return false
-        end
-        Players[pid]:FinishLogin()
-        return false
+    local admin = false
+    local moderator = false
+    
+    if Players[pid]:IsAdmin() then
+        admin = true
+        moderator = true
+    elseif Players[pid]:IsModerator() then
+        moderator = true
     end
 
-    return true
+    if message:sub(1,1) == '/' then
+
+        local command = (message:sub(2, #message)):split(" ")
+        commandHandler.ProcessCommand(pid, command)
+        return false -- commands should be hidden
+
+    -- Check for chat overrides that add extra text
+    else
+        if admin then
+            local message = "[Admin] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+            return false
+        elseif moderator then
+            local message = "[Mod] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            tes3mp.SendMessage(pid, message, true)
+            return false
+        end
+    end
+
+    return true -- default behavior, regular chat messages should not be overridden
 end
 
 eventHandler.OnPlayerDeath = function(pid)

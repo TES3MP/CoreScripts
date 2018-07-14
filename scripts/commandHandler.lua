@@ -4,6 +4,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     local admin = false
     local moderator = false
+
     if Players[pid]:IsAdmin() then
         admin = true
         moderator = true

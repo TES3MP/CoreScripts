@@ -11,7 +11,6 @@ eventHandler = require("eventHandler")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
-commandHandler = require("commandHandler")
 
 Database = nil
 Player = nil
@@ -352,33 +351,7 @@ function OnPlayerResurrect(pid)
 end
 
 function OnPlayerSendMessage(pid, message)
-    local playerName = tes3mp.GetName(pid)
-    tes3mp.LogMessage(1, logicHandler.GetChatName(pid) .. ": " .. message)
-
-    if eventHandler.OnPlayerMessage(pid, message) == false then
-        return false
-    end
-
-    if message:sub(1,1) == '/' then
-
-        local command = (message:sub(2, #message)):split(" ")
-        commandHandler.ProcessCommand(pid, command)
-        return false -- commands should be hidden
-
-    -- Check for chat overrides that add extra text
-    else
-        if admin then
-            local message = "[Admin] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
-            tes3mp.SendMessage(pid, message, true)
-            return false
-        elseif moderator then
-            local message = "[Mod] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
-            tes3mp.SendMessage(pid, message, true)
-            return false
-        end
-    end
-
-    return true -- default behavior, regular chat messages should not be overridden
+    return eventHandler.OnPlayerSendMessage(pid, message)
 end
 
 function OnObjectLoopTimeExpiration(loopIndex)
