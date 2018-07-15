@@ -434,11 +434,6 @@ function OnPlayerReputation(pid)
     eventHandler.OnPlayerReputation(pid)
 end
 
-function OnPlayerKillCount(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerKillCount\" for pid " .. pid)
-    eventHandler.OnPlayerKillCount(pid)
-end
-
 function OnPlayerBook(pid)
     tes3mp.LogMessage(1, "Called \"OnPlayerBook\" for pid " .. pid)
     eventHandler.OnPlayerBook(pid)
@@ -547,6 +542,11 @@ end
 function OnVideoPlay(pid)
     tes3mp.LogMessage(1, "Called \"OnVideoPlay\" for pid " .. pid)
     eventHandler.OnVideoPlay(pid)
+end
+
+function OnWorldKillCount(pid)
+    tes3mp.LogMessage(1, "Called \"OnWorldKillCount\" for pid " .. pid)
+    eventHandler.OnWorldKillCount(pid)
 end
 
 function OnWorldMap(pid)

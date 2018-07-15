@@ -363,7 +363,7 @@ function BaseCell:ProcessObjectsActivated(pid)
 
     tes3mp.ReadReceivedObjectList()
 
-    -- Add your own logic here to prevent object from being activated in certain places,
+    -- Add your own logic here to prevent objects from being activated in certain places,
     -- or to make specific things happen in certain situations, such as when players
     -- are activated by other players
     for index = 0, tes3mp.GetObjectListSize() - 1 do

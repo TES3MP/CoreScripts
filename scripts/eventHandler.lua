@@ -401,12 +401,6 @@ eventHandler.OnPlayerReputation = function(pid)
     end
 end
 
-eventHandler.OnPlayerKillCount = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveKills(pid)
-    end
-end
-
 eventHandler.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:AddBooks()
@@ -658,6 +652,12 @@ eventHandler.OnVideoPlay = function(pid)
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
             tes3mp.SendVideoPlay(true, true)
         end
+    end
+end
+
+eventHandler.OnWorldKillCount = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        WorldInstance:SaveKills(pid)
     end
 end
 
