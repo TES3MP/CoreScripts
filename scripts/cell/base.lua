@@ -357,6 +357,57 @@ function BaseCell:SaveObjectsDeleted(pid)
     end
 end
 
+-- Iterate through the objects in the ObjectActivate packet and sync them based
+-- on this server's options
+function BaseCell:ProcessObjectsActivated(pid)
+
+    tes3mp.ReadReceivedObjectList()
+
+    -- Add your own logic here to prevent object from being activated in certain places,
+    -- or to make specific things happen in certain situations, such as when players
+    -- are activated by other players
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
+
+        local debugMessage = "- "
+        local isObjectPlayer = tes3mp.IsObjectPlayer(index)
+        local objectPid, objectRefId, objectUniqueIndex
+
+        if isObjectPlayer then
+            objectPid = tes3mp.GetObjectPid(index)
+            debugMessage = debugMessage .. logicHandler.GetChatName(objectPid)
+        else
+            objectRefId = tes3mp.GetObjectRefId(index)
+            objectUniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+            debugMessage = debugMessage .. objectRefId .. " " .. objectUniqueIndex
+        end
+
+        debugMessage = debugMessage .. " has been activated by "
+
+        local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(index)
+        local activatingPid, activatingRefId, activatingUniqueIndex
+
+        if doesObjectHaveActivatingPlayer then
+            activatingPid = tes3mp.GetObjectActivatingPid(index)
+            debugMessage = debugMessage .. logicHandler.GetChatName(activatingPid)
+        else
+            activatingRefId = tes3mp.GetObjectActivatingRefId(index)
+            activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(index) ..
+                "-" .. tes3mp.GetObjectActivatingMpNum(index)
+            debugMessage = debugMessage .. activatingRefId .. " " .. activatingUniqueIndex
+        end
+
+        tes3mp.LogAppend(1, debugMessage)
+    end
+
+    tes3mp.CopyReceivedObjectListToStore()
+    -- Objects can't be activated clientside without the server's approval, so we send
+    -- the packet back to the player who sent it, but we avoid sending it to other
+    -- players because OpenMW barely has any code for handling activations not from
+    -- the local player
+    -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+    tes3mp.SendObjectActivate(false, false)
+end
+
 -- Iterate through the objects in the ObjectPlace packet and only sync and save them
 -- if all their refIds are valid
 function BaseCell:ProcessObjectsPlaced(pid)

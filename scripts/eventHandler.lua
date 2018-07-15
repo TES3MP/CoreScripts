@@ -505,6 +505,19 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
     end
 end
 
+eventHandler.OnObjectActivate = function(pid, cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        if LoadedCells[cellDescription] ~= nil then
+            LoadedCells[cellDescription]:ProcessObjectsActivated(pid)
+        else
+            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+                " sent ObjectActivate for unloaded " .. cellDescription)
+        end
+    else
+        tes3mp.Kick(pid)
+    end
+end
+
 eventHandler.OnObjectPlace = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then

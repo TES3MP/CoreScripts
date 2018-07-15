@@ -494,6 +494,11 @@ function OnActorCellChange(pid, cellDescription)
     eventHandler.OnActorCellChange(pid, cellDescription)
 end
 
+function OnObjectActivate(pid, cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectActivate\" for pid " .. pid .. " and cell " .. cellDescription)
+    eventHandler.OnObjectActivate(pid, cellDescription)
+end
+
 function OnObjectPlace(pid, cellDescription)
     tes3mp.LogMessage(1, "Called \"OnObjectPlace\" for pid " .. pid .. " and cell " .. cellDescription)
     eventHandler.OnObjectPlace(pid, cellDescription)
