@@ -214,8 +214,10 @@ config.playerKeyOrder = {"login", "settings", "character", "customClass", "locat
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent"}
 
-config.cellKeyOrder = {"packets", "objectData", "location", "summon", "inventory", "refId", "count",
-    "charge", "enchantmentCharge"}
+config.cellKeyOrder = {"packets", "entry", "lastVisit", "objectData", "refId", "count", "charge",
+    "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
+    "cellChangeTo", "container", "death", "delete", "doorState", "equipment", "inventory", "lock",
+    "place", "position", "scale", "spawn", "state", "statsDynamic", "trap" }
 
 config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
