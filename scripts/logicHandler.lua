@@ -414,12 +414,17 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
 
     if cell ~= nil and actorUniqueIndex ~= nil then
 
-        -- Save this AI package to the actor's objectData in its cell
-        local ai = dataTableBuilder.BuildAIData(action, targetPid, targetUniqueIndex,
-            posX, posY, posZ, distance, duration, shouldRepeat)
-        cell.data.objectData[actorUniqueIndex].ai = ai
-        tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
-        cell:Save()
+        -- Save this AI package to the actor's objectData in its cell, but only if
+        -- the associated action isn't ACTIVATE, because we don't want the activation
+        -- to happen every time someone loads the cell
+        if action ~= enumerations.ai.ACTIVATE then
+
+            local ai = dataTableBuilder.BuildAIData(action, targetPid, targetUniqueIndex,
+                posX, posY, posZ, distance, duration, shouldRepeat)
+            cell.data.objectData[actorUniqueIndex].ai = ai
+            tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
+            cell:Save()
+        end
 
         -- Initialize the packet for the current cell authority
         local pid = cell.authority
