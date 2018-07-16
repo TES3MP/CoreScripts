@@ -12,6 +12,9 @@ function commandHandler.ProcessCommand(pid, cmd)
         moderator = true
     end
 
+    -- The command itself should always be lowercase
+    cmd[1] = string.lower(cmd[1])
+
     if cmd[1] == "message" or cmd[1] == "msg" then
         if pid == tonumber(cmd[2]) then
             tes3mp.SendMessage(pid, "You can't message yourself.\n")
