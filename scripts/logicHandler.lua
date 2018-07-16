@@ -261,11 +261,6 @@ logicHandler.PushPlayerList = function(pls)
     Players = pls
 end
 
-logicHandler.TestFunction = function()
-      tes3mp.LogMessage(2, "TestFunction: Test function called")
-      tes3mp.LogMessage(2, Players[0])
-end
-
 logicHandler.AuthCheck = function(pid)
     if Players[pid]:IsLoggedIn() then
         return true
