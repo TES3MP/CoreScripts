@@ -77,9 +77,9 @@ function menuHelper.effects.removeItem(inputRefIds, inputCount)
     return effect
 end
 
-function menuHelper.effects.setDataVariable(inputVariable, inputValue)
+function menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
     local effect = {
-        effectType = "variable",
+        effectType = "playerVariable",
         action = "data",
         variable = inputVariable,
         value = inputValue
@@ -88,14 +88,35 @@ function menuHelper.effects.setDataVariable(inputVariable, inputValue)
     return effect
 end
 
-function menuHelper.effects.runFunction(inputFunctionName, inputArguments)
+function menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
     local effect = {
-        effectType = "function",
+        effectType = "playerFunction",
         functionName = inputFunctionName,
         arguments = inputArguments
     }
 
     return effect
+end
+
+function menuHelper.effects.runGlobalFunction(inputObjectName, inputFunctionName, inputArguments)
+    local effect = {
+        effectType = "globalFunction",
+        objectName = inputObjectName,
+        functionName = inputFunctionName,
+        arguments = inputArguments
+    }
+
+    return effect
+end
+
+-- Deprecated
+function menuHelper.effects.setDataVariable(inputVariable, inputValue)
+    return menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
+end
+
+-- Deprecated
+function menuHelper.effects.runFunction(inputFunctionName, inputArguments)
+    return menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
 end
 
 function menuHelper.destinations.setDefault(inputMenu, inputEffects)
@@ -194,7 +215,9 @@ function menuHelper.processEffects(pid, effects)
 
     for _, effect in ipairs(effects) do
 
-        if effect.effectType == "item" then
+        local effectType = effect.effectType
+
+        if effectType == "item" then
 
             shouldReloadInventory = true
 
@@ -234,19 +257,32 @@ function menuHelper.processEffects(pid, effects)
                     end
                 end
             end
-        elseif effect.effectType == "variable" then
+        elseif effectType == "playerVariable" then
 
             if effect.action == "data" then
                 targetPlayer.data[effect.variable] = effect.value
             end
-        elseif effect.effectType == "function" then
+        elseif effectType == "playerFunction" or effectType == "globalFunction" then
 
+            local functionName = effect.functionName
             local arguments = effect.arguments
 
-            if arguments == nil then
-                targetPlayer[effect.functionName](targetPlayer)
-            else
-                targetPlayer[effect.functionName](targetPlayer, unpack(arguments))
+            if arguments ~= nil then
+                arguments = unpack(arguments)
+            end
+
+            if effectType == "playerFunction" then
+                targetPlayer[functionName](targetPlayer, arguments)
+            elseif effectType == "globalFunction" then
+
+                local objectName = effect.objectName
+
+                if objectName ~= nil then
+                    local targetObject = _G[objectName]
+                    targetObject[functionName](targetObject, arguments)
+                else
+                    _G[functionName](arguments)
+                end
             end
         end
     end
