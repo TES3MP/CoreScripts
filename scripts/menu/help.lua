@@ -132,6 +132,8 @@ Menus["help moderator page 2"] = {
         color.Yellow .. "/setauthority <pid> <cell>\n" ..
             color.White .. "Forcibly set a certain player as the authority of a cell " ..
             color.Yellow .. "(/setauth)",
+        color.Yellow .. "/advancedexample\n" ..
+            color.White .. "Display an example of an advanced menu using menuHelper",
     buttons = {
         { caption = "Moderator help page 1",
             displayConditions = {

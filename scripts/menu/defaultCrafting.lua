@@ -34,6 +34,7 @@ Menus["default crafting origin"] = {
         { caption = "Exit", destinations = nil }
     }
 }
+
 Menus["default crafting pillow white"] = {
     text = "How many would you like to craft?",
     buttons = {
@@ -67,6 +68,7 @@ Menus["default crafting pillow white"] = {
         { caption = "Exit", destinations = nil }
     }
 }
+
 Menus["default crafting pillow hammock"] = {
     text = "How many would you like to craft?",
     buttons = {
@@ -101,6 +103,7 @@ Menus["default crafting pillow hammock"] = {
         { caption = "Exit", destinations = nil }
     }
 }
+
 Menus["default crafting drum guarskin"] = {
     text = "How many would you like to craft?",
     buttons = {
@@ -134,6 +137,7 @@ Menus["default crafting drum guarskin"] = {
         { caption = "Exit", destinations = nil }
     }
 }
+
 Menus["lack of materials"] = {
     text = "You lack the materials required.",
     buttons = {
@@ -141,6 +145,7 @@ Menus["lack of materials"] = {
         { caption = "Ok", destinations = nil }
     }
 }
+
 Menus["reward generic singular"] = {
     text = "Congratulations! The item is now yours",
     buttons = {
@@ -148,6 +153,7 @@ Menus["reward generic singular"] = {
         { caption = "Exit", destinations = nil }
     }
 }
+
 Menus["reward generic plural"] = {
     text = "Congratulations! The items are now yours",
     buttons = {
