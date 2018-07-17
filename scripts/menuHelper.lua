@@ -326,7 +326,7 @@ function menuHelper.processEffects(pid, effects)
                         targetObject[functionName](targetObject, unpack(arguments))
                     end
                 else
-                    _G[functionName](arguments)
+                    _G[functionName](unpack(arguments))
                 end
             end
         end
