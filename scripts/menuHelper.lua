@@ -267,19 +267,19 @@ function menuHelper.processEffects(pid, effects)
             local functionName = effect.functionName
             local arguments = effect.arguments
 
-            if arguments ~= nil then
-                arguments = unpack(arguments)
+            if arguments == nil then
+                arguments = {}
             end
 
             if effectType == "playerFunction" then
-                targetPlayer[functionName](targetPlayer, arguments)
+                targetPlayer[functionName](targetPlayer, unpack(arguments))
             elseif effectType == "globalFunction" then
 
                 local objectName = effect.objectName
 
                 if objectName ~= nil then
                     local targetObject = _G[objectName]
-                    targetObject[functionName](targetObject, arguments)
+                    targetObject[functionName](targetObject, unpack(arguments))
                 else
                     _G[functionName](arguments)
                 end
