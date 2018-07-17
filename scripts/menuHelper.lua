@@ -5,6 +5,7 @@ local menuHelper = {}
 menuHelper.conditions = {}
 menuHelper.effects = {}
 menuHelper.destinations = {}
+menuHelper.variables = {}
 
 function menuHelper.conditions.requireItem(inputRefIds, inputCount)
 
@@ -146,6 +147,15 @@ function menuHelper.destinations.setConditional(inputMenu, inputConditions, inpu
     return destination
 end
 
+function menuHelper.variables.currentPid()
+    local variable = {
+        variableType = "pid",
+        source = "current"
+    }
+
+    return variable
+end
+
 function menuHelper.checkCondition(pid, condition)
 
     local targetPlayer = Players[pid]
@@ -204,6 +214,30 @@ function menuHelper.checkConditionTable(pid, conditions)
     end
 
     return false
+end
+
+function menuHelper.processVariables(pid, inputTable)
+
+    local resultTable = {}
+
+    for tableIndex, tableElement in ipairs(inputTable) do
+
+        if type(tableElement) == "table" and tableElement.variableType ~= nil then
+
+            local variableType = tableElement.variableType
+            local source = tableElement.source
+
+            if variableType == "pid" then
+                if source == "current" then
+                    tableElement = pid
+                end
+            end
+        end
+
+        table.insert(resultTable, tableElement)
+    end
+
+    return resultTable
 end
 
 function menuHelper.processEffects(pid, effects)
@@ -269,6 +303,10 @@ function menuHelper.processEffects(pid, effects)
 
             if arguments == nil then
                 arguments = {}
+            -- Fill in any variables placed inside the arguments
+            else
+                tableHelper.print(arguments)
+                arguments = menuHelper.processVariables(pid, arguments)
             end
 
             if effectType == "playerFunction" then
