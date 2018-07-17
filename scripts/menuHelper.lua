@@ -279,7 +279,14 @@ function menuHelper.processEffects(pid, effects)
 
                 if objectName ~= nil then
                     local targetObject = _G[objectName]
-                    targetObject[functionName](targetObject, unpack(arguments))
+
+                    -- If this object doesn't have a metatable, don't pass it to itself
+                    -- as an argument
+                    if getmetatable(targetObject) == nil then
+                        targetObject[functionName](unpack(arguments))
+                    else
+                        targetObject[functionName](targetObject, unpack(arguments))
+                    end
                 else
                     _G[functionName](arguments)
                 end
