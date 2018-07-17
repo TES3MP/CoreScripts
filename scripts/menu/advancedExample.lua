@@ -8,6 +8,9 @@ Menus["advanced example origin"] = {
         { caption = "The world instance",
             destinations = { menuHelper.destinations.setDefault("advanced example world") }
         },
+        { caption = "logicHandler",
+            destinations = { menuHelper.destinations.setDefault("advanced example logichandler") }
+        },
         { caption = "Exit", destinations = nil }
     }
 }
@@ -44,7 +47,25 @@ Menus["advanced example world"] = {
                 menuHelper.destinations.setDefault(nil,
                 {
                     menuHelper.effects.runGlobalFunction("WorldInstance", "IncrementDay"),
-                    menuHelper.effects.runGlobalFunction("WorldInstance", "LoadTime", {nil, true})
+                    menuHelper.effects.runGlobalFunction("WorldInstance", "LoadTime",
+                        {menuHelper.variables.currentPid(), true})
+                })
+            }
+        },
+        { caption = "Back", destinations = { menuHelper.destinations.setFromCustomVariable("previousCustomMenu") } },
+        { caption = "Exit", destinations = nil }
+    }
+}
+
+Menus["advanced example logichandler"] = {
+    text = color.Orange .. "Select a function to run on the logicHandler.",
+    buttons = {
+        { caption = "CreateObjectAtPlayer(menuHelper.variables.currentPid(), \"rat\", \"spawn\")",
+            destinations = {
+                menuHelper.destinations.setDefault(nil,
+                {
+                    menuHelper.effects.runGlobalFunction("logicHandler", "CreateObjectAtPlayer",
+                        {menuHelper.variables.currentPid(), "rat", "spawn"})
                 })
             }
         },
