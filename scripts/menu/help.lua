@@ -131,7 +131,7 @@ Menus["help moderator page 2"] = {
             color.White .. "Set a player's momentum to certain values\n" ..
         color.Yellow .. "/setauthority <pid> <cell>\n" ..
             color.White .. "Forcibly set a certain player as the authority of a cell " ..
-            color.Yellow .. "(/setauth)",
+            color.Yellow .. "(/setauth)\n" ..
         color.Yellow .. "/advancedexample\n" ..
             color.White .. "Display an example of an advanced menu using menuHelper " ..
             color.Yellow .. "(/advex)",
