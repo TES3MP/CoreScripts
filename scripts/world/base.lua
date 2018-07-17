@@ -118,10 +118,6 @@ end
 
 function BaseWorld:LoadTime(pid, sendToOthers)
 
-    if pid == nil then
-        pid = tableHelper.getAnyValue(Players).pid
-    end
-
     tes3mp.SetHour(self.data.time.hour)
     tes3mp.SetDay(self.data.time.day)
 
