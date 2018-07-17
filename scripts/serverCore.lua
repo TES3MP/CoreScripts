@@ -328,21 +328,6 @@ function OnPlayerDisconnect(pid)
 
     tes3mp.SendMessage(pid, message, true)
 
-    if Players[pid] ~= nil then
-
-        Players[pid]:DeleteSummons()
-
-        -- Was this player confiscating from someone? If so, clear that
-        if Players[pid].confiscationTargetName ~= nil then
-            local targetName = Players[pid].confiscationTargetName
-            local targetPlayer = logicHandler.GetPlayerByName(targetName)
-            targetPlayer:SetConfiscationState(false)
-        end
-    end
-
-    -- Trigger any necessary script events useful for saving state
-    eventHandler.OnPlayerCellChange(pid)
-
     eventHandler.OnPlayerDisconnect(pid)
     DecrementAdminCounter()
 end

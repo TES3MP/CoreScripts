@@ -50,6 +50,20 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
 
+        Players[pid]:DeleteSummons()
+
+        -- Was this player confiscating from someone? If so, clear that
+        if Players[pid].confiscationTargetName ~= nil then
+            local targetName = Players[pid].confiscationTargetName
+            local targetPlayer = logicHandler.GetPlayerByName(targetName)
+            targetPlayer:SetConfiscationState(false)
+        end
+
+        Players[pid]:SaveCell()
+        Players[pid]:SaveStatsDynamic()
+        tes3mp.LogMessage(1, "Saving player " .. pid)
+        Players[pid]:Save()
+
         -- Unload every cell for this player
         for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
 
@@ -160,6 +174,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
 end
 
 eventHandler.OnPlayerSendMessage = function(pid, message)
+
     local playerName = tes3mp.GetName(pid)
     tes3mp.LogMessage(1, logicHandler.GetChatName(pid) .. ": " .. message)
 
