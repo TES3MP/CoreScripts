@@ -1,15 +1,18 @@
 Menus["advanced example origin"] = {
     text = color.Orange .. "This is an example of an advanced menu. Use it as a starting point for your own.\n\n" ..
-                color.White .. "Select an object whose functions you want to run.",
+                color.White .. "Select what kind of functions you want to run.",
     buttons = {
-        { caption = "This player",
+        { caption = "Player functions",
             destinations = { menuHelper.destinations.setDefault("advanced example player") }
         },
-        { caption = "The world instance",
+        { caption = "World instance functions",
             destinations = { menuHelper.destinations.setDefault("advanced example world") }
         },
-        { caption = "logicHandler",
+        { caption = "logicHandler functions",
             destinations = { menuHelper.destinations.setDefault("advanced example logichandler") }
+        },
+        { caption = "Global functions",
+            destinations = { menuHelper.destinations.setDefault("advanced example global") }
         },
         { caption = "Exit", destinations = nil }
     }
@@ -66,6 +69,23 @@ Menus["advanced example logichandler"] = {
                 {
                     menuHelper.effects.runGlobalFunction("logicHandler", "CreateObjectAtPlayer",
                         {menuHelper.variables.currentPid(), "rat", "spawn"})
+                })
+            }
+        },
+        { caption = "Back", destinations = { menuHelper.destinations.setFromCustomVariable("previousCustomMenu") } },
+        { caption = "Exit", destinations = nil }
+    }
+}
+
+Menus["advanced example global"] = {
+    text = color.Orange .. "Select a global function to run.",
+    buttons = {
+        { caption = "OnPlayerSendMessage(menuHelper.variables.currentPid(), \"This is a test chat message\")",
+            destinations = {
+                menuHelper.destinations.setDefault(nil,
+                {
+                    menuHelper.effects.runGlobalFunction(nil, "OnPlayerSendMessage",
+                        {menuHelper.variables.currentPid(), "This is a test chat message"})
                 })
             }
         },
