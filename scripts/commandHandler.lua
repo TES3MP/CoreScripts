@@ -1048,7 +1048,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         Players[pid].currentCustomMenu = "default crafting origin"
         menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
 
-    elseif cmd[1] == "advancedexample" and moderator then
+    elseif cmd[1] == "advancedexample" or cmd[1] == "advex" and moderator then
 
         -- Check "scripts/menu/advancedExample.lua" if you want to change the advanced menu example
         Players[pid].currentCustomMenu = "advanced example origin"
