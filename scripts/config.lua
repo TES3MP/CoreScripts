@@ -134,6 +134,12 @@ config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
 config.menuHelperFiles = { "help", "defaultCrafting", "advancedExample" }
 
+-- What the difference in ping needs to be in favor of a new arrival to a cell or region
+-- compared to that cell or region's current player authority for the new arrival to become
+-- the authority there
+-- Note: Setting this too low will lead to constant authority changes which cause more lag
+config.pingDifferenceRequiredForAuthority = 40
+
 -- The log level enforced on clients by default, determining how much debug information
 -- is displayed in their debug window and logs
 -- Note 1: Set this to -1 to allow clients to use whatever log level they have set in

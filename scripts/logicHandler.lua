@@ -486,7 +486,7 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SetAuthority(pid)
     -- Otherwise, only set this player as the authority if their ping is noticeably lower
     -- than that of the current authority
-    elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - 40) then
+    elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
         tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
             " took over authority from player " .. logicHandler.GetChatName(authPid) ..
             " in " .. cellDescription .. " for latency reasons")
