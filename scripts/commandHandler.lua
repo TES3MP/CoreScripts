@@ -612,9 +612,9 @@ function commandHandler.ProcessCommand(pid, cmd)
                 creatureRefId = "nothing"
             end
 
-            tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " .. creatureRefId, false)
+            tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " .. creatureRefId .. "\n", false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId, false)
+                tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId .. "\n", false)
             end
         end
 
