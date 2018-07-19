@@ -189,11 +189,6 @@ config.disallowedStateRefIds = {}
 -- Prevent object scales from being set this high
 config.maximumObjectScale = 20
 
--- Disallow players from including the following in their names
--- Note: Unfortunately, these are based on real names that trolls have been using on servers
-config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
-"faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
-
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
@@ -209,6 +204,11 @@ config.databaseType = "json"
 -- The location of the database file
 -- Note: Not applicable when using json
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
+
+-- Disallow players from including the following in their names
+-- Note: Unfortunately, these are based on real names that trolls have been using on servers
+config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
+"faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- The order in which table keys should be saved to JSON files
 config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats",
