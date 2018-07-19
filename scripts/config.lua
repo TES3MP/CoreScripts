@@ -165,7 +165,7 @@ config.enablePlacedObjectCollision = false
 
 -- Enforce collision for certain placed object refIds even when enablePlacedObjectCollision
 -- is false
-config.enforcedCollisionRefIds = { "misc_uni_pillow_01" }
+config.enforcedCollisionRefIds = { "misc_uni_pillow_01", "misc_uni_pillow_02" }
 
 -- Whether placed object collision (when turned on) resembles actor collision, in that it
 -- prevents players from standing on top of the placed objects without slipping
