@@ -144,6 +144,9 @@ function BasePlayer:FinishLogin()
     self.loggedIn = true
     if self.hasAccount ~= false then -- load account
         self:SaveIpAddress()
+
+        WorldInstance:LoadTime(self.pid, false)
+
         self:LoadCharacter()
         self:LoadClass()
         self:LoadLevel()
@@ -223,6 +226,8 @@ function BasePlayer:EndCharGen()
     self:SaveEquipment()
     self:SaveIpAddress()
     self:CreateAccount()
+
+    WorldInstance:LoadTime(self.pid, false)
 
     if config.shareJournal == true then
         WorldInstance:LoadJournal(self.pid)
