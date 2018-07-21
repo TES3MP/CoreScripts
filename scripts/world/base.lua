@@ -1,8 +1,12 @@
 stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
+-- Keep this here because it's required in mathematical operations
 BaseWorld.defaultTimeScale = 30
+
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+
+BaseWorld.loadedRegions = {}
 
 function BaseWorld:__init()
 
@@ -36,6 +40,73 @@ function BaseWorld:EnsureTimeDataExists()
     if self.data.time == nil then
         self.data.time = config.defaultTimeTable
     end
+end
+
+function BaseWorld:AddRegionVisitor(pid, regionName)
+
+    if self.loadedRegions[regionName] == nil then
+        self.loadedRegions[regionName] = { visitors = {}, forcedWeatherUpdatePids = {} }
+    end
+
+    -- Only add new visitor if we don't already have them
+    if tableHelper.containsValue(self.loadedRegions[regionName].visitors, pid) == false then
+        table.insert(self.loadedRegions[regionName].visitors, pid)
+    end
+end
+
+function BaseWorld:RemoveRegionVisitor(pid, regionName)
+
+    local loadedRegion = self.loadedRegions[regionName]
+
+    -- Only remove visitor if they are actually recorded as one
+    if tableHelper.containsValue(loadedRegion.visitors, pid) then
+        tableHelper.removeValue(loadedRegion.visitors, pid)
+    end
+
+    -- Additionally, remove the visitor from the forcedWeatherUpdatePids if they
+    -- are still in there
+    self:RemoveForcedWeatherUpdatePid(pid, regionName)
+end
+
+function BaseWorld:AddForcedWeatherUpdatePid(pid, regionName)
+
+    local loadedRegion = self.loadedRegions[regionName]
+    table.insert(loadedRegion.forcedWeatherUpdatePids, pid)
+end
+
+function BaseWorld:RemoveForcedWeatherUpdatePid(pid, regionName)
+
+    local loadedRegion = self.loadedRegions[regionName]
+    tableHelper.removeValue(loadedRegion.forcedWeatherUpdatePids, pid)
+end
+
+function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
+    
+    local loadedRegion = self.loadedRegions[regionName]
+
+    if tableHelper.containsValue(loadedRegion.forcedWeatherUpdatePids, pid) then
+        return true
+    end
+
+    return false
+end
+
+function BaseWorld:GetRegionAuthority(regionName)
+    
+    if self.loadedRegions[regionName] ~= nil then
+        return self.loadedRegions[regionName].authority
+    end
+
+    return nil
+end
+
+function BaseWorld:SetRegionAuthority(pid, regionName)
+    self.loadedRegions[regionName].authority = pid
+    tes3mp.LogMessage(1, "Authority of region " .. regionName .. " is now " ..
+        logicHandler.GetChatName(pid))
+
+    tes3mp.SetAuthorityRegion(regionName)
+    tes3mp.SendWorldRegionAuthority(pid)
 end
 
 function BaseWorld:IncrementDay()
@@ -116,6 +187,35 @@ function BaseWorld:LoadKills(pid)
     tes3mp.SendKillChanges(pid)
 end
 
+function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
+
+    local region = self.loadedRegions[regionName]
+
+    if region.currentWeather ~= nil then
+
+        tes3mp.SetWeatherRegion(regionName)
+        tes3mp.SetWeatherCurrent(region.currentWeather)
+        tes3mp.SetWeatherNext(region.nextWeather)
+        tes3mp.SetWeatherQueued(region.queuedWeather)
+        tes3mp.SetWeatherTransitionFactor(region.transitionFactor)
+        tes3mp.SetWeatherForceState(forceState)
+        tes3mp.SendWorldWeather(pid, sendToOthers)
+    else
+        tes3mp.LogMessage(1, "Could not load weather in region " .. regionName .. " for " ..
+            logicHandler.GetChatName(pid) .. " because we have no weather information for it")
+    end
+end
+
+function BaseWorld:LoadWeather(pid, sendToOthers, forceState)
+
+    for regionName, region in pairs(self.loadedRegions) do
+
+        if region.currentWeather ~= nil then
+            self:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
+        end
+    end
+end
+
 function BaseWorld:LoadTime(pid, sendToOthers)
 
     tes3mp.SetHour(self.data.time.hour)
@@ -174,11 +274,20 @@ function BaseWorld:SaveKills(pid)
     self:Save()
 end
 
+function BaseWorld:SaveRegionWeather(regionName)
+
+    local loadedRegion = self.loadedRegions[regionName]
+    loadedRegion.currentWeather = tes3mp.GetWeatherCurrent()
+    loadedRegion.nextWeather = tes3mp.GetWeatherNext()
+    loadedRegion.queuedWeather = tes3mp.GetWeatherQueued()
+    loadedRegion.transitionFactor = tes3mp.GetWeatherTransitionFactor()
+end
+
 function BaseWorld:SaveMapExploration(pid)
     stateHelper:SaveMapExploration(pid, self)
 end
 
-function BaseWorld:SaveMapTiles(pid)
+function BaseWorld:SaveMapTiles()
 
     tes3mp.ReadReceivedWorldstate()
 

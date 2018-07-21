@@ -4,8 +4,6 @@ commandHandler = require("commandHandler")
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
-    WorldInstance:LoadTime(pid, false)
-
     tes3mp.SetDifficulty(pid, config.difficulty)
     tes3mp.SetConsoleAllowed(pid, config.allowConsole)
     tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
@@ -21,6 +19,8 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
 
     logicHandler.SendConfigCollisionOverrides(pid, false)
+
+    WorldInstance:LoadTime(pid, false)
 
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
@@ -66,8 +66,11 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
         -- Unload every cell for this player
         for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
-
             logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
+        end
+
+        if Players[pid].data.location.regionName ~= nil then
+            logicHandler.UnloadRegionForPlayer(pid, Players[pid].data.location.regionName)
         end
 
         Players[pid]:Destroy()
@@ -251,6 +254,44 @@ eventHandler.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if contentFixer.ValidateCellChange(pid) then
+
+            local previousCell = Players[pid].data.location.cell
+
+            -- If this player is changing their region, add them to the visitors of the new
+            -- region while removing them from the visitors of their old region
+            if tes3mp.IsChangingRegion(pid) then
+                local regionName = string.lower(tes3mp.GetRegion(pid))
+                local debugMessage = logicHandler.GetChatName(pid) .. " has "
+                
+                local hasFinishedInitialTeleportation = Players[pid].hasFinishedInitialTeleportation
+                local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded, previousCell)
+
+                -- It's possible we've been teleported to a cell we had already loaded when
+                -- spawning on the server, so also check whether this is the player's first
+                -- cell change since joining
+                local isTeleported = previousCellIsStillLoaded == false or hasFinishedInitialTeleportation == false
+
+                if isTeleported then
+                    debugMessage = debugMessage .. "teleported"
+                else
+                    debugMessage = debugMessage .. "walked"
+                end
+
+                debugMessage = debugMessage .. " to region " .. regionName .. "\n"
+                tes3mp.LogMessage(1, debugMessage)
+
+                logicHandler.LoadRegionForPlayer(pid, regionName, isTeleported)
+
+                local previousRegionName = Players[pid].data.location.regionName
+
+                if previousRegionName ~= nil and previousRegionName ~= regionName then
+                    logicHandler.UnloadRegionForPlayer(pid, previousRegionName)
+                end
+
+                Players[pid].data.location.regionName = regionName
+                Players[pid].hasFinishedInitialTeleportation = true
+            end
+
             Players[pid]:SaveCell()
             Players[pid]:SaveStatsDynamic()
             tes3mp.LogMessage(1, "Saving player " .. pid)
@@ -678,7 +719,7 @@ end
 
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveMapTiles(pid)
+        WorldInstance:SaveMapTiles()
 
         if config.shareMapExploration == true then
             tes3mp.CopyReceivedWorldstateToStore()
@@ -686,6 +727,39 @@ eventHandler.OnWorldMap = function(pid)
             -- Send this WorldMap packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
             tes3mp.SendWorldMap(pid, true, true)
+        end
+    end
+end
+
+eventHandler.OnWorldWeather = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedWorldstate()
+
+        local regionName = string.lower(tes3mp.GetWeatherRegion())
+
+        -- Track current weather in each region
+        if WorldInstance.loadedRegions[regionName] ~= nil then
+            WorldInstance:SaveRegionWeather(regionName)
+        end
+
+        -- Go through the other players on the server and send them this weather update
+        for _, otherPlayer in pairs(Players) do
+
+            local otherPid = otherPlayer.pid
+
+            -- Ignore the player we got the weather from
+            if otherPid ~= pid then
+
+                -- If this player has been marked as requiring a force weather update for
+                -- this region, provide them with one
+                if WorldInstance:IsForcedWeatherUpdatePid(otherPid, regionName) then
+                    WorldInstance:LoadRegionWeather(regionName, otherPid, false, true)
+                    WorldInstance:RemoveForcedWeatherUpdatePid(otherPid, regionName)
+                else
+                    WorldInstance:LoadRegionWeather(regionName, otherPid, false, false)
+                end
+            end
         end
     end
 end

@@ -539,6 +539,11 @@ function OnWorldMap(pid)
     eventHandler.OnWorldMap(pid)
 end
 
+function OnWorldWeather(pid)
+    tes3mp.LogMessage(1, "Called \"OnWorldWeather\" for pid " .. pid)
+    eventHandler.OnWorldWeather(pid)
+end
+
 function OnGUIAction(pid, idGui, data)
     tes3mp.LogMessage(1, "Called \"OnGUIAction\" for pid " .. pid)
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called

@@ -34,6 +34,7 @@ function BasePlayer:__init(pid, playerName)
         },
         location = {
             cell = "",
+            regionName = "",
             posX = 0,
             posY = 0,
             posZ = 0,
@@ -114,6 +115,8 @@ function BasePlayer:__init(pid, playerName)
 
     self.cellsLoaded = {}
     self.summons = {}
+
+    self.hasFinishedInitialTeleportation = false
 end
 
 function BasePlayer:Destroy()
@@ -146,6 +149,7 @@ function BasePlayer:FinishLogin()
         self:SaveIpAddress()
 
         WorldInstance:LoadTime(self.pid, false)
+        WorldInstance:LoadWeather(self.pid, false)
 
         self:LoadCharacter()
         self:LoadClass()
@@ -228,6 +232,7 @@ function BasePlayer:EndCharGen()
     self:CreateAccount()
 
     WorldInstance:LoadTime(self.pid, false)
+    WorldInstance:LoadWeather(self.pid, false, true)
 
     if config.shareJournal == true then
         WorldInstance:LoadJournal(self.pid)
@@ -759,6 +764,12 @@ function BasePlayer:LoadCell()
 
             tes3mp.SendCell(self.pid)
             tes3mp.SendPos(self.pid)
+
+            local regionName = self.data.location.regionName
+
+            if regionName ~= nil then
+                logicHandler.LoadRegionForPlayer(self.pid, regionName, true)
+            end
         end
     end
 end

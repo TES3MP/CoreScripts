@@ -484,7 +484,7 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
     -- If the cell's authority is nil, set this player as the authority
     if authPid == nil then
         LoadedCells[cellDescription]:SetAuthority(pid)
-    -- Otherwise, only set this player as the authority if their ping is noticeably lower
+    -- Otherwise, only set this new visitor as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
         tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
@@ -519,6 +519,68 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
             for key, otherPid in pairs(LoadedCells[cellDescription].visitors) do
                 LoadedCells[cellDescription]:SetAuthority(otherPid)
                 break
+            end
+        end
+    end
+end
+
+logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
+
+    tes3mp.LogMessage(1, "Loading region " .. regionName .. " for " .. pid)
+
+    -- Record that this player has the region loaded
+    WorldInstance:AddRegionVisitor(pid, regionName)
+    local authPid = WorldInstance:GetRegionAuthority(regionName)
+
+    -- Set the latest known weather for this player; if isTeleported is true, the weather
+    -- will be forced, i.e. set instantly to how it is for the authority
+    WorldInstance:LoadRegionWeather(regionName, pid, false, isTeleported)
+
+    -- If the region's authority is nil, set this player as the authority
+    if authPid == nil then
+        WorldInstance:SetRegionAuthority(pid, regionName)
+    else
+        -- If the player has been teleported here, we'll be receiving an update for this weather
+        -- from the region authority, so store this new visitor in the forcedUpdatePids for when
+        -- that packet arrives
+        if isTeleported then
+            WorldInstance:AddForcedWeatherUpdatePid(pid, regionName)
+
+        -- Only set this new visitor as the authority if they haven't been teleported here and
+        -- their ping is noticeably lower than that of the current authority
+        elseif isTeleported == false and 
+            tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
+            tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
+                " took over authority from player " .. logicHandler.GetChatName(authPid) ..
+                " in region " .. regionName .. " for latency reasons")
+            WorldInstance:SetRegionAuthority(pid, regionName)
+        end
+    end
+end
+
+logicHandler.UnloadRegionForPlayer = function(pid, regionName)
+
+    if WorldInstance.loadedRegions[regionName] ~= nil then
+
+        tes3mp.LogMessage(1, "Unloading region " .. regionName .. " for " .. pid)
+
+        -- No longer record that this player has the region loaded
+        WorldInstance:RemoveRegionVisitor(pid, regionName)
+
+        -- If this player was the region's authority, set another player
+        -- as the authority
+        if WorldInstance:GetRegionAuthority(regionName) == pid then
+
+            local visitors = WorldInstance.loadedRegions[regionName].visitors
+
+            if tableHelper.getCount(visitors) > 0 then
+
+                for key, otherPid in pairs(visitors) do
+                    WorldInstance:SetRegionAuthority(otherPid, regionName)
+                    break
+                end
+            else
+                WorldInstance.loadedRegions[regionName].authority = nil
             end
         end
     end
