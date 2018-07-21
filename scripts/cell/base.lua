@@ -264,43 +264,6 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
--- Iterate through the objects in the ObjectDelete packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectsDeleted(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedDeleteRefIds, refId) or
-            tableHelper.containsValue(self.unusableContainerUniqueIndexes, uniqueIndex) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectsDeleted(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can sometimes be deleted clientside without the server's approval and
-        -- sometimes not, but we should always send ObjectDelete packets back to the sender
-        -- for the sake of the latter situations
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectDelete(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-    end
-end
-
 function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
@@ -355,92 +318,6 @@ function BaseCell:SaveObjectsDeleted(pid)
     -- Go through every temporary loaded cell and unload it
     for arrayIndex, originalCellDescription in pairs(temporaryLoadedCells) do
         logicHandler.UnloadCell(originalCellDescription)
-    end
-end
-
--- Iterate through the objects in the ObjectActivate packet and sync them based
--- on this server's options
-function BaseCell:ProcessObjectsActivated(pid)
-
-    tes3mp.ReadReceivedObjectList()
-
-    -- Add your own logic here to prevent objects from being activated in certain places,
-    -- or to make specific things happen in certain situations, such as when players
-    -- are activated by other players
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local debugMessage = "- "
-        local isObjectPlayer = tes3mp.IsObjectPlayer(index)
-        local objectPid, objectRefId, objectUniqueIndex
-
-        if isObjectPlayer then
-            objectPid = tes3mp.GetObjectPid(index)
-            debugMessage = debugMessage .. logicHandler.GetChatName(objectPid)
-        else
-            objectRefId = tes3mp.GetObjectRefId(index)
-            objectUniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-            debugMessage = debugMessage .. objectRefId .. " " .. objectUniqueIndex
-        end
-
-        debugMessage = debugMessage .. " has been activated by "
-
-        local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(index)
-        local activatingPid, activatingRefId, activatingUniqueIndex
-
-        if doesObjectHaveActivatingPlayer then
-            activatingPid = tes3mp.GetObjectActivatingPid(index)
-            debugMessage = debugMessage .. logicHandler.GetChatName(activatingPid)
-        else
-            activatingRefId = tes3mp.GetObjectActivatingRefId(index)
-            activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(index) ..
-                "-" .. tes3mp.GetObjectActivatingMpNum(index)
-            debugMessage = debugMessage .. activatingRefId .. " " .. activatingUniqueIndex
-        end
-
-        tes3mp.LogAppend(1, debugMessage)
-    end
-
-    tes3mp.CopyReceivedObjectListToStore()
-    -- Objects can't be activated clientside without the server's approval, so we send
-    -- the packet back to the player who sent it, but we avoid sending it to other
-    -- players because OpenMW barely has any code for handling activations not from
-    -- the local player
-    -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-    tes3mp.SendObjectActivate(false, false)
-end
-
--- Iterate through the objects in the ObjectPlace packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectsPlaced(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectsPlaced(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be placed clientside without the server's approval, so we send
-        -- the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectPlace(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -517,41 +394,6 @@ function BaseCell:SaveObjectsPlaced(pid)
     end
 end
 
--- Iterate through the objects in the ObjectSpawn packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectsSpawned(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedCreateRefIds, refId) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectsSpawned(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be spawned clientside without the server's approval, so we send
-        -- the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectSpawn(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-    end
-end
-
 function BaseCell:SaveObjectsSpawned(pid)
 
     local containerUniqueIndexesRequested = {}
@@ -625,41 +467,6 @@ function BaseCell:SaveObjectsSpawned(pid)
     end
 end
 
--- Iterate through the objects in the ObjectLock packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectsLocked(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedLockRefIds, refId) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectsLocked(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be locked/unlocked clientside without the server's approval,
-        -- so we send the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectLock(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-    end
-end
-
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -678,41 +485,6 @@ function BaseCell:SaveObjectsLocked(pid)
         tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, uniqueIndex)
-    end
-end
-
--- Iterate through the objects in the ObjectTrap packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectTrapsTriggered(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedTrapRefIds, refId) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectTrapsTriggered(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be untrapped clientside without the server's approval, so we send
-        -- the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectTrap(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -735,42 +507,6 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
     end
 end
 
--- Iterate through the objects in the ObjectScaled packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectsScaled(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-        local scale = tes3mp.GetObjectScale(index)
-
-        if scale >= config.maximumObjectScale then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectsScaled(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be scaled clientside without the server's approval, so we send
-        -- the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectScale(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-    end
-end
-
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -789,41 +525,6 @@ function BaseCell:SaveObjectsScaled(pid)
         tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, uniqueIndex)
-    end
-end
-
--- Iterate through the objects in the ObjectState packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessObjectStates(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(config.disallowedStateRefIds, refId) then
-            table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-            isValid = false
-        end
-    end
-
-    if isValid then
-        self:SaveObjectStates(pid)
-
-        tes3mp.CopyReceivedObjectListToStore()
-        -- Objects can't be enabled or disabled clientside without the server's approval,
-        -- so we send the packet to other players and also back to the player who sent it,
-        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-        tes3mp.SendObjectState(true, false)
-
-    else
-        tes3mp.LogMessage(1, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) ..
-            " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -885,44 +586,6 @@ function BaseCell:SaveDoorStates(pid)
         self.data.objectData[uniqueIndex].doorState = doorState
 
         tableHelper.insertValueIfMissing(self.data.packets.doorState, uniqueIndex)
-    end
-end
-
--- Iterate through the objects in the ObjectDelete packet and only sync and save them
--- if all their refIds are valid
-function BaseCell:ProcessContainers(pid)
-
-    local isValid = true
-    local rejectedObjects = {}
-
-    tes3mp.ReadReceivedObjectList()
-
-    local subAction = tes3mp.GetObjectListContainerSubAction()
-
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-        local refId = tes3mp.GetObjectRefId(index)
-        local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-        if tableHelper.containsValue(self.unusableContainerUniqueIndexes, uniqueIndex) then
-            
-            if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
-                tableHelper.removeValue(self.unusableContainerUniqueIndexes, uniqueIndex)
-                tes3mp.LogMessage(1, "Making container " .. uniqueIndex .. " usable as a result of request reply")
-            else
-                table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-                isValid = false
-
-                Players[pid]:Message("That container is currently unusable for synchronization reasons.\n")
-            end
-        end
-    end
-
-    if isValid then
-        self:SaveContainers(pid)
-    else
-        tes3mp.LogMessage(1, "Rejected Container from " .. logicHandler.GetChatName(pid) .." about " ..
-            tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
     end
 end
 
@@ -1147,19 +810,6 @@ function BaseCell:SaveActorEquipment(pid)
     end
 
     self:Save()
-end
-
--- Iterate through the actors in the ActorAI packet and only sync and save them
--- based on this server's options
-function BaseCell:ProcessActorAI(pid)
-
-    tes3mp.ReadReceivedActorList()
-    tes3mp.CopyReceivedActorListToStore()
-    -- Actor AI packages are currently enabled unilaterally on the client
-    -- that has sent them, so we only need to send them to other players,
-    -- and can skip the original sender
-    -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is true
-    tes3mp.SendActorAI(true, true)
 end
 
 function BaseCell:SaveActorDeath(pid)
