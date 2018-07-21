@@ -134,7 +134,7 @@ end
 function BaseCell:RemoveVisitor(pid)
 
     -- Only remove visitor if they are actually recorded as one
-    if tableHelper.containsValue(self.visitors, pid) == true then
+    if tableHelper.containsValue(self.visitors, pid) then
 
         tableHelper.removeValue(self.visitors, pid)
 
@@ -164,7 +164,8 @@ end
 
 function BaseCell:SetAuthority(pid)
     self.authority = pid
-    tes3mp.LogMessage(1, "Authority of " .. self.data.entry.description .. " is now player " .. pid)
+    tes3mp.LogMessage(1, "Authority of cell " .. self.data.entry.description ..
+        " is now " .. logicHandler.GetChatName(pid))
 
     self:SendActorAuthority(pid)
 end
