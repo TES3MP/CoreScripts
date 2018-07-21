@@ -305,7 +305,6 @@ function menuHelper.processEffects(pid, effects)
                 arguments = {}
             -- Fill in any variables placed inside the arguments
             else
-                tableHelper.print(arguments)
                 arguments = menuHelper.processVariables(pid, arguments)
             end
 
