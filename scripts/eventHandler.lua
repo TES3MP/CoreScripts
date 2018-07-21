@@ -261,26 +261,30 @@ eventHandler.OnPlayerCellChange = function(pid)
             -- region while removing them from the visitors of their old region
             if tes3mp.IsChangingRegion(pid) then
                 local regionName = string.lower(tes3mp.GetRegion(pid))
-                local debugMessage = logicHandler.GetChatName(pid) .. " has "
-                
-                local hasFinishedInitialTeleportation = Players[pid].hasFinishedInitialTeleportation
-                local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded, previousCell)
 
-                -- It's possible we've been teleported to a cell we had already loaded when
-                -- spawning on the server, so also check whether this is the player's first
-                -- cell change since joining
-                local isTeleported = previousCellIsStillLoaded == false or hasFinishedInitialTeleportation == false
+                if regionName ~= "" then
+                    
+                    local debugMessage = logicHandler.GetChatName(pid) .. " has "
+                    
+                    local hasFinishedInitialTeleportation = Players[pid].hasFinishedInitialTeleportation
+                    local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded, previousCell)
 
-                if isTeleported then
-                    debugMessage = debugMessage .. "teleported"
-                else
-                    debugMessage = debugMessage .. "walked"
+                    -- It's possible we've been teleported to a cell we had already loaded when
+                    -- spawning on the server, so also check whether this is the player's first
+                    -- cell change since joining
+                    local isTeleported = previousCellIsStillLoaded == false or hasFinishedInitialTeleportation == false
+
+                    if isTeleported then
+                        debugMessage = debugMessage .. "teleported"
+                    else
+                        debugMessage = debugMessage .. "walked"
+                    end
+
+                    debugMessage = debugMessage .. " to region " .. regionName .. "\n"
+                    tes3mp.LogMessage(1, debugMessage)
+
+                    logicHandler.LoadRegionForPlayer(pid, regionName, isTeleported)
                 end
-
-                debugMessage = debugMessage .. " to region " .. regionName .. "\n"
-                tes3mp.LogMessage(1, debugMessage)
-
-                logicHandler.LoadRegionForPlayer(pid, regionName, isTeleported)
 
                 local previousRegionName = Players[pid].data.location.regionName
 
