@@ -572,6 +572,8 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
             -- Add your own logic here to prevent objects from being activated in certain places,
             -- or to make specific things happen in certain situations, such as when players
             -- are activated by other players
+            local isValid = true
+
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
                 local debugMessage = "- "
@@ -605,13 +607,17 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                 tes3mp.LogAppend(1, debugMessage)
             end
 
-            tes3mp.CopyReceivedObjectListToStore()
-            -- Objects can't be activated clientside without the server's approval, so we send
-            -- the packet back to the player who sent it, but we avoid sending it to other
-            -- players because OpenMW barely has any code for handling activations not from
-            -- the local player
-            -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-            tes3mp.SendObjectActivate(false, false)
+            -- Set isValid to false in the loop above if you want to override the default activation
+            -- associated with this packet
+            if isValid then
+                tes3mp.CopyReceivedObjectListToStore()
+                -- Objects can't be activated clientside without the server's approval, so we send
+                -- the packet back to the player who sent it, but we avoid sending it to other
+                -- players because OpenMW barely has any code for handling activations not from
+                -- the local player
+                -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+                tes3mp.SendObjectActivate(false, false)
+            end
 
         else
             tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
