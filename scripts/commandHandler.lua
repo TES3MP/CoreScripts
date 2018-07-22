@@ -2,6 +2,15 @@ local commandHandler = {}
 
 function commandHandler.ProcessCommand(pid, cmd)
 
+    if cmd[1] == nil then
+        local message = "Please use a command after the / symbol.\n"
+        tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
+        return false
+    else
+        -- The command itself should always be lowercase
+        cmd[1] = string.lower(cmd[1])
+    end
+
     local admin = false
     local moderator = false
 
@@ -11,9 +20,6 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif Players[pid]:IsModerator() then
         moderator = true
     end
-
-    -- The command itself should always be lowercase
-    cmd[1] = string.lower(cmd[1])
 
     if cmd[1] == "message" or cmd[1] == "msg" then
         if pid == tonumber(cmd[2]) then
@@ -1056,7 +1062,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     else
         local message = "Not a valid command. Type /help for more info.\n"
-        tes3mp.SendMessage(pid, color.Error..message..color.Default, false)
+        tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
     end
 end
 
