@@ -2,6 +2,8 @@ local eventHandler = {}
 
 commandHandler = require("commandHandler")
 
+local consoleKickMessage = " has been kicked for using the console despite not having the permission to do so.\n"
+
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
     tes3mp.SetDifficulty(pid, config.difficulty)
@@ -569,6 +571,7 @@ end
 
 eventHandler.OnObjectActivate = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
         if LoadedCells[cellDescription] ~= nil then
             
             tes3mp.ReadReceivedObjectList()
@@ -634,14 +637,24 @@ end
 
 eventHandler.OnObjectPlace = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if LoadedCells[cellDescription] ~= nil then
 
             -- Iterate through the objects in the ObjectPlace packet and only sync and save them
             -- if all their refIds are valid
             local isValid = true
             local rejectedObjects = {}
-
-            tes3mp.ReadReceivedObjectList()
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -677,14 +690,24 @@ end
 
 eventHandler.OnObjectSpawn = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if LoadedCells[cellDescription] ~= nil then
 
             -- Iterate through the objects in the ObjectSpawn packet and only sync and save them
             -- if all their refIds are valid
             local isValid = true
             local rejectedObjects = {}
-
-            tes3mp.ReadReceivedObjectList()
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -720,6 +743,18 @@ end
 
 eventHandler.OnObjectDelete = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if LoadedCells[cellDescription] ~= nil then
 
             -- Iterate through the objects in the ObjectDelete packet and only sync and save them
@@ -727,8 +762,6 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
             local isValid = true
             local rejectedObjects = {}
             local unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
-
-            tes3mp.ReadReceivedObjectList()
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -773,6 +806,12 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(1, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
@@ -829,14 +868,24 @@ end
 
 eventHandler.OnObjectTrap = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if LoadedCells[cellDescription] ~= nil then
 
             -- Iterate through the objects in the ObjectTrap packet and only sync and save them
             -- if all their refIds are valid
             local isValid = true
             local rejectedObjects = {}
-
-            tes3mp.ReadReceivedObjectList()
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -873,14 +922,24 @@ end
 
 eventHandler.OnObjectScale = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if LoadedCells[cellDescription] ~= nil then
 
             -- Iterate through the objects in the ObjectScaled packet and only sync and save them
             -- if all their refIds are valid
             local isValid = true
             local rejectedObjects = {}
-
-            tes3mp.ReadReceivedObjectList()
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -923,6 +982,12 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(1, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
@@ -997,6 +1062,12 @@ eventHandler.OnContainer = function(pid, cellDescription)
         tes3mp.LogAppend(1, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
         if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
@@ -1063,10 +1134,19 @@ end
 eventHandler.OnVideoPlay = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
         if config.shareVideos == true then
             tes3mp.LogMessage(2, "Sharing VideoPlay from " .. pid)
-
-            tes3mp.ReadReceivedObjectList()
 
             for i = 0, tes3mp.GetObjectListSize() - 1 do
                 local videoFilename = tes3mp.GetVideoFilename(i)
