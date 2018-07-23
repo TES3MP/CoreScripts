@@ -787,8 +787,6 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         local isValid = true
         local rejectedObjects = {}
 
-        tes3mp.ReadReceivedObjectList()
-
         for index = 0, tes3mp.GetObjectListSize() - 1 do
 
             local refId = tes3mp.GetObjectRefId(index)
