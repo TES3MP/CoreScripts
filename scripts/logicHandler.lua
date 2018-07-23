@@ -115,6 +115,22 @@ logicHandler.IsPlayerNameAllowed = function(playerName)
     return true
 end
 
+logicHandler.IsPlayerAllowedConsole = function(pid)
+
+    local player = Players[pid]
+
+    if player ~= nil and player:IsLoggedIn() then
+
+        if player.data.settings.consoleAllowed == true then
+            return true
+        elseif player.data.settings.consoleAllowed == "default" and config.allowConsole then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- Get the Player object of either an online player or an offline one
 logicHandler.GetPlayerByName = function(targetName)
     -- Check if the player is online
@@ -277,11 +293,22 @@ end
 
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 
-    packetOriginEnums = enumerations.packetOrigin
+    local packetOriginEnums = enumerations.packetOrigin
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY or
         packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL then
 
+        return true
+    end
+
+    return false
+end
+
+logicHandler.IsPacketFromConsole = function(packetOrigin)
+    
+    local packetOriginEnums = enumerations.packetOrigin
+
+    if packetOrigin == enumerations.packetOrigin.CLIENT_CONSOLE then
         return true
     end
 
