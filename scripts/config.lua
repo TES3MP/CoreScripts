@@ -211,21 +211,21 @@ config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cu
 "faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = {"login", "settings", "character", "customClass", "location", "stats",
+config.playerKeyOrder = { "login", "settings", "character", "customClass", "location", "stats",
     "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
     "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
     "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
     "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
-    "magickaCurrent", "fatigueBase", "fatigueCurrent"}
+    "magickaCurrent", "fatigueBase", "fatigueCurrent" }
 
-config.cellKeyOrder = {"packets", "entry", "lastVisit", "objectData", "refId", "count", "charge",
+config.cellKeyOrder = { "packets", "entry", "lastVisit", "objectData", "refId", "count", "charge",
     "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
     "cellChangeTo", "container", "death", "delete", "doorState", "equipment", "inventory", "lock",
     "place", "position", "scale", "spawn", "state", "statsDynamic", "trap" }
 
-config.worldKeyOrder = {"general", "time", "topics", "kills", "journal", "customVariables", "type",
-    "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale"}
+config.worldKeyOrder = { "general", "time", "topics", "kills", "journal", "customVariables", "type",
+    "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale" }
 
 return config
