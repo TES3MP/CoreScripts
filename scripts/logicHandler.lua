@@ -275,6 +275,19 @@ logicHandler.AuthCheck = function(pid)
     return false
 end
 
+logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
+
+    packetOriginEnums = enumerations.packetOrigin
+
+    if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY or
+        packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL then
+
+        return true
+    end
+
+    return false
+end
+
 logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 
     tes3mp.ClearEnforcedCollisionRefIds()

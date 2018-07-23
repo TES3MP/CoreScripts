@@ -768,42 +768,64 @@ end
 
 eventHandler.OnObjectLock = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        if LoadedCells[cellDescription] ~= nil then
 
-            -- Iterate through the objects in the ObjectLock packet and only sync and save them
-            -- if all their refIds are valid
-            local isValid = true
-            local rejectedObjects = {}
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-            tes3mp.ReadReceivedObjectList()
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-                local refId = tes3mp.GetObjectRefId(index)
-                local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-
-                if tableHelper.containsValue(config.disallowedLockRefIds, refId) then
-                    table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-                    isValid = false
-                end
-            end
-
-            if isValid then
-                LoadedCells[cellDescription]:SaveObjectsLocked(pid)
-
-                tes3mp.CopyReceivedObjectListToStore()
-                -- Objects can't be locked/unlocked clientside without the server's approval,
-                -- so we send the packet to other players and also back to the player who sent it,
-                -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                tes3mp.SendObjectLock(true, false)
-            else
-                tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-            end
-        else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectLock for unloaded " .. cellDescription)
+        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(2, "Invalid ObjectLock: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
         end
+
+        -- Iterate through the objects in the ObjectLock packet and only sync and save them
+        -- if all their refIds are valid
+        local isValid = true
+        local rejectedObjects = {}
+
+        tes3mp.ReadReceivedObjectList()
+
+        for index = 0, tes3mp.GetObjectListSize() - 1 do
+
+            local refId = tes3mp.GetObjectRefId(index)
+            local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+            if tableHelper.containsValue(config.disallowedLockRefIds, refId) then
+                table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
+                isValid = false
+            end
+        end
+
+        if isValid then
+            local useTemporaryLoad = false
+
+            if isCellLoaded == false then
+                logicHandler.LoadCell(cellDescription)
+                useTemporaryLoad = true
+            end
+
+            LoadedCells[cellDescription]:SaveObjectsLocked(pid)
+
+            if useTemporaryLoad then
+                logicHandler.UnloadCell(cellDescription)
+            end
+
+            tes3mp.CopyReceivedObjectListToStore()
+            -- Objects can't be locked/unlocked clientside without the server's approval,
+            -- so we send the packet to other players and also back to the player who sent it,
+            -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
+            tes3mp.SendObjectLock(true, false)
+        else
+            tes3mp.LogMessage(1, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
+                " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        end
+    else
+        tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+            " sent ObjectLock for unloaded " .. cellDescription)
     end
 end
 
@@ -898,19 +920,24 @@ end
 
 eventHandler.OnObjectState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local shouldUnload = false
 
-        if LoadedCells[cellDescription] == nil then
-            logicHandler.LoadCell(cellDescription)
-            shouldUnload = true
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
+
+        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(2, "Invalid ObjectState: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
         end
 
         -- Iterate through the objects in the ObjectState packet and only sync and save them
         -- if all their refIds are valid
         local isValid = true
         local rejectedObjects = {}
-
-        tes3mp.ReadReceivedObjectList()
 
         for index = 0, tes3mp.GetObjectListSize() - 1 do
 
@@ -924,7 +951,18 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         end
 
         if isValid then
+            local useTemporaryLoad = false
+
+            if isCellLoaded == false then
+                logicHandler.LoadCell(cellDescription)
+                useTemporaryLoad = true
+            end
+
             LoadedCells[cellDescription]:SaveObjectStates(pid)
+
+            if useTemporaryLoad then
+                logicHandler.UnloadCell(cellDescription)
+            end
 
             tes3mp.CopyReceivedObjectListToStore()
             -- Objects can't be enabled or disabled clientside without the server's approval,
@@ -934,10 +972,6 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         else
             tes3mp.LogMessage(1, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
-        end
-
-        if shouldUnload == true then
-            logicHandler.UnloadCell(cellDescription)
         end
     else
         tes3mp.Kick(pid)
@@ -959,46 +993,69 @@ end
 
 eventHandler.OnContainer = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        if LoadedCells[cellDescription] ~= nil then
 
-            -- Iterate through the objects in the Container packet and only sync and save them
-            -- if all their refIds are valid
-            local isValid = true
-            local rejectedObjects = {}
-            local unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(1, "- packetOrigin was " ..
+            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-            tes3mp.ReadReceivedObjectList()
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            local subAction = tes3mp.GetObjectListContainerSubAction()
+        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(2, "Invalid Container: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
+        -- Iterate through the objects in the Container packet and only sync and save them
+        -- if all their refIds are valid
+        local isValid = true
+        local rejectedObjects = {}
+        local unusableContainerUniqueIndexes = {}
 
-                local refId = tes3mp.GetObjectRefId(index)
-                local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        if isCellLoaded then
+            unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
+        end
 
-                if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
-                    
-                    if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
-                        tableHelper.removeValue(unusableContainerUniqueIndexes, uniqueIndex)
-                        tes3mp.LogMessage(1, "Making container " .. uniqueIndex .. " usable as a result of request reply")
-                    else
-                        table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
-                        isValid = false
+        local subAction = tes3mp.GetObjectListContainerSubAction()
 
-                        Players[pid]:Message("That container is currently unusable for synchronization reasons.\n")
-                    end
+        for index = 0, tes3mp.GetObjectListSize() - 1 do
+
+            local refId = tes3mp.GetObjectRefId(index)
+            local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+
+            if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
+                
+                if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
+                    tableHelper.removeValue(unusableContainerUniqueIndexes, uniqueIndex)
+                    tes3mp.LogMessage(1, "Making container " .. uniqueIndex .. " usable as a result of request reply")
+                else
+                    table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
+                    isValid = false
+
+                    Players[pid]:Message("That container is currently unusable for synchronization reasons.\n")
                 end
             end
+        end
 
-            if isValid then
-                LoadedCells[cellDescription]:SaveContainers(pid)
-            else
-                tes3mp.LogMessage(1, "Rejected Container from " .. logicHandler.GetChatName(pid) .." about " ..
-                    tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+        if isValid then
+            local useTemporaryLoad = false
+
+            if isCellLoaded == false then
+                logicHandler.LoadCell(cellDescription)
+                useTemporaryLoad = true
+            end
+
+            -- Don't sync this packet here; BaseCell():SaveContainers will have to
+            -- deal with it
+            LoadedCells[cellDescription]:SaveContainers(pid)
+
+            if useTemporaryLoad then
+                logicHandler.UnloadCell(cellDescription)
             end
         else
-            tes3mp.LogMessage(2, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent Container for " .. cellDescription)
+            tes3mp.LogMessage(1, "Rejected Container from " .. logicHandler.GetChatName(pid) .." about " ..
+                tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
         end
     else
         tes3mp.Kick(pid)
