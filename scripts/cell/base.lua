@@ -272,10 +272,10 @@ function BaseCell:SaveObjectsDeleted(pid)
     tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        local refId = tes3mp.GetObjectRefId(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
 
         tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
 
@@ -329,30 +329,30 @@ function BaseCell:SaveObjectsPlaced(pid)
     tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
 
         local location = {
-            posX = tes3mp.GetObjectPosX(i),
-            posY = tes3mp.GetObjectPosY(i),
-            posZ = tes3mp.GetObjectPosZ(i),
-            rotX = tes3mp.GetObjectRotX(i),
-            rotY = tes3mp.GetObjectRotY(i),
-            rotZ = tes3mp.GetObjectRotZ(i)
+            posX = tes3mp.GetObjectPosX(objectIndex),
+            posY = tes3mp.GetObjectPosY(objectIndex),
+            posZ = tes3mp.GetObjectPosZ(objectIndex),
+            rotX = tes3mp.GetObjectRotX(objectIndex),
+            rotY = tes3mp.GetObjectRotY(objectIndex),
+            rotZ = tes3mp.GetObjectRotZ(objectIndex)
         }
 
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
-            local refId = tes3mp.GetObjectRefId(i)
+            local refId = tes3mp.GetObjectRefId(objectIndex)
             self:InitializeObjectData(uniqueIndex, refId)
 
-            local count = tes3mp.GetObjectCount(i)
-            local charge = tes3mp.GetObjectCharge(i)
-            local enchantmentCharge = tes3mp.GetObjectEnchantmentCharge(i)
-            local goldValue = tes3mp.GetObjectGoldValue(i)
+            local count = tes3mp.GetObjectCount(objectIndex)
+            local charge = tes3mp.GetObjectCharge(objectIndex)
+            local enchantmentCharge = tes3mp.GetObjectEnchantmentCharge(objectIndex)
+            local goldValue = tes3mp.GetObjectGoldValue(objectIndex)
 
             -- Only save count if it isn't the default value of 1
             if count ~= 1 then
@@ -383,7 +383,7 @@ function BaseCell:SaveObjectsPlaced(pid)
             table.insert(self.data.packets.place, uniqueIndex)
 
             -- Track objects which have containers so we can request their contents
-            if tes3mp.DoesObjectHaveContainer(i) then
+            if tes3mp.DoesObjectHaveContainer(objectIndex) then
                 table.insert(containerUniqueIndexesRequested, uniqueIndex)
             end
         end
@@ -402,42 +402,42 @@ function BaseCell:SaveObjectsSpawned(pid)
     tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
 
         local location = {
-            posX = tes3mp.GetObjectPosX(i),
-            posY = tes3mp.GetObjectPosY(i),
-            posZ = tes3mp.GetObjectPosZ(i),
-            rotX = tes3mp.GetObjectRotX(i),
-            rotY = tes3mp.GetObjectRotY(i),
-            rotZ = tes3mp.GetObjectRotZ(i)
+            posX = tes3mp.GetObjectPosX(objectIndex),
+            posY = tes3mp.GetObjectPosY(objectIndex),
+            posZ = tes3mp.GetObjectPosZ(objectIndex),
+            rotX = tes3mp.GetObjectRotX(objectIndex),
+            rotY = tes3mp.GetObjectRotY(objectIndex),
+            rotZ = tes3mp.GetObjectRotZ(objectIndex)
         }
 
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
-            local refId = tes3mp.GetObjectRefId(i)
+            local refId = tes3mp.GetObjectRefId(objectIndex)
             self:InitializeObjectData(uniqueIndex, refId)
 
             tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
 
             self.data.objectData[uniqueIndex].location = location
 
-            if tes3mp.GetObjectSummonState(i) then
-                local summonDuration = tes3mp.GetObjectSummonDuration(i)
+            if tes3mp.GetObjectSummonState(objectIndex) then
+                local summonDuration = tes3mp.GetObjectSummonDuration(objectIndex)
 
                 if summonDuration > 0 then
                     local summon = {}
                     summon.duration = summonDuration
                     summon.startTime = os.time()
 
-                    local isPlayer = tes3mp.DoesObjectHavePlayerSummoner(i)
+                    local isPlayer = tes3mp.DoesObjectHavePlayerSummoner(objectIndex)
 
                     if isPlayer then
-                        local summonerPid = tes3mp.GetObjectSummonerPid(i)
+                        local summonerPid = tes3mp.GetObjectSummonerPid(objectIndex)
                         tes3mp.LogAppend(1, "- summoned by pid " .. summonerPid)
 
                         -- Track the player and the summon for each other
@@ -445,9 +445,9 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                         Players[summonerPid].summons[uniqueIndex] = refId
                     else
-                        local summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(i) ..
-                            "-" .. tes3mp.GetObjectSummonerMpNum(i)
-                        local summonerRefId = tes3mp.GetObjectSummonerRefId(i)
+                        local summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(objectIndex) ..
+                            "-" .. tes3mp.GetObjectSummonerMpNum(objectIndex)
+                        local summonerRefId = tes3mp.GetObjectSummonerRefId(objectIndex)
                         tes3mp.LogAppend(1, "- summoned by actor " .. summonerUniqueIndex ..
                             ", refId: " .. summonerRefId)
                     end
@@ -473,11 +473,11 @@ function BaseCell:SaveObjectsLocked(pid)
     tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        local refId = tes3mp.GetObjectRefId(i)
-        local lockLevel = tes3mp.GetObjectLockLevel(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local lockLevel = tes3mp.GetObjectLockLevel(objectIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].lockLevel = lockLevel
@@ -494,10 +494,10 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
     tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        local refId = tes3mp.GetObjectRefId(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
 
@@ -513,11 +513,11 @@ function BaseCell:SaveObjectsScaled(pid)
     tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        local refId = tes3mp.GetObjectRefId(i)
-        local scale = tes3mp.GetObjectScale(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local scale = tes3mp.GetObjectScale(objectIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].scale = scale
@@ -538,13 +538,13 @@ function BaseCell:SaveObjectStates(pid)
     tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refNum = tes3mp.GetObjectRefNum(i)
-        local mpNum = tes3mp.GetObjectMpNum(i)
+        local refNum = tes3mp.GetObjectRefNum(objectIndex)
+        local mpNum = tes3mp.GetObjectMpNum(objectIndex)
         local uniqueIndex = refNum .. "-" .. mpNum
-        local refId = tes3mp.GetObjectRefId(i)
-        local state = tes3mp.GetObjectState(i)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local state = tes3mp.GetObjectState(objectIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].state = state
@@ -576,11 +576,11 @@ function BaseCell:SaveDoorStates(pid)
 
     tes3mp.ReadReceivedObjectList()
 
-    for i = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(i) .. "-" .. tes3mp.GetObjectMpNum(i)
-        local refId = tes3mp.GetObjectRefId(i)
-        local doorState = tes3mp.GetObjectDoorState(i)
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local doorState = tes3mp.GetObjectDoorState(objectIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].doorState = doorState
@@ -718,19 +718,19 @@ function BaseCell:SaveActorPositions()
         return
     end
 
-    for i = 0, actorListSize - 1 do
+    for objectIndex = 0, actorListSize - 1 do
 
-        local uniqueIndex = tes3mp.GetActorRefNum(i) .. "-" .. tes3mp.GetActorMpNum(i)
+        local uniqueIndex = tes3mp.GetActorRefNum(objectIndex) .. "-" .. tes3mp.GetActorMpNum(objectIndex)
 
-        if tes3mp.DoesActorHavePosition(i) == true and self:ContainsObject(uniqueIndex) then
+        if tes3mp.DoesActorHavePosition(objectIndex) == true and self:ContainsObject(uniqueIndex) then
 
             self.data.objectData[uniqueIndex].location = {
-                posX = tes3mp.GetActorPosX(i),
-                posY = tes3mp.GetActorPosY(i),
-                posZ = tes3mp.GetActorPosZ(i),
-                rotX = tes3mp.GetActorRotX(i),
-                rotY = tes3mp.GetActorRotY(i),
-                rotZ = tes3mp.GetActorRotZ(i)
+                posX = tes3mp.GetActorPosX(objectIndex),
+                posY = tes3mp.GetActorPosY(objectIndex),
+                posZ = tes3mp.GetActorPosZ(objectIndex),
+                rotX = tes3mp.GetActorRotX(objectIndex),
+                rotY = tes3mp.GetActorRotY(objectIndex),
+                rotZ = tes3mp.GetActorRotZ(objectIndex)
             }
 
             tableHelper.insertValueIfMissing(self.data.packets.position, uniqueIndex)
@@ -747,22 +747,22 @@ function BaseCell:SaveActorStatsDynamic()
         return
     end
 
-    for i = 0, actorListSize - 1 do
+    for objectIndex = 0, actorListSize - 1 do
 
-        local uniqueIndex = tes3mp.GetActorRefNum(i) .. "-" .. tes3mp.GetActorMpNum(i)
+        local uniqueIndex = tes3mp.GetActorRefNum(objectIndex) .. "-" .. tes3mp.GetActorMpNum(objectIndex)
 
-        if tes3mp.DoesActorHaveStatsDynamic(i) == true and self:ContainsObject(uniqueIndex) then
+        if tes3mp.DoesActorHaveStatsDynamic(objectIndex) == true and self:ContainsObject(uniqueIndex) then
 
             self.data.objectData[uniqueIndex].stats = {
-                healthBase = tes3mp.GetActorHealthBase(i),
-                healthCurrent = tes3mp.GetActorHealthCurrent(i),
-                healthModified = tes3mp.GetActorHealthModified(i),
-                magickaBase = tes3mp.GetActorMagickaBase(i),
-                magickaCurrent = tes3mp.GetActorMagickaCurrent(i),
-                magickaModified = tes3mp.GetActorMagickaModified(i),
-                fatigueBase = tes3mp.GetActorFatigueBase(i),
-                fatigueCurrent = tes3mp.GetActorFatigueCurrent(i),
-                fatigueModified = tes3mp.GetActorFatigueModified(i)
+                healthBase = tes3mp.GetActorHealthBase(objectIndex),
+                healthCurrent = tes3mp.GetActorHealthCurrent(objectIndex),
+                healthModified = tes3mp.GetActorHealthModified(objectIndex),
+                magickaBase = tes3mp.GetActorMagickaBase(objectIndex),
+                magickaCurrent = tes3mp.GetActorMagickaCurrent(objectIndex),
+                magickaModified = tes3mp.GetActorMagickaModified(objectIndex),
+                fatigueBase = tes3mp.GetActorFatigueBase(objectIndex),
+                fatigueCurrent = tes3mp.GetActorFatigueCurrent(objectIndex),
+                fatigueModified = tes3mp.GetActorFatigueModified(objectIndex)
             }
 
             tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, uniqueIndex)
