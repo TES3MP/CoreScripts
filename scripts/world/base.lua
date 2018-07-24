@@ -264,10 +264,10 @@ end
 
 function BaseWorld:SaveKills(pid)
 
-    for i = 0, tes3mp.GetKillChangesSize(pid) - 1 do
+    for index = 0, tes3mp.GetKillChangesSize(pid) - 1 do
 
-        local refId = tes3mp.GetKillRefId(pid, i)
-        local number = tes3mp.GetKillNumber(pid, i)
+        local refId = tes3mp.GetKillRefId(pid, index)
+        local number = tes3mp.GetKillNumber(pid, index)
         self.data.kills[refId] = number
     end
 

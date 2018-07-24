@@ -87,14 +87,14 @@ function BasePlayer:__init(pid, playerName)
         customVariables= {}
     }
 
-    for i = 0, (tes3mp.GetAttributeCount() - 1) do
-        local attributeName = tes3mp.GetAttributeName(i)
+    for index = 0, (tes3mp.GetAttributeCount() - 1) do
+        local attributeName = tes3mp.GetAttributeName(index)
         self.data.attributes[attributeName] = 1
         self.data.attributeSkillIncreases[attributeName] = 0
     end
 
-    for i = 0, (tes3mp.GetSkillCount() - 1) do
-        local skillName = tes3mp.GetSkillName(i)
+    for index = 0, (tes3mp.GetSkillCount() - 1) do
+        local skillName = tes3mp.GetSkillName(index)
         self.data.skills[skillName] = 1
         self.data.skillProgress[skillName] = 0
     end
@@ -516,22 +516,22 @@ function BasePlayer:LoadClass()
             tes3mp.SetClassDesc(self.pid, self.data.customClass.description)
         end
 
-        local i = 0
+        local index = 0
         for value in string.gmatch(self.data.customClass.majorAttributes, patterns.commaSplit) do
-            tes3mp.SetClassMajorAttribute(self.pid, i, tes3mp.GetAttributeId(value))
-            i = i + 1
+            tes3mp.SetClassMajorAttribute(self.pid, index, tes3mp.GetAttributeId(value))
+            index = index + 1
         end
 
-        i = 0
+        index = 0
         for value in string.gmatch(self.data.customClass.majorSkills, patterns.commaSplit) do
-            tes3mp.SetClassMajorSkill(self.pid, i, tes3mp.GetSkillId(value))
-            i = i + 1
+            tes3mp.SetClassMajorSkill(self.pid, index, tes3mp.GetSkillId(value))
+            index = index + 1
         end
 
-        i = 0
+        index = 0
         for value in string.gmatch(self.data.customClass.minorSkills, patterns.commaSplit) do
-            tes3mp.SetClassMinorSkill(self.pid, i, tes3mp.GetSkillId(value))
-            i = i + 1
+            tes3mp.SetClassMinorSkill(self.pid, index, tes3mp.GetSkillId(value))
+            index = index + 1
         end
     end
 
@@ -550,13 +550,13 @@ function BasePlayer:SaveClass()
         local majorSkills = {}
         local minorSkills = {}
 
-        for i = 0, 1, 1 do
-            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, i)))
+        for index = 0, 1, 1 do
+            majorAttributes[i + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, index)))
         end
 
-        for i = 0, 4, 1 do
-            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, i)))
-            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, i)))
+        for index = 0, 4, 1 do
+            majorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, index)))
+            minorSkills[i + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, index)))
         end
 
         self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
@@ -799,19 +799,19 @@ end
 
 function BasePlayer:LoadEquipment()
 
-    for i = 0, tes3mp.GetEquipmentSize() - 1 do
+    for index = 0, tes3mp.GetEquipmentSize() - 1 do
 
-        local currentItem = self.data.equipment[i]
+        local currentItem = self.data.equipment[index]
 
         if currentItem ~= nil then
             if currentItem.enchantmentCharge == nil then
                 currentItem.enchantmentCharge = -1
             end
 
-            tes3mp.EquipItem(self.pid, i, currentItem.refId, currentItem.count,
+            tes3mp.EquipItem(self.pid, index, currentItem.refId, currentItem.count,
                 currentItem.charge, currentItem.enchantmentCharge)
         else
-            tes3mp.UnequipItem(self.pid, i)
+            tes3mp.UnequipItem(self.pid, index)
         end
     end
 
@@ -824,19 +824,19 @@ function BasePlayer:SaveEquipment()
 
     self.data.equipment = {}
 
-    for i = 0, tes3mp.GetEquipmentSize() - 1 do
-        local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, i)
+    for index = 0, tes3mp.GetEquipmentSize() - 1 do
+        local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, index)
 
         if itemRefId ~= "" then
             if tableHelper.containsValue(config.bannedEquipmentItems, itemRefId) then
                 self:Message("You have tried wearing an item that isn't allowed!\n")
                 reloadAtEnd = true
             else
-                self.data.equipment[i] = {
+                self.data.equipment[index] = {
                     refId = itemRefId,
-                    count = tes3mp.GetEquipmentItemCount(self.pid, i),
-                    charge = tes3mp.GetEquipmentItemCharge(self.pid, i),
-                    enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, i)
+                    count = tes3mp.GetEquipmentItemCount(self.pid, index),
+                    charge = tes3mp.GetEquipmentItemCharge(self.pid, index),
+                    enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index)
                 }
             end
         end
@@ -888,15 +888,15 @@ function BasePlayer:SaveInventory()
 
     self.data.inventory = {}
 
-    for i = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
-        local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, i)
+    for index = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
+        local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, index)
 
         if itemRefId ~= "" then
-            self.data.inventory[i] = {
+            self.data.inventory[index] = {
                 refId = itemRefId,
-                count = tes3mp.GetInventoryItemCount(self.pid, i),
-                charge = tes3mp.GetInventoryItemCharge(self.pid, i),
-                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, i)
+                count = tes3mp.GetInventoryItemCount(self.pid, index),
+                charge = tes3mp.GetInventoryItemCharge(self.pid, index),
+                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, index)
             }
         end
     end
@@ -923,8 +923,8 @@ end
 
 function BasePlayer:AddSpells()
 
-    for i = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
-        local spellId = tes3mp.GetSpellId(self.pid, i)
+    for index = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
+        local spellId = tes3mp.GetSpellId(self.pid, index)
 
         -- Only add new spell if we don't already have it
         if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == false then
@@ -938,8 +938,8 @@ end
 
 function BasePlayer:RemoveSpells()
 
-    for i = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
-        local spellId = tes3mp.GetSpellId(self.pid, i)
+    for index = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
+        local spellId = tes3mp.GetSpellId(self.pid, index)
 
         -- Only print spell removal if the spell actually exists
         if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
@@ -978,13 +978,13 @@ end
 
 function BasePlayer:SaveQuickKeys()
 
-    for i = 0, tes3mp.GetQuickKeyChangesSize(self.pid) - 1 do
+    for index = 0, tes3mp.GetQuickKeyChangesSize(self.pid) - 1 do
 
-        local slot = tes3mp.GetQuickKeySlot(self.pid, i)
+        local slot = tes3mp.GetQuickKeySlot(self.pid, index)
 
         self.data.quickKeys[slot] = {
-            keyType = tes3mp.GetQuickKeyType(self.pid, i),
-            itemId = tes3mp.GetQuickKeyItemId(self.pid, i)
+            keyType = tes3mp.GetQuickKeyType(self.pid, index),
+            itemId = tes3mp.GetQuickKeyItemId(self.pid, index)
         }
     end
 end
@@ -1067,8 +1067,8 @@ end
 
 function BasePlayer:AddBooks()
 
-    for i = 0, tes3mp.GetBookChangesSize(self.pid) - 1 do
-        local bookId = tes3mp.GetBookId(self.pid, i)
+    for index = 0, tes3mp.GetBookChangesSize(self.pid) - 1 do
+        local bookId = tes3mp.GetBookId(self.pid, index)
 
         -- Only add new book if we don't already have it
         if tableHelper.containsValue(self.data.books, bookId, false) == false then
