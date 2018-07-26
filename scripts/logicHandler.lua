@@ -82,6 +82,26 @@ logicHandler.GetChatName = function(pid)
     end
 end
 
+-- Iterate through a table of pids and find the player with the
+-- lowest ping in it
+logicHandler.GetLowestPingPid = function(pidTable)
+
+    local lowestPing
+    local lowestPingPid
+
+    for _, pid in pairs(pidTable) do
+
+        local currentPing = tes3mp.GetAvgPing(pid)
+
+        if lowestPing == nil or currentPing < lowestPing then
+            lowestPing = currentPing
+            lowestPingPid = pid
+        end
+    end
+
+    return lowestPingPid
+end
+
 -- Check if there is already a player with this name on the server
 logicHandler.IsPlayerNameLoggedIn = function(newName)
 
@@ -555,9 +575,12 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
         -- If this player was the cell's authority, set another player
         -- as the authority
         if LoadedCells[cellDescription]:GetAuthority() == pid then
-            for key, otherPid in pairs(LoadedCells[cellDescription].visitors) do
-                LoadedCells[cellDescription]:SetAuthority(otherPid)
-                break
+
+            local visitors = LoadedCells[cellDescription].visitors
+
+            if tableHelper.getCount(visitors) > 0 then
+                local newAuthorityPid = logicHandler.GetLowestPingPid(visitors)
+                LoadedCells[cellDescription]:SetAuthority(newAuthorityPid)
             end
         end
     end
@@ -617,11 +640,8 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
             local visitors = WorldInstance.loadedRegions[regionName].visitors
 
             if tableHelper.getCount(visitors) > 0 then
-
-                for key, otherPid in pairs(visitors) do
-                    WorldInstance:SetRegionAuthority(otherPid, regionName)
-                    break
-                end
+                local newAuthorityPid = logicHandler.GetLowestPingPid(visitors)
+                WorldInstance:SetRegionAuthority(newAuthorityPid, regionName)
             else
                 WorldInstance.loadedRegions[regionName].authority = nil
             end
