@@ -17,7 +17,12 @@ function StateHelper:LoadJournal(pid, stateObject)
                 journalItem.actorRefId = "player"
             end
 
-            tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
+            if journalItem.timestamp ~= nil then
+                tes3mp.AddJournalEntryWithTimestamp(pid, journalItem.quest, journalItem.index, journalItem.actorRefId,
+                    journalItem.timestamp.daysPassed, journalItem.timestamp.month, journalItem.timestamp.day)
+            else
+                tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
+            end
         else
             tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
         end
@@ -168,7 +173,12 @@ function StateHelper:SaveJournal(pid, stateObject)
         local journalItem = {
             type = tes3mp.GetJournalItemType(pid, i),
             index = tes3mp.GetJournalItemIndex(pid, i),
-            quest = tes3mp.GetJournalItemQuest(pid, i)
+            quest = tes3mp.GetJournalItemQuest(pid, i),
+            timestamp = {
+                daysPassed = WorldInstance.data.time.daysPassed,
+                month = WorldInstance.data.time.month,
+                day = WorldInstance.data.time.day
+            }
         }
 
         if journalItem.type == enumerations.journal.ENTRY then
