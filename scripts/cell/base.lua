@@ -93,10 +93,7 @@ function BaseCell:IsExterior()
 end
 
 function BaseCell:GetVisitorCount()
-
-    local visitorCount = 0
-    for visitor in pairs(self.visitors) do visitorCount = visitorCount + 1 end
-    return visitorCount
+    return tableHelper.getCount(self.visitors)
 end
 
 function BaseCell:AddVisitor(pid)
