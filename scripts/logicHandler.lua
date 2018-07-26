@@ -495,7 +495,6 @@ logicHandler.LoadCell = function(cellDescription)
     if LoadedCells[cellDescription] == nil then
 
         LoadedCells[cellDescription] = Cell(cellDescription)
-        LoadedCells[cellDescription].description = cellDescription
 
         -- If this cell has a data entry, load it
         if LoadedCells[cellDescription]:HasEntry() then

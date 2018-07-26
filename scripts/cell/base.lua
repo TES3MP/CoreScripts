@@ -39,6 +39,7 @@ function BaseCell:__init(cellDescription)
         }
     }
 
+    self.description = cellDescription
     self.visitors = {}
     self.authority = nil
 
