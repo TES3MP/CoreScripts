@@ -875,8 +875,12 @@ function BasePlayer:LoadInventory()
                     currentItem.enchantmentCharge = -1
                 end
 
+                if currentItem.soul == nil then
+                    currentItem.soul = ""
+                end
+
                 tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count,
-                    currentItem.charge, currentItem.enchantmentCharge)
+                    currentItem.charge, currentItem.enchantmentCharge, currentItem.soul)
             end
         end
     end
@@ -896,7 +900,8 @@ function BasePlayer:SaveInventory()
                 refId = itemRefId,
                 count = tes3mp.GetInventoryItemCount(self.pid, index),
                 charge = tes3mp.GetInventoryItemCharge(self.pid, index),
-                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, index)
+                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, index),
+                soul = tes3mp.GetInventoryItemSoul(self.pid, index)
             }
         end
     end

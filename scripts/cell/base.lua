@@ -352,6 +352,7 @@ function BaseCell:SaveObjectsPlaced(pid)
             local count = tes3mp.GetObjectCount(objectIndex)
             local charge = tes3mp.GetObjectCharge(objectIndex)
             local enchantmentCharge = tes3mp.GetObjectEnchantmentCharge(objectIndex)
+            local soul = tes3mp.GetObjectSoul(objectIndex)
             local goldValue = tes3mp.GetObjectGoldValue(objectIndex)
 
             -- Only save count if it isn't the default value of 1
@@ -369,6 +370,10 @@ function BaseCell:SaveObjectsPlaced(pid)
                 self.data.objectData[uniqueIndex].enchantmentCharge = enchantmentCharge
             end
 
+            if soul ~= "" then
+               self.data.objectData[uniqueIndex].soul = soul
+            end
+
             -- Only save goldValue if it isn't the default value of 1
             if goldValue ~=1 then
                 self.data.objectData[uniqueIndex].goldValue = goldValue
@@ -378,7 +383,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
             tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", count: " .. count ..
                 ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
-                ", goldValue: " .. goldValue)
+                ", soul: " .. soul .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, uniqueIndex)
 
@@ -625,6 +630,7 @@ function BaseCell:SaveContainers(pid)
             local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
             local itemEnchantmentCharge = tes3mp.GetContainerItemEnchantmentCharge(objectIndex, itemIndex)
+            local itemSoul = tes3mp.GetContainerItemSoul(objectIndex, itemIndex)
 
             -- Check if the object's stored inventory contains this item already
             if inventoryHelper.containsItem(inventory, itemRefId, itemCharge) then
@@ -658,7 +664,7 @@ function BaseCell:SaveContainers(pid)
                     tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
-                        itemCharge, itemEnchantmentCharge)
+                        itemCharge, itemEnchantmentCharge, itemSoul)
                 end
             end
         end
@@ -1044,6 +1050,7 @@ function BaseCell:SendObjectsPlaced(pid)
             local count = self.data.objectData[uniqueIndex].count
             local charge = self.data.objectData[uniqueIndex].charge
             local enchantmentCharge = self.data.objectData[uniqueIndex].enchantmentCharge
+            local soul = self.data.objectData[uniqueIndex].soul
             local goldValue = self.data.objectData[uniqueIndex].goldValue
 
             -- Use default count of 1 when the value is missing
@@ -1061,6 +1068,10 @@ function BaseCell:SendObjectsPlaced(pid)
                 enchantmentCharge = -1
             end
 
+            if soul == nil then
+                soul = ""
+            end
+
             -- Use default goldValue of 1 when the value is missing
             if goldValue == nil then
                 goldValue = 1
@@ -1069,6 +1080,7 @@ function BaseCell:SendObjectsPlaced(pid)
             tes3mp.SetObjectCount(count)
             tes3mp.SetObjectCharge(charge)
             tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
+            tes3mp.SetObjectSoul(soul)
             tes3mp.SetObjectGoldValue(goldValue)
             tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
             tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
@@ -1316,15 +1328,20 @@ function BaseCell:SendContainers(pid)
             tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
 
             for itemIndex, item in pairs(self.data.objectData[uniqueIndex].inventory) do
-                tes3mp.SetContainerItemRefId(item.refId)
-                tes3mp.SetContainerItemCount(item.count)
-                tes3mp.SetContainerItemCharge(item.charge)
 
                 if item.enchantmentCharge == nil then
                     item.enchantmentCharge = -1
                 end
 
+                if item.soul == nil then
+                    item.soul = ""
+                end
+
+                tes3mp.SetContainerItemRefId(item.refId)
+                tes3mp.SetContainerItemCount(item.count)
+                tes3mp.SetContainerItemCharge(item.charge)
                 tes3mp.SetContainerItemEnchantmentCharge(item.enchantmentCharge)
+                tes3mp.SetContainerItemSoul(item.soul)
 
                 tes3mp.AddContainerItem()
             end
