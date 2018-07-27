@@ -1,51 +1,62 @@
 local inventoryHelper = {}
 
-function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge)
+function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul)
     for itemIndex, item in pairs(inventory) do
         if item.refId == refId then
-            if charge == nil and enchantmentCharge == nil then
+
+            isValid = true
+
+            if charge ~= nil and item.charge ~= charge then
+                isValid = false
+            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= enchantmentCharge then
+                isValid = false
+            elseif soul ~= nil and item.soul ~= soul then
+                isValid = false
+            end
+
+            if isValid then
                 return true
-            elseif item.charge == charge then
-                if enchantmentCharge == nil then
-                    return true
-                elseif item.enchantmentCharge == enchantmentCharge then
-                    return true
-                end
             end
         end
     end
     return false
 end
 
-function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge)
+function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
     for itemIndex, item in pairs(inventory) do
         if item.refId == refId then
-            if charge == nil and enchantmentCharge == nil then
+
+            isValid = true
+
+            if charge ~= nil and item.charge ~= charge then
+                isValid = false
+            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= enchantmentCharge then
+                isValid = false
+            elseif soul ~= nil and item.soul ~= soul then
+                isValid = false
+            end
+
+            if isValid then
                 return itemIndex
-            elseif item.charge == charge then
-                if enchantmentCharge == nil then
-                    return itemIndex
-                elseif item.enchantmentCharge == enchantmentCharge then
-                    return itemIndex
-                end
             end
         end
     end
     return nil
 end
 
-function inventoryHelper.addItem(inventory, inputRefId, inputCount, inputCharge, inputEnchantmentCharge)
+function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
-    if inventoryHelper.containsItem(inventory, inputRefId, inputCharge, inputEnchantmentCharge) then
-        local index = inventoryHelper.getItemIndex(inventory, inputRefId, inputCharge, inputEnchantmentCharge)
-        inventory[index].count = inventory[index].count + inputCount
+    if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
+        local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
+        inventory[index].count = inventory[index].count + count
     else
-        local item = {
-            refId = inputRefId,
-            count = inputCount,
-            charge = inputCharge,
-            enchantmentCharge = inputEnchantmentCharge
-        }
+        local item = {}
+        item.refId = refId
+        item.count = count
+        item.charge = charge
+        item.enchantmentCharge = enchantmentCharge
+        item.soul = soul
+
         table.insert(inventory, item)
     end
 end
