@@ -320,7 +320,7 @@ function tableHelper.shallowCopy(inputTable)
 end
 
 -- Based on http://stackoverflow.com/a/13398936
-function tableHelper.print(inputTable, indentLevel)
+function tableHelper.getPrintableTable(inputTable, indentLevel)
     local str = ""
     local indentStr = "#"
 
@@ -329,8 +329,7 @@ function tableHelper.print(inputTable, indentLevel)
     end
 
     if (indentLevel == nil) then
-        tes3mp.LogMessage(2, tableHelper.print(inputTable, 0))
-        return
+        return tableHelper.getPrintableTable(inputTable, 0)
     end
 
     for i = 0, indentLevel do
@@ -349,13 +348,18 @@ function tableHelper.print(inputTable, indentLevel)
         end
 
         if type(value) == "table" then
-            str = str .. ": \n" .. tableHelper.print(value, (indentLevel + 1))
+            str = str .. ": \n" .. tableHelper.getPrintableTable(value, (indentLevel + 1))
         else
             str = str .. ": " .. value .. "\n"
         end
     end
 
     return str
+end
+
+function tableHelper.print(inputTable, indentLevel)
+    local text = tableHelper.getPrintableTable(inputTable, indentLevel)
+    tes3mp.LogMessage(2, text)
 end
 
 return tableHelper
