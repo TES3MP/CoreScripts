@@ -320,35 +320,36 @@ function tableHelper.shallowCopy(inputTable)
 end
 
 -- Based on http://stackoverflow.com/a/13398936
-function tableHelper.getPrintableTable(inputTable, indentLevel)
+function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
     local str = ""
-    local indentStr = "#"
+
+    local currentIndent = ""
+
+    if indentStr == nil then
+        indentStr = "\t"
+    end
 
     if (inputTable == nil) then
         return
     end
 
     if (indentLevel == nil) then
-        return tableHelper.getPrintableTable(inputTable, 0)
+        return tableHelper.getPrintableTable(inputTable, indentStr, 0)
     end
 
     for i = 0, indentLevel do
-        indentStr = indentStr .. "\t"
+        currentIndent = currentIndent .. indentStr
     end
 
     for index, value in pairs(inputTable) do
-        str = str .. indentStr .. index
+        str = str .. currentIndent .. index
 
         if type(value) == "boolean" then
-            if value == true then
-                value = "true"
-            else
-                value = "false"
-            end
+            value = tostring(value)
         end
 
         if type(value) == "table" then
-            str = str .. ": \n" .. tableHelper.getPrintableTable(value, (indentLevel + 1))
+            str = str .. ": \n" .. tableHelper.getPrintableTable(value, indentStr, (indentLevel + 1))
         else
             str = str .. ": " .. value .. "\n"
         end
@@ -357,8 +358,8 @@ function tableHelper.getPrintableTable(inputTable, indentLevel)
     return str
 end
 
-function tableHelper.print(inputTable, indentLevel)
-    local text = tableHelper.getPrintableTable(inputTable, indentLevel)
+function tableHelper.print(inputTable, indentStr, indentLevel)
+    local text = tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
     tes3mp.LogMessage(2, text)
 end
 
