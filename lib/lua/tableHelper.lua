@@ -20,7 +20,7 @@ function tableHelper.getTableFromCommaSplit(inputString)
 
     local newTable = {}
 
-    for value in string.gmatch(inputString, DefaultPatterns.commaSplit) do
+    for value in string.gmatch(inputString, patterns.commaSplit) do
         table.insert(newTable, value)
     end
 
@@ -58,6 +58,10 @@ end
 function tableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
 
     local resultString = ""
+
+    if startIndex == nil then
+        startIndex = 1
+    end
 
     if delimiter == nil then
         delimiter = " "
