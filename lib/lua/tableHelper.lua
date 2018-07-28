@@ -319,6 +319,28 @@ function tableHelper.shallowCopy(inputTable)
     return newTable
 end
 
+function tableHelper.getSimplePrintableTable(inputTable)
+
+    local text = ""
+    local shouldPrintComma = false
+
+    for index, value in pairs(inputTable) do
+        if shouldPrintComma then
+            text = text .. ", "
+        end
+
+        if type(value) == "table" then
+            text = text .. "[" .. tableHelper.getSimplePrintableTable(value) .. "]"
+        else
+            text = text .. index .. ": " .. value
+        end
+
+        shouldPrintComma = true
+    end
+
+    return text
+end
+
 -- Based on http://stackoverflow.com/a/13398936
 function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
     local str = ""
