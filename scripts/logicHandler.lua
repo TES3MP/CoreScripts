@@ -368,6 +368,8 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
             tes3mp.SendObjectSpawn(true)
         end
     end
+    
+    return uniqueIndex
 end
 
 logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
@@ -378,7 +380,7 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
+    return logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
 logicHandler.DeleteObject = function(pid, refId, refNum, mpNum, forEveryone)
