@@ -1042,6 +1042,12 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
+    elseif cmd[1] == "storerecord" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
+        commandHandler.StoreRecord(pid, cmd)
+
+    elseif cmd[1] == "createrecord" and cmd[2] ~= nil and admin then
+        commandHandler.CreateRecord(pid, cmd)
+
     elseif cmd[1] == "help" then
         
         -- Check "scripts/menu/help.lua" if you want to change the contents of the help menus
@@ -1063,6 +1069,312 @@ function commandHandler.ProcessCommand(pid, cmd)
     else
         local message = "Not a valid command. Type /help for more info.\n"
         tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
+    end
+end
+
+function commandHandler.StoreRecord(pid, cmd)
+
+    if Players[pid].data.customVariables == nil then
+        Players[pid].data.customVariables = {}
+    end
+
+    if Players[pid].data.customVariables.storedRecords == nil then
+        Players[pid].data.customVariables.storedRecords = {}
+
+        for recordKey, _ in pairs(config.validRecordSettings) do
+            Players[pid].data.customVariables.storedRecords[recordKey] = {}
+        end
+    end
+
+    local inputType = string.lower(cmd[2])
+    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
+
+    if storedTable == nil then
+        Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
+            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
+        return
+    end
+
+    local inputSetting = cmd[3]
+
+    if inputSetting == "clear" then
+        Players[pid].data.customVariables.storedRecords[inputType] = {}
+        Players[pid]:Message("Clearing stored " .. inputType .. " data\n")
+    elseif inputSetting == "print" then
+        local text = "for a record of type " .. inputType
+
+        if tableHelper.isEmpty(storedTable) then
+            text = "You have no values stored " .. text .. "."
+        else
+            text = "You have the current values stored " .. text .. ":\n\n"
+
+            for index, value in pairs(storedTable) do
+                text = text .. index .. ": "
+
+                if type(value) == "table" then
+                    text = text .. tableHelper.getSimplePrintableTable(value)
+                else
+                    text = text .. value
+                end
+
+                text = text .. "\n"
+            end
+        end
+
+        tes3mp.CustomMessageBox(pid, config.customMenuIds.recordPrint, text, "Ok")
+    elseif inputSetting ~= nil then
+
+        if inputSetting == "add" then
+            local inputAdditionType = cmd[4]
+            local inputConcatenation
+            local inputValues
+
+            if inputAdditionType == nil or cmd[5] == nil then
+                Players[pid]:Message("Please provide the minimum number of arguments required.\n")
+                return
+            else
+                inputConcatenation = tableHelper.concatenateFromIndex(cmd, 5)
+                inputValues = tableHelper.getTableFromCommaSplit(inputConcatenation)
+            end
+
+            if inputAdditionType == "part" and (inputType == "armor" or inputType == "clothing") then
+
+                if storedTable.parts == nil then
+                    storedTable.parts = {}
+                end
+
+                local inputPartType = inputValues[1]
+
+                if type(tonumber(inputPartType)) == "number" then
+
+                    local part = { partType = tonumber(inputPartType), malePart = inputValues[2],
+                        femalePart = inputValues[3] }
+                    table.insert(storedTable.parts, part)
+                    Players[pid]:Message("Added part " .. inputConcatenation .. "\n")
+                else
+                    Players[pid]:Message("Please use a numerical value for the part type.\n")
+                end
+            elseif inputAdditionType == "item" and (inputType == "creature" or inputType == "npc") then
+
+                if storedTable.items == nil then
+                    storedTable.items = {}
+                end                
+
+                local inputItemId = inputValues[1]
+                local inputItemCount = tonumber(inputValues[2])
+
+                if type(inputItemCount) ~= "number" then
+                    inputItemCount = 1
+                end
+
+                local item = { id = inputItemId, count = inputItemCount }
+                table.insert(storedTable.items, item)
+                Players[pid]:Message("Added item " .. inputItemId .. " with count " .. inputItemCount .. "\n")
+
+            else
+                Players[pid]:Message(tostring(inputAdditionType) .. " is not a valid addition type for " .. inputType ..
+                    " records.\n")
+            end
+
+        elseif tableHelper.containsValue(config.validRecordSettings[inputType], inputSetting) then
+
+            local inputValue = tableHelper.concatenateFromIndex(cmd, 4)
+
+            -- Although numerical values are accepted for gender, allow "male" and "female" input
+            -- as well
+            if inputSetting == "gender" and type(tonumber(inputValue)) ~= "number" then
+                local gender
+
+                if inputValue == "male" then
+                    gender = 1
+                elseif inputValue == "female" then
+                    gender = 0
+                end
+
+                if type(gender) == "number" then
+                    storedTable.gender = gender
+                else
+                    Players[pid]:Message("Please use either 0/1 or female/male as the gender input.\n")
+                    return
+                end
+            elseif tableHelper.containsValue(config.numericalRecordSettings, inputSetting) then
+                inputValue = tonumber(inputValue)
+
+                if type(inputValue) == "number" then
+                    storedTable[inputSetting] = inputValue
+                else
+                    Players[pid]:Message("Please use a valid numerical value as the input for " ..
+                        inputSetting .. "\n")
+                    return
+                end
+            elseif tableHelper.containsValue(config.minMaxRecordSettings, inputSetting) then
+                local minValue = tonumber(cmd[4])
+                local maxValue = tonumber(cmd[5])
+
+                if type(minValue) == "number" and type(maxValue) == "number"  then
+                    storedTable[inputSetting] = { min = minValue, max = maxValue }
+                else
+                    Players[pid]:Message("Please use two valid numerical values as the input for " ..
+                        inputSetting .. "\n")
+                    return
+                end
+            elseif tableHelper.containsValue(config.booleanRecordSettings, inputSetting) then
+                if inputValue == "true" or inputValue == "on" or tonumber(inputValue) == 1 then
+                    storedTable[inputSetting] = true
+                elseif inputValue == "false" or inputValue == "off" or tonumber(inputValue) == 0 then
+                    storedTable[inputSetting] = false
+                else
+                    Players[pid]:Message("Please use a valid boolean as the input for " .. inputSetting .. "\n")
+                    return
+                end
+            else
+                storedTable[inputSetting] = inputValue
+            end
+
+            local message = "Storing " .. inputType .. " " .. inputSetting .. " with value " .. inputValue .. "\n"
+            Players[pid]:Message(message)
+        else
+            local validSettingsArray = config.validRecordSettings[inputType]
+            Players[pid]:Message(inputSetting .. " is not a valid setting for " .. inputType .. " records. " ..
+                "Try one of these:\n" .. tableHelper.concatenateArrayValues(validSettingsArray, 1, ", ") .. "\n")
+        end
+    end
+end
+
+function commandHandler.CreateRecord(pid, cmd)
+
+    if Players[pid].data.customVariables == nil then
+        Players[pid].data.customVariables = {}
+    end
+
+    if Players[pid].data.customVariables.storedRecords == nil then
+        Players[pid].data.customVariables.storedRecords = {}
+    end
+
+    local inputType = string.lower(cmd[2])
+    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
+
+    if storedTable == nil then
+        Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
+            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
+        return
+    end    
+
+    local isValid = true
+
+    if storedTable.baseId == nil then
+        if inputType == "creature" then
+            Players[pid]:Message("As of now, you cannot create creatures from scratch because of how many " ..
+                "different settings need to be implemented for them. Please use a baseId for your creature " ..
+                "instead.\n")
+            return
+        end
+
+        local missingSettings = {}
+
+        for _, requiredSetting in pairs(config.requiredRecordSettings[inputType]) do
+            if storedTable[requiredSetting] == nil then
+                table.insert(missingSettings, requiredSetting)
+            end
+        end
+
+        if tableHelper.isEmpty(missingSettings) == false then
+            isValid = false
+            Players[pid]:Message("You cannot create a record of type " .. inputType .. " because it is missing the " ..
+                "following required settings: " .. tableHelper.concatenateArrayValues(missingSettings, 1, ", ") .. "\n")
+        end
+    end
+
+    if isValid then
+
+        local recordStore = RecordStores[inputType]
+
+        local id = storedTable.id
+
+        if id == nil then
+            id = "custom_" .. inputType .. "_" .. recordStore:IncrementRecordNum()
+        end
+
+        -- Use an autoCalc of 1 by default for entirely new NPCs to avoid spawning them
+        -- without any stats
+        if inputType == "npc" and storedTable.baseId == nil and storedTable.autoCalc == nil then
+            storedTable.autoCalc = 1
+        end
+
+        -- Use a skillId of -1 by default for entirely new books to avoid having them
+        -- increase a skill
+        if inputType == "book" and storedTable.skillId == nil then
+            storedTable.skillId = -1
+        end
+
+        recordStore.data.records[id] = storedTable
+        recordStore:Save()
+
+        tes3mp.ClearRecords()
+        tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
+        tes3mp.SetRecordId(id)
+
+        if storedTable.baseId ~= nil then tes3mp.SetRecordBaseId(storedTable.baseId) end
+        if storedTable.inventoryBaseId ~= nil then
+            tes3mp.SetRecordInventoryBaseId(storedTable.inventoryBaseId) end
+        if storedTable.subtype ~= nil then tes3mp.SetRecordSubtype(storedTable.subtype) end
+        if storedTable.name ~= nil then tes3mp.SetRecordName(storedTable.name) end
+        if storedTable.model ~= nil then tes3mp.SetRecordModel(storedTable.model) end
+        if storedTable.icon ~= nil then tes3mp.SetRecordIcon(storedTable.icon) end
+        if storedTable.script ~= nil then tes3mp.SetRecordScript(storedTable.script) end
+        if storedTable.enchantmentId ~= nil then
+            tes3mp.SetRecordEnchantmentId(storedTable.enchantmentId) end
+        if storedTable.enchantmentCharge ~= nil then
+            tes3mp.SetRecordEnchantmentCharge(storedTable.enchantmentCharge) end
+        if storedTable.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(storedTable.autoCalc) end
+        if storedTable.charge ~= nil then tes3mp.SetRecordCharge(storedTable.charge) end
+        if storedTable.cost ~= nil then tes3mp.SetRecordCost(storedTable.cost) end
+        if storedTable.flags ~= nil then tes3mp.SetRecordFlags(storedTable.flags) end
+        if storedTable.value ~= nil then tes3mp.SetRecordValue(storedTable.value) end
+        if storedTable.weight ~= nil then tes3mp.SetRecordWeight(storedTable.weight) end
+        if storedTable.armorRating ~= nil then tes3mp.SetRecordArmorRating(storedTable.armorRating) end
+        if storedTable.health ~= nil then tes3mp.SetRecordHealth(storedTable.health) end
+        if storedTable.damageChop ~= nil then tes3mp.SetRecordDamageChop(storedTable.damageChop.min,
+            storedTable.damageChop.max) end
+        if storedTable.damageSlash ~= nil then tes3mp.SetRecordDamageSlash(storedTable.damageSlash.min,
+            storedTable.damageSlash.max) end
+        if storedTable.damageThrust ~= nil then tes3mp.SetRecordDamageThrust(storedTable.damageThrust.min,
+            storedTable.damageThrust.max) end
+        if storedTable.reach ~= nil then tes3mp.SetRecordReach(storedTable.reach) end
+        if storedTable.speed ~= nil then tes3mp.SetRecordSpeed(storedTable.speed) end
+        if storedTable.keyState ~= nil then tes3mp.SetRecordKeyState(storedTable.keyState) end
+        if storedTable.scrollState ~= nil then tes3mp.SetRecordScrollState(storedTable.scrollState) end
+        if storedTable.skillId ~= nil then tes3mp.SetRecordSkillId(storedTable.skillId) end
+        if storedTable.text ~= nil then tes3mp.SetRecordText(storedTable.text) end
+        if storedTable.hair ~= nil then tes3mp.SetRecordHair(storedTable.hair) end
+        if storedTable.head ~= nil then tes3mp.SetRecordHead(storedTable.head) end
+        if storedTable.gender ~= nil then tes3mp.SetRecordGender(storedTable.gender) end
+        if storedTable.race ~= nil then tes3mp.SetRecordRace(storedTable.race) end
+        if storedTable.class ~= nil then tes3mp.SetRecordClass(storedTable.class) end
+        if storedTable.faction ~= nil then tes3mp.SetRecordFaction(storedTable.faction) end
+        if storedTable.level ~= nil then tes3mp.SetRecordLevel(storedTable.level) end
+
+        recordStore:LoadRecordBodyParts(storedTable.parts)
+        recordStore:LoadRecordInventoryItems(storedTable.items)
+
+        tes3mp.AddRecord()
+        tes3mp.SendRecordDynamic(pid, true, false)
+
+        local message = "Your record has now been created.\n"
+
+        if inputType ~= "enchantment" then
+            if inputType == "creature" or inputType == "npc" then
+                message = message .. "You can spawn an instance of it using /spawnat "
+            else
+                message = message .. "You can place an instance of it using /placeat "
+            end
+        end
+
+        message = message .. "<pid> " .. id .. "\n"
+        Players[pid]:Message(message)
+    else
+        Players[pid].currentCustomMenu = "help createnpc"
+        menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
     end
 end
 

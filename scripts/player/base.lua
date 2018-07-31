@@ -111,10 +111,11 @@ function BasePlayer:__init(pid, playerName)
     self.loggedIn = false
     self.loginTimerId = nil
     self.admin = 0
-    self.hasAccount = nil -- TODO Check whether account file exists
+    self.hasAccount = nil
 
     self.cellsLoaded = {}
     self.summons = {}
+    self.unresolvedEnchantments = {}
 
     self.hasFinishedInitialTeleportation = false
 end
@@ -148,16 +149,27 @@ function BasePlayer:FinishLogin()
     if self.hasAccount ~= false then -- load account
         self:SaveIpAddress()
 
-        WorldInstance:LoadTime(self.pid, false)
-        WorldInstance:LoadWeather(self.pid, false)
-
         self:LoadCharacter()
         self:LoadClass()
         self:LoadLevel()
         self:LoadAttributes()
         self:LoadSkills()
         self:LoadStatsDynamic()
-        self:LoadCell()
+
+        WorldInstance:LoadTime(self.pid, false)
+        WorldInstance:LoadWeather(self.pid, false)
+
+        RecordStores["spell"]:LoadSpells(self.pid)
+        RecordStores["potion"]:LoadPotions(self.pid)
+        RecordStores["enchantment"]:LoadEnchantments(self.pid)
+        RecordStores["armor"]:LoadArmors(self.pid)
+        RecordStores["book"]:LoadBooks(self.pid)
+        RecordStores["clothing"]:LoadClothing(self.pid)
+        RecordStores["weapon"]:LoadWeapons(self.pid)
+        RecordStores["miscellaneous"]:LoadMiscellaneous(self.pid)
+        RecordStores["creature"]:LoadCreatures(self.pid)
+        RecordStores["npc"]:LoadNpcs(self.pid)
+
         self:LoadSettings()
         self:LoadInventory()
         self:LoadEquipment()
@@ -219,6 +231,8 @@ function BasePlayer:FinishLogin()
         else
             self:LoadMap()
         end
+
+        self:LoadCell()
     end
 end
 
@@ -233,6 +247,17 @@ function BasePlayer:EndCharGen()
 
     WorldInstance:LoadTime(self.pid, false)
     WorldInstance:LoadWeather(self.pid, false, true)
+
+    RecordStores["spell"]:LoadSpells(self.pid)
+    RecordStores["potion"]:LoadPotions(self.pid)
+    RecordStores["enchantment"]:LoadEnchantments(self.pid)
+    RecordStores["armor"]:LoadArmors(self.pid)
+    RecordStores["book"]:LoadBooks(self.pid)
+    RecordStores["clothing"]:LoadClothing(self.pid)
+    RecordStores["weapon"]:LoadWeapons(self.pid)
+    RecordStores["miscellaneous"]:LoadMiscellaneous(self.pid)
+    RecordStores["creature"]:LoadCreatures(self.pid)
+    RecordStores["npc"]:LoadNpcs(self.pid)
 
     if config.shareJournal == true then
         WorldInstance:LoadJournal(self.pid)

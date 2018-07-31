@@ -15,6 +15,7 @@ menuHelper = require("menuHelper")
 Database = nil
 Player = nil
 Cell = nil
+RecordStore = nil
 World = nil
 
 hourCounter = nil
@@ -41,10 +42,12 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
 
     Player = require("player.sql")
     Cell = require("cell.sql")
+    RecordStore = require("recordstore.sql")
     World = require("world.sql")
 else
     Player = require("player.json")
     Cell = require("cell.json")
+    RecordStore = require("recordstore.json")
     World = require("world.json")
 end
 
@@ -196,6 +199,14 @@ function OnServerInit()
     end
 
     logicHandler.InitializeWorld()
+
+    local recordStoreTypes = { "armor", "book", "clothing", "creature", "enchantment", "miscellaneous", "npc",
+        "potion", "spell", "weapon" }
+
+    for _, recordStoreType in ipairs(recordStoreTypes) do
+        logicHandler.LoadRecordStore(recordStoreType)
+    end
+
     hourCounter = WorldInstance.data.time.hour
     frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
 
@@ -527,6 +538,11 @@ end
 function OnVideoPlay(pid)
     tes3mp.LogMessage(1, "Called \"OnVideoPlay\" for pid " .. pid)
     eventHandler.OnVideoPlay(pid)
+end
+
+function OnRecordDynamic(pid)
+    tes3mp.LogMessage(1, "Called \"OnRecordDynamic\" for pid " .. pid)
+    eventHandler.OnRecordDynamic(pid)
 end
 
 function OnWorldKillCount(pid)

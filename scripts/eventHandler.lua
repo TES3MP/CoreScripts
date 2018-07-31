@@ -1162,6 +1162,80 @@ eventHandler.OnVideoPlay = function(pid)
     end
 end
 
+eventHandler.OnRecordDynamic = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        tes3mp.ReadReceivedWorldstate()
+        
+        local recordType = tes3mp.GetRecordType(pid)
+        local recordStore = logicHandler.GetRecordStore(recordType)
+        local recordAdditions
+
+        local enchantableRecordTypes = { enumerations.recordType.ARMOR, enumerations.recordType.BOOK,
+            enumerations.recordType.CLOTHING, enumerations.recordType.WEAPON }
+
+        if recordType == enumerations.recordType.SPELL then
+            recordAdditions = recordStore:SaveSpells(pid)
+        elseif recordType == enumerations.recordType.POTION then
+            recordAdditions = recordStore:SavePotions(pid)
+        elseif recordType == enumerations.recordType.ENCHANTMENT then
+            recordAdditions = recordStore:SaveEnchantments(pid)
+        elseif tableHelper.containsValue(enchantableRecordTypes, recordType) then
+            recordAdditions = recordStore:SaveEnchantedItems(pid)
+        end
+
+        tes3mp.CopyReceivedWorldstateToStore()
+
+        -- Iterate through the record additions and make any necessary adjustments
+        for _, recordAddition in pairs(recordAdditions) do
+
+            -- Set the server-generated ids of the records in our stored copy of the
+            -- RecordsDynamic packet before we send it to the players
+            tes3mp.SetRecordIdByIndex(recordAddition.index, recordAddition.id)
+
+            if recordType == enumerations.recordType.ENCHANTMENT then
+                -- We need to store this enchantment's original client-generated id
+                -- on this player so we can match it with its server-generated correct
+                -- id once the player sends the record of the enchanted item they've
+                -- used it on
+                Players[pid].unresolvedEnchantments[recordAddition.clientsideId] = recordAddition.id
+            elseif tableHelper.containsValue(enchantableRecordTypes, recordType) then
+                -- Set the server-generated id for this enchanted item's enchantment
+                tes3mp.SetRecordEnchantmentIdByIndex(recordAddition.index, recordAddition.enchantmentId)
+            end
+        end
+
+        -- Send this RecordDynamic packet to other players (sendToOthersPlayers is true),
+        -- and also send it to the player we got it from (skipAttachedPlayer is false)
+        tes3mp.SendRecordDynamic(pid, true, false)
+    
+        -- Add the final spell to the player's spellbook
+        if recordType == enumerations.recordType.SPELL then
+
+            tes3mp.InitializeSpellbookChanges(pid)
+            tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
+            
+            for _, recordAddition in pairs(recordAdditions) do
+                table.insert(Players[pid].data.spellbook, { spellId = recordAddition.id })
+                tes3mp.AddSpell(pid, recordAddition.id)
+            end
+
+            Players[pid]:Save()
+            tes3mp.SendSpellbookChanges(pid)
+        -- Add the final items to the player's inventory
+        elseif recordType == enumerations.recordType.POTION or
+            tableHelper.containsValue(enchantableRecordTypes, recordType) then
+            
+            for _, recordAddition in pairs(recordAdditions) do
+                local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1 }
+                table.insert(Players[pid].data.inventory, item)
+            end
+
+            Players[pid]:LoadInventory()
+            Players[pid]:LoadEquipment()
+        end
+    end
+end
+
 eventHandler.OnWorldKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         WorldInstance:SaveKills(pid)
@@ -1170,7 +1244,7 @@ end
 
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        WorldInstance:SaveMapTiles()
+        WorldInstance:SaveMapTiles(pid)
 
         if config.shareMapExploration == true then
             tes3mp.CopyReceivedWorldstateToStore()

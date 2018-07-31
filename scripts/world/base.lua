@@ -287,7 +287,7 @@ function BaseWorld:SaveMapExploration(pid)
     stateHelper:SaveMapExploration(pid, self)
 end
 
-function BaseWorld:SaveMapTiles()
+function BaseWorld:SaveMapTiles(pid)
 
     tes3mp.ReadReceivedWorldstate()
 

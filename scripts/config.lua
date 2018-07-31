@@ -129,7 +129,7 @@ config.fixmeInterval = 30
 
 -- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
 -- to prevent other menu inputs from being taken into account for them
-config.customMenuIds = { menuHelper = 9001, confiscate = 9002 }
+config.customMenuIds = { menuHelper = 9001, confiscate = 9002, recordPrint = 9003 }
 
 -- The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
 config.menuHelperFiles = { "help", "defaultCrafting", "advancedExample" }
@@ -189,6 +189,51 @@ config.disallowedStateRefIds = {}
 -- Prevent object scales from being set this high
 config.maximumObjectScale = 20
 
+-- The settings which are accepted as input for different record types when using /storerecord
+config.validRecordSettings = {
+    armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
+        "subtype", "weight", "value", "health", "armorRating" },
+    book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
+        "text", "weight", "value", "scrollState", "skillId" },
+    clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
+        "subtype", "weight", "value" },
+    creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "flags" },
+    enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
+    miscellaneous = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "keyState" },
+    npc = { "baseId", "inventoryBaseId", "id", "name", "script", "flags", "gender", "race", "model", "hair",
+        "head", "class", "faction", "level", "autoCalc" },
+    potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
+    spell = { "baseId", "id", "name", "subtype", "cost", "flags", "effects" },
+    weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
+        "subtype", "weight", "value", "health", "speed", "reach", "damageChop", "damageSlash", "damageThrust",
+        "flags" }
+}
+
+-- The settings which need to be provided when creating a new record that isn't based at all
+-- on an existing one, i.e. a new record that is missing a baseId
+config.requiredRecordSettings = {
+    armor = { "name", "model" },
+    book = { "name", "model" },
+    clothing = { "name", "model" },
+    creature = { "name", "model" },
+    enchantment = {},
+    miscellaneous = { "name", "model" },
+    npc = { "name", "race", "class" },
+    potion = { "name", "model" },
+    spell = { "name" },
+    weapon = { "name", "model" }
+}
+
+-- The record type settings whose input should be converted to numerical values when using /storerecord
+config.numericalRecordSettings = { "subtype", "weight", "value", "cost", "charge", "health", "armorRating",
+    "speed", "reach", "level", "autoCalc", "gender", "flags", "enchantmentCharge" }
+
+-- The record type settings whose input should be converted to booleans when using /storerecord
+config.booleanRecordSettings = { "scrollState", "keyState" }
+
+-- The record type settings whose input should be converted to tables with a min and a max numerical value
+config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }
+
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
@@ -224,6 +269,11 @@ config.cellKeyOrder = { "packets", "entry", "lastVisit", "objectData", "refId", 
     "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
     "cellChangeTo", "container", "death", "delete", "doorState", "equipment", "inventory", "lock",
     "place", "position", "scale", "spawn", "state", "statsDynamic", "trap" }
+
+config.recordstoreKeyOrder = { "general", "id", "baseId", "name", "subtype", "gender", "race", "hair",
+    "head", "class", "faction", "cost", "value", "charge", "weight", "autoCalc", "flags", "icon",
+    "model", "script", "id", "attribute", "skill", "rangeType", "area", "duration", "magnitudeMax",
+    "magnitudeMin", "effects" }
 
 config.worldKeyOrder = { "general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale" }

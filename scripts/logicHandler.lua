@@ -12,6 +12,7 @@ local logicHandler = {}
 
 Players = {}
 LoadedCells = {}
+RecordStores = {}
 WorldInstance = nil
 ObjectLoops = {}
 Menus = {}
@@ -378,6 +379,8 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNum(0)
         tes3mp.SetObjectMpNum(mpNum)
+        tes3mp.SetObjectCharge(-1)
+        tes3mp.SetObjectEnchantmentCharge(-1)
         tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
         tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
         tes3mp.AddObject()
@@ -452,6 +455,25 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SendConsoleCommand(true, false)
 end
 
+logicHandler.GetRecordStore = function(recordType)
+
+    if recordType == nil then return end
+
+    local recordStoreKey
+
+    if type(recordType) == "number" then
+        recordStoreKey = string.lower(tableHelper.getIndexByPattern(enumerations.recordType, recordType))
+    else
+        recordStoreKey = string.lower(recordType)
+    end
+
+    if recordStoreKey ~= nil then
+        return RecordStores[recordStoreKey]
+    end
+
+    return nil
+end
+
 logicHandler.GetCellContainingActor = function(actorUniqueIndex)
 
     for cellDescription, cell in pairs(LoadedCells) do
@@ -507,6 +529,22 @@ end
 
 logicHandler.SetCellAuthority = function(pid, cellDescription)
     LoadedCells[cellDescription]:SetAuthority(pid)
+end
+
+logicHandler.LoadRecordStore = function(storeType)
+
+    if RecordStores[storeType] == nil then
+
+        RecordStores[storeType] = RecordStore(storeType)
+
+        -- If this record store has a data entry, load it
+        if RecordStores[storeType]:HasEntry() then
+            RecordStores[storeType]:Load()
+        -- Otherwise, create a data file for it
+        else
+            RecordStores[storeType]:CreateEntry()
+        end
+    end
 end
 
 logicHandler.LoadCell = function(cellDescription)
