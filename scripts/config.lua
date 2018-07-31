@@ -208,7 +208,10 @@ config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where datab
 -- Disallow players from including the following in their names
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
-"faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
+"fag", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore", 
+"Malseph", "terrabyte25", "terabyte25", "Trap", "ты гей", "Soy", "Bitch", "Daddy", "Nazi", "Socialis", 
+"race war", "Retard", "Rape", "Kas Gikes", "Gook", "Pooplord", "boner", "jew", "juden", "furry", "qt", "cunt", "pedo", "nig"
+"cracker", "lenin", "communis", "capitalis", "libtard", "conservetard", "tard", "cuck", "stalin", "nationalis"}
 
 -- The order in which table keys should be saved to JSON files
 config.playerKeyOrder = { "login", "settings", "character", "customClass", "location", "stats",
