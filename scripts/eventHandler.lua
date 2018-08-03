@@ -604,6 +604,18 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                 if doesObjectHaveActivatingPlayer then
                     activatingPid = tes3mp.GetObjectActivatingPid(index)
                     debugMessage = debugMessage .. logicHandler.GetChatName(activatingPid)
+
+                    if tes3mp.GetSneakState(activatingPid) then
+                        debugMessage = debugMessage .. " while sneaking"
+                    end
+
+                    local drawState = tes3mp.GetDrawState(activatingPid)
+
+                    if drawState == 1 then
+                        debugMessage = debugMessage .. " with their weapon drawn"
+                    elseif drawState == 2 then
+                        debugMessage = debugMessage .. " with their casting hands out"
+                    end
                 else
                     activatingRefId = tes3mp.GetObjectActivatingRefId(index)
                     activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(index) ..
