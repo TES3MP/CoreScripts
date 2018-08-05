@@ -1091,7 +1091,7 @@ function commandHandler.StoreRecord(pid, cmd)
 
     if storedTable == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
-            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
+            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
     end
 
@@ -1295,10 +1295,13 @@ function commandHandler.CreateRecord(pid, cmd)
             id = "custom_" .. inputType .. "_" .. recordStore:IncrementRecordNum()
         end
 
+        local autoCalc = storedTable.autoCalc
+
         -- Use an autoCalc of 1 by default for entirely new NPCs to avoid spawning them
         -- without any stats
-        if inputType == "npc" and storedTable.baseId == nil and storedTable.autoCalc == nil then
-            storedTable.autoCalc = 1
+        if inputType == "npc" and storedTable.baseId == nil and autoCalc == nil then
+            autoCalc = 1
+            Players[pid]:Message("autoCalc is defaulting to 1 for this record.\n")
         end
 
         -- Use a skillId of -1 by default for entirely new books to avoid having them
@@ -1326,7 +1329,6 @@ function commandHandler.CreateRecord(pid, cmd)
             tes3mp.SetRecordEnchantmentId(storedTable.enchantmentId) end
         if storedTable.enchantmentCharge ~= nil then
             tes3mp.SetRecordEnchantmentCharge(storedTable.enchantmentCharge) end
-        if storedTable.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(storedTable.autoCalc) end
         if storedTable.charge ~= nil then tes3mp.SetRecordCharge(storedTable.charge) end
         if storedTable.cost ~= nil then tes3mp.SetRecordCost(storedTable.cost) end
         if storedTable.flags ~= nil then tes3mp.SetRecordFlags(storedTable.flags) end
@@ -1353,6 +1355,10 @@ function commandHandler.CreateRecord(pid, cmd)
         if storedTable.class ~= nil then tes3mp.SetRecordClass(storedTable.class) end
         if storedTable.faction ~= nil then tes3mp.SetRecordFaction(storedTable.faction) end
         if storedTable.level ~= nil then tes3mp.SetRecordLevel(storedTable.level) end
+        if storedTable.magicka ~= nil then tes3mp.SetRecordMagicka(storedTable.magicka) end
+        if storedTable.fatigue ~= nil then tes3mp.SetRecordFatigue(storedTable.fatigue) end
+        if storedTable.aiFight ~= nil then tes3mp.SetRecordAiFight(storedTable.aiFight) end
+        if autoCalc ~= nil then tes3mp.SetRecordAutoCalc(autoCalc) end
 
         recordStore:LoadRecordBodyParts(storedTable.parts)
         recordStore:LoadRecordInventoryItems(storedTable.items)

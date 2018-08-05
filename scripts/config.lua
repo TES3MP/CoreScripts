@@ -200,11 +200,12 @@ config.validRecordSettings = {
         "text", "weight", "value", "scrollState", "skillId" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
-    creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "flags" },
+    creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "health", "magicka",
+        "fatigue", "aiFight", "flags" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
     miscellaneous = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "keyState" },
     npc = { "baseId", "inventoryBaseId", "id", "name", "script", "flags", "gender", "race", "model", "hair",
-        "head", "class", "faction", "level", "autoCalc" },
+        "head", "class", "faction", "level", "health", "magicka", "fatigue", "aiFight", "autoCalc" },
     potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
     spell = { "baseId", "id", "name", "subtype", "cost", "flags", "effects" },
     weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -229,7 +230,7 @@ config.requiredRecordSettings = {
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "weight", "value", "cost", "charge", "health", "armorRating",
-    "speed", "reach", "level", "autoCalc", "gender", "flags", "enchantmentCharge" }
+    "speed", "reach", "level", "magicka", "fatigue", "aiFight", "autoCalc", "gender", "flags", "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState" }
