@@ -1,9 +1,9 @@
+require("color")
 require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
 require("utils")
 require("guiIds")
-require("color")
 require("time")
 
 logicHandler = require("logicHandler")

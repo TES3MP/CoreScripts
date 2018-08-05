@@ -127,6 +127,9 @@ config.allowFixmeCommand = true
 -- How many seconds need to pass between uses of the /fixme command by a player
 config.fixmeInterval = 30
 
+-- The colors used for different ranks on the server
+config.rankColors = { admin = color.Red, moderator = color.Green }
+
 -- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
 -- to prevent other menu inputs from being taken into account for them
 config.customMenuIds = { menuHelper = 9001, confiscate = 9002, recordPrint = 9003 }

@@ -202,11 +202,13 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     -- Check for chat overrides that add extra text
     else
         if admin then
-            local message = "[Admin] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            local message = config.rankColors.admin .. "[Admin] " .. color.White .. logicHandler.GetChatName(pid) ..
+                ": " .. message .. "\n"
             tes3mp.SendMessage(pid, message, true)
             return false
         elseif moderator then
-            local message = "[Mod] " .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            local message = config.rankColors.moderator .. "[Mod] " .. color.White .. logicHandler.GetChatName(pid) ..
+                ": " .. message .. "\n"
             tes3mp.SendMessage(pid, message, true)
             return false
         end

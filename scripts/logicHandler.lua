@@ -367,8 +367,8 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
 
     LoadedCells[cell]:Save()
 
-    -- Are there any players on the server? If so, initialize the event
-    -- for the first one we find and just send the corresponding packet
+    -- Are there any players on the server? If so, initialize the object
+    -- list for the first one we find and just send the corresponding packet
     -- to everyone
     if tableHelper.getCount(Players) > 0 then
 
