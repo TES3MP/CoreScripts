@@ -435,6 +435,11 @@ function OnPlayerBook(pid)
     eventHandler.OnPlayerBook(pid)
 end
 
+function OnPlayerItemUse(pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerItemUse\" for pid " .. pid)
+    eventHandler.OnPlayerItemUse(pid)
+end
+
 function OnPlayerMiscellaneous(pid)
     tes3mp.LogMessage(1, "Called \"OnPlayerMiscellaneous\" for pid " .. pid)
     eventHandler.OnPlayerMiscellaneous(pid)
