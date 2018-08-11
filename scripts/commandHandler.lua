@@ -1357,7 +1357,7 @@ function commandHandler.CreateRecord(pid, cmd)
         if storedTable.level ~= nil then tes3mp.SetRecordLevel(storedTable.level) end
         if storedTable.magicka ~= nil then tes3mp.SetRecordMagicka(storedTable.magicka) end
         if storedTable.fatigue ~= nil then tes3mp.SetRecordFatigue(storedTable.fatigue) end
-        if storedTable.aiFight ~= nil then tes3mp.SetRecordAiFight(storedTable.aiFight) end
+        if storedTable.aiFight ~= nil then tes3mp.SetRecordAIFight(storedTable.aiFight) end
         if autoCalc ~= nil then tes3mp.SetRecordAutoCalc(autoCalc) end
 
         recordStore:LoadRecordBodyParts(storedTable.parts)
