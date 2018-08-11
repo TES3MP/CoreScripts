@@ -1137,7 +1137,27 @@ function commandHandler.StoreRecord(pid, cmd)
                 inputValues = tableHelper.getTableFromCommaSplit(inputConcatenation)
             end
 
-            if inputAdditionType == "part" and (inputType == "armor" or inputType == "clothing") then
+            if inputAdditionType == "effect" and (inputType == "spell" or
+                inputType == "potion" or inputType == "enchantment") then
+
+                if storedTable.effects == nil then
+                    storedTable.effects = {}
+                end
+
+                local inputEffectId = inputValues[1]
+
+                if type(tonumber(inputEffectId)) == "number" then
+
+                    local effect = { id = tonumber(inputEffectId), rangeType = tonumber(inputValues[2]),
+                        duration = tonumber(inputValues[3]), area = tonumber(inputValues[4]),
+                        magnitudeMin = tonumber(inputValues[5]), magnitudeMax = tonumber(inputValues[6]),
+                        attribute = tonumber(inputValues[7]), skill = tonumber(inputValues[8]) }
+                    table.insert(storedTable.effects, effect)
+                    Players[pid]:Message("Added effect " .. inputConcatenation .. "\n")
+                else
+                    Players[pid]:Message("Please use a numerical value for the effect ID.\n")
+                end
+            elseif inputAdditionType == "part" and (inputType == "armor" or inputType == "clothing") then
 
                 if storedTable.parts == nil then
                     storedTable.parts = {}
@@ -1170,7 +1190,6 @@ function commandHandler.StoreRecord(pid, cmd)
                 local item = { id = inputItemId, count = inputItemCount }
                 table.insert(storedTable.items, item)
                 Players[pid]:Message("Added item " .. inputItemId .. " with count " .. inputItemCount .. "\n")
-
             else
                 Players[pid]:Message(tostring(inputAdditionType) .. " is not a valid addition type for " .. inputType ..
                     " records.\n")
@@ -1285,6 +1304,11 @@ function commandHandler.CreateRecord(pid, cmd)
         end
     end
 
+    if inputType == "enchantment" and (storedTable.effects == nil or tableHelper.isEmpty(storedTable.effects)) then
+        isValid = false
+        Players[pid]:Message("Records of type " .. inputType .. " require at least 1 effect.\n")
+    end
+
     if isValid then
 
         local recordStore = RecordStores[inputType]
@@ -1360,6 +1384,7 @@ function commandHandler.CreateRecord(pid, cmd)
         if storedTable.aiFight ~= nil then tes3mp.SetRecordAIFight(storedTable.aiFight) end
         if autoCalc ~= nil then tes3mp.SetRecordAutoCalc(autoCalc) end
 
+        recordStore:LoadRecordEffects(storedTable.effects)
         recordStore:LoadRecordBodyParts(storedTable.parts)
         recordStore:LoadRecordInventoryItems(storedTable.items)
 
@@ -1374,9 +1399,13 @@ function commandHandler.CreateRecord(pid, cmd)
             else
                 message = message .. "You can place an instance of it using /placeat "
             end
+
+            message = message .. "<pid> " .. id .. "\n"
+        else
+            message = message .. "To use it, create an armor, book, clothing or weapon record with an " ..
+                "enchantmentId of " .. id .. "\n"
         end
 
-        message = message .. "<pid> " .. id .. "\n"
         Players[pid]:Message(message)
     else
         Players[pid].currentCustomMenu = "help createnpc"
