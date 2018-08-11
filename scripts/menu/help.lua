@@ -352,6 +352,9 @@ Menus["help record examples"] = {
         { caption = "Replace an existing creature with another existing creature",
             destinations = { menuHelper.destinations.setDefault("help record example creature 1") }
         },
+        { caption = "Create a new enchantment entirely from scratch",
+            destinations = { menuHelper.destinations.setDefault("help record example enchantment 1") }
+        },
         { caption = "Create a new armor item entirely from scratch",
             destinations = { menuHelper.destinations.setDefault("help record example armor 1") }
         },
@@ -501,6 +504,31 @@ Menus["help record example creature 1"] = {
     }
 }
 
+Menus["help record example enchantment 1"] = {
+    text = color.White .. "Use the following commands to create a custom enchantment record entirely from scratch:\n" ..
+        color.Yellow .. "/storerecord enchantment clear\n" ..
+        color.Yellow .. "/storerecord enchantment subtype <subtype>\n" ..
+        color.Yellow .. "/storerecord enchantment cost <cost>\n" ..
+        color.Yellow .. "/storerecord enchantment charge <charge>\n" ..
+        color.Yellow .. "/storerecord enchantment add effect <id>, <rangeType>, <duration>, <area>, <magnitudeMin>, " ..
+            "<magnitudeMax>, <attribute>, <skill>\n" ..
+        color.White .. "When you're done, type in:\n" ..
+        color.Yellow .. "/createrecord enchantment\n\n" ..
+        color.White .. "Example series of commands:\n" ..
+        color.Yellow .. "/storerecord enchantment clear\n" ..
+        color.Yellow .. "/storerecord enchantment subtype 1\n" ..
+        color.Yellow .. "/storerecord enchantment cost 30\n" ..
+        color.Yellow .. "/storerecord enchantment charge 400\n" ..
+        color.Yellow .. "/storerecord enchantment add effect 14, 2, 5, 5, 20, 50, -1, -1\n" ..
+        color.Yellow .. "/createrecord enchantment",
+    buttons = {
+        { caption = "Back to examples page",
+            destinations = { menuHelper.destinations.setDefault("help record examples") }
+        },
+        { caption = "Exit", destinations = nil }
+    }
+}
+
 Menus["help record example armor 1"] = {
     text = color.White .. "Use the following commands to create a custom armor record entirely from scratch:\n" ..
         color.Yellow .. "/storerecord armor clear\n" ..
@@ -636,6 +664,7 @@ Menus["help record example weapon 1"] = {
         color.Yellow .. "/storerecord weapon damageChop <min> <max>\n" ..
         color.Yellow .. "/storerecord weapon damageSlash <min> <max>\n" ..
         color.Yellow .. "/storerecord weapon damageThrust <min> <max>\n" ..
+        color.Yellow .. "/storerecord weapon enchantmentId <enchantmentId>\n" ..
         color.White .. "When you're done, type in:\n" ..
         color.Yellow .. "/createrecord weapon\n\n" ..
         color.White .. "Example series of commands:\n" ..
