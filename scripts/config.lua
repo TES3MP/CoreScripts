@@ -276,7 +276,7 @@ config.cellKeyOrder = { "packets", "entry", "lastVisit", "objectData", "refId", 
 
 config.recordstoreKeyOrder = { "general", "id", "baseId", "name", "subtype", "gender", "race", "hair",
     "head", "class", "faction", "cost", "value", "charge", "weight", "autoCalc", "flags", "icon",
-    "model", "script", "id", "attribute", "skill", "rangeType", "area", "duration", "magnitudeMax",
+    "model", "script", "attribute", "skill", "rangeType", "area", "duration", "magnitudeMax",
     "magnitudeMin", "effects" }
 
 config.worldKeyOrder = { "general", "time", "topics", "kills", "journal", "customVariables", "type",
