@@ -103,6 +103,19 @@ logicHandler.GetLowestPingPid = function(pidTable)
     return lowestPingPid
 end
 
+logicHandler.IsNameAllowed = function(inputName)
+
+    for _, disallowedNameString in pairs(config.disallowedNameStrings) do
+        
+        if string.find(string.lower(inputName), string.lower(disallowedNameString)) ~= nil then
+
+            return false
+        end
+    end
+
+    return true
+end
+
 -- Check if there is already a player with this name on the server
 logicHandler.IsPlayerNameLoggedIn = function(newName)
 
@@ -120,20 +133,6 @@ logicHandler.IsPlayerNameLoggedIn = function(newName)
     end
 
     return false
-end
-
--- Check if the player is using a disallowed name
-logicHandler.IsPlayerNameAllowed = function(playerName)
-
-    for _, disallowedNameString in pairs(config.disallowedNameStrings) do
-        
-        if string.find(string.lower(playerName), string.lower(disallowedNameString)) ~= nil then
-
-            return false
-        end
-    end
-
-    return true
 end
 
 logicHandler.IsPlayerAllowedConsole = function(pid)

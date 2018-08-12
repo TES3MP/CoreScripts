@@ -254,10 +254,10 @@ config.databaseType = "json"
 -- Note: Not applicable when using json
 config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
 
--- Disallow players from including the following in their names
+-- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers
 config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cunt", "ejaculat",
-"faggot", "fellatio", "fuck", "gas the ", "Hitler", "nigga", "nigger", "smegma", "vagina", "whore" }
+    "faggot", "fellatio", "fuck", "gas the ", "Hitler", "jizz", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- The order in which table keys should be saved to JSON files
 config.playerKeyOrder = { "login", "settings", "character", "customClass", "location", "stats",

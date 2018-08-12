@@ -43,8 +43,8 @@ function BaseRecordStore:LoadRecordEffects(effects)
         if effect.rangeType ~= nil then tes3mp.SetRecordEffectRangeType(effect.rangeType) end
         if effect.area ~= nil then tes3mp.SetRecordEffectArea(effect.area) end
         if effect.duration ~= nil then tes3mp.SetRecordEffectDuration(effect.duration) end
-        if effect.magnitudeMax ~= nil then tes3mp.SetRecordEffectMagnitudeMax(effect.magnitudeMax) end
         if effect.magnitudeMin ~= nil then tes3mp.SetRecordEffectMagnitudeMin(effect.magnitudeMin) end
+        if effect.magnitudeMax ~= nil then tes3mp.SetRecordEffectMagnitudeMax(effect.magnitudeMax) end
 
         tes3mp.AddRecordEffect()
     end
@@ -372,8 +372,8 @@ function BaseRecordStore:GetRecordEffects(recordIndex)
             rangeType = tes3mp.GetRecordEffectRangeType(recordIndex, effectIndex),
             area = tes3mp.GetRecordEffectArea(recordIndex, effectIndex),
             duration = tes3mp.GetRecordEffectDuration(recordIndex, effectIndex),
-            magnitudeMax = tes3mp.GetRecordEffectMagnitudeMax(recordIndex, effectIndex),
-            magnitudeMin = tes3mp.GetRecordEffectMagnitudeMin(recordIndex, effectIndex)
+            magnitudeMin = tes3mp.GetRecordEffectMagnitudeMin(recordIndex, effectIndex),
+            magnitudeMax = tes3mp.GetRecordEffectMagnitudeMax(recordIndex, effectIndex)
         }
 
         table.insert(effectTable, effect)

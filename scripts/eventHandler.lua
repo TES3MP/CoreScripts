@@ -1192,6 +1192,33 @@ eventHandler.OnRecordDynamic = function(pid)
         tes3mp.ReadReceivedWorldstate()
         
         local recordType = tes3mp.GetRecordType(pid)
+
+        -- Iterate through the records in the RecordDynamic packet and only sync and save them
+        -- if all their names are allowed
+        local isValid = true
+        local rejectedRecords = {}
+
+        if recordType ~= enumerations.recordType.ENCHANTMENT then
+            local recordCount = tes3mp.GetRecordCount(pid)
+
+            for recordIndex = 0, recordCount - 1 do
+                local recordName = tes3mp.GetRecordName(recordIndex)
+
+                if logicHandler.IsNameAllowed(recordName) == false then
+                    table.insert(rejectedRecords, recordName)
+                    isValid = false
+
+                    Players[pid]:Message("You are not allowed to create a record called " .. recordName .. "\n")
+                end
+            end
+        end
+
+        if isValid == false then
+            tes3mp.LogMessage(1, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) .." about " ..
+                tableHelper.concatenateArrayValues(rejectedRecords, 1, ", "))
+            return
+        end
+
         local recordStore = logicHandler.GetRecordStore(recordType)
         local recordAdditions
 
