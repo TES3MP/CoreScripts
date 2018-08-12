@@ -1,6 +1,6 @@
 dataTableBuilder = {}
 
-dataTableBuilder.BuildAIData = function(action, targetPid, targetUniqueIndex,
+dataTableBuilder.BuildAIData = function(targetPid, targetUniqueIndex, action,
     posX, posY, posZ, distance, duration, shouldRepeat)
 
     local ai = {}

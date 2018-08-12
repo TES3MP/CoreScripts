@@ -492,14 +492,15 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
 
     if cell ~= nil and actorUniqueIndex ~= nil then
 
+        local aiData = dataTableBuilder.BuildAIData(targetPid, targetUniqueIndex, action,
+            posX, posY, posZ, distance, duration, shouldRepeat)
+
         -- Save this AI package to the actor's objectData in its cell, but only if
         -- the associated action isn't ACTIVATE, because we don't want the activation
         -- to happen every time someone loads the cell
         if action ~= enumerations.ai.ACTIVATE then
 
-            local ai = dataTableBuilder.BuildAIData(action, targetPid, targetUniqueIndex,
-                posX, posY, posZ, distance, duration, shouldRepeat)
-            cell.data.objectData[actorUniqueIndex].ai = ai
+            cell.data.objectData[actorUniqueIndex].ai = aiData
             tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
             cell:Save()
         end
@@ -510,8 +511,7 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
         tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(cell.description)
 
-        packetBuilder.AddAIActorToPacket(actorUniqueIndex, action, targetPid, targetUniqueIndex,
-            posX, posY, posZ, distance, duration, shouldRepeat)
+        packetBuilder.AddAIActorToPacket(actorUniqueIndex, targetPid, aiData)
 
         -- If the cell authority leaves, we want the new cell authority to resume
         -- this AI package, so we send the packet to all of the cell's visitors
