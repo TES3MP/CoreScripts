@@ -1,6 +1,6 @@
 packetBuilder = {}
 
-packetBuilder.AddAIActorToPacket = function(actorUniqueIndex, targetPid, aiData)
+packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
 
     local splitIndex = actorUniqueIndex:split("-")
     tes3mp.SetActorRefNum(splitIndex[1])

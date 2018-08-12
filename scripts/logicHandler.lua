@@ -511,7 +511,7 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
         tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(cell.description)
 
-        packetBuilder.AddAIActorToPacket(actorUniqueIndex, targetPid, aiData)
+        packetBuilder.AddAIActor(actorUniqueIndex, targetPid, aiData)
 
         -- If the cell authority leaves, we want the new cell authority to resume
         -- this AI package, so we send the packet to all of the cell's visitors

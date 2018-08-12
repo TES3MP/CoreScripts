@@ -1588,7 +1588,7 @@ function BaseCell:SendActorAI(pid)
                 if pid == targetPid then
                     table.insert(sharedPacketUniqueIndexes, uniqueIndex)
                 else
-                    packetBuilder.AddAIActorToPacket(uniqueIndex, targetPid, ai)
+                    packetBuilder.AddAIActor(uniqueIndex, targetPid, ai)
 
                     actorCount = actorCount + 1
                 end
@@ -1619,7 +1619,7 @@ function BaseCell:SendActorAI(pid)
             tes3mp.SetActorRefNum(splitIndex[1])
             tes3mp.SetActorMpNum(splitIndex[2])
             local ai = self.data.objectData[uniqueIndex].ai
-            packetBuilder.AddAIActorToPacket(uniqueIndex, pid, ai)
+            packetBuilder.AddAIActor(uniqueIndex, pid, ai)
         end
 
         tes3mp.SendActorAI(true)
