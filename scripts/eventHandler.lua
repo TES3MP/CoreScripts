@@ -166,10 +166,10 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         local buttonIndex = tonumber(data) + 1
         local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
 
-        local destination = menuHelper.getButtonDestination(pid, buttonPressed)
+        local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
 
-        menuHelper.processEffects(pid, destination.effects)
-        menuHelper.displayMenu(pid, destination.targetMenu)
+        menuHelper.ProcessEffects(pid, destination.effects)
+        menuHelper.DisplayMenu(pid, destination.targetMenu)
 
         Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
         Players[pid].currentCustomMenu = destination.targetMenu
@@ -1273,6 +1273,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
             Players[pid]:Save()
             tes3mp.SendSpellbookChanges(pid)
+
         -- Add the final items to the player's inventory
         elseif recordType == enumerations.recordType.POTION or
             tableHelper.containsValue(enchantableRecordTypes, recordType) then

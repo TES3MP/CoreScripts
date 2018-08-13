@@ -156,7 +156,7 @@ function menuHelper.variables.currentPid()
     return variable
 end
 
-function menuHelper.checkCondition(pid, condition)
+function menuHelper.CheckCondition(pid, condition)
 
     local targetPlayer = Players[pid]
 
@@ -197,14 +197,14 @@ function menuHelper.checkCondition(pid, condition)
     return false
 end
 
-function menuHelper.checkConditionTable(pid, conditions)
+function menuHelper.CheckConditionTable(pid, conditions)
 
     local conditionCount = table.maxn(conditions)
     local conditionsMet = 0
 
     for _, condition in ipairs(conditions) do
 
-        if menuHelper.checkCondition(pid, condition) then
+        if menuHelper.CheckCondition(pid, condition) then
             conditionsMet = conditionsMet + 1
         end
     end
@@ -216,7 +216,7 @@ function menuHelper.checkConditionTable(pid, conditions)
     return false
 end
 
-function menuHelper.processVariables(pid, inputTable)
+function menuHelper.ProcessVariables(pid, inputTable)
 
     local resultTable = {}
 
@@ -240,7 +240,7 @@ function menuHelper.processVariables(pid, inputTable)
     return resultTable
 end
 
-function menuHelper.processEffects(pid, effects)
+function menuHelper.ProcessEffects(pid, effects)
 
     if effects == nil then return end
 
@@ -305,7 +305,7 @@ function menuHelper.processEffects(pid, effects)
                 arguments = {}
             -- Fill in any variables placed inside the arguments
             else
-                arguments = menuHelper.processVariables(pid, arguments)
+                arguments = menuHelper.ProcessVariables(pid, arguments)
             end
 
             if effectType == "playerFunction" then
@@ -339,7 +339,7 @@ function menuHelper.processEffects(pid, effects)
     end
 end
 
-function menuHelper.getButtonDestination(pid, buttonPressed)
+function menuHelper.GetButtonDestination(pid, buttonPressed)
 
     if buttonPressed ~= nil then
 
@@ -357,7 +357,7 @@ function menuHelper.getButtonDestination(pid, buttonPressed)
                 if destination.conditions == nil then
                     defaultDestination = destination
                 else
-                    local conditionsMet = menuHelper.checkConditionTable(pid, destination.conditions)
+                    local conditionsMet = menuHelper.CheckConditionTable(pid, destination.conditions)
 
                     if conditionsMet then
                         return destination
@@ -372,7 +372,7 @@ function menuHelper.getButtonDestination(pid, buttonPressed)
     return {}
 end
 
-function menuHelper.getDisplayedButtons(pid, menuIndex)
+function menuHelper.GetDisplayedButtons(pid, menuIndex)
 
     if menuIndex == nil or Menus[menuIndex] == nil then return end
     local displayedButtons = {}
@@ -384,7 +384,7 @@ function menuHelper.getDisplayedButtons(pid, menuIndex)
         local conditionsMet = true
 
         if button.displayConditions ~= nil then
-            conditionsMet = menuHelper.checkConditionTable(pid, button.displayConditions)
+            conditionsMet = menuHelper.CheckConditionTable(pid, button.displayConditions)
         end
 
         if conditionsMet then
@@ -395,12 +395,12 @@ function menuHelper.getDisplayedButtons(pid, menuIndex)
     return displayedButtons
 end
 
-function menuHelper.displayMenu(pid, menuIndex)
+function menuHelper.DisplayMenu(pid, menuIndex)
 
     if menuIndex == nil or Menus[menuIndex] == nil then return end
 
     local text = Menus[menuIndex].text
-    local displayedButtons = menuHelper.getDisplayedButtons(pid, menuIndex)
+    local displayedButtons = menuHelper.GetDisplayedButtons(pid, menuIndex)
     local buttonCount = tableHelper.getCount(displayedButtons)
     local buttonList = ""
 

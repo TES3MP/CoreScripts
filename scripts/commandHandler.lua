@@ -1052,19 +1052,19 @@ function commandHandler.ProcessCommand(pid, cmd)
         
         -- Check "scripts/menu/help.lua" if you want to change the contents of the help menus
         Players[pid].currentCustomMenu = "help player"
-        menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
+        menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 
     elseif cmd[1] == "craft" then
 
         -- Check "scripts/menu/defaultCrafting.lua" if you want to change the example craft menu
         Players[pid].currentCustomMenu = "default crafting origin"
-        menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
+        menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 
     elseif cmd[1] == "advancedexample" or cmd[1] == "advex" and moderator then
 
         -- Check "scripts/menu/advancedExample.lua" if you want to change the advanced menu example
         Players[pid].currentCustomMenu = "advanced example origin"
-        menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
+        menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 
     else
         local message = "Not a valid command. Type /help for more info.\n"
@@ -1409,7 +1409,7 @@ function commandHandler.CreateRecord(pid, cmd)
         Players[pid]:Message(message)
     else
         Players[pid].currentCustomMenu = "help createnpc"
-        menuHelper.displayMenu(pid, Players[pid].currentCustomMenu)
+        menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
     end
 end
 
