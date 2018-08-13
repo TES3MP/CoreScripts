@@ -1319,76 +1319,41 @@ function commandHandler.CreateRecord(pid, cmd)
             id = "custom_" .. inputType .. "_" .. recordStore:IncrementRecordNum()
         end
 
-        local autoCalc = storedTable.autoCalc
+        -- We don't want to insert a direct reference to the storedTable in our record data,
+        -- so create a copy of the storedTable and insert that instead
+        local savedTable = tableHelper.shallowCopy(storedTable)
 
         -- Use an autoCalc of 1 by default for entirely new NPCs to avoid spawning them
         -- without any stats
-        if inputType == "npc" and storedTable.baseId == nil and autoCalc == nil then
-            autoCalc = 1
+        if inputType == "npc" and savedTable.baseId == nil and savedTable.autoCalc == nil then
+            savedTable.autoCalc = 1
             Players[pid]:Message("autoCalc is defaulting to 1 for this record.\n")
         end
 
         -- Use a skillId of -1 by default for entirely new books to avoid having them
         -- increase a skill
-        if inputType == "book" and storedTable.skillId == nil then
-            storedTable.skillId = -1
+        if inputType == "book" and savedTable.skillId == nil then
+            savedTable.skillId = -1
+            Players[pid]:Message("skillId is defaulting to -1 for this record.\n")
         end
 
-        recordStore.data.records[id] = storedTable
+        recordStore.data.records[id] = savedTable
         recordStore:Save()
 
         tes3mp.ClearRecords()
         tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
-        tes3mp.SetRecordId(id)
 
-        if storedTable.baseId ~= nil then tes3mp.SetRecordBaseId(storedTable.baseId) end
-        if storedTable.inventoryBaseId ~= nil then
-            tes3mp.SetRecordInventoryBaseId(storedTable.inventoryBaseId) end
-        if storedTable.subtype ~= nil then tes3mp.SetRecordSubtype(storedTable.subtype) end
-        if storedTable.name ~= nil then tes3mp.SetRecordName(storedTable.name) end
-        if storedTable.model ~= nil then tes3mp.SetRecordModel(storedTable.model) end
-        if storedTable.icon ~= nil then tes3mp.SetRecordIcon(storedTable.icon) end
-        if storedTable.script ~= nil then tes3mp.SetRecordScript(storedTable.script) end
-        if storedTable.enchantmentId ~= nil then
-            tes3mp.SetRecordEnchantmentId(storedTable.enchantmentId) end
-        if storedTable.enchantmentCharge ~= nil then
-            tes3mp.SetRecordEnchantmentCharge(storedTable.enchantmentCharge) end
-        if storedTable.charge ~= nil then tes3mp.SetRecordCharge(storedTable.charge) end
-        if storedTable.cost ~= nil then tes3mp.SetRecordCost(storedTable.cost) end
-        if storedTable.flags ~= nil then tes3mp.SetRecordFlags(storedTable.flags) end
-        if storedTable.value ~= nil then tes3mp.SetRecordValue(storedTable.value) end
-        if storedTable.weight ~= nil then tes3mp.SetRecordWeight(storedTable.weight) end
-        if storedTable.armorRating ~= nil then tes3mp.SetRecordArmorRating(storedTable.armorRating) end
-        if storedTable.health ~= nil then tes3mp.SetRecordHealth(storedTable.health) end
-        if storedTable.damageChop ~= nil then tes3mp.SetRecordDamageChop(storedTable.damageChop.min,
-            storedTable.damageChop.max) end
-        if storedTable.damageSlash ~= nil then tes3mp.SetRecordDamageSlash(storedTable.damageSlash.min,
-            storedTable.damageSlash.max) end
-        if storedTable.damageThrust ~= nil then tes3mp.SetRecordDamageThrust(storedTable.damageThrust.min,
-            storedTable.damageThrust.max) end
-        if storedTable.reach ~= nil then tes3mp.SetRecordReach(storedTable.reach) end
-        if storedTable.speed ~= nil then tes3mp.SetRecordSpeed(storedTable.speed) end
-        if storedTable.keyState ~= nil then tes3mp.SetRecordKeyState(storedTable.keyState) end
-        if storedTable.scrollState ~= nil then tes3mp.SetRecordScrollState(storedTable.scrollState) end
-        if storedTable.skillId ~= nil then tes3mp.SetRecordSkillId(storedTable.skillId) end
-        if storedTable.text ~= nil then tes3mp.SetRecordText(storedTable.text) end
-        if storedTable.hair ~= nil then tes3mp.SetRecordHair(storedTable.hair) end
-        if storedTable.head ~= nil then tes3mp.SetRecordHead(storedTable.head) end
-        if storedTable.gender ~= nil then tes3mp.SetRecordGender(storedTable.gender) end
-        if storedTable.race ~= nil then tes3mp.SetRecordRace(storedTable.race) end
-        if storedTable.class ~= nil then tes3mp.SetRecordClass(storedTable.class) end
-        if storedTable.faction ~= nil then tes3mp.SetRecordFaction(storedTable.faction) end
-        if storedTable.level ~= nil then tes3mp.SetRecordLevel(storedTable.level) end
-        if storedTable.magicka ~= nil then tes3mp.SetRecordMagicka(storedTable.magicka) end
-        if storedTable.fatigue ~= nil then tes3mp.SetRecordFatigue(storedTable.fatigue) end
-        if storedTable.aiFight ~= nil then tes3mp.SetRecordAIFight(storedTable.aiFight) end
-        if autoCalc ~= nil then tes3mp.SetRecordAutoCalc(autoCalc) end
+        if inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
+        elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
+        elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
+        elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
+        elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
+        elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
+        elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
+        elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
+        elseif inputType == "spell" then packetBuilder.AddSpellRecord(id, savedTable)
+        elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
 
-        recordStore:LoadRecordEffects(storedTable.effects)
-        recordStore:LoadRecordBodyParts(storedTable.parts)
-        recordStore:LoadRecordInventoryItems(storedTable.items)
-
-        tes3mp.AddRecord()
         tes3mp.SendRecordDynamic(pid, true, false)
 
         local message = "Your record has now been created.\n"
