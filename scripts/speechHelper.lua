@@ -280,7 +280,7 @@ speechFolders["wood elf"] = {
     }
 }
 
-function speechHelper.getSpeech(pid, speechTypeAlias, speechIndex)
+function speechHelper.GetSpeech(pid, speechTypeAlias, speechIndex)
 
     local speechType
 
@@ -345,7 +345,7 @@ function speechHelper.getSpeech(pid, speechTypeAlias, speechIndex)
     return "invalid"
 end
 
-function speechHelper.getValidList(pid)
+function speechHelper.GetValidList(pid)
 
     local validList = {}
 
@@ -375,9 +375,9 @@ function speechHelper.getValidList(pid)
     return tableHelper.concatenateFromIndex(validList, 1, ", ")
 end
 
-function speechHelper.playSpeech(pid, speechTypeAlias, speechIndex)
+function speechHelper.PlaySpeech(pid, speechTypeAlias, speechIndex)
 
-    local speechPath = speechHelper.getSpeech(pid, speechTypeAlias, speechIndex)
+    local speechPath = speechHelper.GetSpeech(pid, speechTypeAlias, speechIndex)
 
     if speechPath ~= "invalid" then
         tes3mp.PlaySpeech(pid, speechPath)

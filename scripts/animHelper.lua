@@ -11,7 +11,7 @@ local generalAnimAliases = { act_impatient = "idle6", check_missing_item = "idle
 local femaleAnimAliases = { adjust_hair = "idle4", touch_hip = "idle5" }
 local beastAnimAliases = { act_confused = "idle9", look_around = "idle2", touch_hands = "idle6" }
 
-function animHelper.getAnimation(pid, animAlias)
+function animHelper.GetAnimation(pid, animAlias)
 
     -- Is this animation included in the default animation names?
     if tableHelper.containsValue(defaultAnimNames, animAlias) then
@@ -49,7 +49,7 @@ function animHelper.getAnimation(pid, animAlias)
     return "invalid"
 end
 
-function animHelper.getValidList(pid)
+function animHelper.GetValidList(pid)
 
     local validList = {}
 
@@ -89,9 +89,9 @@ function animHelper.getValidList(pid)
     return tableHelper.concatenateFromIndex(validList, 1, ", ")
 end
 
-function animHelper.playAnimation(pid, animAlias)
+function animHelper.PlayAnimation(pid, animAlias)
 
-    local defaultAnim = animHelper.getAnimation(pid, animAlias)
+    local defaultAnim = animHelper.GetAnimation(pid, animAlias)
 
     if defaultAnim ~= "invalid" then
         tes3mp.PlayAnimation(pid, defaultAnim, 0, 1, false)

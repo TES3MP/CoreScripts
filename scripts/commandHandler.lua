@@ -908,20 +908,20 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
-        local isValid = animHelper.playAnimation(pid, cmd[2])
+        local isValid = animHelper.PlayAnimation(pid, cmd[2])
             
         if isValid == false then
-            local validList = animHelper.getValidList(pid)
+            local validList = animHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
                 validList .. "\n", false)
         end
 
     elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and
         type(tonumber(cmd[3])) == "number" then
-        local isValid = speechHelper.playSpeech(pid, cmd[2], tonumber(cmd[3]))
+        local isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
             
         if isValid == false then
-            local validList = speechHelper.getValidList(pid)
+            local validList = speechHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
                 .. validList .. "\n", false)
         end
