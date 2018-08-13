@@ -29,7 +29,7 @@ packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
     tes3mp.AddActor()
 end
 
-packetBuilder.AddEffectToRecord(effect)
+packetBuilder.AddEffectToRecord = function(effect)
 
     tes3mp.SetRecordEffectId(effect.id)
     if effect.attribute ~= nil then tes3mp.SetRecordEffectAttribute(effect.attribute) end
@@ -43,7 +43,7 @@ packetBuilder.AddEffectToRecord(effect)
     tes3mp.AddRecordEffect()
 end
 
-packetBuilder.AddBodyPartToRecord(part)
+packetBuilder.AddBodyPartToRecord = function(part)
 
     tes3mp.SetRecordBodyPartType(part.partType)
     if part.malePart ~= nil then tes3mp.SetRecordBodyPartIdForMale(part.malePart) end
@@ -52,7 +52,7 @@ packetBuilder.AddBodyPartToRecord(part)
     tes3mp.AddRecordBodyPart()
 end
 
-packetBuilder.AddInventoryItemToRecord(item)
+packetBuilder.AddInventoryItemToRecord = function(item)
 
     tes3mp.SetRecordInventoryItemId(item.id)
     if item.count ~= nil then tes3mp.SetRecordInventoryItemCount(item.count) end
