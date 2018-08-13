@@ -142,6 +142,12 @@ packetBuilder.AddCreatureRecord = function(id, record)
     if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
+    if type(record.items) == "table" then
+        for _, item in pairs(record.items) do
+            packetBuilder.AddInventoryItemToRecord(item)
+        end
+    end
+
     tes3mp.AddRecord()
 end
 
@@ -197,6 +203,12 @@ packetBuilder.AddNpcRecord = function(id, record)
     if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
     if record.faction ~= nil then tes3mp.SetRecordFaction(record.faction) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    if type(record.items) == "table" then
+        for _, item in pairs(record.items) do
+            packetBuilder.AddInventoryItemToRecord(item)
+        end
+    end
 
     tes3mp.AddRecord()
 end
