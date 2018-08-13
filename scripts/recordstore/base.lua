@@ -171,32 +171,6 @@ function BaseRecordStore:LoadWeapons(pid)
     tes3mp.SendRecordDynamic(pid, false, false)
 end
 
-function BaseRecordStore:GetRecordEffects(recordIndex)
-
-    local effectTable = {}
-    local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-
-    tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
-
-    for effectIndex = 0, effectCount - 1 do
-
-        local effect = {
-            id = tes3mp.GetRecordEffectId(recordIndex, effectIndex),
-            attribute = tes3mp.GetRecordEffectAttribute(recordIndex, effectIndex),
-            skill = tes3mp.GetRecordEffectSkill(recordIndex, effectIndex),
-            rangeType = tes3mp.GetRecordEffectRangeType(recordIndex, effectIndex),
-            area = tes3mp.GetRecordEffectArea(recordIndex, effectIndex),
-            duration = tes3mp.GetRecordEffectDuration(recordIndex, effectIndex),
-            magnitudeMin = tes3mp.GetRecordEffectMagnitudeMin(recordIndex, effectIndex),
-            magnitudeMax = tes3mp.GetRecordEffectMagnitudeMax(recordIndex, effectIndex)
-        }
-
-        table.insert(effectTable, effect)
-    end
-
-    return effectTable
-end
-
 function BaseRecordStore:SaveEnchantedItems(pid)
 
     if self.storeType ~= "armor" and self.storeType ~= "book" and
@@ -251,13 +225,16 @@ function BaseRecordStore:SaveEnchantments(pid)
     for recordIndex = 0, recordCount - 1 do
 
         local recordId = "custom_enchantment_" .. self:IncrementRecordNum()
+        
+        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
+        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
 
         local record = {
             subtype = tes3mp.GetRecordSubtype(recordIndex),
             cost = tes3mp.GetRecordCost(recordIndex),
             charge = tes3mp.GetRecordCharge(recordIndex),
             autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            effects = self:GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordEffects(recordIndex)
         }
 
         self.data.records[recordId] = record
@@ -280,6 +257,9 @@ function BaseRecordStore:SavePotions(pid)
 
         local recordId = "custom_potion_" .. self:IncrementRecordNum()
 
+        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
+        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
+
         local record = {
             name = tes3mp.GetRecordName(recordIndex),
             weight = tes3mp.GetRecordWeight(recordIndex),
@@ -288,7 +268,7 @@ function BaseRecordStore:SavePotions(pid)
             icon = tes3mp.GetRecordIcon(recordIndex),
             model = tes3mp.GetRecordModel(recordIndex),
             script = tes3mp.GetRecordScript(recordIndex),
-            effects = self:GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordEffects(recordIndex)
         }
 
         self.data.records[recordId] = record
@@ -310,12 +290,15 @@ function BaseRecordStore:SaveSpells(pid)
 
         local recordId = "custom_spell_" .. self:IncrementRecordNum()
 
+        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
+        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
+
         local record = {
             name = tes3mp.GetRecordName(recordIndex),
             subtype = tes3mp.GetRecordSubtype(recordIndex),
             cost = tes3mp.GetRecordCost(recordIndex),
             flags = tes3mp.GetRecordFlags(recordIndex),
-            effects = self:GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordEffects(recordIndex)
         }
 
         self.data.records[recordId] = record

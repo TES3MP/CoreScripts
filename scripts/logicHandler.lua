@@ -7,6 +7,7 @@ contentFixer = require("contentFixer")
 menuHelper = require("menuHelper")
 dataTableBuilder = require("dataTableBuilder")
 packetBuilder = require("packetBuilder")
+packetReader = require("packetReader")
 
 local logicHandler = {}
 
