@@ -31,52 +31,6 @@ function BaseRecordStore:IncrementRecordNum()
     return self:GetCurrentRecordNum()
 end
 
-function BaseRecordStore:LoadRecordEffects(effects)
-
-    if type(effects) ~= "table" then return end
-
-    for _, effect in pairs(effects) do
-
-        tes3mp.SetRecordEffectId(effect.id)
-        if effect.attribute ~= nil then tes3mp.SetRecordEffectAttribute(effect.attribute) end
-        if effect.skill ~= nil then tes3mp.SetRecordEffectSkill(effect.skill) end
-        if effect.rangeType ~= nil then tes3mp.SetRecordEffectRangeType(effect.rangeType) end
-        if effect.area ~= nil then tes3mp.SetRecordEffectArea(effect.area) end
-        if effect.duration ~= nil then tes3mp.SetRecordEffectDuration(effect.duration) end
-        if effect.magnitudeMin ~= nil then tes3mp.SetRecordEffectMagnitudeMin(effect.magnitudeMin) end
-        if effect.magnitudeMax ~= nil then tes3mp.SetRecordEffectMagnitudeMax(effect.magnitudeMax) end
-
-        tes3mp.AddRecordEffect()
-    end
-end
-
-function BaseRecordStore:LoadRecordBodyParts(parts)
-
-    if type(parts) ~= "table" then return end
-
-    for _, part in pairs(parts) do
-
-        tes3mp.SetRecordBodyPartType(part.partType)
-        if part.malePart ~= nil then tes3mp.SetRecordBodyPartIdForMale(part.malePart) end
-        if part.femalePart ~= nil then tes3mp.SetRecordBodyPartIdForFemale(part.femalePart) end
-
-        tes3mp.AddRecordBodyPart()
-    end
-end
-
-function BaseRecordStore:LoadRecordInventoryItems(items)
-
-    if type(items) ~= "table" then return end
-
-    for _, item in pairs(items) do
-
-        tes3mp.SetRecordInventoryItemId(item.id)
-        if item.count ~= nil then tes3mp.SetRecordInventoryItemCount(item.count) end
-
-        tes3mp.AddRecordInventoryItem()
-    end
-end
-
 function BaseRecordStore:LoadArmors(pid)
 
     if self.storeType ~= "armor" then return end
@@ -85,23 +39,7 @@ function BaseRecordStore:LoadArmors(pid)
     tes3mp.SetRecordType(enumerations.recordType.ARMOR)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-        if record.armorRating ~= nil then tes3mp.SetRecordArmorRating(record.armorRating) end
-        if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-        if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        self:LoadRecordBodyParts(record.parts)
-        tes3mp.AddRecord()
+        packetBuilder.AddArmorRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -115,22 +53,7 @@ function BaseRecordStore:LoadBooks(pid)
     tes3mp.SetRecordType(enumerations.recordType.BOOK)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.text ~= nil then tes3mp.SetRecordText(record.text) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.scrollState ~= nil then tes3mp.SetRecordScrollState(record.scrollState) end
-        if record.skillId ~= nil then tes3mp.SetRecordSkillId(record.skillId) end
-        if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-        if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        tes3mp.AddRecord()
+        packetBuilder.AddBookRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -144,21 +67,7 @@ function BaseRecordStore:LoadClothing(pid)
     tes3mp.SetRecordType(enumerations.recordType.CLOTHING)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-        if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        self:LoadRecordBodyParts(record.parts)
-        tes3mp.AddRecord()
+        packetBuilder.AddClothingRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -172,21 +81,7 @@ function BaseRecordStore:LoadCreatures(pid)
     tes3mp.SetRecordType(enumerations.recordType.CREATURE)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.level ~= nil then tes3mp.SetRecordLevel(record.level) end
-        if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-        if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
-        if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
-        if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
-        if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        tes3mp.AddRecord()
+        packetBuilder.AddCreatureRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -200,16 +95,7 @@ function BaseRecordStore:LoadEnchantments(pid)
     tes3mp.SetRecordType(enumerations.recordType.ENCHANTMENT)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.cost ~= nil then tes3mp.SetRecordCost(record.cost) end
-        if record.charge ~= nil then tes3mp.SetRecordCharge(record.charge) end
-        if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
-
-        self:LoadRecordEffects(record.effects)
-        tes3mp.AddRecord()
+        packetBuilder.AddEnchantmentRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -223,18 +109,7 @@ function BaseRecordStore:LoadMiscellaneous(pid)
     tes3mp.SetRecordType(enumerations.recordType.MISCELLANEOUS)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.keyState ~= nil then tes3mp.SetRecordKeyState(record.keyState) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        tes3mp.AddRecord()
+        packetBuilder.AddMiscellaneousRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -248,26 +123,7 @@ function BaseRecordStore:LoadNpcs(pid)
     tes3mp.SetRecordType(enumerations.recordType.NPC)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.inventoryBaseId ~= nil then tes3mp.SetRecordInventoryBaseId(record.inventoryBaseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.gender ~= nil then tes3mp.SetRecordGender(record.gender) end
-        if record.race ~= nil then tes3mp.SetRecordRace(record.race) end
-        if record.hair ~= nil then tes3mp.SetRecordHair(record.hair) end
-        if record.head ~= nil then tes3mp.SetRecordHead(record.head) end
-        if record.class ~= nil then tes3mp.SetRecordClass(record.class) end
-        if record.level ~= nil then tes3mp.SetRecordLevel(record.level) end
-        if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-        if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
-        if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
-        if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
-        if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
-        if record.faction ~= nil then tes3mp.SetRecordFaction(record.faction) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        tes3mp.AddRecord()
+        packetBuilder.AddNpcRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -281,19 +137,7 @@ function BaseRecordStore:LoadPotions(pid)
     tes3mp.SetRecordType(enumerations.recordType.POTION)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        self:LoadRecordEffects(record.effects)
-        tes3mp.AddRecord()
+        packetBuilder.AddPotionRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -307,16 +151,7 @@ function BaseRecordStore:LoadSpells(pid)
     tes3mp.SetRecordType(enumerations.recordType.SPELL)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.cost ~= nil then tes3mp.SetRecordCost(record.cost) end
-        if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-
-        self:LoadRecordEffects(record.effects)
-        tes3mp.AddRecord()
+        packetBuilder.AddSpellRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
@@ -330,27 +165,7 @@ function BaseRecordStore:LoadWeapons(pid)
     tes3mp.SetRecordType(enumerations.recordType.WEAPON)
 
     for id, record in pairs(self.data.records) do
-
-        tes3mp.SetRecordId(id)
-        if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-        if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-        if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-        if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-        if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-        if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-        if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-        if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-        if record.speed ~= nil then tes3mp.SetRecordSpeed(record.speed) end
-        if record.reach ~= nil then tes3mp.SetRecordReach(record.reach) end
-        if record.damageChop ~= nil then tes3mp.SetRecordDamageChop(record.damageChop.min, record.damageChop.max) end
-        if record.damageSlash ~= nil then tes3mp.SetRecordDamageSlash(record.damageSlash.min, record.damageSlash.max) end
-        if record.damageThrust ~= nil then tes3mp.SetRecordDamageThrust(record.damageThrust.min, record.damageThrust.max) end
-        if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-        if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-        if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-        if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
-
-        tes3mp.AddRecord()
+        packetBuilder.AddWeaponRecord(id, record)
     end
 
     tes3mp.SendRecordDynamic(pid, false, false)
