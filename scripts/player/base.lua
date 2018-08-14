@@ -941,11 +941,16 @@ function BasePlayer:LoadSpellbook()
     tes3mp.InitializeSpellbookChanges(self.pid)
     tes3mp.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
 
-    for index, currentSpell in pairs(self.data.spellbook) do
+    for index, spellId in pairs(self.data.spellbook) do
 
-        if currentSpell ~= nil then
-            tes3mp.AddSpell(self.pid, currentSpell.spellId)
+        -- Is this an old spell table from a previous version of TES3MP?
+        -- If so, update it to the new format
+        if type(spellId) == "table" then
+            spellId = spellId.spellId
+            self.data.spellbook[index] = spellId
         end
+
+        tes3mp.AddSpell(self.pid, spellId)
     end
 
     tes3mp.SendSpellbookChanges(self.pid)
@@ -957,11 +962,9 @@ function BasePlayer:AddSpells()
         local spellId = tes3mp.GetSpellId(self.pid, index)
 
         -- Only add new spell if we don't already have it
-        if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == false then
+        if tableHelper.containsValue(self.data.spellbook, spellId) == false then
             tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
-            local newSpell = {}
-            newSpell.spellId = spellId
-            table.insert(self.data.spellbook, newSpell)
+            table.insert(self.data.spellbook, spellId)
         end
     end
 end
@@ -972,9 +975,9 @@ function BasePlayer:RemoveSpells()
         local spellId = tes3mp.GetSpellId(self.pid, index)
 
         -- Only print spell removal if the spell actually exists
-        if tableHelper.containsKeyValue(self.data.spellbook, "spellId", spellId, true) == true then
+        if tableHelper.containsValue(self.data.spellbook, spellId) == true then
             tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
-            local foundIndex = tableHelper.getIndexByNestedKeyValue(self.data.spellbook, "spellId", spellId)
+            local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
             self.data.spellbook[foundIndex] = nil
         end
     end
