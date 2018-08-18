@@ -956,39 +956,36 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpellbookChanges(self.pid)
 end
 
-function BasePlayer:AddSpells()
+function BasePlayer:SaveSpellbook()
+
+    local action = tes3mp.GetSpellbookChangesAction(self.pid)
+
+    if action == enumerations.spellbook.SET then
+        self.data.spellbook = {}
+    end
 
     for index = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
         local spellId = tes3mp.GetSpellId(self.pid, index)
 
-        -- Only add new spell if we don't already have it
-        if tableHelper.containsValue(self.data.spellbook, spellId) == false then
-            tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. tes3mp.GetName(self.pid))
-            table.insert(self.data.spellbook, spellId)
-        end
-    end
-end
-
-function BasePlayer:RemoveSpells()
-
-    for index = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
-        local spellId = tes3mp.GetSpellId(self.pid, index)
-
-        -- Only print spell removal if the spell actually exists
-        if tableHelper.containsValue(self.data.spellbook, spellId) == true then
-            tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. tes3mp.GetName(self.pid))
-            local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
-            self.data.spellbook[foundIndex] = nil
+        if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+            -- Only add new spell if we don't already have it
+            if tableHelper.containsValue(self.data.spellbook, spellId) == false then
+                tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. logicHandler.GetChatName(self.pid))
+                table.insert(self.data.spellbook, spellId)
+            end
+        elseif action == enumerations.spellbook.REMOVE then
+            -- Only print spell removal if the spell actually exists
+            if tableHelper.containsValue(self.data.spellbook, spellId) == true then
+                tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. logicHandler.GetChatName(self.pid))
+                local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
+                self.data.spellbook[foundIndex] = nil
+            end
         end
     end
 
-    tableHelper.cleanNils(self.data.spellbook)
-end
-
-function BasePlayer:SetSpells()
-
-    self.data.spellbook = {}
-    self:AddSpells()
+    if action == enumerations.spellbook.REMOVE then
+        tableHelper.cleanNils(self.data.spellbook)
+    end
 end
 
 function BasePlayer:LoadQuickKeys()

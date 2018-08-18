@@ -337,16 +337,7 @@ end
 
 eventHandler.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        local action = tes3mp.GetSpellbookChangesAction(pid)
-
-        if action == enumerations.spellbook.SET then
-            Players[pid]:SetSpells()
-        elseif action == enumerations.spellbook.ADD then
-            Players[pid]:AddSpells()
-        elseif action == enumerations.spellbook.REMOVE then
-            Players[pid]:RemoveSpells()
-        end
+        Players[pid]:SaveSpellbook()
     end
 end
 
