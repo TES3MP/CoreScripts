@@ -157,6 +157,14 @@ function tableHelper.getIndexByNestedKeyValue(inputTable, keyToFind, valueToFind
     return nil
 end
 
+function tableHelper.getIndexByValue(inputTable, valueToFind)
+    for key, value in pairs(inputTable) do
+        if value == valueToFind then
+            return key
+        end
+    end
+end
+
 -- Iterate through a table and return a new table based on it that has no nil values
 -- (useful for numerical arrays because they retain nil values)
 --
