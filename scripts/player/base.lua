@@ -915,20 +915,40 @@ end
 
 function BasePlayer:SaveInventory()
 
-    self.data.inventory = {}
+    local action = tes3mp.GetInventoryChangesAction(self.pid)
+    local itemChangesCount = tes3mp.GetInventoryChangesSize(self.pid)
 
-    for index = 0, tes3mp.GetInventoryChangesSize(self.pid) - 1 do
+    tes3mp.LogMessage(3, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
+        tableHelper.getIndexByValue(enumerations.inventory, action))
+
+    if action == enumerations.inventory.SET then
+        self.data.inventory = {}
+    end
+
+    for index = 0, itemChangesCount - 1 do
         local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, index)
 
         if itemRefId ~= "" then
-            self.data.inventory[index] = {
+            local item = {
                 refId = itemRefId,
                 count = tes3mp.GetInventoryItemCount(self.pid, index),
                 charge = tes3mp.GetInventoryItemCharge(self.pid, index),
                 enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, index),
                 soul = tes3mp.GetInventoryItemSoul(self.pid, index)
             }
+
+            if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
+                inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
+                    item.enchantmentCharge, item.soul)
+            elseif action == enumerations.inventory.REMOVE then
+                inventoryHelper.removeItem(self.data.inventory, item.refId, item.count, item.charge,
+                    item.enchantmentCharge, item.soul)
+            end
         end
+    end
+
+    if action == enumerations.inventory.REMOVE then
+        tableHelper.cleanNils(self.data.inventory)
     end
 end
 
