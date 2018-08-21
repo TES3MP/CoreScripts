@@ -48,6 +48,7 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
         local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
+
         inventory[index].count = inventory[index].count + count
     else
         local item = {}
@@ -58,6 +59,20 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
         item.soul = soul
 
         table.insert(inventory, item)
+    end
+end
+
+function inventoryHelper.removeItem(inventory, refId, count, charge, enchantmentCharge, soul)
+
+    if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
+        local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
+
+        inventory[index].count = inventory[index].count - count
+
+        if inventory[index].count < 1 then
+            inventory[index] = nil
+            tableHelper.cleanNils(inventory)
+        end
     end
 end
 
