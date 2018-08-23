@@ -31,6 +31,10 @@ function BaseRecordStore:IncrementRecordNum()
     return self:GetCurrentRecordNum()
 end
 
+function BaseRecordStore:GenerateRecordId()
+    return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementRecordNum()
+end
+
 function BaseRecordStore:LoadArmors(pid)
 
     if self.storeType ~= "armor" then return end
@@ -194,7 +198,7 @@ function BaseRecordStore:SaveEnchantedItems(pid)
             -- Stop tracking this as an unresolved enchantment
             Players[pid].unresolvedEnchantments[clientEnchantmentId] = nil
 
-            local recordId = "custom_" .. self.storeType .. "_" .. self:IncrementRecordNum()
+            local recordId = self:GenerateRecordId()
 
             -- We don't need to track all the details of the enchanted items, just their base
             -- id and their enchantment information
@@ -224,7 +228,7 @@ function BaseRecordStore:SaveEnchantments(pid)
 
     for recordIndex = 0, recordCount - 1 do
 
-        local recordId = "custom_enchantment_" .. self:IncrementRecordNum()
+        local recordId = self:GenerateRecordId()
         
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
         tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
@@ -255,7 +259,7 @@ function BaseRecordStore:SavePotions(pid)
 
     for recordIndex = 0, recordCount - 1 do
 
-        local recordId = "custom_potion_" .. self:IncrementRecordNum()
+        local recordId = self:GenerateRecordId()
 
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
         tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
@@ -288,7 +292,7 @@ function BaseRecordStore:SaveSpells(pid)
 
     for recordIndex = 0, recordCount - 1 do
 
-        local recordId = "custom_spell_" .. self:IncrementRecordNum()
+        local recordId = self:GenerateRecordId()
 
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
         tes3mp.LogAppend(3, "- Effects have count " .. effectCount)

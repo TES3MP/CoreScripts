@@ -1316,7 +1316,7 @@ function commandHandler.CreateRecord(pid, cmd)
         local id = storedTable.id
 
         if id == nil then
-            id = "custom_" .. inputType .. "_" .. recordStore:IncrementRecordNum()
+            id = recordStore:GenerateRecordId()
         end
 
         -- We don't want to insert a direct reference to the storedTable in our record data,

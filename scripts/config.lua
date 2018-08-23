@@ -192,6 +192,14 @@ config.disallowedStateRefIds = {}
 -- Prevent object scales from being set this high
 config.maximumObjectScale = 20
 
+-- The prefix used for automatically generated record IDs
+-- Note 1: Records with automatically generated IDs get erased when there are no more instances of
+-- them in player inventories/spellbooks or in cells
+-- Note 2: By default, records created through regular gameplay (i.e. player-created spells, potions,
+-- enchantments and enchanted items) use automatically generated record IDs, as do records created
+-- via the /createrecord command when no ID is specified there
+config.generatedRecordIdPrefix = "$custom"
+
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
     armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
