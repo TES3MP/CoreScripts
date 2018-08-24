@@ -71,9 +71,12 @@ function inventoryHelper.removeItem(inventory, refId, count, charge, enchantment
 
         if inventory[index].count < 1 then
             inventory[index] = nil
-            tableHelper.cleanNils(inventory)
         end
+
+        return inventory[index]
     end
+
+    return nil
 end
 
 return inventoryHelper
