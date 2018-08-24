@@ -15,6 +15,18 @@ function tableHelper.getCount(inputTable)
     return count
 end
 
+-- Iterate through a table's indexes and put them into an array table
+function tableHelper.getArrayFromIndexes(inputTable)
+
+    local newTable = {}
+
+    for key, _ in pairs(inputTable) do
+        table.insert(newTable, key)
+    end
+
+    return newTable
+end
+
 -- Iterate through comma-separated values in a string and turn them into table values
 function tableHelper.getTableFromCommaSplit(inputString)
 
