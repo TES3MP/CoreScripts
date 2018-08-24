@@ -163,6 +163,8 @@ function tableHelper.getIndexByValue(inputTable, valueToFind)
             return key
         end
     end
+
+    return nil
 end
 
 -- Iterate through a table and return a new table based on it that has no nil values
