@@ -122,10 +122,10 @@ function BaseCell:AddVisitor(pid)
             -- First, fix whatever quest problems exist in this cell
             contentFixer.FixCell(pid, self.description)
 
-            self:SendInitialCellData(pid)
+            self:LoadInitialCellData(pid)
         end
 
-        self:SendMomentaryCellData(pid)
+        self:LoadMomentaryCellData(pid)
     end
 end
 
@@ -165,7 +165,7 @@ function BaseCell:SetAuthority(pid)
     tes3mp.LogMessage(1, "Authority of cell " .. self.data.entry.description ..
         " is now " .. logicHandler.GetChatName(pid))
 
-    self:SendActorAuthority(pid)
+    self:LoadActorAuthority(pid)
 end
 
 -- Iterate through saved packets and ensure the object uniqueIndexes they refer to
@@ -1000,7 +1000,7 @@ function BaseCell:SaveActorCellChanges(pid)
     self:Save()
 end
 
-function BaseCell:SendObjectsDeleted(pid)
+function BaseCell:LoadObjectsDeleted(pid)
 
     local objectCount = 0
 
@@ -1019,7 +1019,7 @@ function BaseCell:SendObjectsDeleted(pid)
     end
 end
 
-function BaseCell:SendObjectsPlaced(pid)
+function BaseCell:LoadObjectsPlaced(pid)
 
     local objectCount = 0
 
@@ -1048,7 +1048,7 @@ function BaseCell:SendObjectsPlaced(pid)
     end
 end
 
-function BaseCell:SendObjectsSpawned(pid)
+function BaseCell:LoadObjectsSpawned(pid)
 
     -- Keep this around for backwards compatibility
     if self.data.packets.spawn == nil then
@@ -1100,7 +1100,7 @@ function BaseCell:SendObjectsSpawned(pid)
     end
 end
 
-function BaseCell:SendObjectsLocked(pid)
+function BaseCell:LoadObjectsLocked(pid)
 
     local objectCount = 0
 
@@ -1126,7 +1126,7 @@ function BaseCell:SendObjectsLocked(pid)
     end
 end
 
-function BaseCell:SendObjectTrapsTriggered(pid)
+function BaseCell:LoadObjectTrapsTriggered(pid)
 
     local objectCount = 0
 
@@ -1144,7 +1144,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
     end
 end
 
-function BaseCell:SendObjectsScaled(pid)
+function BaseCell:LoadObjectsScaled(pid)
 
     local objectCount = 0
 
@@ -1168,7 +1168,7 @@ function BaseCell:SendObjectsScaled(pid)
     end
 end
 
-function BaseCell:SendObjectStates(pid)
+function BaseCell:LoadObjectStates(pid)
 
     if self.data.packets.state == nil then
         self.data.packets.state = {}
@@ -1196,7 +1196,7 @@ function BaseCell:SendObjectStates(pid)
     end
 end
 
-function BaseCell:SendDoorStates(pid)
+function BaseCell:LoadDoorStates(pid)
 
     local objectCount = 0
 
@@ -1214,7 +1214,7 @@ function BaseCell:SendDoorStates(pid)
     end
 end
 
-function BaseCell:SendContainers(pid)
+function BaseCell:LoadContainers(pid)
 
     local objectCount = 0
 
@@ -1269,7 +1269,7 @@ function BaseCell:SendContainers(pid)
     end
 end
 
-function BaseCell:SendActorList(pid)
+function BaseCell:LoadActorList(pid)
 
     local actorCount = 0
 
@@ -1303,7 +1303,7 @@ function BaseCell:SendActorList(pid)
     end
 end
 
-function BaseCell:SendActorAuthority(pid)
+function BaseCell:LoadActorAuthority(pid)
 
     tes3mp.ClearActorList()
     tes3mp.SetActorListPid(pid)
@@ -1312,7 +1312,7 @@ function BaseCell:SendActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
-function BaseCell:SendActorPositions(pid)
+function BaseCell:LoadActorPositions(pid)
 
     local actorCount = 0
 
@@ -1352,7 +1352,7 @@ function BaseCell:SendActorPositions(pid)
     end
 end
 
-function BaseCell:SendActorStatsDynamic(pid)
+function BaseCell:LoadActorStatsDynamic(pid)
 
     local actorCount = 0
 
@@ -1394,7 +1394,7 @@ function BaseCell:SendActorStatsDynamic(pid)
     end
 end
 
-function BaseCell:SendActorEquipment(pid)
+function BaseCell:LoadActorEquipment(pid)
 
     local actorCount = 0
 
@@ -1442,7 +1442,7 @@ function BaseCell:SendActorEquipment(pid)
     end
 end
 
-function BaseCell:SendActorAI(pid)
+function BaseCell:LoadActorAI(pid)
 
     if self.data.packets.ai == nil then
         self.data.packets.ai = {}
@@ -1532,7 +1532,7 @@ function BaseCell:SendActorAI(pid)
     end
 end
 
-function BaseCell:SendActorCellChanges(pid)
+function BaseCell:LoadActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
     local actorCount = 0
@@ -1700,24 +1700,24 @@ function BaseCell:RequestActorList(pid)
     tes3mp.SendActorList()
 end
 
-function BaseCell:SendInitialCellData(pid)
+function BaseCell:LoadInitialCellData(pid)
 
     self:EnsurePacketValidity()
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
 
-    self:SendObjectsDeleted(pid)
-    self:SendObjectsPlaced(pid)
-    self:SendObjectsSpawned(pid)
-    self:SendObjectsLocked(pid)
-    self:SendObjectTrapsTriggered(pid)
-    self:SendObjectsScaled(pid)
-    self:SendObjectStates(pid)
-    self:SendDoorStates(pid)
+    self:LoadObjectsDeleted(pid)
+    self:LoadObjectsPlaced(pid)
+    self:LoadObjectsSpawned(pid)
+    self:LoadObjectsLocked(pid)
+    self:LoadObjectTrapsTriggered(pid)
+    self:LoadObjectsScaled(pid)
+    self:LoadObjectStates(pid)
+    self:LoadDoorStates(pid)
 
     if self:HasContainerData() == true then
         tes3mp.LogAppend(1, "- Had container data")
-        self:SendContainers(pid)
+        self:LoadContainers(pid)
     elseif self.isRequestingContainers == false then
         tes3mp.LogAppend(1, "- Requesting containers")
         self:RequestContainers(pid)
@@ -1725,20 +1725,20 @@ function BaseCell:SendInitialCellData(pid)
 
     if self:HasActorData() == true then
         tes3mp.LogAppend(1, "- Had actor data")
-        self:SendActorCellChanges(pid)
-        self:SendActorEquipment(pid)
-        self:SendActorAI(pid)
+        self:LoadActorCellChanges(pid)
+        self:LoadActorEquipment(pid)
+        self:LoadActorAI(pid)
     elseif self.isRequestingActorList == false then
         tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
     end
 end
 
-function BaseCell:SendMomentaryCellData(pid)
+function BaseCell:LoadMomentaryCellData(pid)
 
     if self:HasActorData() == true then
-        self:SendActorPositions(pid)
-        self:SendActorStatsDynamic(pid)
+        self:LoadActorPositions(pid)
+        self:LoadActorStatsDynamic(pid)
     end
 end
 
