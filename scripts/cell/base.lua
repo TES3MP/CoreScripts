@@ -631,8 +631,9 @@ function BaseCell:SaveContainers(pid)
             local itemSoul = tes3mp.GetContainerItemSoul(objectIndex, itemIndex)
 
             -- Check if the object's stored inventory contains this item already
-            if inventoryHelper.containsItem(inventory, itemRefId, itemCharge) then
-                local foundIndex = inventoryHelper.getItemIndex(inventory, itemRefId, itemCharge)
+            if inventoryHelper.containsItem(inventory, itemRefId, itemCharge, itemEnchantmentCharge, itemSoul) then
+                local foundIndex = inventoryHelper.getItemIndex(inventory, itemRefId, itemCharge,
+                    itemEnchantmentCharge, itemSoul)
                 local item = inventory[foundIndex]
 
                 if action == enumerations.container.ADD then
