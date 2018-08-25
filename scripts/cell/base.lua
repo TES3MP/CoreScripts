@@ -1041,51 +1041,7 @@ function BaseCell:SendObjectsPlaced(pid)
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
-            local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetObjectRefNum(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
-
-            local count = self.data.objectData[uniqueIndex].count
-            local charge = self.data.objectData[uniqueIndex].charge
-            local enchantmentCharge = self.data.objectData[uniqueIndex].enchantmentCharge
-            local soul = self.data.objectData[uniqueIndex].soul
-            local goldValue = self.data.objectData[uniqueIndex].goldValue
-
-            -- Use default count of 1 when the value is missing
-            if count == nil then
-                count = 1
-            end
-
-            -- Use default charge of -1 when the value is missing
-            if charge == nil then
-                charge = -1
-            end
-
-            -- Use default enchantment charge of -1 when the value is missing
-            if enchantmentCharge == nil then
-                enchantmentCharge = -1
-            end
-
-            if soul == nil then
-                soul = ""
-            end
-
-            -- Use default goldValue of 1 when the value is missing
-            if goldValue == nil then
-                goldValue = 1
-            end
-
-            tes3mp.SetObjectCount(count)
-            tes3mp.SetObjectCharge(charge)
-            tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
-            tes3mp.SetObjectSoul(soul)
-            tes3mp.SetObjectGoldValue(goldValue)
-            tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-            tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-
-            tes3mp.AddObject()
-
+            packetBuilder.AddObjectPlace(uniqueIndex, self.data.objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
             self.data.objectData[uniqueIndex] = nil

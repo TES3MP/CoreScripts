@@ -1,5 +1,38 @@
 packetBuilder = {}
 
+packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+
+    local count = objectData.count
+    local charge = objectData.charge
+    local enchantmentCharge = objectData.enchantmentCharge
+    local soul = objectData.soul
+    local goldValue = objectData.goldValue
+
+    -- Use default values when necessary
+    if count == nil then count = 1 end
+    if charge == nil then charge = -1 end
+    if enchantmentCharge == nil then enchantmentCharge = -1 end
+    if soul == nil then soul = "" end
+    if goldValue == nil then goldValue = 1 end
+
+    tes3mp.SetObjectCount(count)
+    tes3mp.SetObjectCharge(charge)
+    tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
+    tes3mp.SetObjectSoul(soul)
+    tes3mp.SetObjectGoldValue(goldValue)
+
+    local location = objectData.location
+    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+
+    tes3mp.AddObject()
+end
+
 packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
