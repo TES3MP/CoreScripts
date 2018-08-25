@@ -1136,17 +1136,7 @@ function BaseCell:SendObjectsSpawned(pid)
             end
 
             if shouldSkip == false then
-
-                local splitIndex = uniqueIndex:split("-")
-                tes3mp.SetObjectRefNum(splitIndex[1])
-                tes3mp.SetObjectMpNum(splitIndex[2])
-                tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
-
-                tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-
-                tes3mp.AddObject()
-
+                packetBuilder.AddObjectSpawn(uniqueIndex, self.data.objectData[uniqueIndex])
                 objectCount = objectCount + 1
             end
         else

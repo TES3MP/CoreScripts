@@ -1,5 +1,20 @@
 packetBuilder = {}
 
+packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+
+    tes3mp.SetObjectRefId(objectData.refId)
+
+    local location = objectData.location
+    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+
+    tes3mp.AddObject()
+end
+
 packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
 
     local splitIndex = actorUniqueIndex:split("-")
