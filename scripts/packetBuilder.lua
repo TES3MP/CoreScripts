@@ -1,5 +1,14 @@
 packetBuilder = {}
 
+packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.AddObject()
+end
+
 packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -45,6 +54,56 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
     tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
     tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
 
+    tes3mp.AddObject()
+end
+
+packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectLockLevel(objectData.lockLevel)
+    tes3mp.AddObject()
+end
+
+packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectDisarmState(true)
+    tes3mp.AddObject()
+end
+
+packetBuilder.AddObjectScale = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectScale(objectData.scale)
+    tes3mp.AddObject()
+end
+
+packetBuilder.AddObjectState = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectState(objectData.state)
+    tes3mp.AddObject()
+end
+
+packetBuilder.AddDoorState = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectDoorState(objectData.doorState)
     tes3mp.AddObject()
 end
 

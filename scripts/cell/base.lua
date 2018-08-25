@@ -1008,15 +1008,9 @@ function BaseCell:SendObjectsDeleted(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    -- Objects deleted
     for arrayIndex, uniqueIndex in pairs(self.data.packets.delete) do
 
-        local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetObjectRefNum(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
-        tes3mp.AddObject()
-
+        packetBuilder.AddObjectDelete(uniqueIndex, self.data.objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
@@ -1120,14 +1114,7 @@ function BaseCell:SendObjectsLocked(pid)
         local lockLevel = self.data.objectData[uniqueIndex].lockLevel
 
         if refId ~= nil and lockLevel ~= nil then
-
-            local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetObjectRefNum(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(refId)
-            tes3mp.SetObjectLockLevel(lockLevel)
-            tes3mp.AddObject()
-
+            packetBuilder.AddObjectLock(uniqueIndex, self.data.objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
             tableHelper.removeValue(self.data.packets.lock, uniqueIndex)
@@ -1148,14 +1135,7 @@ function BaseCell:SendObjectTrapsTriggered(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.trap) do
-
-        local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetObjectRefNum(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
-        tes3mp.SetObjectDisarmState(true)
-        tes3mp.AddObject()
-
+        packetBuilder.AddObjectTrap(uniqueIndex, self.data.objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
@@ -1174,18 +1154,11 @@ function BaseCell:SendObjectsScaled(pid)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.scale) do
 
-        local splitIndex = uniqueIndex:split("-")
         local refId = self.data.objectData[uniqueIndex].refId
         local scale = self.data.objectData[uniqueIndex].scale
 
         if refId ~= nil and scale ~= nil then
-
-            tes3mp.SetObjectRefNum(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(refId)
-            tes3mp.SetObjectScale(scale)
-            tes3mp.AddObject()
-
+            packetBuilder.AddObjectScale(uniqueIndex, self.data.objectData[uniqueIndex])
             objectCount = objectCount + 1
         end
     end
@@ -1209,18 +1182,11 @@ function BaseCell:SendObjectStates(pid)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.state) do
 
-        local splitIndex = uniqueIndex:split("-")
         local refId = self.data.objectData[uniqueIndex].refId
         local state = self.data.objectData[uniqueIndex].state
 
         if refId ~= nil and state ~= nil then
-
-            tes3mp.SetObjectRefNum(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(refId)
-            tes3mp.SetObjectState(state)
-            tes3mp.AddObject()
-
+            packetBuilder.AddObjectState(uniqueIndex, self.data.objectData[uniqueIndex])
             objectCount = objectCount + 1
         end
     end
@@ -1239,14 +1205,7 @@ function BaseCell:SendDoorStates(pid)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.doorState) do
-
-        local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetObjectRefNum(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
-        tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
-        tes3mp.SetObjectDoorState(self.data.objectData[uniqueIndex].doorState)
-        tes3mp.AddObject()
-
+        packetBuilder.AddDoorState(uniqueIndex, self.data.objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
