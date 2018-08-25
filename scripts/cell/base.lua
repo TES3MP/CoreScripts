@@ -1502,7 +1502,7 @@ function BaseCell:LoadActorAI(pid)
         else
             tes3mp.LogAppend(3, "- Had AI packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.equipment, uniqueIndex)
+            tableHelper.removeValue(self.data.packets.ai, uniqueIndex)
         end
     end
 
