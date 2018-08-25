@@ -1000,7 +1000,7 @@ function BaseCell:SaveActorCellChanges(pid)
     self:Save()
 end
 
-function BaseCell:LoadObjectsDeleted(pid)
+function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1008,9 +1008,9 @@ function BaseCell:LoadObjectsDeleted(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.delete) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        packetBuilder.AddObjectDelete(uniqueIndex, self.data.objectData[uniqueIndex])
+        packetBuilder.AddObjectDelete(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
@@ -1019,7 +1019,7 @@ function BaseCell:LoadObjectsDeleted(pid)
     end
 end
 
-function BaseCell:LoadObjectsPlaced(pid)
+function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1027,19 +1027,19 @@ function BaseCell:LoadObjectsPlaced(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.place) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local location = self.data.objectData[uniqueIndex].location
+        local location = objectData[uniqueIndex].location
 
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
-            packetBuilder.AddObjectPlace(uniqueIndex, self.data.objectData[uniqueIndex])
+            packetBuilder.AddObjectPlace(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
-            self.data.objectData[uniqueIndex] = nil
-            tableHelper.removeValue(self.data.packets.place, uniqueIndex)
+            objectData[uniqueIndex] = nil
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1048,12 +1048,7 @@ function BaseCell:LoadObjectsPlaced(pid)
     end
 end
 
-function BaseCell:LoadObjectsSpawned(pid)
-
-    -- Keep this around for backwards compatibility
-    if self.data.packets.spawn == nil then
-        self.data.packets.spawn = {}
-    end
+function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1061,16 +1056,16 @@ function BaseCell:LoadObjectsSpawned(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.spawn) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local location = self.data.objectData[uniqueIndex].location
+        local location = objectData[uniqueIndex].location
 
         -- Ensure data integrity before proceeeding
         if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
             self:ContainsPosition(location.posX, location.posY) then
 
             local shouldSkip = false
-            local summon = self.data.objectData[uniqueIndex].summon
+            local summon = objectData[uniqueIndex].summon
 
             if summon ~= nil then
                 local currentTime = os.time()
@@ -1086,12 +1081,12 @@ function BaseCell:LoadObjectsSpawned(pid)
             end
 
             if shouldSkip == false then
-                packetBuilder.AddObjectSpawn(uniqueIndex, self.data.objectData[uniqueIndex])
+                packetBuilder.AddObjectSpawn(uniqueIndex, objectData[uniqueIndex])
                 objectCount = objectCount + 1
             end
         else
-            self.data.objectData[uniqueIndex] = nil
-            tableHelper.removeValue(self.data.packets.spawn, uniqueIndex)
+            objectData[uniqueIndex] = nil
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1100,7 +1095,7 @@ function BaseCell:LoadObjectsSpawned(pid)
     end
 end
 
-function BaseCell:LoadObjectsLocked(pid)
+function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1108,16 +1103,16 @@ function BaseCell:LoadObjectsLocked(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.lock) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = self.data.objectData[uniqueIndex].refId
-        local lockLevel = self.data.objectData[uniqueIndex].lockLevel
+        local refId = objectData[uniqueIndex].refId
+        local lockLevel = objectData[uniqueIndex].lockLevel
 
         if refId ~= nil and lockLevel ~= nil then
-            packetBuilder.AddObjectLock(uniqueIndex, self.data.objectData[uniqueIndex])
+            packetBuilder.AddObjectLock(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
-            tableHelper.removeValue(self.data.packets.lock, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1126,7 +1121,7 @@ function BaseCell:LoadObjectsLocked(pid)
     end
 end
 
-function BaseCell:LoadObjectTrapsTriggered(pid)
+function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1134,8 +1129,8 @@ function BaseCell:LoadObjectTrapsTriggered(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.trap) do
-        packetBuilder.AddObjectTrap(uniqueIndex, self.data.objectData[uniqueIndex])
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+        packetBuilder.AddObjectTrap(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
@@ -1144,7 +1139,7 @@ function BaseCell:LoadObjectTrapsTriggered(pid)
     end
 end
 
-function BaseCell:LoadObjectsScaled(pid)
+function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1152,13 +1147,13 @@ function BaseCell:LoadObjectsScaled(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.scale) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = self.data.objectData[uniqueIndex].refId
-        local scale = self.data.objectData[uniqueIndex].scale
+        local refId = objectData[uniqueIndex].refId
+        local scale = objectData[uniqueIndex].scale
 
         if refId ~= nil and scale ~= nil then
-            packetBuilder.AddObjectScale(uniqueIndex, self.data.objectData[uniqueIndex])
+            packetBuilder.AddObjectScale(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         end
     end
@@ -1168,11 +1163,7 @@ function BaseCell:LoadObjectsScaled(pid)
     end
 end
 
-function BaseCell:LoadObjectStates(pid)
-
-    if self.data.packets.state == nil then
-        self.data.packets.state = {}
-    end
+function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1180,13 +1171,13 @@ function BaseCell:LoadObjectStates(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.state) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = self.data.objectData[uniqueIndex].refId
-        local state = self.data.objectData[uniqueIndex].state
+        local refId = objectData[uniqueIndex].refId
+        local state = objectData[uniqueIndex].state
 
         if refId ~= nil and state ~= nil then
-            packetBuilder.AddObjectState(uniqueIndex, self.data.objectData[uniqueIndex])
+            packetBuilder.AddObjectState(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         end
     end
@@ -1196,7 +1187,7 @@ function BaseCell:LoadObjectStates(pid)
     end
 end
 
-function BaseCell:LoadDoorStates(pid)
+function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1204,8 +1195,8 @@ function BaseCell:LoadDoorStates(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.doorState) do
-        packetBuilder.AddDoorState(uniqueIndex, self.data.objectData[uniqueIndex])
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+        packetBuilder.AddDoorState(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
     end
 
@@ -1214,7 +1205,7 @@ function BaseCell:LoadDoorStates(pid)
     end
 end
 
-function BaseCell:LoadContainers(pid)
+function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
@@ -1222,16 +1213,16 @@ function BaseCell:LoadContainers(pid)
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.container) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
 
-        if self:ContainsObject(uniqueIndex) and self.data.objectData[uniqueIndex].inventory ~= nil then
-            tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].inventory ~= nil then
+            tes3mp.SetObjectRefId(objectData[uniqueIndex].refId)
 
-            for itemIndex, item in pairs(self.data.objectData[uniqueIndex].inventory) do
+            for itemIndex, item in pairs(objectData[uniqueIndex].inventory) do
 
                 if item.enchantmentCharge == nil then
                     item.enchantmentCharge = -1
@@ -1256,7 +1247,7 @@ function BaseCell:LoadContainers(pid)
         else
             tes3mp.LogAppend(3, "- Had container packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.container, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1269,7 +1260,7 @@ function BaseCell:LoadContainers(pid)
     end
 end
 
-function BaseCell:LoadActorList(pid)
+function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
@@ -1277,20 +1268,20 @@ function BaseCell:LoadActorList(pid)
     tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.actorList) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) then
-            tes3mp.SetActorRefId(self.data.objectData[uniqueIndex].refId)
+            tes3mp.SetActorRefId(objectData[uniqueIndex].refId)
 
             actorCount = actorCount + 1
         else
             tes3mp.LogAppend(3, "- Had actorList packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.actorList, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1312,7 +1303,7 @@ function BaseCell:LoadActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
-function BaseCell:LoadActorPositions(pid)
+function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
@@ -1320,14 +1311,14 @@ function BaseCell:LoadActorPositions(pid)
     tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.position) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) then
-            local location = self.data.objectData[uniqueIndex].location
+            local location = objectData[uniqueIndex].location
 
             -- Ensure data integrity before proceeeding
             if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
@@ -1343,7 +1334,7 @@ function BaseCell:LoadActorPositions(pid)
         else
             tes3mp.LogAppend(3, "- Had position packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.position, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1352,7 +1343,7 @@ function BaseCell:LoadActorPositions(pid)
     end
 end
 
-function BaseCell:LoadActorStatsDynamic(pid)
+function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
@@ -1360,14 +1351,14 @@ function BaseCell:LoadActorStatsDynamic(pid)
     tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.statsDynamic) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self:ContainsObject(uniqueIndex) and self.data.objectData[uniqueIndex].stats ~= nil then
-            local stats = self.data.objectData[uniqueIndex].stats
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].stats ~= nil then
+            local stats = objectData[uniqueIndex].stats
 
             tes3mp.SetActorHealthBase(stats.healthBase)
             tes3mp.SetActorHealthCurrent(stats.healthCurrent)
@@ -1385,7 +1376,7 @@ function BaseCell:LoadActorStatsDynamic(pid)
         else
             tes3mp.LogAppend(3, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.statsDynamic, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1394,7 +1385,7 @@ function BaseCell:LoadActorStatsDynamic(pid)
     end
 end
 
-function BaseCell:LoadActorEquipment(pid)
+function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
@@ -1402,14 +1393,14 @@ function BaseCell:LoadActorEquipment(pid)
     tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.equipment) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self:ContainsObject(uniqueIndex) and self.data.objectData[uniqueIndex].equipment ~= nil then
-            local equipment = self.data.objectData[uniqueIndex].equipment
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].equipment ~= nil then
+            local equipment = objectData[uniqueIndex].equipment
 
             for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
 
@@ -1433,7 +1424,7 @@ function BaseCell:LoadActorEquipment(pid)
         else
             tes3mp.LogAppend(3, "- Had equipment packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.equipment, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1442,11 +1433,7 @@ function BaseCell:LoadActorEquipment(pid)
     end
 end
 
-function BaseCell:LoadActorAI(pid)
-
-    if self.data.packets.ai == nil then
-        self.data.packets.ai = {}
-    end
+function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
@@ -1459,14 +1446,14 @@ function BaseCell:LoadActorAI(pid)
     tes3mp.SetActorListPid(pid)
     tes3mp.SetActorListCell(self.description)
 
-    for arrayIndex, uniqueIndex in pairs(self.data.packets.ai) do
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        if self:ContainsObject(uniqueIndex) and self.data.objectData[uniqueIndex].ai ~= nil then
-            local ai = self.data.objectData[uniqueIndex].ai
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].ai ~= nil then
+            local ai = objectData[uniqueIndex].ai
             local targetPid
 
             if ai.targetPlayer ~= nil then
@@ -1502,7 +1489,7 @@ function BaseCell:LoadActorAI(pid)
         else
             tes3mp.LogAppend(3, "- Had AI packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
-            tableHelper.removeValue(self.data.packets.ai, uniqueIndex)
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1524,7 +1511,7 @@ function BaseCell:LoadActorAI(pid)
             local splitIndex = uniqueIndex:split("-")
             tes3mp.SetActorRefNum(splitIndex[1])
             tes3mp.SetActorMpNum(splitIndex[2])
-            local ai = self.data.objectData[uniqueIndex].ai
+            local ai = objectData[uniqueIndex].ai
             packetBuilder.AddAIActor(uniqueIndex, pid, ai)
         end
 
@@ -1532,7 +1519,7 @@ function BaseCell:LoadActorAI(pid)
     end
 end
 
-function BaseCell:LoadActorCellChanges(pid)
+function BaseCell:LoadActorCellChanges(pid, objectData)
 
     local temporaryLoadedCells = {}
     local actorCount = 0
@@ -1548,7 +1535,7 @@ function BaseCell:LoadActorCellChanges(pid)
         tes3mp.SetActorRefNum(splitIndex[1])
         tes3mp.SetActorMpNum(splitIndex[2])
 
-        local newCellDescription = self.data.objectData[uniqueIndex].cellChangeTo
+        local newCellDescription = objectData[uniqueIndex].cellChangeTo
 
         if newCellDescription ~= nil then
             tes3mp.SetActorCell(newCellDescription)
@@ -1577,7 +1564,7 @@ function BaseCell:LoadActorCellChanges(pid)
             else
                 tes3mp.LogAppend(3, "- Tried to move " .. uniqueIndex .. " from " .. self.description ..
                     " to  " .. newCellDescription .. " with no position data!")
-                self.data.objectData[uniqueIndex] = nil
+                objectData[uniqueIndex] = nil
                 tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
             end
         else
@@ -1601,8 +1588,8 @@ function BaseCell:LoadActorCellChanges(pid)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.cellChangeFrom) do
 
-        if self.data.objectData[uniqueIndex] ~= nil and self.data.objectData[uniqueIndex].cellChangeFrom ~= nil then
-            local originalCellDescription = self.data.objectData[uniqueIndex].cellChangeFrom
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].cellChangeFrom ~= nil then
+            local originalCellDescription = objectData[uniqueIndex].cellChangeFrom
 
             if cellChangesFrom[originalCellDescription] == nil then
                 cellChangesFrom[originalCellDescription] = {}
@@ -1633,7 +1620,7 @@ function BaseCell:LoadActorCellChanges(pid)
 
             tes3mp.SetActorCell(self.description)
 
-            local location = self.data.objectData[uniqueIndex].location
+            local location = objectData[uniqueIndex].location
 
             -- Ensure data integrity before proceeeding
             if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and 
@@ -1706,18 +1693,21 @@ function BaseCell:LoadInitialCellData(pid)
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
 
-    self:LoadObjectsDeleted(pid)
-    self:LoadObjectsPlaced(pid)
-    self:LoadObjectsSpawned(pid)
-    self:LoadObjectsLocked(pid)
-    self:LoadObjectTrapsTriggered(pid)
-    self:LoadObjectsScaled(pid)
-    self:LoadObjectStates(pid)
-    self:LoadDoorStates(pid)
+    local objectData = self.data.objectData
+    local packets = self.data.packets
+
+    self:LoadObjectsDeleted(pid, objectData, packets.delete)
+    self:LoadObjectsPlaced(pid, objectData, packets.place)
+    self:LoadObjectsSpawned(pid, objectData, packets.spawn)
+    self:LoadObjectsLocked(pid, objectData, packets.lock)
+    self:LoadObjectTrapsTriggered(pid, objectData, packets.trap)
+    self:LoadObjectsScaled(pid, objectData, packets.scale)
+    self:LoadObjectStates(pid, objectData, packets.state)
+    self:LoadDoorStates(pid, objectData, packets.doorState)
 
     if self:HasContainerData() == true then
         tes3mp.LogAppend(1, "- Had container data")
-        self:LoadContainers(pid)
+        self:LoadContainers(pid, objectData, packets.container)
     elseif self.isRequestingContainers == false then
         tes3mp.LogAppend(1, "- Requesting containers")
         self:RequestContainers(pid)
@@ -1725,9 +1715,9 @@ function BaseCell:LoadInitialCellData(pid)
 
     if self:HasActorData() == true then
         tes3mp.LogAppend(1, "- Had actor data")
-        self:LoadActorCellChanges(pid)
-        self:LoadActorEquipment(pid)
-        self:LoadActorAI(pid)
+        self:LoadActorCellChanges(pid, objectData)
+        self:LoadActorEquipment(pid, objectData, packets.equipment)
+        self:LoadActorAI(pid, objectData, packets.ai)
     elseif self.isRequestingActorList == false then
         tes3mp.LogAppend(1, "- Requesting actor list")
         self:RequestActorList(pid)
@@ -1737,8 +1727,11 @@ end
 function BaseCell:LoadMomentaryCellData(pid)
 
     if self:HasActorData() == true then
-        self:LoadActorPositions(pid)
-        self:LoadActorStatsDynamic(pid)
+        local objectData = self.data.objectData
+        local packets = self.data.packets
+
+        self:LoadActorPositions(pid, objectData, packets.position)
+        self:LoadActorStatsDynamic(pid, objectData, packets.statsDynamic)
     end
 end
 
