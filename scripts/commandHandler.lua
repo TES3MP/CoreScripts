@@ -866,7 +866,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
             local targetPid = tonumber(cmd[2])
-            local refId = cmd[3]
+            local refId = tableHelper.concatenateFromIndex(cmd, 3)
             local packetType
 
             if cmd[1] == "placeat" then
@@ -876,35 +876,6 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
 
             logicHandler.CreateObjectAtPlayer(targetPid, refId, packetType)
-
-            local count = tonumber(cmd[4])
-
-            if count ~= nil and count > 1 then
-
-                -- We've already placed the first object above, so lower the count
-                -- for the object loop
-                count = count - 1
-                local interval = 1
-
-                if tonumber(cmd[5]) ~= nil and tonumber(cmd[5]) > 1 then
-                    interval = tonumber(cmd[5])
-                end
-
-                local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
-                local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
-
-                ObjectLoops[loopIndex] = {
-                    packetType = packetType,
-                    timerId = timerId,
-                    interval = interval,
-                    count = count,
-                    targetPid = targetPid,
-                    targetName = Players[targetPid].accountName,
-                    refId = refId
-                }
-
-                tes3mp.StartTimer(timerId)
-            end
         end
 
     elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then

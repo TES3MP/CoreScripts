@@ -240,11 +240,10 @@ Menus["help admin page 2"] = {
             color.White .. "Store a certain console command for a player\n" ..
         color.Yellow .. "/runconsole <pid> (<count>) (<interval>)\n" ..
             color.White .. "Run a stored console command on a player, with optional count and interval\n" ..
-        color.Yellow .. "/placeat <pid> <refId> (<count>) (<interval>)\n" ..
-            color.White .. "Place a certain object at a player's location, with optional count and interval\n" ..
-        color.Yellow .. "/spawnat <pid> <refId> (<count>) (<interval>)\n" ..
-            color.White .. "Spawn a certain creature or NPC at a player's location, with optional count and " ..
-            "interval\n" ..
+        color.Yellow .. "/placeat <pid> <refId>\n" ..
+            color.White .. "Place a certain non-living object at a player's location\n" ..
+        color.Yellow .. "/spawnat <pid> <refId>\n" ..
+            color.White .. "Spawn a certain creature or NPC at a player's location\n" ..
         color.Yellow .. "/storerecord <type> <setting> <value>\n" ..
             color.White .. "Store a setting value for a custom record in your player data before creating it;" ..
             "check the help page for custom records for more information\n" ..
