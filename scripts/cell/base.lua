@@ -92,15 +92,6 @@ function BaseCell:EnsurePacketValidity()
     end
 end
 
-function BaseCell:IsExterior()
-
-    if string.match(self.description, patterns.exteriorCell) then
-        return true
-    end
-
-    return false
-end
-
 function BaseCell:GetVisitorCount()
     return tableHelper.getCount(self.visitors)
 end
