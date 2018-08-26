@@ -27,6 +27,20 @@ function tableHelper.getArrayFromIndexes(inputTable)
     return newTable
 end
 
+-- Return an array with the values that two input arrays have in common
+function tableHelper.getArrayOverlap(firstArray, secondArray)
+
+    local newTable = {}
+
+    for _, value in pairs(firstArray) do
+        if tableHelper.containsValue(secondArray, value) then
+            table.insert(newTable, value)
+        end
+    end
+
+    return newTable
+end
+
 -- Iterate through comma-separated values in a string and turn them into table values
 function tableHelper.getTableFromCommaSplit(inputString)
 
