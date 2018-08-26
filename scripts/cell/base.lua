@@ -903,6 +903,16 @@ function BaseCell:SaveActorCellChanges(pid)
             -- If so, delete it entirely from the old cell and make it get spawned in the new cell
             if tableHelper.containsValue(self.data.packets.spawn, uniqueIndex) == true then
                 tes3mp.LogAppend(1, "-- As a server-only object, it was moved entirely")
+
+                -- This actor won't exist at all for visitors to the new cell who have not loaded the
+                -- actor's original cell and were not online when it was first spawned, so send all of
+                -- its details to them
+                for _, visitorPid in pairs(newCell.visitors) do
+                    if pid ~= visitorPid then
+                        self:LoadActorPackets(visitorPid, self.data.objectData, { uniqueIndex })
+                    end
+                end
+                
                 self:MoveObjectData(uniqueIndex, newCell)
 
             -- Was this actor moved to the old cell from another cell?
@@ -985,6 +995,26 @@ function BaseCell:SaveActorCellChanges(pid)
     end
 
     self:Save()
+end
+
+function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
+
+    local packets = self.data.packets
+
+    self:LoadObjectsDeleted(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.delete))
+    self:LoadObjectsSpawned(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.spawn))
+    self:LoadObjectsScaled(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.scale))
+
+    if self:HasContainerData() == true then
+        self:LoadContainers(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.container))
+    end
+
+    if self:HasActorData() == true then
+        self:LoadActorPositions(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.position))
+        self:LoadActorStatsDynamic(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.statsDynamic))
+        self:LoadActorEquipment(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.equipment))
+        self:LoadActorAI(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.ai))
+    end
 end
 
 function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray)
