@@ -334,7 +334,7 @@ end
 
 function OnPlayerDisconnect(pid)
 
-    tes3mp.LogMessage(1, "Called \"OnPlayerDisconnect\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerDisconnect\" for " .. logicHandler.GetChatName(pid))
     local message = logicHandler.GetChatName(pid) .. " left the server.\n"
 
     tes3mp.SendMessage(pid, message, true)
@@ -359,12 +359,12 @@ function OnDeathTimeExpiration(pid)
 end
 
 function OnPlayerDeath(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerDeath\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerDeath\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerDeath(pid)
 end
 
 function OnPlayerAttribute(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerAttribute\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerAttribute\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerAttribute(pid)
 end
 
@@ -373,92 +373,94 @@ function OnPlayerSkill(pid)
 end
 
 function OnPlayerLevel(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerLevel\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerLevel\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerLevel(pid)
 end
 
 function OnPlayerShapeshift(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerShapeshift\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerShapeshift\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerShapeshift(pid)
 end
 
 function OnPlayerCellChange(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerCellChange\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerCellChange\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerCellChange(pid)
 end
 
 function OnPlayerEquipment(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerEquipment\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerEquipment\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerEquipment(pid)
 end
 
 function OnPlayerInventory(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerInventory\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerInventory\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerInventory(pid)
 end
 
 function OnPlayerSpellbook(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerSpellbook\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerSpellbook\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerSpellbook(pid)
 end
 
 function OnPlayerQuickKeys(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerQuickKeys\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerQuickKeys\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerQuickKeys(pid)
 end
 
 function OnPlayerJournal(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerJournal\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerJournal\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerJournal(pid)
 end
 
 function OnPlayerFaction(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerFaction\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerFaction\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerFaction(pid)
 end
 
 function OnPlayerTopic(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerTopic\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerTopic\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerTopic(pid)
 end
 
 function OnPlayerBounty(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerBounty\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerBounty\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerBounty(pid)
 end
 
 function OnPlayerReputation(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerReputation\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerReputation\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerReputation(pid)
 end
 
 function OnPlayerBook(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerBook\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerBook\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerBook(pid)
 end
 
 function OnPlayerItemUse(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerItemUse\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerItemUse\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerItemUse(pid)
 end
 
 function OnPlayerMiscellaneous(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerMiscellaneous\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerMiscellaneous\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerMiscellaneous(pid)
 end
 
 function OnPlayerEndCharGen(pid)
-    tes3mp.LogMessage(1, "Called \"OnPlayerEndCharGen\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerEndCharGen\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerEndCharGen(pid)
 end
 
 function OnCellLoad(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnCellLoad\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnCellLoad\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnCellLoad(pid, cellDescription)
 end
 
 function OnCellUnload(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnCellUnload\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnCellUnload\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnCellUnload(pid, cellDescription)
 end
 
@@ -468,107 +470,122 @@ function OnCellDeletion(cellDescription)
 end
 
 function OnActorList(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnActorList\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnActorList\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnActorList(pid, cellDescription)
 end
 
 function OnActorEquipment(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnActorEquipment\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnActorEquipment\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnActorEquipment(pid, cellDescription)
 end
 
 function OnActorAI(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnActorAI\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnActorAI\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnActorAI(pid, cellDescription)
 end
 
 function OnActorDeath(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnActorDeath\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnActorDeath\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnActorDeath(pid, cellDescription)
 end
 
 function OnActorCellChange(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnActorCellChange\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnActorCellChange\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnActorCellChange(pid, cellDescription)
 end
 
 function OnObjectActivate(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectActivate\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectActivate\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectActivate(pid, cellDescription)
 end
 
 function OnObjectPlace(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectPlace\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectPlace\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectPlace(pid, cellDescription)
 end
 
 function OnObjectSpawn(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectSpawn\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectSpawn\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectSpawn(pid, cellDescription)
 end
 
 function OnObjectDelete(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectDelete\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectDelete\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectDelete(pid, cellDescription)
 end
 
 function OnObjectLock(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectLock\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectLock\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectLock(pid, cellDescription)
 end
 
 function OnObjectTrap(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectTrap\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectTrap\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectTrap(pid, cellDescription)
 end
 
 function OnObjectScale(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectScale\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectScale\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectScale(pid, cellDescription)
 end
 
 function OnObjectState(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnObjectState\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnObjectState\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnObjectState(pid, cellDescription)
 end
 
 function OnDoorState(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnDoorState\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnDoorState\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnDoorState(pid, cellDescription)
 end
 
 function OnContainer(pid, cellDescription)
-    tes3mp.LogMessage(1, "Called \"OnContainer\" for pid " .. pid .. " and cell " .. cellDescription)
+    tes3mp.LogMessage(1, "Called \"OnContainer\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
     eventHandler.OnContainer(pid, cellDescription)
 end
 
 function OnVideoPlay(pid)
-    tes3mp.LogMessage(1, "Called \"OnVideoPlay\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnVideoPlay\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnVideoPlay(pid)
 end
 
 function OnRecordDynamic(pid)
-    tes3mp.LogMessage(1, "Called \"OnRecordDynamic\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnRecordDynamic\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnRecordDynamic(pid)
 end
 
 function OnWorldKillCount(pid)
-    tes3mp.LogMessage(1, "Called \"OnWorldKillCount\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnWorldKillCount\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldKillCount(pid)
 end
 
 function OnWorldMap(pid)
-    tes3mp.LogMessage(1, "Called \"OnWorldMap\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnWorldMap\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldMap(pid)
 end
 
 function OnWorldWeather(pid)
-    tes3mp.LogMessage(1, "Called \"OnWorldWeather\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnWorldWeather\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldWeather(pid)
 end
 
 function OnGUIAction(pid, idGui, data)
-    tes3mp.LogMessage(1, "Called \"OnGUIAction\" for pid " .. pid)
+    tes3mp.LogMessage(1, "Called \"OnGUIAction\" for " .. logicHandler.GetChatName(pid))
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called
 end
 

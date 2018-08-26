@@ -63,7 +63,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
         Players[pid]:SaveCell()
         Players[pid]:SaveStatsDynamic()
-        tes3mp.LogMessage(1, "Saving player " .. pid)
+        tes3mp.LogMessage(1, "Saving player " .. logicHandler.GetChatName(pid))
         Players[pid]:Save()
 
         -- Unload every cell for this player
@@ -302,7 +302,7 @@ eventHandler.OnPlayerCellChange = function(pid)
 
             Players[pid]:SaveCell()
             Players[pid]:SaveStatsDynamic()
-            tes3mp.LogMessage(1, "Saving player " .. pid)
+            tes3mp.LogMessage(1, "Saving player " .. logicHandler.GetChatName(pid))
             Players[pid]:Save()
 
             if config.shareMapExploration == true then
@@ -1162,7 +1162,7 @@ eventHandler.OnVideoPlay = function(pid)
         end
 
         if config.shareVideos == true then
-            tes3mp.LogMessage(2, "Sharing VideoPlay from " .. pid)
+            tes3mp.LogMessage(2, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
 
             for i = 0, tes3mp.GetObjectListSize() - 1 do
                 local videoFilename = tes3mp.GetVideoFilename(i)
