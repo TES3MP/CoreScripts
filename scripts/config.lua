@@ -246,6 +246,11 @@ config.booleanRecordSettings = { "scrollState", "keyState" }
 -- The record type settings whose input should be converted to tables with a min and a max numerical value
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }
 
+-- The names of the tables used to store object and actor packets in cell data
+config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", "state", "doorState",
+    "container", "equipment", "ai", "death", "actorList", "position", "statsDynamic", "cellChangeTo",
+    "cellChangeFrom" }
+
 -- Whether the server should enforce that all clients connect with a specific list of plugins
 -- defined in data/pluginlist.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know

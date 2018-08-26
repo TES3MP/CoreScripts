@@ -18,26 +18,10 @@ function BaseCell:__init(cellDescription)
         },
         lastVisit = {},
         objectData = {},
-        packets = {
-            delete = {},
-            place = {},
-            spawn = {},
-            lock = {},
-            trap = {},
-            scale = {},
-            state = {},
-            doorState = {},
-            container = {},
-            equipment = {},
-            ai = {},
-            death = {},
-            actorList = {},
-            position = {},
-            statsDynamic = {},
-            cellChangeTo = {},
-            cellChangeFrom = {}
-        }
+        packets = {}
     }
+
+    self:EnsurePacketTables()
 
     self.description = cellDescription
     self.visitors = {}
@@ -81,6 +65,31 @@ end
 
 function BaseCell:HasEntry()
     return self.hasEntry
+end
+
+-- Iterate through the packets table and ensure all packet types are included in it
+function BaseCell:EnsurePacketTables()
+
+    if self.data.packets == nil then self.data.packets = {} end
+
+    for _, packetType in pairs(config.cellPacketTypes) do
+        if self.data.packets[packetType] == nil then
+            self.data.packets[packetType] = {}
+        end
+    end
+end
+
+-- Iterate through saved packets and ensure the object uniqueIndexes they refer to
+-- actually exist
+function BaseCell:EnsurePacketValidity()
+
+    for packetType, packetArray in pairs(self.data.packets) do
+        for arrayIndex, uniqueIndex in pairs(self.data.packets[packetType]) do
+            if self.data.objectData[uniqueIndex] == nil then
+                tableHelper.removeValue(self.data.packets[packetType], uniqueIndex)
+            end
+        end
+    end
 end
 
 function BaseCell:IsExterior()
@@ -166,19 +175,6 @@ function BaseCell:SetAuthority(pid)
         " is now " .. logicHandler.GetChatName(pid))
 
     self:LoadActorAuthority(pid)
-end
-
--- Iterate through saved packets and ensure the object uniqueIndexes they refer to
--- actually exist
-function BaseCell:EnsurePacketValidity()
-
-    for packetType, packetArray in pairs(self.data.packets) do
-        for arrayIndex, uniqueIndex in pairs(self.data.packets[packetType]) do
-            if self.data.objectData[uniqueIndex] == nil then
-                tableHelper.removeValue(self.data.packets[packetType], uniqueIndex)
-            end
-        end
-    end
 end
 
 -- Check whether an object is in this cell
@@ -1689,6 +1685,7 @@ end
 
 function BaseCell:LoadInitialCellData(pid)
 
+    self:EnsurePacketTables()
     self:EnsurePacketValidity()
 
     tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to pid " .. pid)
