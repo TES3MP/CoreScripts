@@ -388,10 +388,12 @@ function OnPlayerCellChange(pid)
 end
 
 function OnPlayerEquipment(pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerEquipment\" for pid " .. pid)
     eventHandler.OnPlayerEquipment(pid)
 end
 
 function OnPlayerInventory(pid)
+    tes3mp.LogMessage(1, "Called \"OnPlayerInventory\" for pid " .. pid)
     eventHandler.OnPlayerInventory(pid)
 end
 
