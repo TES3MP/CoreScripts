@@ -86,12 +86,12 @@ end
 
 -- Iterate through a table of pids and find the player with the
 -- lowest ping in it
-logicHandler.GetLowestPingPid = function(pidTable)
+logicHandler.GetLowestPingPid = function(pidArray)
 
     local lowestPing
     local lowestPingPid
 
-    for _, pid in pairs(pidTable) do
+    for _, pid in pairs(pidArray) do
 
         local currentPing = tes3mp.GetAvgPing(pid)
 
@@ -272,6 +272,19 @@ end
 logicHandler.GetLoadedCellCount = function()
 
     return tableHelper.getCount(LoadedCells)
+end
+
+logicHandler.GetLoadedRegionCount = function()
+
+    local regionCount = 0
+
+    for key, value in pairs(WorldInstance.loadedRegions) do
+        if WorldInstance:GetRegionVisitorCount(key) > 0 then
+            regionCount = regionCount + 1
+        end
+    end
+
+    return regionCount
 end
 
 logicHandler.PrintPlayerPosition = function(pid, targetPid)

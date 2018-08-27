@@ -22,7 +22,8 @@ GUI.ShowLogin = function(pid)
 end
 
 GUI.ShowRegister = function(pid)
-    tes3mp.PasswordDialog(pid, GUI.ID.REGISTER, "Create new password:", "Warning: the server owner will be able to read your password, so you should use a unique one for each server.")
+    tes3mp.PasswordDialog(pid, GUI.ID.REGISTER, "Create new password:",
+        "Warning: the server owner will be able to read your password, so you should use a unique one for each server.")
 end
 
 local GetConnectedPlayerList = function()
@@ -31,17 +32,16 @@ local GetConnectedPlayerList = function()
     local list = ""
     local divider = ""
 
-    for i = 0, lastPid do
-        if i == lastPid then
+    for playerIndex = 0, lastPid do
+        if playerIndex == lastPid then
             divider = ""
         else
             divider = "\n"
         end
-        if Players[i] ~= nil and Players[i]:IsLoggedIn() then
-            list = list .. tostring(Players[i].name)
-            list = list .. " (ID: " .. tostring(Players[i].pid)
-            list = list .. ", Ping: " .. tostring(tes3mp.GetAvgPing(Players[i].pid)) .. ")"
-            list = list .. divider
+        if Players[playerIndex] ~= nil and Players[playerIndex]:IsLoggedIn() then
+
+            list = list .. tostring(Players[playerIndex].name) .. " (pid: " .. tostring(Players[playerIndex].pid) .. 
+                ", ping: " .. tostring(tes3mp.GetAvgPing(Players[playerIndex].pid)) .. ")" .. divider
         end
     end
 
@@ -63,10 +63,38 @@ local GetLoadedCellList = function()
         else
             divider = "\n"
         end
-        list = list .. key
-        list = list .. " (auth: " .. LoadedCells[key]:GetAuthority() .. ", loaded by " .. LoadedCells[key]:GetVisitorCount() .. ")"
-        list = list .. divider
+
+        list = list .. key .. " (auth: " .. LoadedCells[key]:GetAuthority() .. ", loaded by " ..
+            LoadedCells[key]:GetVisitorCount() .. ")" .. divider
     end
+
+    return list
+end
+
+local GetLoadedRegionList = function()
+    local list = ""
+    local divider = ""
+
+    local regionCount = logicHandler.GetLoadedRegionCount()
+    local regionIndex = 0
+
+    for key, value in pairs(WorldInstance.loadedRegions) do
+        local visitorCount = WorldInstance:GetRegionVisitorCount(key)
+
+        if visitorCount > 0 then
+            regionIndex = regionIndex + 1
+
+            if regionIndex == regionCount then
+                divider = ""
+            else
+                divider = "\n"
+            end
+
+            list = list .. key .. " (auth: " .. WorldInstance:GetRegionAuthority(key) .. ", loaded by " ..
+                visitorCount .. ")" .. divider
+        end
+    end
+
     return list
 end
 
@@ -84,9 +112,7 @@ local GetPlayerInventoryList = function(pid)
             divider = "\n"
         end
 
-        list = list .. index .. ": " .. currentItem.refId
-        list = list .. " (count: " .. currentItem.count .. ")"
-        list = list .. divider
+        list = list .. index .. ": " .. currentItem.refId .. " (count: " .. currentItem.count .. ")" .. divider
     end
 
     return list
@@ -95,35 +121,46 @@ end
 GUI.ShowPlayerList = function(pid)
 
     local playerCount = logicHandler.GetConnectedPlayerCount()
-    local label = playerCount .. " connected "
-    if playerCount == 1 then
-        label = label .. "player"
-    else
-        label = label .. "players"
+    local label = playerCount .. " connected player"
+
+    if playerCount ~= 1 then
+        label = label .. "s"
     end
+
     tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetConnectedPlayerList())
 end
 
 GUI.ShowCellList = function(pid)
 
     local cellCount = logicHandler.GetLoadedCellCount()
-    local label = cellCount .. " loaded "
-    if cellCount == 1 then
-        label = label .. "cell"
-    else
-        label = label .. "cells"
+    local label = cellCount .. " loaded cell"
+
+    if cellCount ~= 1 then
+        label = label .. "s"
     end
+
     tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedCellList())
+end
+
+GUI.ShowRegionList = function(pid)
+
+    local regionCount = logicHandler.GetLoadedRegionCount()
+    local label = regionCount .. " loaded region"
+
+    if regionCount ~= 1 then
+        label = label .. "s"
+    end
+
+    tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedRegionList())
 end
 
 GUI.ShowInventoryList = function(menuId, pid, inventoryPid)
 
     local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
-    local label = inventoryCount .. " "
-    if inventoryCount == 1 then
-        label = label .. "item"
-    else
-        label = label .. "items"
+    local label = inventoryCount .. " item"
+
+    if inventoryCount ~= 1 then
+        label = label .. "s"
     end
 
     tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))

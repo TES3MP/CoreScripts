@@ -179,6 +179,9 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif cmd[1] == "cells" and moderator then
         GUI.ShowCellList(pid)
 
+    elseif cmd[1] == "regions" and moderator then
+        GUI.ShowRegionList(pid)
+
     elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
         if cmd[2] ~= "all" then
             logicHandler.TeleportToPlayer(pid, cmd[2], pid)

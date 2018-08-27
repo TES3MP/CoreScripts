@@ -42,6 +42,13 @@ function BaseWorld:EnsureTimeDataExists()
     end
 end
 
+function BaseWorld:GetRegionVisitorCount(regionName)
+
+    if self.loadedRegions[regionName] == nil then return 0 end
+
+    return tableHelper.getCount(self.loadedRegions[regionName].visitors)
+end
+
 function BaseWorld:AddRegionVisitor(pid, regionName)
 
     if self.loadedRegions[regionName] == nil then
