@@ -174,13 +174,13 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
     elseif cmd[1] == "players" or cmd[1] == "list" then
-        GUI.ShowPlayerList(pid)
+        guiHelper.ShowPlayerList(pid)
 
     elseif cmd[1] == "cells" and moderator then
-        GUI.ShowCellList(pid)
+        guiHelper.ShowCellList(pid)
 
     elseif cmd[1] == "regions" and moderator then
-        GUI.ShowRegionList(pid)
+        guiHelper.ShowRegionList(pid)
 
     elseif (cmd[1] == "teleport" or cmd[1] == "tp") and moderator then
         if cmd[2] ~= "all" then
@@ -958,7 +958,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetConfiscationState(true)
 
                 tableHelper.cleanNils(Players[targetPid].data.inventory)
-                GUI.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
+                guiHelper.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
             end
         end
 

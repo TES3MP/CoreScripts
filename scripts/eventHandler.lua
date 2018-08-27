@@ -35,10 +35,10 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
 
     if Players[pid]:HasAccount() then
         message = message .. " log in.\n"
-        GUI.ShowLogin(pid)
+        guiHelper.ShowLogin(pid)
     else
         message = message .. " register.\n"
-        GUI.ShowRegister(pid)
+        guiHelper.ShowRegister(pid)
     end
 
     tes3mp.SendMessage(pid, message, false)
@@ -83,10 +83,10 @@ end
 eventHandler.OnGUIAction = function(pid, idGui, data)
     data = tostring(data) -- data can be numeric, but we should convert this to string
 
-    if idGui == GUI.ID.LOGIN then
+    if idGui == guiHelper.ID.LOGIN then
         if data == nil then
             Players[pid]:Message("Incorrect password!\n")
-            GUI.ShowLogin(pid)
+            guiHelper.ShowLogin(pid)
             return true
         end
 
@@ -95,7 +95,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         -- Just in case the password from the data file is a number, make sure to turn it into a string
         if tostring(Players[pid].data.login.password) ~= data then
             Players[pid]:Message("Incorrect password!\n")
-            GUI.ShowLogin(pid)
+            guiHelper.ShowLogin(pid)
             return true
         end
 
@@ -109,10 +109,10 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
             Players[pid]:FinishLogin()
             Players[pid]:Message("You have successfully logged in.\n")
         end
-    elseif idGui == GUI.ID.REGISTER then
+    elseif idGui == guiHelper.ID.REGISTER then
         if data == nil then
             Players[pid]:Message("Password can not be empty\n")
-            GUI.ShowRegister(pid)
+            guiHelper.ShowRegister(pid)
             return true
         end
         Players[pid]:Register(data)

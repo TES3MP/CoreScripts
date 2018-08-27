@@ -1,6 +1,6 @@
 tableHelper = require("tableHelper")
 
-GUI = {}
+guiHelper = {}
 
 function enum(en)
     local _enum = {}
@@ -10,19 +10,19 @@ function enum(en)
     return _enum
 end
 
-GUI.ID = enum {
+guiHelper.ID = enum {
     "LOGIN",
     "REGISTER",
     "PLAYERSLIST",
     "CELLSLIST"
 }
 
-GUI.ShowLogin = function(pid)
-    tes3mp.PasswordDialog(pid, GUI.ID.LOGIN, "Enter your password:", "")
+guiHelper.ShowLogin = function(pid)
+    tes3mp.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
 end
 
-GUI.ShowRegister = function(pid)
-    tes3mp.PasswordDialog(pid, GUI.ID.REGISTER, "Create new password:",
+guiHelper.ShowRegister = function(pid)
+    tes3mp.PasswordDialog(pid, guiHelper.ID.REGISTER, "Create new password:",
         "Warning: the server owner will be able to read your password, so you should use a unique one for each server.")
 end
 
@@ -118,7 +118,7 @@ local GetPlayerInventoryList = function(pid)
     return list
 end
 
-GUI.ShowPlayerList = function(pid)
+guiHelper.ShowPlayerList = function(pid)
 
     local playerCount = logicHandler.GetConnectedPlayerCount()
     local label = playerCount .. " connected player"
@@ -127,10 +127,10 @@ GUI.ShowPlayerList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, GUI.ID.PLAYERSLIST, label, GetConnectedPlayerList())
+    tes3mp.ListBox(pid, guiHelper.ID.PLAYERSLIST, label, GetConnectedPlayerList())
 end
 
-GUI.ShowCellList = function(pid)
+guiHelper.ShowCellList = function(pid)
 
     local cellCount = logicHandler.GetLoadedCellCount()
     local label = cellCount .. " loaded cell"
@@ -139,10 +139,10 @@ GUI.ShowCellList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedCellList())
+    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedCellList())
 end
 
-GUI.ShowRegionList = function(pid)
+guiHelper.ShowRegionList = function(pid)
 
     local regionCount = logicHandler.GetLoadedRegionCount()
     local label = regionCount .. " loaded region"
@@ -151,10 +151,10 @@ GUI.ShowRegionList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, GUI.ID.CELLSLIST, label, GetLoadedRegionList())
+    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedRegionList())
 end
 
-GUI.ShowInventoryList = function(menuId, pid, inventoryPid)
+guiHelper.ShowInventoryList = function(menuId, pid, inventoryPid)
 
     local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
     local label = inventoryCount .. " item"
@@ -166,4 +166,4 @@ GUI.ShowInventoryList = function(menuId, pid, inventoryPid)
     tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
 end
 
-return GUI
+return guiHelper
