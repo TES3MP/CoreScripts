@@ -1241,6 +1241,12 @@ function commandHandler.CreateRecord(pid, cmd)
         Players[pid].data.customVariables.storedRecords = {}
     end
 
+    if tableHelper.getCount(cmd) > 2 then
+        Players[pid]:Message("This command does not take more than 1 argument. Did you mean to use " ..
+            "/storerecord instead?\n")
+        return
+    end
+
     local inputType = string.lower(cmd[2])
     local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
 
