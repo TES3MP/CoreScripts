@@ -189,7 +189,7 @@ function menuHelper.CheckCondition(pid, condition)
         end
     elseif condition.conditionType == "adminRank" then
 
-        if targetPlayer.data.settings.admin >= condition.rankValue then
+        if targetPlayer.data.settings.staffRank >= condition.rankValue then
             return true
         end
     end

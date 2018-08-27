@@ -15,7 +15,7 @@ function BasePlayer:__init(pid, playerName)
             password = ""
         },
         settings = {
-            admin = 0,
+            staffRank = 0,
             difficulty = "default",
             consoleAllowed = "default",
             bedRestAllowed = "default",
@@ -110,7 +110,6 @@ function BasePlayer:__init(pid, playerName)
     self.pid = pid
     self.loggedIn = false
     self.loginTimerId = nil
-    self.admin = 0
     self.hasAccount = nil
 
     self.cellsLoaded = {}
@@ -311,19 +310,19 @@ function BasePlayer:IsLoggedIn()
 end
 
 function BasePlayer:IsServerStaff()
-    return self.data.settings.admin > 0
+    return self.data.settings.staffRank > 0
 end
 
 function BasePlayer:IsServerOwner()
-    return self.data.settings.admin == 3
+    return self.data.settings.staffRank == 3
 end
 
 function BasePlayer:IsAdmin()
-    return self.data.settings.admin >= 2
+    return self.data.settings.staffRank >= 2
 end
 
 function BasePlayer:IsModerator()
-    return self.data.settings.admin >= 1
+    return self.data.settings.staffRank >= 1
 end
 
 function BasePlayer:GetHealthCurrent()
@@ -1321,6 +1320,12 @@ function BasePlayer:SetConfiscationState(state)
 end
 
 function BasePlayer:LoadSettings()
+
+    -- Change admin variable from old player files to the current staffRank
+    if self.data.settings.staffRank == nil and self.data.settings.admin ~= nil then
+        self.data.settings.staffRank = self.data.settings.admin
+        self.data.settings.admin = nil
+    end
 
     self:SetDifficulty(self.data.settings.difficulty)
     self:SetConsoleAllowed(self.data.settings.consoleAllowed)

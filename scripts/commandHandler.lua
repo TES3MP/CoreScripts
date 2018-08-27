@@ -241,7 +241,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             else
                 message = targetName .. " was promoted to Admin!\n"
                 tes3mp.SendMessage(pid, message, true)
-                Players[targetPid].data.settings.admin = 2
+                Players[targetPid].data.settings.staffRank = 2
                 Players[targetPid]:Save()
             end
         end
@@ -258,7 +258,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             elseif Players[targetPid]:IsAdmin() then
                 message = targetName .. " was demoted from Admin to Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
-                Players[targetPid].data.settings.admin = 1
+                Players[targetPid].data.settings.staffRank = 1
                 Players[targetPid]:Save()
             else
                 message = targetName .. " is not an Admin.\n"
@@ -281,7 +281,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             else
                 message = targetName .. " was promoted to Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
-                Players[targetPid].data.settings.admin = 1
+                Players[targetPid].data.settings.staffRank = 1
                 Players[targetPid]:Save()
             end
         end
@@ -298,7 +298,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             elseif Players[targetPid]:IsModerator() then
                 message = targetName .. " was demoted from Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
-                Players[targetPid].data.settings.admin = 0
+                Players[targetPid].data.settings.staffRank = 0
                 Players[targetPid]:Save()
             else
                 message = targetName .. " is not a Moderator.\n"
