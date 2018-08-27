@@ -868,10 +868,6 @@ function BasePlayer:SaveEquipment()
     end
 
     if reloadAtEnd then
-        -- Disable and enable the player's menus to avoid an inventory view that hasn't
-        -- been properly updated (to be fixed for 0.6.3)
-        logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
-        logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
         self:LoadEquipment()
     end
 end
