@@ -11,10 +11,15 @@ function commandHandler.ProcessCommand(pid, cmd)
         cmd[1] = string.lower(cmd[1])
     end
 
+    local serverOwner = false
     local admin = false
     local moderator = false
 
-    if Players[pid]:IsAdmin() then
+    if Players[pid]:IsServerOwner() then
+        serverOwner = true
+        admin = true
+        moderator = true
+    elseif Players[pid]:IsAdmin() then
         admin = true
         moderator = true
     elseif Players[pid]:IsModerator() then
@@ -221,6 +226,43 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = targetName .. " was kicked from the server by " .. playerName .. "!\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid]:Kick()
+            end
+        end
+
+    elseif cmd[1] == "addadmin" and serverOwner then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+            local targetPid = tonumber(cmd[2])
+            local targetName = Players[targetPid].name
+            local message
+
+            if Players[targetPid]:IsAdmin() then
+                message = targetName .. " is already an Admin.\n"
+                tes3mp.SendMessage(pid, message, false)
+            else
+                message = targetName .. " was promoted to Admin!\n"
+                tes3mp.SendMessage(pid, message, true)
+                Players[targetPid].data.settings.admin = 2
+                Players[targetPid]:Save()
+            end
+        end
+
+    elseif cmd[1] == "removeadmin" and serverOwner then
+        if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+            local targetPid = tonumber(cmd[2])
+            local targetName = Players[targetPid].name
+            local message
+
+            if Players[targetPid]:IsServerOwner() then
+                message = "Cannot demote " .. targetName .. " because they are a Server Owner.\n"
+                tes3mp.SendMessage(pid, message, false)
+            elseif Players[targetPid]:IsAdmin() then
+                message = targetName .. " was demoted from Admin to Moderator!\n"
+                tes3mp.SendMessage(pid, message, true)
+                Players[targetPid].data.settings.admin = 1
+                Players[targetPid]:Save()
+            else
+                message = targetName .. " is not an Admin.\n"
+                tes3mp.SendMessage(pid, message, false)
             end
         end
 

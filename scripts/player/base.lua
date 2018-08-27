@@ -310,20 +310,20 @@ function BasePlayer:IsLoggedIn()
     return self.loggedIn
 end
 
+function BasePlayer:IsServerStaff()
+    return self.data.settings.admin > 0
+end
+
+function BasePlayer:IsServerOwner()
+    return self.data.settings.admin == 3
+end
+
 function BasePlayer:IsAdmin()
-    return self.data.settings.admin == 2
+    return self.data.settings.admin >= 2
 end
 
 function BasePlayer:IsModerator()
     return self.data.settings.admin >= 1
-end
-
-function BasePlayer:PromoteModerator(other)
-    if self.IsAdmin() then
-        other.data.settings.admin = 1
-        return true
-    end
-    return false
 end
 
 function BasePlayer:GetHealthCurrent()

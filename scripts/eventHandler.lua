@@ -183,16 +183,6 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     local playerName = tes3mp.GetName(pid)
     tes3mp.LogMessage(1, logicHandler.GetChatName(pid) .. ": " .. message)
 
-    local admin = false
-    local moderator = false
-    
-    if Players[pid]:IsAdmin() then
-        admin = true
-        moderator = true
-    elseif Players[pid]:IsModerator() then
-        moderator = true
-    end
-
     if message:sub(1,1) == '/' then
 
         local command = (message:sub(2, #message)):split(" ")
@@ -200,18 +190,20 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
         return false -- commands should be hidden
 
     -- Check for chat overrides that add extra text
-    else
-        if admin then
-            local message = config.rankColors.admin .. "[Admin] " .. color.White .. logicHandler.GetChatName(pid) ..
-                ": " .. message .. "\n"
-            tes3mp.SendMessage(pid, message, true)
-            return false
-        elseif moderator then
-            local message = config.rankColors.moderator .. "[Mod] " .. color.White .. logicHandler.GetChatName(pid) ..
-                ": " .. message .. "\n"
-            tes3mp.SendMessage(pid, message, true)
-            return false
+    elseif Players[pid]:IsServerStaff() then
+
+        local message = color.White .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+
+        if Players[pid]:IsServerOwner() then
+            message = config.rankColors.serverOwner .. "[Owner] " .. message
+        elseif Players[pid]:IsAdmin() then
+            message = config.rankColors.admin .. "[Admin] " .. message
+        elseif Players[pid]:IsModerator() then
+            message = config.rankColors.moderator .. "[Mod] " .. message
         end
+
+        tes3mp.SendMessage(pid, message, true)
+        return false
     end
 
     return true -- default behavior, regular chat messages should not be overridden

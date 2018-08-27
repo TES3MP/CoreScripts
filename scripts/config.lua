@@ -128,7 +128,7 @@ config.allowFixmeCommand = true
 config.fixmeInterval = 30
 
 -- The colors used for different ranks on the server
-config.rankColors = { admin = color.Red, moderator = color.Green }
+config.rankColors = { serverOwner = color.Orange, admin = color.Red, moderator = color.Green }
 
 -- Which numerical IDs should be used by custom menus implemented in the Lua scripts,
 -- to prevent other menu inputs from being taken into account for them
