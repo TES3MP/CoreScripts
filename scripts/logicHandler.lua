@@ -278,7 +278,7 @@ logicHandler.GetLoadedRegionCount = function()
 
     local regionCount = 0
 
-    for key, value in pairs(WorldInstance.loadedRegions) do
+    for key, value in pairs(WorldInstance.storedRegions) do
         if WorldInstance:GetRegionVisitorCount(key) > 0 then
             regionCount = regionCount + 1
         end
@@ -679,7 +679,7 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
 
     if regionName == "" then return end
 
-    if WorldInstance.loadedRegions[regionName] ~= nil then
+    if WorldInstance.storedRegions[regionName] ~= nil then
 
         tes3mp.LogMessage(1, "Unloading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
 
@@ -690,13 +690,13 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
         -- as the authority
         if WorldInstance:GetRegionAuthority(regionName) == pid then
 
-            local visitors = WorldInstance.loadedRegions[regionName].visitors
+            local visitors = WorldInstance.storedRegions[regionName].visitors
 
             if tableHelper.getCount(visitors) > 0 then
                 local newAuthorityPid = logicHandler.GetLowestPingPid(visitors)
                 WorldInstance:SetRegionAuthority(newAuthorityPid, regionName)
             else
-                WorldInstance.loadedRegions[regionName].authority = nil
+                WorldInstance.storedRegions[regionName].authority = nil
             end
         end
     end

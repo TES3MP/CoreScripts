@@ -65,7 +65,7 @@ local GetLoadedRegionList = function()
     local regionCount = logicHandler.GetLoadedRegionCount()
     local regionIndex = 0
 
-    for key, value in pairs(WorldInstance.loadedRegions) do
+    for key, value in pairs(WorldInstance.storedRegions) do
         local visitorCount = WorldInstance:GetRegionVisitorCount(key)
 
         if visitorCount > 0 then

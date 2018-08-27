@@ -1300,7 +1300,7 @@ eventHandler.OnWorldWeather = function(pid)
         local regionName = string.lower(tes3mp.GetWeatherRegion())
 
         -- Track current weather in each region
-        if WorldInstance.loadedRegions[regionName] ~= nil then
+        if WorldInstance.storedRegions[regionName] ~= nil then
             WorldInstance:SaveRegionWeather(regionName)
         end
 

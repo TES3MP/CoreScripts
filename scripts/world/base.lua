@@ -6,7 +6,7 @@ BaseWorld.defaultTimeScale = 30
 
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
-BaseWorld.loadedRegions = {}
+BaseWorld.storedRegions = {}
 
 function BaseWorld:__init()
 
@@ -44,26 +44,26 @@ end
 
 function BaseWorld:GetRegionVisitorCount(regionName)
 
-    if self.loadedRegions[regionName] == nil then return 0 end
+    if self.storedRegions[regionName] == nil then return 0 end
 
-    return tableHelper.getCount(self.loadedRegions[regionName].visitors)
+    return tableHelper.getCount(self.storedRegions[regionName].visitors)
 end
 
 function BaseWorld:AddRegionVisitor(pid, regionName)
 
-    if self.loadedRegions[regionName] == nil then
-        self.loadedRegions[regionName] = { visitors = {}, forcedWeatherUpdatePids = {} }
+    if self.storedRegions[regionName] == nil then
+        self.storedRegions[regionName] = { visitors = {}, forcedWeatherUpdatePids = {} }
     end
 
     -- Only add new visitor if we don't already have them
-    if tableHelper.containsValue(self.loadedRegions[regionName].visitors, pid) == false then
-        table.insert(self.loadedRegions[regionName].visitors, pid)
+    if tableHelper.containsValue(self.storedRegions[regionName].visitors, pid) == false then
+        table.insert(self.storedRegions[regionName].visitors, pid)
     end
 end
 
 function BaseWorld:RemoveRegionVisitor(pid, regionName)
 
-    local loadedRegion = self.loadedRegions[regionName]
+    local loadedRegion = self.storedRegions[regionName]
 
     -- Only remove visitor if they are actually recorded as one
     if tableHelper.containsValue(loadedRegion.visitors, pid) then
@@ -77,19 +77,19 @@ end
 
 function BaseWorld:AddForcedWeatherUpdatePid(pid, regionName)
 
-    local loadedRegion = self.loadedRegions[regionName]
+    local loadedRegion = self.storedRegions[regionName]
     table.insert(loadedRegion.forcedWeatherUpdatePids, pid)
 end
 
 function BaseWorld:RemoveForcedWeatherUpdatePid(pid, regionName)
 
-    local loadedRegion = self.loadedRegions[regionName]
+    local loadedRegion = self.storedRegions[regionName]
     tableHelper.removeValue(loadedRegion.forcedWeatherUpdatePids, pid)
 end
 
 function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
     
-    local loadedRegion = self.loadedRegions[regionName]
+    local loadedRegion = self.storedRegions[regionName]
 
     if tableHelper.containsValue(loadedRegion.forcedWeatherUpdatePids, pid) then
         return true
@@ -100,15 +100,15 @@ end
 
 function BaseWorld:GetRegionAuthority(regionName)
     
-    if self.loadedRegions[regionName] ~= nil then
-        return self.loadedRegions[regionName].authority
+    if self.storedRegions[regionName] ~= nil then
+        return self.storedRegions[regionName].authority
     end
 
     return nil
 end
 
 function BaseWorld:SetRegionAuthority(pid, regionName)
-    self.loadedRegions[regionName].authority = pid
+    self.storedRegions[regionName].authority = pid
     tes3mp.LogMessage(1, "Authority of region " .. regionName .. " is now " ..
         logicHandler.GetChatName(pid))
 
@@ -196,7 +196,7 @@ end
 
 function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
 
-    local region = self.loadedRegions[regionName]
+    local region = self.storedRegions[regionName]
 
     if region.currentWeather ~= nil then
 
@@ -215,7 +215,7 @@ end
 
 function BaseWorld:LoadWeather(pid, sendToOthers, forceState)
 
-    for regionName, region in pairs(self.loadedRegions) do
+    for regionName, region in pairs(self.storedRegions) do
 
         if region.currentWeather ~= nil then
             self:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
@@ -283,7 +283,7 @@ end
 
 function BaseWorld:SaveRegionWeather(regionName)
 
-    local loadedRegion = self.loadedRegions[regionName]
+    local loadedRegion = self.storedRegions[regionName]
     loadedRegion.currentWeather = tes3mp.GetWeatherCurrent()
     loadedRegion.nextWeather = tes3mp.GetWeatherNext()
     loadedRegion.queuedWeather = tes3mp.GetWeatherQueued()
