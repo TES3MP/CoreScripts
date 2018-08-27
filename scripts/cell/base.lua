@@ -904,15 +904,14 @@ function BaseCell:SaveActorCellChanges(pid)
             if tableHelper.containsValue(self.data.packets.spawn, uniqueIndex) == true then
                 tes3mp.LogAppend(1, "-- As a server-only object, it was moved entirely")
 
-                -- This actor won't exist at all for visitors to the new cell who have not loaded the
-                -- actor's original cell and were not online when it was first spawned, so send all of
-                -- its details to them
-                for _, visitorPid in pairs(newCell.visitors) do
-                    if pid ~= visitorPid then
-                        self:LoadActorPackets(visitorPid, self.data.objectData, { uniqueIndex })
+                -- This actor won't exist at all for players who have not loaded the actor's original
+                -- cell and were not online when it was first spawned, so send all of its details to them
+                for _, player in pairs(Players) do
+                    if pid ~= player.pid and not tableHelper.containsValue(self.visitors, player.pid) then
+                        self:LoadActorPackets(player.pid, self.data.objectData, { uniqueIndex })
                     end
                 end
-                
+
                 self:MoveObjectData(uniqueIndex, newCell)
 
             -- Was this actor moved to the old cell from another cell?
