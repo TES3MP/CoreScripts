@@ -1394,9 +1394,6 @@ function commandHandler.CreateRecord(pid, cmd)
         end
 
         Players[pid]:Message(message)
-    else
-        Players[pid].currentCustomMenu = "help createnpc"
-        menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
     end
 end
 
