@@ -251,7 +251,7 @@ eventHandler.OnPlayerCellChange = function(pid)
 
         if contentFixer.ValidateCellChange(pid) then
 
-            local previousCell = Players[pid].data.location.cell
+            local previousCellDescription = Players[pid].data.location.cell
 
             -- If this player is changing their region, add them to the visitors of the new
             -- region while removing them from the visitors of their old region
@@ -263,7 +263,8 @@ eventHandler.OnPlayerCellChange = function(pid)
                     local debugMessage = logicHandler.GetChatName(pid) .. " has "
                     
                     local hasFinishedInitialTeleportation = Players[pid].hasFinishedInitialTeleportation
-                    local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded, previousCell)
+                    local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded,
+                        previousCellDescription)
 
                     -- It's possible we've been teleported to a cell we had already loaded when
                     -- spawning on the server, so also check whether this is the player's first
@@ -287,6 +288,10 @@ eventHandler.OnPlayerCellChange = function(pid)
                 if previousRegionName ~= nil and previousRegionName ~= regionName then
                     logicHandler.UnloadRegionForPlayer(pid, previousRegionName)
                 end
+
+                -- Exchange generated records with the other players who have this cell loaded
+                local currentCellDescription = tes3mp.GetCell(pid)
+                logicHandler.ExchangeGeneratedRecords(pid, LoadedCells[currentCellDescription].visitors)
 
                 Players[pid].data.location.regionName = regionName
                 Players[pid].hasFinishedInitialTeleportation = true
@@ -1174,14 +1179,14 @@ eventHandler.OnRecordDynamic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         tes3mp.ReadReceivedWorldstate()
         
-        local recordType = tes3mp.GetRecordType(pid)
+        local recordNumericalType = tes3mp.GetRecordType(pid)
 
         -- Iterate through the records in the RecordDynamic packet and only sync and save them
         -- if all their names are allowed
         local isValid = true
         local rejectedRecords = {}
 
-        if recordType ~= enumerations.recordType.ENCHANTMENT then
+        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
             local recordCount = tes3mp.GetRecordCount(pid)
 
             for recordIndex = 0, recordCount - 1 do
@@ -1202,20 +1207,25 @@ eventHandler.OnRecordDynamic = function(pid)
             return
         end
 
-        local recordStore = logicHandler.GetRecordStore(recordType)
-        local recordAdditions
+        local storeType = string.lower(tableHelper.getIndexByPattern(enumerations.recordType, recordNumericalType))
+        local recordStore = RecordStores[storeType]
+        local isEnchantable, recordAdditions
 
-        local enchantableRecordTypes = { enumerations.recordType.ARMOR, enumerations.recordType.BOOK,
-            enumerations.recordType.CLOTHING, enumerations.recordType.WEAPON }
+        if recordStore == nil then
+            tes3mp.LogMessage(2, "Rejected RecordDynamic for invalid record store of type " .. recordNumericalType)
+            return
+        else
+            isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
+        end
 
-        if recordType == enumerations.recordType.SPELL then
-            recordAdditions = recordStore:SaveSpells(pid)
-        elseif recordType == enumerations.recordType.POTION then
-            recordAdditions = recordStore:SavePotions(pid)
-        elseif recordType == enumerations.recordType.ENCHANTMENT then
-            recordAdditions = recordStore:SaveEnchantments(pid)
-        elseif tableHelper.containsValue(enchantableRecordTypes, recordType) then
-            recordAdditions = recordStore:SaveEnchantedItems(pid)
+        if storeType == "spell" then
+            recordAdditions = recordStore:SaveGeneratedSpells(pid)
+        elseif storeType == "potion" then
+            recordAdditions = recordStore:SaveGeneratedPotions(pid)
+        elseif storeType == "enchantment" then
+            recordAdditions = recordStore:SaveGeneratedEnchantments(pid)
+        elseif isEnchantable then
+            recordAdditions = recordStore:SaveGeneratedEnchantedItems(pid)
         end
 
         tes3mp.CopyReceivedWorldstateToStore()
@@ -1227,15 +1237,21 @@ eventHandler.OnRecordDynamic = function(pid)
             -- RecordsDynamic packet before we send it to the players
             tes3mp.SetRecordIdByIndex(recordAddition.index, recordAddition.id)
 
-            if recordType == enumerations.recordType.ENCHANTMENT then
+            if storeType == "enchantment" then
                 -- We need to store this enchantment's original client-generated id
                 -- on this player so we can match it with its server-generated correct
                 -- id once the player sends the record of the enchanted item they've
                 -- used it on
                 Players[pid].unresolvedEnchantments[recordAddition.clientsideId] = recordAddition.id
-            elseif tableHelper.containsValue(enchantableRecordTypes, recordType) then
+            elseif isEnchantable then
                 -- Set the server-generated id for this enchanted item's enchantment
                 tes3mp.SetRecordEnchantmentIdByIndex(recordAddition.index, recordAddition.enchantmentId)
+            end
+
+            -- This record will be sent to everyone on the server just after this loop,
+            -- so track it as having already been received by players
+            for _, player in pairs(Players) do
+                table.insert(player.generatedRecordsReceived, recordAddition.id)
             end
         end
 
@@ -1244,28 +1260,47 @@ eventHandler.OnRecordDynamic = function(pid)
         tes3mp.SendRecordDynamic(pid, true, false)
     
         -- Add the final spell to the player's spellbook
-        if recordType == enumerations.recordType.SPELL then
+        if storeType == "spell" then
 
             tes3mp.InitializeSpellbookChanges(pid)
             tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
             
             for _, recordAddition in pairs(recordAdditions) do
-                table.insert(Players[pid].data.spellbook, { spellId = recordAddition.id })
+                table.insert(Players[pid].data.spellbook, recordAddition.id)
                 tes3mp.AddSpell(pid, recordAddition.id)
+
+                Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
             end
 
+            recordStore:Save()
             Players[pid]:Save()
             tes3mp.SendSpellbookChanges(pid)
 
         -- Add the final items to the player's inventory
-        elseif recordType == enumerations.recordType.POTION or
-            tableHelper.containsValue(enchantableRecordTypes, recordType) then
+        elseif storeType == "potion" or isEnchantable then
+
+            local enchantmentStore
+
+            if isEnchantable then enchantmentStore = RecordStores["enchantment"] end
             
             for _, recordAddition in pairs(recordAdditions) do
                 local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1 }
                 table.insert(Players[pid].data.inventory, item)
+
+                Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
+
+                -- If this is an enchantable item record, add a link to it from its associated
+                -- enchantment record
+                if isEnchantable then
+                    enchantmentStore:AddLinkToRecord(recordAddition.enchantmentId,
+                        recordAddition.id, storeType)
+                end
             end
 
+            if isEnchantable then enchantmentStore:Save() end
+
+            recordStore:Save()
+            Players[pid]:Save()
             Players[pid]:LoadInventory()
             Players[pid]:LoadEquipment()
         end

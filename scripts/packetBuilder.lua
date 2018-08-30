@@ -167,6 +167,31 @@ packetBuilder.AddInventoryItemToRecord = function(item)
     tes3mp.AddRecordInventoryItem()
 end
 
+packetBuilder.AddRecordByType = function(id, record, storeType)
+
+    if storeType == "armor" then    
+        packetBuilder.AddArmorRecord(id, record)
+    elseif storeType == "book" then
+        packetBuilder.AddBookRecord(id, record)
+    elseif storeType == "clothing" then
+        packetBuilder.AddClothingRecord(id, record)
+    elseif storeType == "creature" then
+        packetBuilder.AddCreatureRecord(id, record)
+    elseif storeType == "enchantment" then
+        packetBuilder.AddEnchantmentRecord(id, record)
+    elseif storeType == "miscellaneous" then
+        packetBuilder.AddMiscellaneousRecord(id, record)
+    elseif storeType == "npc" then
+        packetBuilder.AddNpcRecord(id, record)
+    elseif storeType == "potion" then
+        packetBuilder.AddPotionRecord(id, record)
+    elseif storeType == "spell" then
+        packetBuilder.AddSpellRecord(id, record)
+    elseif storeType == "weapon" then
+        packetBuilder.AddWeaponRecord(id, record)
+    end
+end
+
 packetBuilder.AddArmorRecord = function(id, record)
     
     tes3mp.SetRecordId(id)

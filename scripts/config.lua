@@ -200,6 +200,20 @@ config.maximumObjectScale = 20
 -- via the /createrecord command when no ID is specified there
 config.generatedRecordIdPrefix = "$custom"
 
+-- The types of record stores used on this server in the order in which they should be loaded for
+-- players, with the correct order ensuring that enchantments are loaded before items that might be
+-- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
+-- inventories
+config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
+    "miscellaneous", "creature", "npc" }
+
+-- The types of records that can be enchanted and therefore have links to enchantment records
+config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
+
+-- The types of records that can be stored by players and therefore have links to players,
+-- listed in the order in which they should be loaded
+config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", "weapon", "miscellaneous" }
+
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
     armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -246,7 +260,7 @@ config.booleanRecordSettings = { "scrollState", "keyState" }
 -- The record type settings whose input should be converted to tables with a min and a max numerical value
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }
 
--- The names of the tables used to store object and actor packets in cell data
+-- The types of object and actor packets stored in cell data
 config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", "state", "doorState",
     "container", "equipment", "ai", "death", "actorList", "position", "statsDynamic", "cellChangeTo",
     "cellChangeFrom" }
@@ -275,22 +289,22 @@ config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cu
 -- The order in which table keys should be saved to JSON files
 config.playerKeyOrder = { "login", "settings", "character", "customClass", "location", "stats",
     "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
-    "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
+    "recordLinks", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
     "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
     "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent" }
 
-config.cellKeyOrder = { "packets", "entry", "lastVisit", "objectData", "refId", "count", "charge",
-    "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
+config.cellKeyOrder = { "packets", "entry", "lastVisit", "recordLinks", "objectData", "refId", "count",
+    "charge", "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
     "cellChangeTo", "container", "death", "delete", "doorState", "equipment", "inventory", "lock",
     "place", "position", "scale", "spawn", "state", "statsDynamic", "trap" }
 
-config.recordstoreKeyOrder = { "general", "id", "baseId", "name", "subtype", "gender", "race", "hair",
-    "head", "class", "faction", "cost", "value", "charge", "weight", "autoCalc", "flags", "icon",
-    "model", "script", "attribute", "skill", "rangeType", "area", "duration", "magnitudeMax",
-    "magnitudeMin", "effects" }
+config.recordstoreKeyOrder = { "general", "permanentRecords", "generatedRecords", "recordLinks",
+    "id", "baseId", "name", "subtype", "gender", "race", "hair", "head", "class", "faction", "cost",
+    "value", "charge", "weight", "autoCalc", "flags", "icon", "model", "script", "attribute", "skill",
+    "rangeType", "area", "duration", "magnitudeMax", "magnitudeMin", "effects", "players", "cells", "global" }
 
 config.worldKeyOrder = { "general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale" }

@@ -5,9 +5,11 @@ function BaseRecordStore:__init(storeType)
     self.data =
     {
         general = {
-            currentRecordNum = 0
+            currentGeneratedNum = 0
         },
-        records = {}
+        permanentRecords = {},
+        generatedRecords = {},
+        recordLinks = {}
     }
 
     self.storeType = storeType
@@ -17,165 +19,240 @@ function BaseRecordStore:HasEntry()
     return self.hasEntry
 end
 
-function BaseRecordStore:GetCurrentRecordNum()
-    return self.data.general.currentRecordNum
+function BaseRecordStore:GetCurrentGeneratedNum()
+    return self.data.general.currentGeneratedNum
 end
 
-function BaseRecordStore:SetCurrentRecordNum(currentRecordNum)
-    self.data.general.currentRecordNum = currentRecordNum
+function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
+    self.data.general.currentGeneratedNum = currentGeneratedNum
     self:Save()
 end
 
-function BaseRecordStore:IncrementRecordNum()
-    self:SetCurrentRecordNum(self:GetCurrentRecordNum() + 1)
-    return self:GetCurrentRecordNum()
+function BaseRecordStore:IncrementGeneratedNum()
+    self:SetCurrentGeneratedNum(self:GetCurrentGeneratedNum() + 1)
+    return self:GetCurrentGeneratedNum()
 end
 
 function BaseRecordStore:GenerateRecordId()
-    return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementRecordNum()
+    return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementGeneratedNum()
 end
 
-function BaseRecordStore:LoadArmors(pid)
+function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
-    if self.storeType ~= "armor" then return end
+    tes3mp.LogMessage(2, "Deleting generated " .. self.storeType .. " record " .. recordId)
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.ARMOR)
+    -- Is this an enchantable record? If so, we should remove any links to it
+    -- from its associated generated enchantment record if there is one
+    if tableHelper.containsValue(config.enchantableRecordTypes, self.storeType) then
+        local enchantmentId = self.data.generatedRecords[recordId].enchantmentId
 
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddArmorRecord(id, record)
+        if enchantmentId ~= nil and logicHandler.IsGeneratedRecord(enchantmentId) then
+            local enchantmentStore = RecordStores["enchantment"]
+            enchantmentStore:RemoveLinkToRecord(enchantmentId, recordId, self.storeType)
+            enchantmentStore:Save()
+        end
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
-end
+    self.data.generatedRecords[recordId] = nil
 
-function BaseRecordStore:LoadBooks(pid)
-
-    if self.storeType ~= "book" then return end
-
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.BOOK)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddBookRecord(id, record)
+    if self.data.recordLinks[recordId] ~= nil then
+        self.data.recordLinks[recordId] = nil
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
+    self:Save()
 end
 
-function BaseRecordStore:LoadClothing(pid)
+-- Check whether there are any links remaining to a certain generated record
+function BaseRecordStore:HasLinks(recordId)
 
-    if self.storeType ~= "clothing" then return end
+    local recordLinks = self.data.recordLinks
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.CLOTHING)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddClothingRecord(id, record)
+    if (recordLinks[recordId].cells ~= nil and not tableHelper.isEmpty(recordLinks[recordId].cells)) or
+        (recordLinks[recordId].players ~= nil and not tableHelper.isEmpty(recordLinks[recordId].players)) then
+        return true
+    -- Is this an enchantment record? If so, check for links to other records for enchantable items
+    elseif self.storeType == "enchantment" then
+        for _, enchantableType in pairs(config.enchantableRecordTypes) do
+            if recordLinks[recordId].records ~= nil and recordLinks[recordId].records[enchantableType] ~= nil and not
+                tableHelper.isEmpty(recordLinks[recordId].records[enchantableType]) then
+                return true
+            end
+        end
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
+    return false
 end
 
-function BaseRecordStore:LoadCreatures(pid)
+-- Add a link between a record and another record from a different record store,
+-- i.e. for enchantments being used by other items
+function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType)
 
-    if self.storeType ~= "creature" then return end
+    local recordLinks = self.data.recordLinks
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.CREATURE)
+    if recordLinks[recordId] == nil then recordLinks[recordId] = {} end
+    if recordLinks[recordId].records == nil then recordLinks[recordId].records = {} end
+    if recordLinks[recordId].records[otherStoreType] == nil then recordLinks[recordId].records[otherStoreType] = {} end
 
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddCreatureRecord(id, record)
+    if not tableHelper.containsValue(recordLinks[recordId].records[otherStoreType], otherRecordId) then
+        table.insert(recordLinks[recordId].records[otherStoreType], otherRecordId)
+    end    
+end
+
+function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
+
+    local recordLinks = self.data.recordLinks
+
+    if recordLinks[recordId] ~= nil and recordLinks[recordId].records ~= nil and
+        recordLinks[recordId].records[otherStoreType] ~= nil then
+
+        local linkIndex = tableHelper.getIndexByValue(recordLinks[recordId].records[otherStoreType], otherRecordId)
+
+        if linkIndex ~= nil then
+            recordLinks[recordId].records[otherStoreType][linkIndex] = nil
+        end
+
+        if not self:HasLinks(recordId) then
+            self:DeleteGeneratedRecord(recordId)
+        end
+    end
+end
+
+-- Add a link between a record and a cell it is found in
+function BaseRecordStore:AddLinkToCell(recordId, cell)
+
+    local cellDescription = cell.description
+    local recordLinks = self.data.recordLinks
+
+    if recordLinks[recordId] == nil then recordLinks[recordId] = {} end
+    if recordLinks[recordId].cells == nil then recordLinks[recordId].cells = {} end
+
+    if not tableHelper.containsValue(recordLinks[recordId].cells, cellDescription) then
+        table.insert(recordLinks[recordId].cells, cellDescription)
+    end
+end
+
+function BaseRecordStore:RemoveLinkToCell(recordId, cell)
+
+    local cellDescription = cell.description
+    local recordLinks = self.data.recordLinks
+
+    if recordLinks[recordId] ~= nil and recordLinks[recordId].cells ~= nil then
+
+        local linkIndex = tableHelper.getIndexByValue(recordLinks[recordId].cells, cellDescription)
+
+        if linkIndex ~= nil then
+            recordLinks[recordId].cells[linkIndex] = nil
+        end
+
+        if not self:HasLinks(recordId) then
+            self:DeleteGeneratedRecord(recordId)
+        end
+    end
+end
+
+-- Add a link between a record and a player in whose inventory or spellbook it is found
+function BaseRecordStore:AddLinkToPlayer(recordId, player)
+
+    local accountName = player.accountName
+    local recordLinks = self.data.recordLinks
+
+    if recordLinks[recordId] == nil then recordLinks[recordId] = {} end
+    if recordLinks[recordId].players == nil then recordLinks[recordId].players = {} end
+
+    if not tableHelper.containsValue(recordLinks[recordId].players, accountName) then
+        table.insert(recordLinks[recordId].players, accountName)
+    end
+end
+
+function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
+
+    local accountName = player.accountName
+    local recordLinks = self.data.recordLinks
+
+    if recordLinks[recordId] == nil then recordLinks[recordId] = {} end
+    if recordLinks[recordId].players == nil then recordLinks[recordId].players = {} end
+
+    local linkIndex = tableHelper.getIndexByValue(recordLinks[recordId].players, accountName)
+
+    if linkIndex ~= nil then
+        recordLinks[recordId].players[linkIndex] = nil
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
+    if not self:HasLinks(recordId) then
+        self:DeleteGeneratedRecord(recordId)
+    end
 end
 
-function BaseRecordStore:LoadEnchantments(pid)
+function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray)
 
-    if self.storeType ~= "enchantment" then return end
+    if type(recordList) ~= "table" then return end
+    if type(idArray) ~= "table" then return end
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.ENCHANTMENT)
+    local validIdArray = {}
 
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddEnchantmentRecord(id, record)
+    -- If these are enchantable records, track generated enchantment records used by them
+    -- and send them beforehand
+    local isEnchantable = false
+    local enchantmentIdArray
+
+    if tableHelper.containsValue(config.enchantableRecordTypes, self.storeType) then
+        isEnchantable = true
+        enchantmentIdArray = {}
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
-end
+    for _, recordId in pairs(idArray) do
+        if not tableHelper.containsValue(Players[pid].generatedRecordsReceived, recordId) then
 
-function BaseRecordStore:LoadMiscellaneous(pid)
+            table.insert(Players[pid].generatedRecordsReceived, recordId)
+            table.insert(validIdArray, recordId)
 
-    if self.storeType ~= "miscellaneous" then return end
+            if isEnchantable then
+                local record = recordList[recordId]
+                local shouldLoadEnchantment = record ~= nil and record.enchantmentId ~= nil and
+                    logicHandler.IsGeneratedRecord(record.enchantmentId) and not
+                    tableHelper.containsValue(Players[pid].generatedRecordsReceived, record.enchantmentId)
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.MISCELLANEOUS)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddMiscellaneousRecord(id, record)
+                if shouldLoadEnchantment then
+                    table.insert(enchantmentIdArray, record.enchantmentId)
+                end
+            end
+        end
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
-end
-
-function BaseRecordStore:LoadNpcs(pid)
-
-    if self.storeType ~= "npc" then return end
-
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.NPC)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddNpcRecord(id, record)
+    -- Load the associated generated enchantment records first
+    if isEnchantable and not tableHelper.isEmpty(enchantmentIdArray) then
+        local enchantmentStore = RecordStores["enchantment"]
+        enchantmentStore:LoadRecords(pid, enchantmentStore.data.generatedRecords, enchantmentIdArray)
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
+    -- Load our own valid generated records
+    self:LoadRecords(pid, recordList, validIdArray)
 end
 
-function BaseRecordStore:LoadPotions(pid)
+function BaseRecordStore:LoadRecords(pid, recordList, idArray)
 
-    if self.storeType ~= "potion" then return end
+    if type(recordList) ~= "table" then return end
+    if type(idArray) ~= "table" then return end
 
     tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.POTION)
+    tes3mp.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
+    local recordCount = 0
 
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddPotionRecord(id, record)
+    for _, recordId in pairs(idArray) do
+        local record = recordList[recordId]
+
+        if record ~= nil then
+            packetBuilder.AddRecordByType(recordId, record, self.storeType)
+            recordCount = recordCount + 1
+        end
     end
 
-    tes3mp.SendRecordDynamic(pid, false, false)
-end
-
-function BaseRecordStore:LoadSpells(pid)
-
-    if self.storeType ~= "spell" then return end
-
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.SPELL)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddSpellRecord(id, record)
+    if recordCount > 0 then
+        tes3mp.SendRecordDynamic(pid, false, false)
     end
-
-    tes3mp.SendRecordDynamic(pid, false, false)
 end
 
-function BaseRecordStore:LoadWeapons(pid)
-
-    if self.storeType ~= "weapon" then return end
-
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType.WEAPON)
-
-    for id, record in pairs(self.data.records) do
-        packetBuilder.AddWeaponRecord(id, record)
-    end
-
-    tes3mp.SendRecordDynamic(pid, false, false)
-end
-
-function BaseRecordStore:SaveEnchantedItems(pid)
+function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
 
     if self.storeType ~= "armor" and self.storeType ~= "book" and
         self.storeType ~= "clothing" and self.storeType ~= "weapon" then
@@ -209,7 +286,7 @@ function BaseRecordStore:SaveEnchantedItems(pid)
                 enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
             }
 
-            self.data.records[recordId] = record
+            self.data.generatedRecords[recordId] = record
             table.insert(recordAdditions, { index = recordIndex, id = recordId,
                 enchantmentId = serverEnchantmentId })
         end
@@ -219,7 +296,7 @@ function BaseRecordStore:SaveEnchantedItems(pid)
     return recordAdditions
 end
 
-function BaseRecordStore:SaveEnchantments(pid)
+function BaseRecordStore:SaveGeneratedEnchantments(pid)
 
     if self.storeType ~= "enchantment" then return end
 
@@ -241,7 +318,7 @@ function BaseRecordStore:SaveEnchantments(pid)
             effects = packetReader.GetRecordEffects(recordIndex)
         }
 
-        self.data.records[recordId] = record
+        self.data.generatedRecords[recordId] = record
         table.insert(recordAdditions, { index = recordIndex, id = recordId,
             clientsideId = tes3mp.GetRecordId(recordIndex) })
     end
@@ -250,7 +327,7 @@ function BaseRecordStore:SaveEnchantments(pid)
     return recordAdditions
 end
 
-function BaseRecordStore:SavePotions(pid)
+function BaseRecordStore:SaveGeneratedPotions(pid)
 
     if self.storeType ~= "potion" then return end
 
@@ -275,7 +352,7 @@ function BaseRecordStore:SavePotions(pid)
             effects = packetReader.GetRecordEffects(recordIndex)
         }
 
-        self.data.records[recordId] = record
+        self.data.generatedRecords[recordId] = record
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
 
@@ -283,7 +360,7 @@ function BaseRecordStore:SavePotions(pid)
     return recordAdditions
 end
 
-function BaseRecordStore:SaveSpells(pid)
+function BaseRecordStore:SaveGeneratedSpells(pid)
 
     if self.storeType ~= "spell" then return end
 
@@ -305,7 +382,7 @@ function BaseRecordStore:SaveSpells(pid)
             effects = packetReader.GetRecordEffects(recordIndex)
         }
 
-        self.data.records[recordId] = record
+        self.data.generatedRecords[recordId] = record
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
 

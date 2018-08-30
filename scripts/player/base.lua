@@ -84,7 +84,8 @@ function BasePlayer:__init(pid, playerName)
         books = {},
         mapExplored = {},
         ipAddresses = {},
-        customVariables= {}
+        recordLinks = {},
+        customVariables = {}
     }
 
     for index = 0, (tes3mp.GetAttributeCount() - 1) do
@@ -114,6 +115,7 @@ function BasePlayer:__init(pid, playerName)
 
     self.cellsLoaded = {}
     self.summons = {}
+    self.generatedRecordsReceived = {}
     self.unresolvedEnchantments = {}
 
     self.hasFinishedInitialTeleportation = false
@@ -158,16 +160,23 @@ function BasePlayer:FinishLogin()
         WorldInstance:LoadTime(self.pid, false)
         WorldInstance:LoadWeather(self.pid, false)
 
-        RecordStores["spell"]:LoadSpells(self.pid)
-        RecordStores["potion"]:LoadPotions(self.pid)
-        RecordStores["enchantment"]:LoadEnchantments(self.pid)
-        RecordStores["armor"]:LoadArmors(self.pid)
-        RecordStores["book"]:LoadBooks(self.pid)
-        RecordStores["clothing"]:LoadClothing(self.pid)
-        RecordStores["weapon"]:LoadWeapons(self.pid)
-        RecordStores["miscellaneous"]:LoadMiscellaneous(self.pid)
-        RecordStores["creature"]:LoadCreatures(self.pid)
-        RecordStores["npc"]:LoadNpcs(self.pid)
+        if self.data.recordLinks == nil then self.data.recordLinks = {} end
+
+        for _, storeType in ipairs(config.recordStoreLoadOrder) do
+            local recordStore = RecordStores[storeType]
+
+            if recordStore ~= nil then
+                -- Load all the permanent records in this record store
+                recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
+                    tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+
+                -- Load the generated records linked to us in this record store
+                if self.data.recordLinks[storeType] ~= nil then
+                    recordStore:LoadGeneratedRecords(self.pid, recordStore.data.generatedRecords,
+                        self.data.recordLinks[storeType])
+                end
+            end
+        end
 
         self:LoadSettings()
         self:LoadInventory()
@@ -247,16 +256,13 @@ function BasePlayer:EndCharGen()
     WorldInstance:LoadTime(self.pid, false)
     WorldInstance:LoadWeather(self.pid, false, true)
 
-    RecordStores["spell"]:LoadSpells(self.pid)
-    RecordStores["potion"]:LoadPotions(self.pid)
-    RecordStores["enchantment"]:LoadEnchantments(self.pid)
-    RecordStores["armor"]:LoadArmors(self.pid)
-    RecordStores["book"]:LoadBooks(self.pid)
-    RecordStores["clothing"]:LoadClothing(self.pid)
-    RecordStores["weapon"]:LoadWeapons(self.pid)
-    RecordStores["miscellaneous"]:LoadMiscellaneous(self.pid)
-    RecordStores["creature"]:LoadCreatures(self.pid)
-    RecordStores["npc"]:LoadNpcs(self.pid)
+    for _, storeType in ipairs(config.recordStoreLoadOrder) do
+        local recordStore = RecordStores[storeType]
+        
+        -- Load all the permanent records in this record store
+        recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
+            tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+    end
 
     if config.shareJournal == true then
         WorldInstance:LoadJournal(self.pid)
@@ -323,6 +329,49 @@ end
 
 function BasePlayer:IsModerator()
     return self.data.settings.staffRank >= 1
+end
+
+function BasePlayer:AddLinkToRecord(storeType, recordId)
+
+    if self.data.recordLinks == nil then self.data.recordLinks = {} end
+
+    local recordStore = RecordStores[storeType]
+
+    if recordStore ~= nil then
+
+        local recordLinks = self.data.recordLinks
+
+        if recordLinks[storeType] == nil then recordLinks[storeType] = {} end
+
+        if not tableHelper.containsValue(recordLinks[storeType], recordId) then
+            table.insert(recordLinks[storeType], recordId)
+        end
+
+        recordStore:AddLinkToPlayer(recordId, self)
+        recordStore:Save()
+    end
+end
+
+function BasePlayer:RemoveLinkToRecord(storeType, recordId)
+
+    local recordStore = RecordStores[storeType]
+
+    if recordStore ~= nil then
+
+        local recordLinks = self.data.recordLinks
+
+        if recordLinks ~= nil and recordLinks[storeType] ~= nil then
+
+            local linkIndex = tableHelper.getIndexByValue(recordLinks[storeType], recordId)
+
+            if linkIndex ~= nil then
+                recordLinks[storeType][linkIndex] = nil
+            end
+
+            recordStore:RemoveLinkToPlayer(recordId, self)
+            recordStore:Save()
+        end
+    end
 end
 
 function BasePlayer:GetHealthCurrent()
@@ -935,9 +984,26 @@ function BasePlayer:SaveInventory()
             if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
                 inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
                     item.enchantmentCharge, item.soul)
+
+                if logicHandler.IsGeneratedRecord(item.refId) then
+                    local recordStore = logicHandler.GetRecordStoreByRecordId(item.refId)
+
+                    if recordStore ~= nil then
+                        self:AddLinkToRecord(recordStore.storeType, item.refId)
+                    end
+                end
+                
             elseif action == enumerations.inventory.REMOVE then
-                inventoryHelper.removeItem(self.data.inventory, item.refId, item.count, item.charge,
-                    item.enchantmentCharge, item.soul)
+                local remainingItem = inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,
+                    item.charge, item.enchantmentCharge, item.soul)
+
+                if remainingItem == nil and logicHandler.IsGeneratedRecord(item.refId) then
+                    local recordStore = logicHandler.GetRecordStoreByRecordId(item.refId)
+
+                    if recordStore ~= nil then
+                        self:RemoveLinkToRecord(recordStore.storeType, item.refId)
+                    end
+                end
             end
         end
     end
@@ -945,6 +1011,8 @@ function BasePlayer:SaveInventory()
     if action == enumerations.inventory.REMOVE then
         tableHelper.cleanNils(self.data.inventory)
     end
+
+    self:Save()
 end
 
 function BasePlayer:LoadSpellbook()
@@ -994,6 +1062,14 @@ function BasePlayer:SaveSpellbook()
                 tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. logicHandler.GetChatName(self.pid))
                 local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
+
+                if logicHandler.IsGeneratedRecord(spellId) then
+                    local recordStore = RecordStores["spell"]
+
+                    if recordStore ~= nil then
+                        self:RemoveLinkToRecord(recordStore.storeType, spellId)
+                    end
+                end
             end
         end
     end

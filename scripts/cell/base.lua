@@ -18,7 +18,8 @@ function BaseCell:__init(cellDescription)
         },
         lastVisit = {},
         objectData = {},
-        packets = {}
+        packets = {},
+        recordLinks = {}
     }
 
     self:EnsurePacketTables()
@@ -92,6 +93,58 @@ function BaseCell:EnsurePacketValidity()
     end
 end
 
+-- Adding record links to cells is special because we'll keep track of the uniqueIndex
+-- of every object that uses a particular generated record
+function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
+
+    if self.data.recordLinks == nil then self.data.recordLinks = {} end
+
+    local recordStore = RecordStores[storeType]
+
+    if recordStore ~= nil then
+
+        local recordLinks = self.data.recordLinks
+
+        if recordLinks[storeType] == nil then recordLinks[storeType] = {} end
+        if recordLinks[storeType][recordId] == nil then recordLinks[storeType][recordId] = {} end
+
+        if not tableHelper.containsValue(self.data.recordLinks[storeType][recordId], uniqueIndex) then
+            table.insert(self.data.recordLinks[storeType][recordId], uniqueIndex)
+        end
+
+        recordStore:AddLinkToCell(recordId, self)
+        recordStore:Save()
+    end
+end
+
+function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
+
+    local recordStore = RecordStores[storeType]
+
+    if recordStore ~= nil then
+
+        local recordLinks = self.data.recordLinks
+
+        if recordLinks ~= nil and recordLinks[storeType] ~= nil and recordLinks[storeType][recordId] ~= nil then
+
+            local linkIndex = tableHelper.getIndexByValue(recordLinks[storeType][recordId], uniqueIndex)
+
+            if linkIndex ~= nil then
+                recordLinks[storeType][recordId][linkIndex] = nil
+            end
+
+            local remainingIndexCount = tableHelper.getCount(recordLinks[storeType][recordId])
+
+            if remainingIndexCount == 0 then
+                recordLinks[storeType][recordId] = nil
+
+                recordStore:RemoveLinkToCell(recordId, self)
+                recordStore:Save()
+            end
+        end
+    end
+end
+
 function BaseCell:GetVisitorCount()
     return tableHelper.getCount(self.visitors)
 end
@@ -104,6 +157,8 @@ function BaseCell:AddVisitor(pid)
 
         -- Also add a record to the player's list of loaded cells
         Players[pid]:AddCellLoaded(self.description)
+
+        self:LoadGeneratedRecords(pid)
 
         local shouldSendInfo = false
         local lastVisitTimestamp = self.data.lastVisit[Players[pid].accountName]
@@ -241,7 +296,6 @@ function BaseCell:MoveObjectData(uniqueIndex, newCell)
     end
 
     newCell.data.objectData[uniqueIndex] = self.data.objectData[uniqueIndex]
-
     self.data.objectData[uniqueIndex] = nil
 end
 
@@ -292,10 +346,20 @@ function BaseCell:SaveObjectsDeleted(pid)
 
             self:DeleteObjectData(uniqueIndex)
 
+            -- If this is an object from the game's data files, we should keep sending ObjectDelete
+            -- packets for it to visitors
             if wasPlacedHere == false then
 
                 table.insert(self.data.packets.delete, uniqueIndex)
                 self:InitializeObjectData(uniqueIndex, refId)
+
+            -- If this is an object based on a generated record, we need to remove the link to it
+            elseif logicHandler.IsGeneratedRecord(refId) then
+                local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+
+                if recordStore ~= nil then
+                    self:RemoveLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+                end
             end
         end
     end
@@ -376,8 +440,18 @@ function BaseCell:SaveObjectsPlaced(pid)
             if tes3mp.DoesObjectHaveContainer(objectIndex) then
                 table.insert(containerUniqueIndexesRequested, uniqueIndex)
             end
+
+            if logicHandler.IsGeneratedRecord(refId) then
+                local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+
+                if recordStore ~= nil then
+                    self:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+                end
+            end
         end
     end
+
+    self:Save()
 
     if tableHelper.isEmpty(containerUniqueIndexesRequested) == false then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
@@ -449,6 +523,14 @@ function BaseCell:SaveObjectsSpawned(pid)
             table.insert(self.data.packets.spawn, uniqueIndex)
             table.insert(self.data.packets.actorList, uniqueIndex)
             table.insert(containerUniqueIndexesRequested, uniqueIndex)
+
+            if logicHandler.IsGeneratedRecord(refId) then
+                local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+
+                if recordStore ~= nil then
+                    self:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+                end
+            end
         end
     end
 
@@ -643,6 +725,15 @@ function BaseCell:SaveContainers(pid)
                         tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
                     end
+
+                    -- Is this a generated record? If so, remove the link to it
+                    if inventory[foundIndex] == nil and logicHandler.IsGeneratedRecord(itemRefId) then
+                        local recordStore = logicHandler.GetRecordStoreByRecordId(itemRefId)
+
+                        if recordStore ~= nil then
+                            self:RemoveLinkToRecord(recordStore.storeType, itemRefId, uniqueIndex)
+                        end
+                    end
                 end
             else
                 if action == enumerations.container.REMOVE then
@@ -651,6 +742,15 @@ function BaseCell:SaveContainers(pid)
                 else
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
                         itemCharge, itemEnchantmentCharge, itemSoul)
+
+                    -- Is this a generated record? If so, add a link to it
+                    if logicHandler.IsGeneratedRecord(itemRefId) then
+                        local recordStore = logicHandler.GetRecordStoreByRecordId(itemRefId)
+
+                        if recordStore ~= nil then
+                            self:AddLinkToRecord(recordStore.storeType, itemRefId, uniqueIndex)
+                        end
+                    end
                 end
             end
         end
@@ -903,6 +1003,27 @@ function BaseCell:SaveActorCellChanges(pid)
             -- If so, delete it entirely from the old cell and make it get spawned in the new cell
             if tableHelper.containsValue(self.data.packets.spawn, uniqueIndex) == true then
                 tes3mp.LogAppend(1, "-- As a server-only object, it was moved entirely")
+
+                -- If this object is based on a generated record, move its record link
+                -- to the new cell
+                local refId = self.data.objectData[uniqueIndex].refId
+
+                if logicHandler.IsGeneratedRecord(refId) then
+
+                    local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+
+                    if recordStore ~= nil then
+                        newCell:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+                        self:RemoveLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+                    end
+
+                    -- Send this generated record to every visitor in the new cell
+                    for _, visitorPid in pairs(newCell.visitors) do
+                        if pid ~= visitorPid then
+                            recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
+                        end
+                    end
+                end
 
                 -- This actor won't exist at all for players who have not loaded the actor's original
                 -- cell and were not online when it was first spawned, so send all of its details to them
@@ -1749,6 +1870,23 @@ function BaseCell:LoadMomentaryCellData(pid)
 
         self:LoadActorPositions(pid, objectData, packets.position)
         self:LoadActorStatsDynamic(pid, objectData, packets.statsDynamic)
+    end
+end
+
+function BaseCell:LoadGeneratedRecords(pid)
+
+    if self.data.recordLinks == nil then self.data.recordLinks = {} end
+
+    local recordLinks = self.data.recordLinks
+
+    for storeType, recordList in pairs(recordLinks) do
+
+        local recordStore = RecordStores[storeType]
+
+        if recordStore ~= nil then
+            recordStore:LoadGeneratedRecords(pid, recordStore.data.generatedRecords,
+                tableHelper.getArrayFromIndexes(recordList))
+        end
     end
 end
 

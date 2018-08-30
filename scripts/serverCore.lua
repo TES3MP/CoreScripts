@@ -200,11 +200,8 @@ function OnServerInit()
 
     logicHandler.InitializeWorld()
 
-    local recordStoreTypes = { "armor", "book", "clothing", "creature", "enchantment", "miscellaneous", "npc",
-        "potion", "spell", "weapon" }
-
-    for _, recordStoreType in ipairs(recordStoreTypes) do
-        logicHandler.LoadRecordStore(recordStoreType)
+    for _, storeType in ipairs(config.recordStoreLoadOrder) do
+        logicHandler.LoadRecordStore(storeType)
     end
 
     hourCounter = WorldInstance.data.time.hour

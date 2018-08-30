@@ -362,6 +362,25 @@ end
 
 logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
 
+    -- Is this a generated record? If so, add a link to it in the cell it
+    -- has been placed in
+    if logicHandler.IsGeneratedRecord(refId) then
+        local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+
+        if recordStore ~= nil then
+            LoadedCells[cell]:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+
+            -- Do any of the visitors to this cell lack the generated record?
+            -- If so, send it to them
+            for _, visitorPid in pairs(LoadedCells[cell].visitors) do
+                recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
+            end
+        else
+            tes3mp.LogMessage(3, "Attempt at creating object based on non-existent generated record")
+            return
+        end
+    end
+
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local uniqueIndex =  0 .. "-" .. mpNum
 
@@ -470,23 +489,61 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SendConsoleCommand(true, false)
 end
 
-logicHandler.GetRecordStore = function(recordType)
+logicHandler.IsGeneratedRecord = function(recordId)
 
-    if recordType == nil then return end
-
-    local recordStoreKey
-
-    if type(recordType) == "number" then
-        recordStoreKey = string.lower(tableHelper.getIndexByPattern(enumerations.recordType, recordType))
-    else
-        recordStoreKey = string.lower(recordType)
+    if string.find(string.lower(recordId), string.lower(config.generatedRecordIdPrefix)) ~= nil then
+        return true
     end
 
-    if recordStoreKey ~= nil then
-        return RecordStores[recordStoreKey]
+    return false
+end
+
+logicHandler.GetRecordStoreByRecordId = function(recordId)
+
+    local isGenerated = logicHandler.IsGeneratedRecord(recordId)
+    
+    if isGenerated then
+        local recordType = string.match(recordId, "_(%a+)_")
+
+        if RecordStores[recordType] ~= nil then
+            return RecordStores[recordType]
+        end
+    end
+
+    for _, storeType in pairs(config.recordStoreLoadOrder) do
+
+        if isGenerated and RecordStores[storeType].data.generatedRecords[recordId] ~= nil then
+            return RecordStores[storeType]
+        elseif RecordStores[storeType].data.permanentRecords[recordId] ~= nil then
+            return RecordStores[storeType]
+        end
     end
 
     return nil
+end
+
+logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
+    
+    for _, storeType in ipairs(config.recordStoreLoadOrder) do
+        local recordStore = RecordStores[storeType]
+
+        for _, otherPid in pairs(otherPidsArray) do
+            if pid ~= otherPid then
+
+                -- Load the generated records linked to other players
+                if Players[otherPid].data.recordLinks[storeType] ~= nil then
+                    recordStore:LoadGeneratedRecords(pid, recordStore.data.generatedRecords,
+                        Players[otherPid].data.recordLinks[storeType])
+                end
+
+                -- Make the other players load the generated records linked to us too
+                if Players[pid].data.recordLinks[storeType] ~= nil then
+                    recordStore:LoadGeneratedRecords(otherPid, recordStore.data.generatedRecords,
+                        Players[pid].data.recordLinks[storeType])
+                end
+            end
+        end
+    end
 end
 
 logicHandler.GetCellContainingActor = function(actorUniqueIndex)

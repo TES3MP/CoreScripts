@@ -1301,8 +1301,6 @@ function commandHandler.CreateRecord(pid, cmd)
         return
     end    
 
-    local isValid = true
-
     if storedTable.baseId == nil then
         if inputType == "creature" then
             Players[pid]:Message("As of now, you cannot create creatures from scratch because of how many " ..
@@ -1327,74 +1325,122 @@ function commandHandler.CreateRecord(pid, cmd)
     end
 
     if inputType == "enchantment" and (storedTable.effects == nil or tableHelper.isEmpty(storedTable.effects)) then
-        isValid = false
         Players[pid]:Message("Records of type " .. inputType .. " require at least 1 effect.\n")
+        return
     end
 
-    if isValid then
+    local id = storedTable.id
+    local isGenerated = id == nil or logicHandler.IsGeneratedRecord(id)
 
-        local recordStore = RecordStores[inputType]
+    local enchantmentStore
+    local hasGeneratedEnchantment = tableHelper.containsValue(config.enchantableRecordTypes, inputType) and
+        storedTable.enchantmentId ~= nil and logicHandler.IsGeneratedRecord(storedTable.enchantmentId)
 
-        local id = storedTable.id
+    if hasGeneratedEnchantment then
+        -- Ensure the generated enchantment used by this record actually exists
+        if isGenerated then
+            enchantmentStore = RecordStores["enchantment"]
 
-        if id == nil then
-            id = recordStore:GenerateRecordId()
-        end
-
-        -- We don't want to insert a direct reference to the storedTable in our record data,
-        -- so create a copy of the storedTable and insert that instead
-        local savedTable = tableHelper.shallowCopy(storedTable)
-
-        -- Use an autoCalc of 1 by default for entirely new NPCs to avoid spawning them
-        -- without any stats
-        if inputType == "npc" and savedTable.baseId == nil and savedTable.autoCalc == nil then
-            savedTable.autoCalc = 1
-            Players[pid]:Message("autoCalc is defaulting to 1 for this record.\n")
-        end
-
-        -- Use a skillId of -1 by default for entirely new books to avoid having them
-        -- increase a skill
-        if inputType == "book" and savedTable.skillId == nil then
-            savedTable.skillId = -1
-            Players[pid]:Message("skillId is defaulting to -1 for this record.\n")
-        end
-
-        recordStore.data.records[id] = savedTable
-        recordStore:Save()
-
-        tes3mp.ClearRecords()
-        tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
-
-        if inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
-        elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
-        elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
-        elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
-        elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
-        elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
-        elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
-        elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
-        elseif inputType == "spell" then packetBuilder.AddSpellRecord(id, savedTable)
-        elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
-
-        tes3mp.SendRecordDynamic(pid, true, false)
-
-        local message = "Your record has now been created.\n"
-
-        if inputType ~= "enchantment" then
-            if inputType == "creature" or inputType == "npc" then
-                message = message .. "You can spawn an instance of it using /spawnat "
-            else
-                message = message .. "You can place an instance of it using /placeat "
+            if enchantmentStore.data.generatedRecords[storedTable.enchantmentId] == nil then
+                Players[pid]:Message("The generated enchantment record (" .. storedTable.enchantmentId ..
+                    ") you are trying to use for this " .. inputType .. " record does not exist.\n")
+                return
             end
-
-            message = message .. "<pid> " .. id .. "\n"
+        -- Permanent records should only use other permanent records as enchantments, so
+        -- go no further if that is not the case
         else
-            message = message .. "To use it, create an armor, book, clothing or weapon record with an " ..
-                "enchantmentId of " .. id .. "\n"
+            Players[pid]:Message("You cannot use a generated enchantment record (" .. storedTable.enchantmentId ..
+                ") with a permanent record (" .. id .. ").\n")
+            return
+        end
+    end
+
+    local recordStore = RecordStores[inputType]
+
+    if id == nil then
+        id = recordStore:GenerateRecordId()
+        isGenerated = true
+    end
+
+    -- We don't want to insert a direct reference to the storedTable in our record data,
+    -- so create a copy of the storedTable and insert that instead
+    local savedTable = tableHelper.shallowCopy(storedTable)
+
+    -- The id and the savedTable will form a key-value pair, so there's no need to keep
+    -- the id in the savedTable as well
+    savedTable.id = nil
+
+    -- Use an autoCalc of 1 by default for entirely new NPCs to avoid spawning them
+    -- without any stats
+    if inputType == "npc" and savedTable.baseId == nil and savedTable.autoCalc == nil then
+        savedTable.autoCalc = 1
+        Players[pid]:Message("autoCalc is defaulting to 1 for this record.\n")
+    end
+
+    -- Use a skillId of -1 by default for entirely new books to avoid having them
+    -- increase a skill
+    if inputType == "book" and savedTable.skillId == nil then
+        savedTable.skillId = -1
+        Players[pid]:Message("skillId is defaulting to -1 for this record.\n")
+    end
+
+    local message = "Your record has now been saved as a "
+
+    if isGenerated then
+        message = message .. "generated record that will be deleted when no longer used.\n"
+        recordStore.data.generatedRecords[id] = savedTable
+
+        -- This record will be sent to everyone on the server below, so track it
+        -- as having already been received by players
+        for _, player in pairs(Players) do
+            if not tableHelper.containsValue(Players[pid].generatedRecordsReceived, id) then
+                table.insert(player.generatedRecordsReceived, id)
+            end
         end
 
-        Players[pid]:Message(message)
+        -- Is this an enchantable record using an enchantment from a generated record?
+        -- If so, add a link to this record for that enchantment record
+        if hasGeneratedEnchantment then
+            enchantmentStore:AddLinkToRecord(savedTable.enchantmentId, id, inputType)
+            enchantmentStore:Save()
+        end
+    else
+        message = message .. "permanent record that you'll have to remove manually when you no longer need it.\n"
+        recordStore.data.permanentRecords[id] = savedTable
     end
+
+    recordStore:Save()
+
+    tes3mp.ClearRecords()
+    tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
+
+    if inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
+    elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
+    elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
+    elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
+    elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
+    elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
+    elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
+    elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
+    elseif inputType == "spell" then packetBuilder.AddSpellRecord(id, savedTable)
+    elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
+
+    tes3mp.SendRecordDynamic(pid, true, false)
+
+    if inputType ~= "enchantment" then
+        if inputType == "creature" or inputType == "npc" then
+            message = message .. "You can spawn an instance of it using /spawnat "
+        else
+            message = message .. "You can place an instance of it using /placeat "
+        end
+
+        message = message .. "<pid> " .. id .. "\n"
+    else
+        message = message .. "To use it, create an armor, book, clothing or weapon record with an " ..
+            "enchantmentId of " .. id .. "\n"
+    end
+
+    Players[pid]:Message(message)
 end
 
 return commandHandler
