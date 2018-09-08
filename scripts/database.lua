@@ -23,7 +23,7 @@ function Database:Execute(query)
     local response = self.connection:execute(query)
 
     if response == nil then
-        tes3mp.LogMessage(3, "Could not execute query: " .. query)
+        tes3mp.LogMessage(enumerations.log.ERROR, "Could not execute query: " .. query)
     end
 
     return response
@@ -153,7 +153,7 @@ function Database:SavePlayer(dbPid, data)
         elseif category ~= "login" then
 
             local tableName = "player_" .. category
-            tes3mp.LogMessage(1, "Saving category " .. category)
+            tes3mp.LogMessage(enumerations.log.INFO, "Saving category " .. category)
             local tempTable = tableHelper.shallowCopy(categoryTable)
             tempTable.dbPid = dbPid
             self:InsertRow(tableName, tempTable)

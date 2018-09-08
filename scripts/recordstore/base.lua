@@ -39,7 +39,7 @@ end
 
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
-    tes3mp.LogMessage(2, "Deleting generated " .. self.storeType .. " record " .. recordId)
+    tes3mp.LogMessage(enumerations.log.WARN, "Deleting generated " .. self.storeType .. " record " .. recordId)
 
     -- Is this an enchantable record? If so, we should remove any links to it
     -- from its associated generated enchantment record if there is one
@@ -308,7 +308,7 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
         local recordId = self:GenerateRecordId()
         
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
+        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
 
         local record = {
             subtype = tes3mp.GetRecordSubtype(recordIndex),
@@ -339,7 +339,7 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
         local recordId = self:GenerateRecordId()
 
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
+        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
 
         local record = {
             name = tes3mp.GetRecordName(recordIndex),
@@ -372,7 +372,7 @@ function BaseRecordStore:SaveGeneratedSpells(pid)
         local recordId = self:GenerateRecordId()
 
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(3, "- Effects have count " .. effectCount)
+        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
 
         local record = {
             name = tes3mp.GetRecordName(recordIndex),

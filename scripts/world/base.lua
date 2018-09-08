@@ -109,7 +109,7 @@ end
 
 function BaseWorld:SetRegionAuthority(pid, regionName)
     self.storedRegions[regionName].authority = pid
-    tes3mp.LogMessage(1, "Authority of region " .. regionName .. " is now " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Authority of region " .. regionName .. " is now " ..
         logicHandler.GetChatName(pid))
 
     tes3mp.SetAuthorityRegion(regionName)
@@ -208,7 +208,7 @@ function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
         tes3mp.SetWeatherForceState(forceState)
         tes3mp.SendWorldWeather(pid, sendToOthers)
     else
-        tes3mp.LogMessage(1, "Could not load weather in region " .. regionName .. " for " ..
+        tes3mp.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName .. " for " ..
             logicHandler.GetChatName(pid) .. " because we have no weather information for it")
     end
 end

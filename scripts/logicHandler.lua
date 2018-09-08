@@ -376,7 +376,7 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
                 recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
             end
         else
-            tes3mp.LogMessage(3, "Attempt at creating object based on non-existent generated record")
+            tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at creating object based on non-existent generated record")
             return
         end
     end
@@ -590,7 +590,7 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
         tes3mp.SendActorAI(true, false)
 
     else
-        tes3mp.LogAppend(3, "Invalid input for logicHandler.SetAIForActor()!")
+        tes3mp.LogAppend(enumerations.log.ERROR, "Invalid input for logicHandler.SetAIForActor()!")
     end
 end
 
@@ -656,7 +656,7 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
     -- Otherwise, only set this new visitor as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
-        tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
+        tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
             " took over authority from player " .. logicHandler.GetChatName(authPid) ..
             " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
@@ -700,7 +700,7 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
     if regionName == "" then return end
 
-    tes3mp.LogMessage(1, "Loading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Loading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
 
     -- Record that this player has the region loaded
     WorldInstance:AddRegionVisitor(pid, regionName)
@@ -724,7 +724,7 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
         -- their ping is noticeably lower than that of the current authority
         elseif isTeleported == false and 
             tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
-            tes3mp.LogMessage(2, "Player " .. logicHandler.GetChatName(pid) ..
+            tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
                 " took over authority from player " .. logicHandler.GetChatName(authPid) ..
                 " in region " .. regionName .. " for latency reasons")
             WorldInstance:SetRegionAuthority(pid, regionName)
@@ -738,7 +738,7 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
 
     if WorldInstance.storedRegions[regionName] ~= nil then
 
-        tes3mp.LogMessage(1, "Unloading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
+        tes3mp.LogMessage(enumerations.log.INFO, "Unloading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
 
         -- No longer record that this player has the region loaded
         WorldInstance:RemoveRegionVisitor(pid, regionName)

@@ -11,6 +11,7 @@ enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 enumerations.inventory = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.journal = { ENTRY = 0, INDEX = 1 }
+enumerations.log = { VERBOSE = 0, INFO = 1, WARN = 2, ERROR = 3, FATAL = 4 }
 enumerations.miscellaneous = { MARK_LOCATION = 0, SELECTED_SPELL = 1 }
 enumerations.objectCategories = { PLAYER = 0, ACTOR = 1, PLACED_OBJECT = 2 }
 enumerations.packetOrigin = { CLIENT_GAMEPLAY = 0, CLIENT_CONSOLE = 1, CLIENT_DIALOGUE = 2,

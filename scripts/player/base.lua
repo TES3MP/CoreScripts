@@ -545,7 +545,7 @@ function BasePlayer:DeleteSummons()
 
     if self.summons ~= nil then
         for summonUniqueIndex, summonRefId in pairs(self.summons) do
-            tes3mp.LogAppend(1, "- removing player's summon " .. summonUniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.INFO, "- removing player's summon " .. summonUniqueIndex ..
                 ", refId " .. summonRefId)
             
             local cell = logicHandler.GetCellContainingActor(summonUniqueIndex)
@@ -802,7 +802,7 @@ function BasePlayer:SaveShapeshift()
     local newScale = tes3mp.GetScale(self.pid)
 
     if newScale ~= self.data.shapeshift.scale then
-        tes3mp.LogMessage(1, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed " ..
+        tes3mp.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed " ..
             "their scale to " .. newScale)
         self.data.shapeshift.scale = newScale
     end
@@ -962,7 +962,7 @@ function BasePlayer:SaveInventory()
     local action = tes3mp.GetInventoryChangesAction(self.pid)
     local itemChangesCount = tes3mp.GetInventoryChangesSize(self.pid)
 
-    tes3mp.LogMessage(3, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
+    tes3mp.LogMessage(enumerations.log.ERROR, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
         tableHelper.getIndexByValue(enumerations.inventory, action))
 
     if action == enumerations.inventory.SET then
@@ -1053,13 +1053,13 @@ function BasePlayer:SaveSpellbook()
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if tableHelper.containsValue(self.data.spellbook, spellId) == false then
-                tes3mp.LogMessage(1, "Adding spell " .. spellId .. " to " .. logicHandler.GetChatName(self.pid))
+                tes3mp.LogMessage(enumerations.log.INFO, "Adding spell " .. spellId .. " to " .. logicHandler.GetChatName(self.pid))
                 table.insert(self.data.spellbook, spellId)
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if tableHelper.containsValue(self.data.spellbook, spellId) == true then
-                tes3mp.LogMessage(1, "Removing spell " .. spellId .. " from " .. logicHandler.GetChatName(self.pid))
+                tes3mp.LogMessage(enumerations.log.INFO, "Removing spell " .. spellId .. " from " .. logicHandler.GetChatName(self.pid))
                 local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
 
@@ -1193,7 +1193,7 @@ function BasePlayer:AddBooks()
 
         -- Only add new book if we don't already have it
         if tableHelper.containsValue(self.data.books, bookId, false) == false then
-            tes3mp.LogMessage(1, "Adding book " .. bookId .. " to " .. tes3mp.GetName(self.pid))
+            tes3mp.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " .. tes3mp.GetName(self.pid))
             table.insert(self.data.books, bookId)
         end
     end
@@ -1288,7 +1288,7 @@ function BasePlayer:SetDifficulty(difficulty)
     end
 
     tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(1, "Set difficulty to " .. tostring(difficulty) .. " for " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Set difficulty to " .. tostring(difficulty) .. " for " ..
         logicHandler.GetChatName(self.pid))
 end
 
@@ -1301,7 +1301,7 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     end
 
     tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(1, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " ..
         logicHandler.GetChatName(self.pid))
 end
 
@@ -1314,7 +1314,7 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     end
 
     tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(1, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " ..
         logicHandler.GetChatName(self.pid))
 end
 

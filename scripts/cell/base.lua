@@ -217,7 +217,7 @@ end
 
 function BaseCell:SetAuthority(pid)
     self.authority = pid
-    tes3mp.LogMessage(1, "Authority of cell " .. self.data.entry.description ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Authority of cell " .. self.data.entry.description ..
         " is now " .. logicHandler.GetChatName(pid))
 
     self:LoadActorAuthority(pid)
@@ -308,7 +308,7 @@ function BaseCell:SaveObjectsDeleted(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectDelete from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -316,7 +316,7 @@ function BaseCell:SaveObjectsDeleted(pid)
         local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         -- Check whether this object was moved to this cell from another one
         local wasMovedHere = tableHelper.containsValue(self.data.packets.cellChangeFrom, uniqueIndex)
@@ -375,7 +375,7 @@ function BaseCell:SaveObjectsPlaced(pid)
     local containerUniqueIndexesRequested = {}
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectPlace from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -430,7 +430,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
             self.data.objectData[uniqueIndex].location = location
 
-            tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", count: " .. count ..
+            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", count: " .. count ..
                 ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
                 ", soul: " .. soul .. ", goldValue: " .. goldValue)
 
@@ -463,7 +463,7 @@ function BaseCell:SaveObjectsSpawned(pid)
     local containerUniqueIndexesRequested = {}
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -486,7 +486,7 @@ function BaseCell:SaveObjectsSpawned(pid)
             local refId = tes3mp.GetObjectRefId(objectIndex)
             self:InitializeObjectData(uniqueIndex, refId)
 
-            tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
+            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
             self.data.objectData[uniqueIndex].location = location
 
@@ -502,7 +502,7 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                     if isPlayer then
                         local summonerPid = tes3mp.GetObjectSummonerPid(objectIndex)
-                        tes3mp.LogAppend(1, "- summoned by pid " .. summonerPid)
+                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by pid " .. summonerPid)
 
                         -- Track the player and the summon for each other
                         summon.summonerPlayer = Players[summonerPid].accountName
@@ -512,7 +512,7 @@ function BaseCell:SaveObjectsSpawned(pid)
                         local summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(objectIndex) ..
                             "-" .. tes3mp.GetObjectSummonerMpNum(objectIndex)
                         local summonerRefId = tes3mp.GetObjectSummonerRefId(objectIndex)
-                        tes3mp.LogAppend(1, "- summoned by actor " .. summonerUniqueIndex ..
+                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summonerUniqueIndex ..
                             ", refId: " .. summonerRefId)
                     end
 
@@ -542,7 +542,7 @@ end
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectLock from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -554,7 +554,7 @@ function BaseCell:SaveObjectsLocked(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].lockLevel = lockLevel
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, uniqueIndex)
     end
@@ -563,7 +563,7 @@ end
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectTrap from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -573,7 +573,7 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
 
         self:InitializeObjectData(uniqueIndex, refId)
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.trap, uniqueIndex)
     end
@@ -582,7 +582,7 @@ end
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectScale from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -594,7 +594,7 @@ function BaseCell:SaveObjectsScaled(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].scale = scale
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", scale: " .. scale)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, uniqueIndex)
     end
@@ -607,7 +607,7 @@ function BaseCell:SaveObjectStates(pid)
     end
 
     tes3mp.ReadReceivedObjectList()
-    tes3mp.LogMessage(1, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ObjectState from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
@@ -621,7 +621,7 @@ function BaseCell:SaveObjectStates(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].state = state
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId .. ", state: " .. tostring(state))
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
         
@@ -636,7 +636,7 @@ function BaseCell:SaveObjectStates(pid)
                 -- If the player gets 5 false object states for the same refid in that cell, delete it
                 if Players[pid].stateSpam[refId] >= 5 then
                     logicHandler.DeleteObjectForPlayer(pid, refId, refNum, mpNum)
-                    tes3mp.LogMessage(1, "- " .. uniqueIndex .. " with refId: " .. refId ..
+                    tes3mp.LogMessage(enumerations.log.INFO, "- " .. uniqueIndex .. " with refId: " .. refId ..
                         " was causing spam and has been deleted")            
                 end
             end
@@ -666,7 +666,7 @@ function BaseCell:SaveContainers(pid)
     tes3mp.ReadReceivedObjectList()
     tes3mp.CopyReceivedObjectListToStore()
 
-    tes3mp.LogMessage(1, "Saving Container from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving Container from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     local action = tes3mp.GetObjectListAction()
@@ -677,7 +677,7 @@ function BaseCell:SaveContainers(pid)
         local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         self:InitializeObjectData(uniqueIndex, refId)
 
@@ -720,8 +720,8 @@ function BaseCell:SaveContainers(pid)
                         inventory[foundIndex] = nil
                     else
                         actionCount = item.count
-                        tes3mp.LogAppend(2, "- Attempt to remove more than possible from item")
-                        tes3mp.LogAppend(2, "- Removed just " .. actionCount .. " instead")
+                        tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove more than possible from item")
+                        tes3mp.LogAppend(enumerations.log.WARN, "- Removed just " .. actionCount .. " instead")
                         tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
                     end
@@ -737,7 +737,7 @@ function BaseCell:SaveContainers(pid)
                 end
             else
                 if action == enumerations.container.REMOVE then
-                    tes3mp.LogAppend(2, "- Attempt to remove non-existent item")
+                    tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove non-existent item")
                     tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
@@ -782,7 +782,7 @@ end
 function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(1, "Saving ActorList from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorList from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
@@ -791,7 +791,7 @@ function BaseCell:SaveActorList(pid)
         local refId = tes3mp.GetActorRefId(actorIndex)
 
         self:InitializeObjectData(uniqueIndex, refId)
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", refId: " .. refId)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end
@@ -865,7 +865,7 @@ end
 function BaseCell:SaveActorEquipment(pid)
 
     tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(1, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
@@ -877,7 +877,7 @@ function BaseCell:SaveActorEquipment(pid)
     for actorIndex = 0, actorListSize - 1 do
 
         local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        tes3mp.LogAppend(1, "- " .. uniqueIndex)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
 
         if self:ContainsObject(uniqueIndex) then
             self.data.objectData[uniqueIndex].equipment = {}
@@ -913,7 +913,7 @@ function BaseCell:SaveActorDeath(pid)
     local containerUniqueIndexesRequested = {}
 
     tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(1, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     local actorListSize = tes3mp.GetActorListSize()
@@ -952,7 +952,7 @@ function BaseCell:SaveActorDeath(pid)
                 end
             end
 
-            tes3mp.LogAppend(1, "- " .. uniqueIndex .. ", deathReason: " .. deathReason)
+            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", deathReason: " .. deathReason)
 
             tableHelper.insertValueIfMissing(self.data.packets.death, uniqueIndex)
 
@@ -978,7 +978,7 @@ function BaseCell:SaveActorCellChanges(pid)
     local temporaryLoadedCells = {}
 
     tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(1, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
     for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
@@ -986,7 +986,7 @@ function BaseCell:SaveActorCellChanges(pid)
         local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         local newCellDescription = tes3mp.GetActorCell(actorIndex)
 
-        tes3mp.LogAppend(1, "- " .. uniqueIndex .. " moved to " .. newCellDescription)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. " moved to " .. newCellDescription)
 
         -- If the new cell is not loaded, load it temporarily
         if LoadedCells[newCellDescription] == nil then
@@ -1002,7 +1002,7 @@ function BaseCell:SaveActorCellChanges(pid)
             -- Was this actor spawned in the old cell, instead of being a pre-existing actor?
             -- If so, delete it entirely from the old cell and make it get spawned in the new cell
             if tableHelper.containsValue(self.data.packets.spawn, uniqueIndex) == true then
-                tes3mp.LogAppend(1, "-- As a server-only object, it was moved entirely")
+                tes3mp.LogAppend(enumerations.log.INFO, "-- As a server-only object, it was moved entirely")
 
                 -- If this object is based on a generated record, move its record link
                 -- to the new cell
@@ -1043,7 +1043,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 -- Is the new cell actually this actor's original cell?
                 -- If so, move its data back and remove all of its cell change data
                 if originalCellDescription == newCellDescription then
-                    tes3mp.LogAppend(1, "-- It is now back in its original cell " .. originalCellDescription)
+                    tes3mp.LogAppend(enumerations.log.INFO, "-- It is now back in its original cell " .. originalCellDescription)
                     self:MoveObjectData(uniqueIndex, newCell)
 
                     tableHelper.removeValue(newCell.data.packets.cellChangeTo, uniqueIndex)
@@ -1065,10 +1065,10 @@ function BaseCell:SaveActorCellChanges(pid)
                     local originalCell = LoadedCells[originalCellDescription]
 
                     if originalCell.data.objectData[uniqueIndex] ~= nil then
-                        tes3mp.LogAppend(1, "-- This is now referenced in its original cell " .. originalCellDescription)
+                        tes3mp.LogAppend(enumerations.log.INFO, "-- This is now referenced in its original cell " .. originalCellDescription)
                         originalCell.data.objectData[uniqueIndex].cellChangeTo = newCellDescription
                     else
-                        tes3mp.LogAppend(3, "-- It does not exist in its original cell " .. originalCellDescription ..
+                        tes3mp.LogAppend(enumerations.log.ERROR, "-- It does not exist in its original cell " .. originalCellDescription ..
                             "! Please report this to a developer")
                     end
                 end
@@ -1077,7 +1077,7 @@ function BaseCell:SaveActorCellChanges(pid)
             -- in its old cell, as long as it's not supposed to already be in the new cell
             elseif self.data.objectData[uniqueIndex].cellChangeTo ~= newCellDescription then
 
-                tes3mp.LogAppend(1, "-- This was its first move away from its original cell")
+                tes3mp.LogAppend(enumerations.log.INFO, "-- This was its first move away from its original cell")
 
                 self:MoveObjectData(uniqueIndex, newCell)
 
@@ -1105,7 +1105,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 }
             end
         else
-            tes3mp.LogAppend(3, "-- Invalid or repeated cell change was attempted! Please report this to a developer")
+            tes3mp.LogAppend(enumerations.log.ERROR, "-- Invalid or repeated cell change was attempted! Please report this to a developer")
         end
     end
 
@@ -1382,7 +1382,7 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
             objectCount = objectCount + 1
         else
-            tes3mp.LogAppend(3, "- Had container packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had container packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1416,7 +1416,7 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had actorList packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had actorList packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1469,7 +1469,7 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
                 actorCount = actorCount + 1
             end
         else
-            tes3mp.LogAppend(3, "- Had position packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had position packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1511,7 +1511,7 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1559,7 +1559,7 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(3, "- Had equipment packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had equipment packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1607,7 +1607,7 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                     ai.action == enumerations.ai.ESCORT or ai.action == enumerations.ai.FOLLOW then
 
                     isValid = false
-                    tes3mp.LogAppend(2, "- Could not find valid AI target for actor " .. uniqueIndex)
+                    tes3mp.LogAppend(enumerations.log.WARN, "- Could not find valid AI target for actor " .. uniqueIndex)
                 end
             end
 
@@ -1624,7 +1624,7 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                 end
             end
         else
-            tes3mp.LogAppend(3, "- Had AI packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had AI packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1699,13 +1699,13 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
                     actorCount = actorCount + 1
                 end
             else
-                tes3mp.LogAppend(3, "- Tried to move " .. uniqueIndex .. " from " .. self.description ..
+                tes3mp.LogAppend(enumerations.log.ERROR, "- Tried to move " .. uniqueIndex .. " from " .. self.description ..
                     " to  " .. newCellDescription .. " with no position data!")
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
             end
         else
-            tes3mp.LogAppend(3, "- Had cellChangeTo packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had cellChangeTo packet recorded for " .. uniqueIndex ..
                 ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
         end
@@ -1734,7 +1734,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
             table.insert(cellChangesFrom[originalCellDescription], uniqueIndex)
         else
-            tes3mp.LogAppend(3, "- Had cellChangeFrom packet recorded for " .. uniqueIndex ..
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had cellChangeFrom packet recorded for " .. uniqueIndex ..
                 ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeFrom, uniqueIndex)
         end
@@ -1829,7 +1829,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:EnsurePacketTables()
     self:EnsurePacketValidity()
 
-    tes3mp.LogMessage(1, "Sending data of cell " .. self.description .. " to " .. logicHandler.GetChatName(pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Sending data of cell " .. self.description .. " to " .. logicHandler.GetChatName(pid))
 
     local objectData = self.data.objectData
     local packets = self.data.packets
@@ -1844,20 +1844,20 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadDoorStates(pid, objectData, packets.doorState)
 
     if self:HasContainerData() == true then
-        tes3mp.LogAppend(1, "- Had container data")
+        tes3mp.LogAppend(enumerations.log.INFO, "- Had container data")
         self:LoadContainers(pid, objectData, packets.container)
     elseif self.isRequestingContainers == false then
-        tes3mp.LogAppend(1, "- Requesting containers")
+        tes3mp.LogAppend(enumerations.log.INFO, "- Requesting containers")
         self:RequestContainers(pid)
     end
 
     if self:HasActorData() == true then
-        tes3mp.LogAppend(1, "- Had actor data")
+        tes3mp.LogAppend(enumerations.log.INFO, "- Had actor data")
         self:LoadActorCellChanges(pid, objectData)
         self:LoadActorEquipment(pid, objectData, packets.equipment)
         self:LoadActorAI(pid, objectData, packets.ai)
     elseif self.isRequestingActorList == false then
-        tes3mp.LogAppend(1, "- Requesting actor list")
+        tes3mp.LogAppend(enumerations.log.INFO, "- Requesting actor list")
         self:RequestActorList(pid)
     end
 end
