@@ -962,7 +962,7 @@ function BasePlayer:SaveInventory()
     local action = tes3mp.GetInventoryChangesAction(self.pid)
     local itemChangesCount = tes3mp.GetInventoryChangesSize(self.pid)
 
-    tes3mp.LogMessage(enumerations.log.ERROR, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
         tableHelper.getIndexByValue(enumerations.inventory, action))
 
     if action == enumerations.inventory.SET then
