@@ -366,6 +366,7 @@ function BasePlayer:RemoveLinkToRecord(storeType, recordId)
 
             if linkIndex ~= nil then
                 recordLinks[storeType][linkIndex] = nil
+                tableHelper.cleanNils(recordLinks[storeType])
             end
 
             recordStore:RemoveLinkToPlayer(recordId, self)
