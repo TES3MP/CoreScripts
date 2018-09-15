@@ -983,6 +983,9 @@ function BasePlayer:SaveInventory()
             }
 
             if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
+
+                if item.soul == "" then item.soul = nil end
+
                 inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
                     item.enchantmentCharge, item.soul)
 
