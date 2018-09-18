@@ -150,6 +150,7 @@ function BasePlayer:FinishLogin()
     if self.hasAccount ~= false then -- load account
         self:SaveIpAddress()
 
+        self:LoadSettings()
         self:LoadCharacter()
         self:LoadClass()
         self:LoadLevel()
@@ -178,9 +179,10 @@ function BasePlayer:FinishLogin()
             end
         end
 
-        self:LoadSettings()
+        self:CleanInventory()
         self:LoadInventory()
         self:LoadEquipment()
+        self:CleanSpellbook()
         self:LoadSpellbook()
         self:LoadQuickKeys()
         self:LoadBooks()
@@ -921,6 +923,22 @@ function BasePlayer:SaveEquipment()
     end
 end
 
+-- Iterate through inventory items and remove the ones whose records no longer exist
+-- Note: This can only handle generated records for now
+function BasePlayer:CleanInventory()
+
+    for index, currentItem in pairs(self.data.inventory) do
+        if logicHandler.IsGeneratedRecord(currentItem.refId) then
+
+            local recordStore = logicHandler.GetRecordStoreByRecordId(currentItem.refId)
+
+            if recordStore == nil or recordStore.data.generatedRecords[currentItem.refId] == nil then
+                self.data.inventory[index] = nil
+            end
+        end
+    end
+end
+
 function BasePlayer:LoadInventory()
 
     if self.data.inventory == nil then
@@ -933,25 +951,23 @@ function BasePlayer:LoadInventory()
 
     for index, currentItem in pairs(self.data.inventory) do
 
-        if currentItem ~= nil then
-            if currentItem.count < 1 then
-                self.data.inventory[index] = nil
-            else
-                if currentItem.charge == nil or currentItem.charge < -1 then
-                    currentItem.charge = -1
-                end
-
-                if currentItem.enchantmentCharge == nil or currentItem.enchantmentCharge < -1 then
-                    currentItem.enchantmentCharge = -1
-                end
-
-                if currentItem.soul == nil then
-                    currentItem.soul = ""
-                end
-
-                tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count,
-                    currentItem.charge, currentItem.enchantmentCharge, currentItem.soul)
+        if currentItem.count < 1 then
+            self.data.inventory[index] = nil
+        else
+            if currentItem.charge == nil or currentItem.charge < -1 then
+                currentItem.charge = -1
             end
+
+            if currentItem.enchantmentCharge == nil or currentItem.enchantmentCharge < -1 then
+                currentItem.enchantmentCharge = -1
+            end
+
+            if currentItem.soul == nil then
+                currentItem.soul = ""
+            end
+
+            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count,
+                currentItem.charge, currentItem.enchantmentCharge, currentItem.soul)
         end
     end
 
@@ -1017,6 +1033,28 @@ function BasePlayer:SaveInventory()
     end
 
     self:Save()
+end
+
+-- Iterate through spells and remove the ones whose records no longer exist
+-- Note: This can only handle generated records for now
+function BasePlayer:CleanSpellbook()
+
+    local shouldCleanNils = false
+    local recordStore = RecordStores["spell"]
+
+    for index, spellId in pairs(self.data.spellbook) do
+        if logicHandler.IsGeneratedRecord(spellId) then
+
+            if recordStore.data.generatedRecords[spellId] == nil then
+                self.data.spellbook[index] = nil
+                shouldCleanNils = true
+            end
+        end
+    end
+
+    if shouldCleanNils then
+        tableHelper.cleanNils(self.data.spellbook)
+    end
 end
 
 function BasePlayer:LoadSpellbook()
