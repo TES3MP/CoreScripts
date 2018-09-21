@@ -30,7 +30,8 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
     Database = require("database")
     Database:LoadDriver(config.databaseType)
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Using " .. Database.driver._VERSION .. " with " .. config.databaseType .. " driver")
+    tes3mp.LogMessage(enumerations.log.INFO, "Using " .. Database.driver._VERSION .. " with " .. config.databaseType ..
+        " driver")
 
     Database:Connect(config.databasePath)
 
@@ -194,7 +195,8 @@ function OnServerInit()
 
     if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
         tes3mp.LogAppend(enumerations.log.ERROR, "- Version mismatch between server and Core scripts!")
-        tes3mp.LogAppend(enumerations.log.ERROR, "- The Core scripts require a server version that starts with " .. expectedVersionPrefix)
+        tes3mp.LogAppend(enumerations.log.ERROR, "- The Core scripts require a server version that starts with " ..
+            expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
 

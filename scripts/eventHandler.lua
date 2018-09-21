@@ -1110,7 +1110,8 @@ eventHandler.OnContainer = function(pid, cellDescription)
                 
                 if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
                     tableHelper.removeValue(unusableContainerUniqueIndexes, uniqueIndex)
-                    tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. uniqueIndex .. " usable as a result of request reply")
+                    tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. uniqueIndex ..
+                        " usable as a result of request reply")
                 else
                     table.insert(rejectedObjects, refId .. " " .. uniqueIndex)
                     isValid = false
@@ -1136,8 +1137,8 @@ eventHandler.OnContainer = function(pid, cellDescription)
                 logicHandler.UnloadCell(cellDescription)
             end
         else
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected Container from " .. logicHandler.GetChatName(pid) .." about " ..
-                tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected Container from " .. logicHandler.GetChatName(pid) ..
+                " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
         end
     else
         tes3mp.Kick(pid)
@@ -1202,8 +1203,8 @@ eventHandler.OnRecordDynamic = function(pid)
         end
 
         if not isValid then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) .." about " ..
-                tableHelper.concatenateArrayValues(rejectedRecords, 1, ", "))
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) ..
+                " about " .. tableHelper.concatenateArrayValues(rejectedRecords, 1, ", "))
             return
         end
 
@@ -1212,7 +1213,8 @@ eventHandler.OnRecordDynamic = function(pid)
         local isEnchantable, recordAdditions
 
         if recordStore == nil then
-            tes3mp.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " .. recordNumericalType)
+            tes3mp.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " ..
+                recordNumericalType)
             return
         else
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)

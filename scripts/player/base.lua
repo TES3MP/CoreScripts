@@ -806,8 +806,8 @@ function BasePlayer:SaveShapeshift()
     local newScale = tes3mp.GetScale(self.pid)
 
     if newScale ~= self.data.shapeshift.scale then
-        tes3mp.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) .. " has changed " ..
-            "their scale to " .. newScale)
+        tes3mp.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) ..
+            " has changed their scale to " .. newScale)
         self.data.shapeshift.scale = newScale
     end
 
@@ -1096,13 +1096,15 @@ function BasePlayer:SaveSpellbook()
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if not tableHelper.containsValue(self.data.spellbook, spellId) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Adding spell " .. spellId .. " to " .. logicHandler.GetChatName(self.pid))
+                tes3mp.LogMessage(enumerations.log.INFO, "Adding spell " .. spellId .. " to " ..
+                    logicHandler.GetChatName(self.pid))
                 table.insert(self.data.spellbook, spellId)
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if tableHelper.containsValue(self.data.spellbook, spellId) == true then
-                tes3mp.LogMessage(enumerations.log.INFO, "Removing spell " .. spellId .. " from " .. logicHandler.GetChatName(self.pid))
+                tes3mp.LogMessage(enumerations.log.INFO, "Removing spell " .. spellId .. " from " ..
+                    logicHandler.GetChatName(self.pid))
                 local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
 
@@ -1344,8 +1346,8 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     end
 
     tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(enumerations.log.INFO, "Set enforced log level to " .. tostring(enforcedLogLevel) .. " for " ..
-        logicHandler.GetChatName(self.pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Set enforced log level to " .. tostring(enforcedLogLevel) ..
+        " for " .. logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
@@ -1357,8 +1359,8 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     end
 
     tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(enumerations.log.INFO, "Set physics framerate to " .. tostring(physicsFramerate) .. " for " ..
-        logicHandler.GetChatName(self.pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Set physics framerate to " .. tostring(physicsFramerate) ..
+        " for " .. logicHandler.GetChatName(self.pid))
 end
 
 function BasePlayer:SetConsoleAllowed(state)

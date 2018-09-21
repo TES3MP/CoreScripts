@@ -208,8 +208,8 @@ function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
         tes3mp.SetWeatherForceState(forceState)
         tes3mp.SendWorldWeather(pid, sendToOthers)
     else
-        tes3mp.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName .. " for " ..
-            logicHandler.GetChatName(pid) .. " because we have no weather information for it")
+        tes3mp.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName ..
+            " for " .. logicHandler.GetChatName(pid) .. " because we have no weather information for it")
     end
 end
 

@@ -663,7 +663,8 @@ function commandHandler.ProcessCommand(pid, cmd)
                 creatureRefId = "nothing"
             end
 
-            tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " .. creatureRefId .. "\n", false)
+            tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " ..
+                creatureRefId .. "\n", false)
             if targetPid ~= pid then
                 tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId .. "\n", false)
             end
@@ -1207,8 +1208,8 @@ function commandHandler.StoreRecord(pid, cmd)
                 table.insert(storedTable.items, item)
                 Players[pid]:Message("Added item " .. inputItemId .. " with count " .. inputItemCount .. "\n")
             else
-                Players[pid]:Message(tostring(inputAdditionType) .. " is not a valid addition type for " .. inputType ..
-                    " records.\n")
+                Players[pid]:Message(tostring(inputAdditionType) .. " is not a valid addition type for " ..
+                    inputType .. " records.\n")
             end
 
         elseif tableHelper.containsValue(config.validRecordSettings[inputType], inputSetting) then

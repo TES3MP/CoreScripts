@@ -430,8 +430,8 @@ function BaseCell:SaveObjectsPlaced(pid)
 
             self.data.objectData[uniqueIndex].location = location
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", count: " .. count ..
-                ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
+            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+                ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
                 ", soul: " .. soul .. ", goldValue: " .. goldValue)
 
             table.insert(self.data.packets.place, uniqueIndex)
@@ -554,7 +554,8 @@ function BaseCell:SaveObjectsLocked(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].lockLevel = lockLevel
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", lockLevel: " .. lockLevel)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, uniqueIndex)
     end
@@ -594,7 +595,8 @@ function BaseCell:SaveObjectsScaled(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].scale = scale
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", scale: " .. scale)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, uniqueIndex)
     end
@@ -621,7 +623,8 @@ function BaseCell:SaveObjectStates(pid)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].state = state
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId .. ", state: " .. tostring(state))
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
         
@@ -1065,11 +1068,12 @@ function BaseCell:SaveActorCellChanges(pid)
                     local originalCell = LoadedCells[originalCellDescription]
 
                     if originalCell.data.objectData[uniqueIndex] ~= nil then
-                        tes3mp.LogAppend(enumerations.log.INFO, "-- This is now referenced in its original cell " .. originalCellDescription)
+                        tes3mp.LogAppend(enumerations.log.INFO, "-- This is now referenced in its original cell " ..
+                            originalCellDescription)
                         originalCell.data.objectData[uniqueIndex].cellChangeTo = newCellDescription
                     else
-                        tes3mp.LogAppend(enumerations.log.ERROR, "-- It does not exist in its original cell " .. originalCellDescription ..
-                            "! Please report this to a developer")
+                        tes3mp.LogAppend(enumerations.log.ERROR, "-- It does not exist in its original cell " ..
+                            originalCellDescription .. "! Please report this to a developer")
                     end
                 end
 
@@ -1105,7 +1109,8 @@ function BaseCell:SaveActorCellChanges(pid)
                 }
             end
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "-- Invalid or repeated cell change was attempted! Please report this to a developer")
+            tes3mp.LogAppend(enumerations.log.ERROR, "-- Invalid or repeated cell change was attempted! " ..
+                "Please report this to a developer")
         end
     end
 
@@ -1607,7 +1612,8 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                     ai.action == enumerations.ai.ESCORT or ai.action == enumerations.ai.FOLLOW then
 
                     isValid = false
-                    tes3mp.LogAppend(enumerations.log.WARN, "- Could not find valid AI target for actor " .. uniqueIndex)
+                    tes3mp.LogAppend(enumerations.log.WARN, "- Could not find valid AI target for actor " ..
+                        uniqueIndex)
                 end
             end
 
@@ -1699,8 +1705,8 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
                     actorCount = actorCount + 1
                 end
             else
-                tes3mp.LogAppend(enumerations.log.ERROR, "- Tried to move " .. uniqueIndex .. " from " .. self.description ..
-                    " to  " .. newCellDescription .. " with no position data!")
+                tes3mp.LogAppend(enumerations.log.ERROR, "- Tried to move " .. uniqueIndex .. " from " ..
+                    self.description .. " to  " .. newCellDescription .. " with no position data!")
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
             end
@@ -1829,7 +1835,8 @@ function BaseCell:LoadInitialCellData(pid)
     self:EnsurePacketTables()
     self:EnsurePacketValidity()
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Sending data of cell " .. self.description .. " to " .. logicHandler.GetChatName(pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Sending data of cell " .. self.description .. " to " ..
+        logicHandler.GetChatName(pid))
 
     local objectData = self.data.objectData
     local packets = self.data.packets

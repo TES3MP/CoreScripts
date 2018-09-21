@@ -700,7 +700,8 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
     if regionName == "" then return end
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Loading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
+    tes3mp.LogMessage(enumerations.log.INFO, "Loading region " .. regionName .. " for " ..
+        logicHandler.GetChatName(pid))
 
     -- Record that this player has the region loaded
     WorldInstance:AddRegionVisitor(pid, regionName)
@@ -738,7 +739,8 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
 
     if WorldInstance.storedRegions[regionName] ~= nil then
 
-        tes3mp.LogMessage(enumerations.log.INFO, "Unloading region " .. regionName .. " for " .. logicHandler.GetChatName(pid))
+        tes3mp.LogMessage(enumerations.log.INFO, "Unloading region " .. regionName .. " for " ..
+            logicHandler.GetChatName(pid))
 
         -- No longer record that this player has the region loaded
         WorldInstance:RemoveRegionVisitor(pid, regionName)
