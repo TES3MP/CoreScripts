@@ -56,7 +56,7 @@ function BaseWorld:AddRegionVisitor(pid, regionName)
     end
 
     -- Only add new visitor if we don't already have them
-    if tableHelper.containsValue(self.storedRegions[regionName].visitors, pid) == false then
+    if not tableHelper.containsValue(self.storedRegions[regionName].visitors, pid) then
         table.insert(self.storedRegions[regionName].visitors, pid)
     end
 end

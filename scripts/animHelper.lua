@@ -67,9 +67,9 @@ function animHelper.GetValidList(pid)
 
     for generalAlias, defaultAnim in pairs(generalAnimAliases) do
 
-        if (isBeast == false and isFemale == false) or
-           (isBeast and tableHelper.containsValue(beastAnimAliases, defaultAnim) == false) or
-           (isFemale and tableHelper.containsValue(femaleAnimAliases, defaultAnim) == false) then
+        if (not isBeast and not isFemale) or
+           (isBeast and not tableHelper.containsValue(beastAnimAliases, defaultAnim)) or
+           (isFemale and not tableHelper.containsValue(femaleAnimAliases, defaultAnim)) then
             table.insert(validList, generalAlias)
         end
     end

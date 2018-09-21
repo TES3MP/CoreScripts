@@ -250,7 +250,7 @@ function StateHelper:SaveTopics(pid, stateObject)
 
         local topicId = tes3mp.GetTopicId(pid, i)
 
-        if tableHelper.containsValue(stateObject.data.topics, topicId) == false then
+        if not tableHelper.containsValue(stateObject.data.topics, topicId) then
             table.insert(stateObject.data.topics, topicId)
         end
     end
@@ -285,7 +285,7 @@ function StateHelper:SaveMapExploration(pid, stateObject)
     local cell = tes3mp.GetCell(pid)
 
     if tes3mp.IsInExterior(pid) == true then
-        if tableHelper.containsValue(stateObject.data.mapExplored, cell) == false then
+        if not tableHelper.containsValue(stateObject.data.mapExplored, cell) then
             table.insert(stateObject.data.mapExplored, cell)
         end
     end

@@ -66,7 +66,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         if cmd[2] == "ip" and cmd[3] ~= nil then
             local ipAddress = cmd[3]
 
-            if tableHelper.containsValue(banList.ipAddresses, ipAddress) == false then
+            if not tableHelper.containsValue(banList.ipAddresses, ipAddress) then
                 table.insert(banList.ipAddresses, ipAddress)
                 SaveBanList()
 
@@ -926,7 +926,7 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
         local isValid = animHelper.PlayAnimation(pid, cmd[2])
             
-        if isValid == false then
+        if not isValid then
             local validList = animHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
                 validList .. "\n", false)
@@ -936,7 +936,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         type(tonumber(cmd[3])) == "number" then
         local isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
             
-        if isValid == false then
+        if not isValid then
             local validList = speechHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
                 .. validList .. "\n", false)
@@ -1317,7 +1317,7 @@ function commandHandler.CreateRecord(pid, cmd)
             end
         end
 
-        if tableHelper.isEmpty(missingSettings) == false then
+        if not tableHelper.isEmpty(missingSettings) then
             isValid = false
             Players[pid]:Message("You cannot create a record of type " .. inputType .. " because it is missing the " ..
                 "following required settings: " .. tableHelper.concatenateArrayValues(missingSettings, 1, ", ") .. "\n")

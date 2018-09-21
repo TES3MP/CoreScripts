@@ -152,7 +152,7 @@ end
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them
-    if tableHelper.containsValue(self.visitors, pid) == false then
+    if not tableHelper.containsValue(self.visitors, pid) then
         table.insert(self.visitors, pid)
 
         -- Also add a record to the player's list of loaded cells
@@ -348,7 +348,7 @@ function BaseCell:SaveObjectsDeleted(pid)
 
             -- If this is an object from the game's data files, we should keep sending ObjectDelete
             -- packets for it to visitors
-            if wasPlacedHere == false then
+            if not wasPlacedHere then
 
                 table.insert(self.data.packets.delete, uniqueIndex)
                 self:InitializeObjectData(uniqueIndex, refId)
@@ -453,7 +453,7 @@ function BaseCell:SaveObjectsPlaced(pid)
 
     self:Save()
 
-    if tableHelper.isEmpty(containerUniqueIndexesRequested) == false then
+    if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
 end
@@ -534,7 +534,7 @@ function BaseCell:SaveObjectsSpawned(pid)
         end
     end
 
-    if tableHelper.isEmpty(containerUniqueIndexesRequested) == false then
+    if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
 end
@@ -625,7 +625,7 @@ function BaseCell:SaveObjectStates(pid)
 
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
         
-        if state == false then
+        if not state then
             if Players[pid].stateSpam == nil then
                 Players[pid].stateSpam = {}
             end    
@@ -966,7 +966,7 @@ function BaseCell:SaveActorDeath(pid)
         end
     end
 
-    if tableHelper.isEmpty(containerUniqueIndexesRequested) == false then
+    if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
 
@@ -1217,7 +1217,7 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
                 end
             end
 
-            if shouldSkip == false then
+            if not shouldSkip then
                 packetBuilder.AddObjectSpawn(uniqueIndex, objectData[uniqueIndex])
                 objectCount = objectCount + 1
             end
@@ -1846,7 +1846,7 @@ function BaseCell:LoadInitialCellData(pid)
     if self:HasContainerData() == true then
         tes3mp.LogAppend(enumerations.log.INFO, "- Had container data")
         self:LoadContainers(pid, objectData, packets.container)
-    elseif self.isRequestingContainers == false then
+    elseif not self.isRequestingContainers then
         tes3mp.LogAppend(enumerations.log.INFO, "- Requesting containers")
         self:RequestContainers(pid)
     end
@@ -1856,7 +1856,7 @@ function BaseCell:LoadInitialCellData(pid)
         self:LoadActorCellChanges(pid, objectData)
         self:LoadActorEquipment(pid, objectData, packets.equipment)
         self:LoadActorAI(pid, objectData, packets.ai)
-    elseif self.isRequestingActorList == false then
+    elseif not self.isRequestingActorList then
         tes3mp.LogAppend(enumerations.log.INFO, "- Requesting actor list")
         self:RequestActorList(pid)
     end

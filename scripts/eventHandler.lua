@@ -269,7 +269,7 @@ eventHandler.OnPlayerCellChange = function(pid)
                     -- It's possible we've been teleported to a cell we had already loaded when
                     -- spawning on the server, so also check whether this is the player's first
                     -- cell change since joining
-                    local isTeleported = previousCellIsStillLoaded == false or hasFinishedInitialTeleportation == false
+                    local isTeleported = not previousCellIsStillLoaded or not hasFinishedInitialTeleportation
 
                     if isTeleported then
                         debugMessage = debugMessage .. "teleported"
@@ -656,7 +656,7 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -709,7 +709,7 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -762,7 +762,7 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -820,7 +820,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -828,7 +828,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
             tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectLock: " .. logicHandler.GetChatName(pid) ..
                 " used impossible packetOrigin for unloaded " .. cellDescription)
             return
@@ -853,7 +853,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         if isValid then
             local useTemporaryLoad = false
 
-            if isCellLoaded == false then
+            if not isCellLoaded then
                 logicHandler.LoadCell(cellDescription)
                 useTemporaryLoad = true
             end
@@ -887,7 +887,7 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -941,7 +941,7 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -996,7 +996,7 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -1004,7 +1004,7 @@ eventHandler.OnObjectState = function(pid, cellDescription)
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
             tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectState: " .. logicHandler.GetChatName(pid) ..
                 " used impossible packetOrigin for unloaded " .. cellDescription)
             return
@@ -1029,7 +1029,7 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         if isValid then
             local useTemporaryLoad = false
 
-            if isCellLoaded == false then
+            if not isCellLoaded then
                 logicHandler.LoadCell(cellDescription)
                 useTemporaryLoad = true
             end
@@ -1075,7 +1075,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -1083,7 +1083,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-        if isCellLoaded == false and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
             tes3mp.LogMessage(enumerations.log.WARN, "Invalid Container: " .. logicHandler.GetChatName(pid) ..
                 " used impossible packetOrigin for unloaded " .. cellDescription)
             return
@@ -1123,7 +1123,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
         if isValid then
             local useTemporaryLoad = false
 
-            if isCellLoaded == false then
+            if not isCellLoaded then
                 logicHandler.LoadCell(cellDescription)
                 useTemporaryLoad = true
             end
@@ -1152,7 +1152,7 @@ eventHandler.OnVideoPlay = function(pid)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and logicHandler.IsPlayerAllowedConsole(pid) == false then
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
@@ -1192,7 +1192,7 @@ eventHandler.OnRecordDynamic = function(pid)
             for recordIndex = 0, recordCount - 1 do
                 local recordName = tes3mp.GetRecordName(recordIndex)
 
-                if logicHandler.IsNameAllowed(recordName) == false then
+                if not logicHandler.IsNameAllowed(recordName) then
                     table.insert(rejectedRecords, recordName)
                     isValid = false
 
@@ -1201,7 +1201,7 @@ eventHandler.OnRecordDynamic = function(pid)
             end
         end
 
-        if isValid == false then
+        if not isValid then
             tes3mp.LogMessage(enumerations.log.INFO, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) .." about " ..
                 tableHelper.concatenateArrayValues(rejectedRecords, 1, ", "))
             return

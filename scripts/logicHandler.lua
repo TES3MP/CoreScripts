@@ -64,7 +64,7 @@ logicHandler.CheckPlayerValidity = function(pid, targetPid)
         valid = true
     end
 
-    if valid == false then
+    if not valid then
         if sendMessage then
             local message = "That player is not logged in!\n"
             tes3mp.SendMessage(pid, message, false)
@@ -174,7 +174,7 @@ logicHandler.GetPlayerByName = function(targetName)
 end
 
 logicHandler.BanPlayer = function(pid, targetName)
-    if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == false then
+    if not tableHelper.containsValue(banList.playerNames, string.lower(targetName)) then
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
@@ -722,7 +722,7 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
         -- Only set this new visitor as the authority if they haven't been teleported here and
         -- their ping is noticeably lower than that of the current authority
-        elseif isTeleported == false and 
+        elseif not isTeleported and 
             tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
             tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
                 " took over authority from player " .. logicHandler.GetChatName(authPid) ..

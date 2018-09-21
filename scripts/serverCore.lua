@@ -306,7 +306,7 @@ function OnPlayerConnect(pid)
         playerName = string.sub(playerName, 0, 35)
     end
 
-    if logicHandler.IsNameAllowed(playerName) == false then
+    if not logicHandler.IsNameAllowed(playerName) then
         local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use a disallowed name.\n"
         tes3mp.SendMessage(pid, message, true)
         return false -- deny player        

@@ -140,7 +140,8 @@ function BasePlayer:Register(password)
     self.loggedIn = true
     self.data.login.password = password
     self.data.settings.consoleAllowed = "default"
-    if self.hasAccount == false then -- create account
+
+    if not self.hasAccount then
         tes3mp.SetCharGenStage(self.pid, 1, 4)
     end
 end
@@ -428,7 +429,7 @@ function BasePlayer:SaveIpAddress()
 
     local ipAddress = tes3mp.GetIP(self.pid)
 
-    if tableHelper.containsValue(self.data.ipAddresses, ipAddress) == false then
+    if not tableHelper.containsValue(self.data.ipAddresses, ipAddress) then
         table.insert(self.data.ipAddresses, ipAddress)
     end
 end
@@ -1094,7 +1095,7 @@ function BasePlayer:SaveSpellbook()
 
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
-            if tableHelper.containsValue(self.data.spellbook, spellId) == false then
+            if not tableHelper.containsValue(self.data.spellbook, spellId) then
                 tes3mp.LogMessage(enumerations.log.INFO, "Adding spell " .. spellId .. " to " .. logicHandler.GetChatName(self.pid))
                 table.insert(self.data.spellbook, spellId)
             end
@@ -1234,7 +1235,7 @@ function BasePlayer:AddBooks()
         local bookId = tes3mp.GetBookId(self.pid, index)
 
         -- Only add new book if we don't already have it
-        if tableHelper.containsValue(self.data.books, bookId, false) == false then
+        if not tableHelper.containsValue(self.data.books, bookId, false) then
             tes3mp.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " .. tes3mp.GetName(self.pid))
             table.insert(self.data.books, bookId)
         end
@@ -1428,7 +1429,7 @@ function BasePlayer:SetConfiscationState(state)
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "disableplayercontrols")
             tes3mp.MessageBox(self.pid, -1, "You are immobilized while an item is being confiscated from you")
-        elseif state == false then
+        elseif not state then
             self.data.customVariables.isConfiscationTarget = nil
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "enableplayercontrols")
@@ -1466,7 +1467,7 @@ end
 function BasePlayer:AddCellLoaded(cellDescription)
 
     -- Only add new loaded cell if we don't already have it
-    if tableHelper.containsValue(self.cellsLoaded, cellDescription) == false then
+    if not tableHelper.containsValue(self.cellsLoaded, cellDescription) then
         table.insert(self.cellsLoaded, cellDescription)
     end
 end
