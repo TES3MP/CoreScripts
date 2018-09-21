@@ -180,7 +180,6 @@ end
 
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
-    local playerName = tes3mp.GetName(pid)
     tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
 
     if message:sub(1,1) == '/' then

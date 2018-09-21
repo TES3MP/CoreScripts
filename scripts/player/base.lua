@@ -1238,7 +1238,8 @@ function BasePlayer:AddBooks()
 
         -- Only add new book if we don't already have it
         if not tableHelper.containsValue(self.data.books, bookId, false) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " .. tes3mp.GetName(self.pid))
+            tes3mp.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " ..
+                logicHandler.GetChatName(self.pid))
             table.insert(self.data.books, bookId)
         end
     end
