@@ -1,5 +1,15 @@
 packetBuilder = {}
 
+packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
+
+    -- Use default values when necessary
+    if item.charge == nil or item.charge < -1 then item.charge = -1 end
+    if item.enchantmentCharge == nil or item.enchantmentCharge < -1 then item.enchantmentCharge = -1 end
+    if item.soul == nil then item.soul = "" end
+
+    tes3mp.AddItem(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
+end
+
 packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")

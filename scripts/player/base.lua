@@ -952,23 +952,10 @@ function BasePlayer:LoadInventory()
 
     for index, currentItem in pairs(self.data.inventory) do
 
-        if currentItem.count < 1 then
-            self.data.inventory[index] = nil
+        if currentItem.count > 0 then
+            packetBuilder.AddPlayerInventoryItemChange(self.pid, currentItem)
         else
-            if currentItem.charge == nil or currentItem.charge < -1 then
-                currentItem.charge = -1
-            end
-
-            if currentItem.enchantmentCharge == nil or currentItem.enchantmentCharge < -1 then
-                currentItem.enchantmentCharge = -1
-            end
-
-            if currentItem.soul == nil then
-                currentItem.soul = ""
-            end
-
-            tes3mp.AddItem(self.pid, currentItem.refId, currentItem.count,
-                currentItem.charge, currentItem.enchantmentCharge, currentItem.soul)
+            self.data.inventory[index] = nil
         end
     end
 
