@@ -1283,10 +1283,13 @@ eventHandler.OnRecordDynamic = function(pid)
             local enchantmentStore
 
             if isEnchantable then enchantmentStore = RecordStores["enchantment"] end
+
+            local itemArray = {}
             
             for _, recordAddition in pairs(recordAdditions) do
                 local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1 }
                 table.insert(Players[pid].data.inventory, item)
+                table.insert(itemArray, item)
 
                 Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
 
@@ -1302,8 +1305,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
             recordStore:Save()
             Players[pid]:Save()
-            Players[pid]:LoadInventory()
-            Players[pid]:LoadEquipment()
+            Players[pid]:LoadItemChanges(itemArray, enumerations.inventory.ADD)
         end
     end
 end
