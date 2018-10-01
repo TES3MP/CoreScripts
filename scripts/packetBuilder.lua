@@ -7,7 +7,7 @@ packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
     if item.enchantmentCharge == nil or item.enchantmentCharge < -1 then item.enchantmentCharge = -1 end
     if item.soul == nil then item.soul = "" end
 
-    tes3mp.AddItem(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
+    tes3mp.AddItemChange(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
 end
 
 packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)

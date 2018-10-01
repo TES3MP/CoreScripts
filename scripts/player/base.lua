@@ -946,9 +946,8 @@ function BasePlayer:LoadInventory()
         self.data.inventory = {}
     end
 
-    -- Send an empty initialized inventory to clear the player's existing items
     tes3mp.InitializeInventoryChanges(self.pid)
-    tes3mp.SendInventoryChanges(self.pid)
+    tes3mp.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
 
     for index, currentItem in pairs(self.data.inventory) do
 
