@@ -940,6 +940,26 @@ function BasePlayer:CleanInventory()
     end
 end
 
+-- Send a packet with some specific item changes to the player, to avoid having
+-- to resend the entire inventory
+--
+-- Note: This just sends a packet, so the same item changes should be applied to
+--       self.data.inventory separately
+function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
+
+    tes3mp.InitializeInventoryChanges(self.pid)
+    tes3mp.SetInventoryChangesAction(self.pid, inventoryAction)
+
+    for index, currentItem in pairs(itemArray) do
+
+        if currentItem.count > 0 then
+            packetBuilder.AddPlayerInventoryItemChange(self.pid, currentItem)
+        end
+    end
+
+    tes3mp.SendInventoryChanges(self.pid)
+end
+
 function BasePlayer:LoadInventory()
 
     if self.data.inventory == nil then
