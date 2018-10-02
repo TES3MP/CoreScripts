@@ -132,8 +132,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         if item ~= nil then
         
             table.insert(Players[pid].data.inventory, item)
-            Players[pid]:LoadInventory()
-            Players[pid]:LoadEquipment()
+            Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
 
             -- If the item is equipped by the target, unequip it first
             if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
@@ -149,8 +148,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                 targetName .. "\n")
 
             if targetPlayer:IsLoggedIn() then
-                targetPlayer:LoadInventory()
-                targetPlayer:LoadEquipment()
+                targetPlayer:LoadItemChanges({item}, enumerations.inventory.REMOVE)
             end
         else
             Players[pid]:Message("Invalid item index\n")

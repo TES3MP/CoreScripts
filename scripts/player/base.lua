@@ -306,8 +306,7 @@ function BasePlayer:EndCharGen()
         if WorldInstance.data.customVariables.deliveredCaiusPackage ~= true then
             local item = { refId = "bk_a1_1_caiuspackage", count = 1, charge = -1 }
             table.insert(self.data.inventory, item)
-            self:LoadInventory()
-            self:LoadEquipment()
+            self:LoadItemChanges({item}, enumerations.inventory.ADD)
             tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation." ..
                 "\n\nAs a result, you start out with Caius Cosades' package.")
         end
