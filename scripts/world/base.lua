@@ -184,7 +184,7 @@ end
 
 function BaseWorld:LoadKills(pid)
 
-    tes3mp.InitializeKillChanges(pid)
+    tes3mp.ClearKillChanges(pid)
 
     for refId, number in pairs(self.data.kills) do
 

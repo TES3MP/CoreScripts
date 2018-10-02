@@ -946,7 +946,7 @@ end
 --       self.data.inventory separately
 function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
 
-    tes3mp.InitializeInventoryChanges(self.pid)
+    tes3mp.ClearInventoryChanges(self.pid)
     tes3mp.SetInventoryChangesAction(self.pid, inventoryAction)
 
     for index, currentItem in pairs(itemArray) do
@@ -965,7 +965,7 @@ function BasePlayer:LoadInventory()
         self.data.inventory = {}
     end
 
-    tes3mp.InitializeInventoryChanges(self.pid)
+    tes3mp.ClearInventoryChanges(self.pid)
     tes3mp.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
 
     for index, currentItem in pairs(self.data.inventory) do
@@ -1069,7 +1069,7 @@ function BasePlayer:LoadSpellbook()
         self.data.spellbook = {}
     end
 
-    tes3mp.InitializeSpellbookChanges(self.pid)
+    tes3mp.ClearSpellbookChanges(self.pid)
     tes3mp.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
 
     for index, spellId in pairs(self.data.spellbook) do
@@ -1135,7 +1135,7 @@ function BasePlayer:LoadQuickKeys()
         self.data.quickKeys = {}
     end
 
-    tes3mp.InitializeQuickKeyChanges(self.pid)
+    tes3mp.ClearQuickKeyChanges(self.pid)
 
     for slot, currentQuickKey in pairs(self.data.quickKeys) do
 
@@ -1226,7 +1226,7 @@ function BasePlayer:LoadBooks()
         self.data.books = {}
     end
 
-    tes3mp.InitializeBookChanges(self.pid)
+    tes3mp.ClearBookChanges(self.pid)
 
     for index, bookId in pairs(self.data.books) do
 

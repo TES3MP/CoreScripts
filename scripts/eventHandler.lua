@@ -1261,7 +1261,7 @@ eventHandler.OnRecordDynamic = function(pid)
         -- Add the final spell to the player's spellbook
         if storeType == "spell" then
 
-            tes3mp.InitializeSpellbookChanges(pid)
+            tes3mp.ClearSpellbookChanges(pid)
             tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
             
             for _, recordAddition in pairs(recordAdditions) do
