@@ -27,13 +27,13 @@ function tableHelper.getArrayFromIndexes(inputTable)
     return newTable
 end
 
--- Return an array with the values that two input arrays have in common
-function tableHelper.getArrayOverlap(firstArray, secondArray)
+-- Return an array with the values that two input tables have in common
+function tableHelper.getValueOverlap(firstTable, secondTable)
 
     local newTable = {}
 
-    for _, value in pairs(firstArray) do
-        if tableHelper.containsValue(secondArray, value) then
+    for _, value in pairs(firstTable) do
+        if tableHelper.containsValue(secondTable, value) then
             table.insert(newTable, value)
         end
     end

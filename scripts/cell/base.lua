@@ -1126,19 +1126,19 @@ function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
 
     local packets = self.data.packets
 
-    self:LoadObjectsDeleted(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.delete))
-    self:LoadObjectsSpawned(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.spawn))
-    self:LoadObjectsScaled(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.scale))
+    self:LoadObjectsDeleted(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.delete))
+    self:LoadObjectsSpawned(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.spawn))
+    self:LoadObjectsScaled(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.scale))
 
     if self:HasContainerData() == true then
-        self:LoadContainers(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.container))
+        self:LoadContainers(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.container))
     end
 
     if self:HasActorData() == true then
-        self:LoadActorPositions(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.position))
-        self:LoadActorStatsDynamic(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.statsDynamic))
-        self:LoadActorEquipment(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.equipment))
-        self:LoadActorAI(pid, objectData, tableHelper.getArrayOverlap(uniqueIndexArray, packets.ai))
+        self:LoadActorPositions(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.position))
+        self:LoadActorStatsDynamic(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
+        self:LoadActorEquipment(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.equipment))
+        self:LoadActorAI(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.ai))
     end
 end
 
