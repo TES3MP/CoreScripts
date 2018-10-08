@@ -332,11 +332,48 @@ end
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
 function tableHelper.isArray(inputTable)
+
     local index = 0
+
     for _ in pairs(inputTable) do
         index = index + 1
         if inputTable[index] == nil then return false end
     end
+
+    return true
+end
+
+-- Checks whether the table has the same keys and values as another table, optionally
+-- ignoring certain keys
+function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
+
+    local hasIgnoredKeys = ignoredKeys ~= nil and not tableHelper.isEmpty(ignoredKeys)
+
+    -- Is this the exact same table?
+    if firstTable == secondTable then
+        return true
+    end
+
+    if not hasIgnoredKeys and tableHelper.getCount(firstTable) ~= tableHelper.getCount(secondTable) then
+        return false
+    end
+
+    for key, value in pairs(firstTable) do
+
+        if not hasIgnoredKeys or not tableHelper.containsValue(ignoredKeys, key) then
+
+            if secondTable[key] == nil then
+                return false
+            elseif type(value) == "table" and type(secondTable[key]) == "table" then
+                if not tableHelper.isEqualTo(value, secondTable[key]) then
+                    return false
+                end
+            elseif value ~= secondTable[key] then
+                return false
+            end
+        end
+    end
+
     return true
 end
 
