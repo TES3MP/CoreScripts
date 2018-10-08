@@ -256,10 +256,14 @@ end
 -- are contained in an ID array
 function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys)
 
+    if idArray == nil then
+        return nil
+    end
+
     for _, recordId in pairs(idArray) do
         local record = recordList[recordId]
 
-        if tableHelper.isEqualTo(comparedRecord, record, ignoredKeys) then
+        if record ~= nil and tableHelper.isEqualTo(comparedRecord, record, ignoredKeys) then
             return recordId
         end
     end
