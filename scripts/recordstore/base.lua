@@ -252,6 +252,21 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray)
     end
 end
 
+-- Check if a record is a perfect match for any of the records whose IDs
+-- are contained in an ID array
+function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys)
+
+    for _, recordId in pairs(idArray) do
+        local record = recordList[recordId]
+
+        if tableHelper.isEqualTo(comparedRecord, record, ignoredKeys) then
+            return recordId
+        end
+    end
+
+    return nil
+end
+
 function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
 
     if self.storeType ~= "armor" and self.storeType ~= "book" and
@@ -336,8 +351,6 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
 
     for recordIndex = 0, recordCount - 1 do
 
-        local recordId = self:GenerateRecordId()
-
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
         tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
 
@@ -352,7 +365,16 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
             effects = packetReader.GetRecordEffects(recordIndex)
         }
 
-        self.data.generatedRecords[recordId] = record
+        -- Is there already a record exactly like this one, icon and model aside?
+        -- If so, we'll just reuse it the way OpenMW would
+        local recordId = self:GetMatchingRecordId(record, self.data.generatedRecords,
+            Players[pid].data.recordLinks.potion, {"icon", "model"})
+
+        if recordId == nil then
+            recordId = self:GenerateRecordId()
+            self.data.generatedRecords[recordId] = record
+        end
+
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
 
