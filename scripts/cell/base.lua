@@ -1171,17 +1171,20 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local location = objectData[uniqueIndex].location
+        if objectData[uniqueIndex] ~= nil then
 
-        -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
-            self:ContainsPosition(location.posX, location.posY) then
+            local location = objectData[uniqueIndex].location
 
-            packetBuilder.AddObjectPlace(uniqueIndex, objectData[uniqueIndex])
-            objectCount = objectCount + 1
-        else
-            objectData[uniqueIndex] = nil
-            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+            -- Ensure data integrity before proceeeding
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                self:ContainsPosition(location.posX, location.posY) then
+
+                packetBuilder.AddObjectPlace(uniqueIndex, objectData[uniqueIndex])
+                objectCount = objectCount + 1
+            else
+                objectData[uniqueIndex] = nil
+                tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+            end
         end
     end
 
@@ -1200,35 +1203,38 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local location = objectData[uniqueIndex].location
+        if objectData[uniqueIndex] ~= nil then
 
-        -- Ensure data integrity before proceeeding
-        if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
-            self:ContainsPosition(location.posX, location.posY) then
+            local location = objectData[uniqueIndex].location
 
-            local shouldSkip = false
-            local summon = objectData[uniqueIndex].summon
+            -- Ensure data integrity before proceeeding
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+                self:ContainsPosition(location.posX, location.posY) then
 
-            if summon ~= nil then
-                local currentTime = os.time()
-                local finishTime = summon.startTime + summon.duration
+                local shouldSkip = false
+                local summon = objectData[uniqueIndex].summon
 
-                if currentTime >= finishTime then
-                    self:DeleteObjectData(uniqueIndex)
-                    shouldSkip = true
-                else
-                    local remainingTime = finishTime - currentTime
-                    tes3mp.SetObjectSummonDuration(remainingTime)
+                if summon ~= nil then
+                    local currentTime = os.time()
+                    local finishTime = summon.startTime + summon.duration
+
+                    if currentTime >= finishTime then
+                        self:DeleteObjectData(uniqueIndex)
+                        shouldSkip = true
+                    else
+                        local remainingTime = finishTime - currentTime
+                        tes3mp.SetObjectSummonDuration(remainingTime)
+                    end
                 end
-            end
 
-            if not shouldSkip then
-                packetBuilder.AddObjectSpawn(uniqueIndex, objectData[uniqueIndex])
-                objectCount = objectCount + 1
+                if not shouldSkip then
+                    packetBuilder.AddObjectSpawn(uniqueIndex, objectData[uniqueIndex])
+                    objectCount = objectCount + 1
+                end
+            else
+                objectData[uniqueIndex] = nil
+                tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
             end
-        else
-            objectData[uniqueIndex] = nil
-            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
