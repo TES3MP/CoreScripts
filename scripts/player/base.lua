@@ -1049,7 +1049,8 @@ function BasePlayer:CleanSpellbook()
     local recordStore = RecordStores["spell"]
 
     for index, spellId in pairs(self.data.spellbook) do
-        if logicHandler.IsGeneratedRecord(spellId) then
+        -- Make sure we skip over old spell tables from previous versions of TES3MP
+        if type(spellId) ~= "table" and logicHandler.IsGeneratedRecord(spellId) then
 
             if recordStore.data.generatedRecords[spellId] == nil then
                 self.data.spellbook[index] = nil
