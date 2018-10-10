@@ -996,6 +996,7 @@ function BasePlayer:SaveInventory()
         local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, index)
 
         if itemRefId ~= "" then
+
             local item = {
                 refId = itemRefId,
                 count = tes3mp.GetInventoryItemCount(self.pid, index),
@@ -1005,8 +1006,6 @@ function BasePlayer:SaveInventory()
             }
 
             if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
-
-                if item.soul == "" then item.soul = nil end
 
                 inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
                     item.enchantmentCharge, item.soul)
@@ -1020,6 +1019,7 @@ function BasePlayer:SaveInventory()
                 end
                 
             elseif action == enumerations.inventory.REMOVE then
+
                 local remainingItem = inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,
                     item.charge, item.enchantmentCharge, item.soul)
 
