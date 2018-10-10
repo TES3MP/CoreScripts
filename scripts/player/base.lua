@@ -653,12 +653,20 @@ function BasePlayer:LoadStatsDynamic()
 end
 
 function BasePlayer:SaveStatsDynamic()
-    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
-    self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
-    self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
-    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
-    self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
-    self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
+
+    local healthBase = tes3mp.GetHealthBase(self.pid)
+
+    -- Sometimes, the player's base health gets set to 1 serverside;
+    -- use this temporary fix until we figure why
+    if healthBase > 1 then
+
+        self.data.stats.healthBase = healthBase
+        self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
+        self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
+        self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
+        self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
+        self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
+    end
 end
 
 function BasePlayer:LoadAttributes()
