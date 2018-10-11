@@ -361,7 +361,10 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 end
 
 logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
-
+    
+    local mpNum = WorldInstance:GetCurrentMpNum() + 1
+    local uniqueIndex =  0 .. "-" .. mpNum
+    
     -- Is this a generated record? If so, add a link to it in the cell it
     -- has been placed in
     if logicHandler.IsGeneratedRecord(refId) then
@@ -381,8 +384,7 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         end
     end
 
-    local mpNum = WorldInstance:GetCurrentMpNum() + 1
-    local uniqueIndex =  0 .. "-" .. mpNum
+
 
     WorldInstance:SetCurrentMpNum(mpNum)
     tes3mp.SetCurrentMpNum(mpNum)
