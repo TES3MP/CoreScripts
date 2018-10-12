@@ -722,7 +722,6 @@ function BasePlayer:LoadSkills()
         tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
-    tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
     tes3mp.SendSkills(self.pid)
 end
 
@@ -762,17 +761,17 @@ function BasePlayer:SaveSkills()
         local attributeId = tes3mp.GetAttributeId(name)
         self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
     end
-
-    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function BasePlayer:LoadLevel()
     tes3mp.SetLevel(self.pid, self.data.stats.level)
+    tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
     tes3mp.SendLevel(self.pid)
 end
 
 function BasePlayer:SaveLevel()
     self.data.stats.level = tes3mp.GetLevel(self.pid)
+    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
 end
 
 function BasePlayer:LoadShapeshift()
