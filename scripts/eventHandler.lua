@@ -296,11 +296,11 @@ eventHandler.OnPlayerCellChange = function(pid)
 
             Players[pid]:SaveCell()
             Players[pid]:SaveStatsDynamic()
-            tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
             Players[pid]:Save()
 
             if config.shareMapExploration == true then
                 WorldInstance:SaveMapExploration(pid)
+                WorldInstance:Save()
             end
         else
             Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)

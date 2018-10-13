@@ -289,8 +289,6 @@ function StateHelper:SaveMapExploration(pid, stateObject)
             table.insert(stateObject.data.mapExplored, cell)
         end
     end
-
-    stateObject:Save()
 end
 
 return StateHelper

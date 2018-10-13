@@ -36,6 +36,7 @@ end
 
 function Player:Save()
     if self.hasAccount then
+        tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(self.pid))
         jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end
