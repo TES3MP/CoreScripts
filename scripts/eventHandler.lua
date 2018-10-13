@@ -871,8 +871,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
         end
     else
-        tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-            " sent ObjectLock for unloaded " .. cellDescription)
+        tes3mp.Kick(pid)
     end
 end
 
