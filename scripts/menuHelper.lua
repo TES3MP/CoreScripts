@@ -165,6 +165,27 @@ function menuHelper.variables.currentChatName()
     return variable
 end
 
+function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
+    local variable = {
+        variableType = "playerVariable",
+        source = "current",
+        variableName = inputVariableName
+    }
+
+    return variable
+end
+
+function menuHelper.variables.concatenation(inputDelimiter, ...)
+    local variable = {
+        variableType = "argumentArray",
+        operation = "concatenation",
+        delimiter = inputDelimiter,
+        containedVariables = {...}
+    }
+
+    return variable
+end
+
 function menuHelper.CheckCondition(pid, condition)
 
     local targetPlayer = Players[pid]
@@ -243,6 +264,21 @@ function menuHelper.ProcessVariables(pid, inputTable)
             elseif variableType == "chatName" then
                 if source == "current" then
                     tableElement = logicHandler.GetChatName(pid)
+                end
+            elseif variableType == "playerVariable" then
+                local variableName = tableElement.variableName
+
+                if source == "current" then
+                    tableElement = tostring(Players[pid].data[variableName])
+                end
+            elseif variableType == "argumentArray" then
+                local operation = tableElement.operation
+                local delimiter = tableElement.delimiter
+
+                local result = menuHelper.ProcessVariables(pid, tableElement.containedVariables)
+
+                if operation == "concatenation" then
+                    tableElement = tableHelper.concatenateArrayValues(result, 1, delimiter)
                 end
             end
         end
