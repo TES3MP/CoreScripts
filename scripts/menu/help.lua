@@ -25,7 +25,7 @@ Menus["help player"] = {
     buttons = {
         { caption = "Admin help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
@@ -33,7 +33,7 @@ Menus["help player"] = {
         },
         { caption = "Moderator help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(1)
+                menuHelper.conditions.requireStaffRank(1)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
@@ -88,7 +88,7 @@ Menus["help moderator page 1"] = {
     buttons = {
         { caption = "Moderator help page 2",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(1)
+                menuHelper.conditions.requireStaffRank(1)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 2")
@@ -96,7 +96,7 @@ Menus["help moderator page 1"] = {
         },
         { caption = "Admin help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
@@ -138,7 +138,7 @@ Menus["help moderator page 2"] = {
     buttons = {
         { caption = "Moderator help page 1",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(1)
+                menuHelper.conditions.requireStaffRank(1)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
@@ -146,7 +146,7 @@ Menus["help moderator page 2"] = {
         },
         { caption = "Admin help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
@@ -193,7 +193,7 @@ Menus["help admin page 1"] = {
     buttons = {
         { caption = "Admin help page 2",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 2")
@@ -201,7 +201,7 @@ Menus["help admin page 1"] = {
         },
         { caption = "Custom record help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help record origin")
@@ -209,7 +209,7 @@ Menus["help admin page 1"] = {
         },
         { caption = "Moderator help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(1)
+                menuHelper.conditions.requireStaffRank(1)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
@@ -263,7 +263,7 @@ Menus["help admin page 2"] = {
     buttons = {
         { caption = "Admin help page 1",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help admin page 1")
@@ -271,7 +271,7 @@ Menus["help admin page 2"] = {
         },
         { caption = "Custom record help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(2)
+                menuHelper.conditions.requireStaffRank(2)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help record origin")
@@ -279,7 +279,7 @@ Menus["help admin page 2"] = {
         },
         { caption = "Moderator help",
             displayConditions = {
-                menuHelper.conditions.requireAdminRank(1)
+                menuHelper.conditions.requireStaffRank(1)
             },
             destinations = {
                 menuHelper.destinations.setDefault("help moderator page 1")
@@ -323,7 +323,7 @@ Menus["help record origin"] = {
             "being the same if you want to replace an existing record with a modified version of itself\n",
     buttons = {
         { caption = "Back to admin help",
-            displayConditions = { menuHelper.conditions.requireAdminRank(2) },
+            displayConditions = { menuHelper.conditions.requireStaffRank(2) },
             destinations = { menuHelper.destinations.setDefault("help admin page 1") }
         },
         { caption = "Examples of record creation",
