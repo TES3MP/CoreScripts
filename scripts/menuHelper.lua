@@ -156,6 +156,15 @@ function menuHelper.variables.currentPid()
     return variable
 end
 
+function menuHelper.variables.currentChatName()
+    local variable = {
+        variableType = "chatName",
+        source = "current"
+    }
+
+    return variable
+end
+
 function menuHelper.CheckCondition(pid, condition)
 
     local targetPlayer = Players[pid]
@@ -230,6 +239,10 @@ function menuHelper.ProcessVariables(pid, inputTable)
             if variableType == "pid" then
                 if source == "current" then
                     tableElement = pid
+                end
+            elseif variableType == "chatName" then
+                if source == "current" then
+                    tableElement = logicHandler.GetChatName(pid)
                 end
             end
         end
