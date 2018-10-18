@@ -674,6 +674,10 @@ function BasePlayer:LoadAttributes()
         tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
+    for name, value in pairs(self.data.attributeSkillIncreases) do
+        tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
+    end
+
     tes3mp.SendAttributes(self.pid)
 end
 
@@ -705,6 +709,7 @@ function BasePlayer:SaveAttributes()
             tes3mp.SendMessage(self.pid, message)
         else
             self.data.attributes[name] = baseValue
+            self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
         end
     end
 end
@@ -716,10 +721,6 @@ function BasePlayer:LoadSkills()
 
     for name, value in pairs(self.data.skillProgress) do
         tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
-    end
-
-    for name, value in pairs(self.data.attributeSkillIncreases) do
-        tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
     end
 
     tes3mp.SendSkills(self.pid)
@@ -755,11 +756,6 @@ function BasePlayer:SaveSkills()
             self.data.skills[name] = baseValue
             self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
         end 
-    end
-
-    for name in pairs(self.data.attributeSkillIncreases) do
-        local attributeId = tes3mp.GetAttributeId(name)
-        self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
     end
 end
 
