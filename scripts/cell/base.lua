@@ -1680,14 +1680,15 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.cellChangeTo) do
 
-        local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].cellChangeTo ~= nil then
 
-        local newCellDescription = objectData[uniqueIndex].cellChangeTo
+            local newCellDescription = objectData[uniqueIndex].cellChangeTo
 
-        if newCellDescription ~= nil then
             tes3mp.SetActorCell(newCellDescription)
+
+            local splitIndex = uniqueIndex:split("-")
+            tes3mp.SetActorRefNum(splitIndex[1])
+            tes3mp.SetActorMpNum(splitIndex[2])
 
             -- If the new cell is not loaded, load it temporarily
             if LoadedCells[newCellDescription] == nil then
@@ -1738,6 +1739,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     for arrayIndex, uniqueIndex in pairs(self.data.packets.cellChangeFrom) do
 
         if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].cellChangeFrom ~= nil then
+
             local originalCellDescription = objectData[uniqueIndex].cellChangeFrom
 
             if cellChangesFrom[originalCellDescription] == nil then
