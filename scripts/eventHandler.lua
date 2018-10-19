@@ -131,7 +131,8 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
 
         if item ~= nil then
         
-            table.insert(Players[pid].data.inventory, item)
+            inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
+                item.enchantmentCharge, item.soul)
             Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
 
             -- If the item is equipped by the target, unequip it first
@@ -1284,8 +1285,10 @@ eventHandler.OnRecordDynamic = function(pid)
             local itemArray = {}
             
             for _, recordAddition in pairs(recordAdditions) do
-                local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1 }
-                table.insert(Players[pid].data.inventory, item)
+
+                local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
+                inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
+                    item.enchantmentCharge, item.soul)
                 table.insert(itemArray, item)
 
                 Players[pid]:AddLinkToRecord(storeType, recordAddition.id)

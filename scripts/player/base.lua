@@ -304,8 +304,10 @@ function BasePlayer:EndCharGen()
 
     if config.shareJournal == true and WorldInstance.data.customVariables ~= nil then
         if WorldInstance.data.customVariables.deliveredCaiusPackage ~= true then
-            local item = { refId = "bk_a1_1_caiuspackage", count = 1, charge = -1 }
-            table.insert(self.data.inventory, item)
+            local item = { refId = "bk_a1_1_caiuspackage", count = 1, charge = -1,
+                enchantmentCharge = -1, soul = "" }
+            inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
+                item.enchantmentCharge, item.soul)
             self:LoadItemChanges({item}, enumerations.inventory.ADD)
             tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation." ..
                 "\n\nAs a result, you start out with Caius Cosades' package.")
@@ -670,6 +672,7 @@ function BasePlayer:SaveStatsDynamic()
 end
 
 function BasePlayer:LoadAttributes()
+
     for name, value in pairs(self.data.attributes) do
         tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
     end
@@ -682,6 +685,7 @@ function BasePlayer:LoadAttributes()
 end
 
 function BasePlayer:SaveAttributes()
+
     for name in pairs(self.data.attributes) do
 
         local attributeId = tes3mp.GetAttributeId(name)
@@ -1008,6 +1012,10 @@ function BasePlayer:SaveInventory()
                 soul = tes3mp.GetInventoryItemSoul(self.pid, index)
             }
 
+            tes3mp.LogAppend(enumerations.log.INFO, "- id: " .. item.refId .. ", count: " .. item.count ..
+                ", charge: " .. item.charge .. ", enchantmentCharge: " .. item.enchantmentCharge ..
+                ", soul: " .. item.soul)
+
             if action == enumerations.inventory.SET or action == enumerations.inventory.ADD then
 
                 inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
@@ -1027,6 +1035,7 @@ function BasePlayer:SaveInventory()
                     item.charge, item.enchantmentCharge, item.soul)
 
                 if remainingItem == nil and logicHandler.IsGeneratedRecord(item.refId) then
+
                     local recordStore = logicHandler.GetRecordStoreByRecordId(item.refId)
 
                     if recordStore ~= nil then
