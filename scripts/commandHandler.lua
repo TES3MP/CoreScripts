@@ -1097,21 +1097,23 @@ function commandHandler.StoreRecord(pid, cmd)
 
     if Players[pid].data.customVariables.storedRecords == nil then
         Players[pid].data.customVariables.storedRecords = {}
+    end
 
-        for recordKey, _ in pairs(config.validRecordSettings) do
+    for recordKey, _ in pairs(config.validRecordSettings) do
+        if Players[pid].data.customVariables.storedRecords[recordKey] == nil then
             Players[pid].data.customVariables.storedRecords[recordKey] = {}
         end
     end
 
     local inputType = string.lower(cmd[2])
-    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
 
-    if storedTable == nil then
+    if config.validRecordSettings[inputType] == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
             "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
     end
 
+    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
     local inputSetting = cmd[3]
 
     if inputSetting == "clear" then
