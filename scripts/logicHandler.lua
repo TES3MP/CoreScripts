@@ -384,8 +384,6 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         end
     end
 
-
-
     WorldInstance:SetCurrentMpNum(mpNum)
     tes3mp.SetCurrentMpNum(mpNum)
 
@@ -458,6 +456,21 @@ end
 
 logicHandler.DeleteObjectForEveryone = function(refId, refNum, mpNum)
     logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNum, mpNum, true)
+end
+
+logicHandler.ActivateObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+    tes3mp.SetObjectListCell(objectCellDescription)
+
+    local splitIndex = objectUniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectActivatingPid(pid)
+
+    tes3mp.AddObject()
+    tes3mp.SendObjectActivate()
 end
 
 logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
