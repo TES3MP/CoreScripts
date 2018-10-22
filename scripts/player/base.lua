@@ -261,7 +261,7 @@ function BasePlayer:EndCharGen()
 
     for _, storeType in ipairs(config.recordStoreLoadOrder) do
         local recordStore = RecordStores[storeType]
-        
+
         -- Load all the permanent records in this record store
         recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
             tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
@@ -286,7 +286,7 @@ function BasePlayer:EndCharGen()
     if config.shareTopics == true then
         WorldInstance:LoadTopics(self.pid)
     end
-    
+
     WorldInstance:LoadKills(self.pid)
 
     if config.defaultSpawnCell ~= nil then
@@ -552,7 +552,7 @@ function BasePlayer:DeleteSummons()
         for summonUniqueIndex, summonRefId in pairs(self.summons) do
             tes3mp.LogAppend(enumerations.log.INFO, "- removing player's summon " .. summonUniqueIndex ..
                 ", refId " .. summonRefId)
-            
+
             local cell = logicHandler.GetCellContainingActor(summonUniqueIndex)
 
             if cell ~= nil then
@@ -759,7 +759,7 @@ function BasePlayer:SaveSkills()
         else
             self.data.skills[name] = baseValue
             self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
-        end 
+        end
     end
 end
 
@@ -1028,7 +1028,7 @@ function BasePlayer:SaveInventory()
                         self:AddLinkToRecord(recordStore.storeType, item.refId)
                     end
                 end
-                
+
             elseif action == enumerations.inventory.REMOVE then
 
                 local remainingItem = inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,

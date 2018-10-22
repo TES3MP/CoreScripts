@@ -516,7 +516,7 @@ function BaseCell:SaveObjectsSpawned(pid)
                             ", refId: " .. summonerRefId)
                     end
 
-                    self.data.objectData[uniqueIndex].summon = summon                
+                    self.data.objectData[uniqueIndex].summon = summon
                 end
             end
 
@@ -627,20 +627,20 @@ function BaseCell:SaveObjectStates(pid)
             ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
-        
+
         if not state then
             if Players[pid].stateSpam == nil then
                 Players[pid].stateSpam = {}
-            end    
+            end
             if Players[pid].stateSpam[refId] == nil then
                 Players[pid].stateSpam[refId] = 0
-            else    
+            else
                 Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
                 -- If the player gets 5 false object states for the same refid in that cell, delete it
                 if Players[pid].stateSpam[refId] >= 5 then
                     logicHandler.DeleteObjectForPlayer(pid, refId, refNum, mpNum)
                     tes3mp.LogMessage(enumerations.log.INFO, "- " .. uniqueIndex .. " with refId: " .. refId ..
-                        " was causing spam and has been deleted")            
+                        " was causing spam and has been deleted")
                 end
             end
         end
@@ -1650,7 +1650,7 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
     -- Send the packets targeting this visitor that all the visitors
     -- need to have
     if tableHelper.getCount(sharedPacketUniqueIndexes) > 0 then
-        
+
         tes3mp.ClearActorList()
         tes3mp.SetActorListPid(pid)
         tes3mp.SetActorListCell(self.description)
@@ -1774,7 +1774,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
             local location = objectData[uniqueIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and 
+            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
                 self:ContainsPosition(location.posX, location.posY) then
 
                 tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)

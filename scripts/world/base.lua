@@ -88,7 +88,7 @@ function BaseWorld:RemoveForcedWeatherUpdatePid(pid, regionName)
 end
 
 function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
-    
+
     local loadedRegion = self.storedRegions[regionName]
 
     if tableHelper.containsValue(loadedRegion.forcedWeatherUpdatePids, pid) then
@@ -99,7 +99,7 @@ function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
 end
 
 function BaseWorld:GetRegionAuthority(regionName)
-    
+
     if self.storedRegions[regionName] ~= nil then
         return self.storedRegions[regionName].authority
     end
@@ -131,7 +131,7 @@ function BaseWorld:IncrementDay()
             self.data.time.year = self.data.time.year + 1
             self.data.time.month = 1
         else
-            self.data.time.month = month + 1            
+            self.data.time.month = month + 1
         end
 
         self.data.time.day = 1

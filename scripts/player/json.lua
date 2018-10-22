@@ -24,7 +24,7 @@ end
 
 function Player:CreateAccount()
     self.hasAccount = jsonInterface.save("player/" .. self.accountFile, self.data)
-    
+
     if self.hasAccount then
         tes3mp.LogMessage(enumerations.log.WARN, "Successfully created account for " .. self.accountName)
     else

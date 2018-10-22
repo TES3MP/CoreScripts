@@ -262,7 +262,7 @@ function StateHelper:SaveBounty(pid, stateObject)
 
     if stateObject.data.fame == nil then
         stateObject.data.fame = {}
-    end    
+    end
 
     stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
 
@@ -273,7 +273,7 @@ function StateHelper:SaveReputation(pid, stateObject)
 
     if stateObject.data.fame == nil then
         stateObject.data.fame = {}
-    end    
+    end
 
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
 

@@ -409,7 +409,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             local xValue = tonumber(cmd[3])
             local yValue = tonumber(cmd[4])
             local zValue = tonumber(cmd[5])
-            
+
             if type(xValue) == "number" and type(yValue) == "number" and
                type(zValue) == "number" then
 
@@ -926,7 +926,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then
         local isValid = animHelper.PlayAnimation(pid, cmd[2])
-            
+
         if not isValid then
             local validList = animHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
@@ -936,7 +936,7 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and
         type(tonumber(cmd[3])) == "number" then
         local isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
-            
+
         if not isValid then
             local validList = speechHelper.GetValidList(pid)
             tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
@@ -1066,7 +1066,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         commandHandler.CreateRecord(pid, cmd)
 
     elseif cmd[1] == "help" then
-        
+
         -- Check "scripts/menu/help.lua" if you want to change the contents of the help menus
         Players[pid].currentCustomMenu = "help player"
         menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
@@ -1197,7 +1197,7 @@ function commandHandler.StoreRecord(pid, cmd)
 
                 if storedTable.items == nil then
                     storedTable.items = {}
-                end                
+                end
 
                 local inputItemId = inputValues[1]
                 local inputItemCount = tonumber(inputValues[2])
@@ -1302,7 +1302,7 @@ function commandHandler.CreateRecord(pid, cmd)
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
             "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
         return
-    end    
+    end
 
     if storedTable.baseId == nil then
         if inputType == "creature" then

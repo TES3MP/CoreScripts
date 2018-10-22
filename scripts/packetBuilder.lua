@@ -179,7 +179,7 @@ end
 
 packetBuilder.AddRecordByType = function(id, record, storeType)
 
-    if storeType == "armor" then    
+    if storeType == "armor" then
         packetBuilder.AddArmorRecord(id, record)
     elseif storeType == "book" then
         packetBuilder.AddBookRecord(id, record)
@@ -203,7 +203,7 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
 end
 
 packetBuilder.AddArmorRecord = function(id, record)
-    
+
     tes3mp.SetRecordId(id)
     if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
     if record.name ~= nil then tes3mp.SetRecordName(record.name) end

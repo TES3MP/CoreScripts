@@ -107,7 +107,7 @@ end
 logicHandler.IsNameAllowed = function(inputName)
 
     for _, disallowedNameString in pairs(config.disallowedNameStrings) do
-        
+
         if string.find(string.lower(inputName), string.lower(disallowedNameString)) ~= nil then
 
             return false
@@ -339,7 +339,7 @@ logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 end
 
 logicHandler.IsPacketFromConsole = function(packetOrigin)
-    
+
     local packetOriginEnums = enumerations.packetOrigin
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_CONSOLE then
@@ -356,15 +356,15 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
     for _, refId in pairs(config.enforcedCollisionRefIds) do
         tes3mp.AddEnforcedCollisionRefId(refId)
     end
-    
+
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
 logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
-    
+
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local uniqueIndex =  0 .. "-" .. mpNum
-    
+
     -- Is this a generated record? If so, add a link to it in the cell it
     -- has been placed in
     if logicHandler.IsGeneratedRecord(refId) then
@@ -425,7 +425,7 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
             tes3mp.SendObjectSpawn(true)
         end
     end
-    
+
     return uniqueIndex
 end
 
@@ -485,7 +485,7 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SetObjectRefNum(refNum)
     tes3mp.SetObjectMpNum(mpNum)
     tes3mp.AddObject()
-    
+
     -- Always send this to everyone
     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
     tes3mp.SendConsoleCommand(true, false)
@@ -503,7 +503,7 @@ end
 logicHandler.GetRecordStoreByRecordId = function(recordId)
 
     local isGenerated = logicHandler.IsGeneratedRecord(recordId)
-    
+
     if isGenerated then
         local recordType = string.match(recordId, "_(%a+)_")
 
@@ -525,7 +525,7 @@ logicHandler.GetRecordStoreByRecordId = function(recordId)
 end
 
 logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
-    
+
     for _, storeType in ipairs(config.recordStoreLoadOrder) do
         local recordStore = RecordStores[storeType]
 
@@ -556,7 +556,7 @@ logicHandler.GetCellContainingActor = function(actorUniqueIndex)
             return cell
         end
     end
-    
+
     return nil
 end
 
@@ -725,7 +725,7 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
         -- Only set this new visitor as the authority if they haven't been teleported here and
         -- their ping is noticeably lower than that of the current authority
-        elseif not isTeleported and 
+        elseif not isTeleported and
             tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
             tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
                 " took over authority from player " .. logicHandler.GetChatName(authPid) ..

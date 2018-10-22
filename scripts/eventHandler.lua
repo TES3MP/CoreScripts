@@ -100,7 +100,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                 local item = targetPlayer.data.inventory[inventoryItemIndex]
 
                 if item ~= nil then
-                
+
                     inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
                         item.enchantmentCharge, item.soul)
                     Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
@@ -270,9 +270,9 @@ eventHandler.OnPlayerCellChange = function(pid)
                 local regionName = string.lower(tes3mp.GetRegion(pid))
 
                 if regionName ~= "" then
-                    
+
                     local debugMessage = logicHandler.GetChatName(pid) .. " has "
-                    
+
                     local hasFinishedInitialTeleportation = Players[pid].hasFinishedInitialTeleportation
                     local previousCellIsStillLoaded = tableHelper.containsValue(Players[pid].cellsLoaded,
                         previousCellDescription)
@@ -587,7 +587,7 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
         if LoadedCells[cellDescription] ~= nil then
-            
+
             tes3mp.ReadReceivedObjectList()
 
             -- Add your own logic here to prevent objects from being activated in certain places,
@@ -1119,7 +1119,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
             local uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
             if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
-                
+
                 if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
                     tableHelper.removeValue(unusableContainerUniqueIndexes, uniqueIndex)
                     tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. uniqueIndex ..
@@ -1191,7 +1191,7 @@ end
 eventHandler.OnRecordDynamic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         tes3mp.ReadReceivedWorldstate()
-        
+
         local recordNumericalType = tes3mp.GetRecordType(pid)
 
         -- Iterate through the records in the RecordDynamic packet and only sync and save them
@@ -1272,13 +1272,13 @@ eventHandler.OnRecordDynamic = function(pid)
         -- Send this RecordDynamic packet to other players (sendToOthersPlayers is true),
         -- and also send it to the player we got it from (skipAttachedPlayer is false)
         tes3mp.SendRecordDynamic(pid, true, false)
-    
+
         -- Add the final spell to the player's spellbook
         if storeType == "spell" then
 
             tes3mp.ClearSpellbookChanges(pid)
             tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
-            
+
             for _, recordAddition in pairs(recordAdditions) do
                 table.insert(Players[pid].data.spellbook, recordAddition.id)
                 tes3mp.AddSpell(pid, recordAddition.id)
@@ -1298,7 +1298,7 @@ eventHandler.OnRecordDynamic = function(pid)
             if isEnchantable then enchantmentStore = RecordStores["enchantment"] end
 
             local itemArray = {}
-            
+
             for _, recordAddition in pairs(recordAdditions) do
 
                 local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
@@ -1391,7 +1391,7 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
 
         if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and
             Players[pid].accountName == loop.targetName then
-        
+
             if loop.packetType == "place" or loop.packetType == "spawn" then
                 logicHandler.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
             elseif loop.packetType == "console" then

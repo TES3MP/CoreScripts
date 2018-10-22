@@ -95,7 +95,7 @@ function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType
 
     if not tableHelper.containsValue(recordLinks[recordId].records[otherStoreType], otherRecordId) then
         table.insert(recordLinks[recordId].records[otherStoreType], otherRecordId)
-    end    
+    end
 end
 
 function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
@@ -325,7 +325,7 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
     for recordIndex = 0, recordCount - 1 do
 
         local recordId = self:GenerateRecordId()
-        
+
         local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
         tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
 
