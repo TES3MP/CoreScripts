@@ -638,7 +638,7 @@ function BaseCell:SaveObjectStates(pid)
                 Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
                 -- If the player gets 5 false object states for the same refid in that cell, delete it
                 if Players[pid].stateSpam[refId] >= 5 then
-                    logicHandler.DeleteObjectForPlayer(pid, refId, refNum, mpNum)
+                    logicHandler.DeleteObjectForPlayer(pid, self.description, uniqueIndex)
                     tes3mp.LogMessage(enumerations.log.INFO, "- " .. uniqueIndex .. " with refId: " .. refId ..
                         " was causing spam and has been deleted")
                 end

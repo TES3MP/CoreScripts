@@ -557,9 +557,7 @@ function BasePlayer:DeleteSummons()
 
             if cell ~= nil then
                 cell:DeleteObjectData(summonUniqueIndex)
-
-                local splitIndex = summonUniqueIndex:split("-")
-                logicHandler.DeleteObjectForEveryone(summonRefId, splitIndex[1], splitIndex[2])
+                logicHandler.DeleteObjectForEveryone(cell.description, summonUniqueIndex)
             end
         end
     end

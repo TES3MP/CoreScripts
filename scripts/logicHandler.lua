@@ -438,24 +438,26 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
     return logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
 end
 
-logicHandler.DeleteObject = function(pid, refId, refNum, mpNum, forEveryone)
+logicHandler.DeleteObject = function(pid, objectCellDescription, objectUniqueIndex, forEveryone)
 
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
-    tes3mp.SetObjectRefNum(refNum)
-    tes3mp.SetObjectMpNum(mpNum)
-    tes3mp.SetObjectRefId(refId)
+    tes3mp.SetObjectListCell(objectCellDescription)
+
+    local splitIndex = objectUniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+
     tes3mp.AddObject()
     tes3mp.SendObjectDelete(forEveryone)
 end
 
-logicHandler.DeleteObjectForPlayer = function(pid, refId, refNum, mpNum)
-    logicHandler.DeleteObject(pid, refId, refNum, mpNum, false)
+logicHandler.DeleteObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
+    logicHandler.DeleteObject(pid, objectCellDescription, objectUniqueIndex, false)
 end
 
-logicHandler.DeleteObjectForEveryone = function(refId, refNum, mpNum)
-    logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, refId, refNum, mpNum, true)
+logicHandler.DeleteObjectForEveryone = function(objectCellDescription, objectUniqueIndex)
+    logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, objectCellDescription, objectUniqueIndex, true)
 end
 
 logicHandler.ActivateObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
