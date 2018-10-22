@@ -216,7 +216,6 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif cmd[1] == "kick" and moderator then
         if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
             local targetPid = tonumber(cmd[2])
-            local targetName = Players[targetPid].name
             local message
 
             if Players[targetPid]:IsAdmin() then
@@ -226,7 +225,8 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = "You cannot kick a fellow Moderator from the server.\n"
                 tes3mp.SendMessage(pid, message, false)
             else
-                message = targetName .. " was kicked from the server by " .. playerName .. "!\n"
+                message = logicHandler.GetChatName(targetPid) .. " was kicked from the server by " ..
+                    logicHandler.GetChatName(pid) .. ".\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid]:Kick()
             end
