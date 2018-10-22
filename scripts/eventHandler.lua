@@ -51,28 +51,30 @@ end
 eventHandler.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
+        if Players[pid]:IsLoggedIn() then
 
-        Players[pid]:DeleteSummons()
+            Players[pid]:DeleteSummons()
 
-        -- Was this player confiscating from someone? If so, clear that
-        if Players[pid].confiscationTargetName ~= nil then
-            local targetName = Players[pid].confiscationTargetName
-            local targetPlayer = logicHandler.GetPlayerByName(targetName)
-            targetPlayer:SetConfiscationState(false)
-        end
+            -- Was this player confiscating from someone? If so, clear that
+            if Players[pid].confiscationTargetName ~= nil then
+                local targetName = Players[pid].confiscationTargetName
+                local targetPlayer = logicHandler.GetPlayerByName(targetName)
+                targetPlayer:SetConfiscationState(false)
+            end
 
-        Players[pid]:SaveCell()
-        Players[pid]:SaveStatsDynamic()
-        tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
-        Players[pid]:Save()
+            Players[pid]:SaveCell()
+            Players[pid]:SaveStatsDynamic()
+            tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
+            Players[pid]:Save()
 
-        -- Unload every cell for this player
-        for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
-            logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
-        end
+            -- Unload every cell for this player
+            for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
+                logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
+            end
 
-        if Players[pid].data.location.regionName ~= nil then
-            logicHandler.UnloadRegionForPlayer(pid, Players[pid].data.location.regionName)
+            if Players[pid].data.location.regionName ~= nil then
+                logicHandler.UnloadRegionForPlayer(pid, Players[pid].data.location.regionName)
+            end
         end
 
         Players[pid]:Destroy()
@@ -81,97 +83,104 @@ eventHandler.OnPlayerDisconnect = function(pid)
 end
 
 eventHandler.OnGUIAction = function(pid, idGui, data)
-    data = tostring(data) -- data can be numeric, but we should convert this to string
 
-    if idGui == guiHelper.ID.LOGIN then
-        if data == nil then
-            Players[pid]:Message("Incorrect password!\n")
-            guiHelper.ShowLogin(pid)
-            return true
-        end
+    if Players[pid] ~= nil then
 
-        Players[pid]:Load()
+        data = tostring(data) -- data can be numeric, but we should convert it to a string
 
-        -- Just in case the password from the data file is a number, make sure to turn it into a string
-        if tostring(Players[pid].data.login.password) ~= data then
-            Players[pid]:Message("Incorrect password!\n")
-            guiHelper.ShowLogin(pid)
-            return true
-        end
+        if Players[pid]:IsLoggedIn() then
+            if idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
-        -- Is this player on the banlist? If so, store their new IP and ban them
-        if tableHelper.containsValue(banList.playerNames, string.lower(Players[pid].accountName)) == true then
-            Players[pid]:SaveIpAddress()
+                local targetName = Players[pid].confiscationTargetName
+                local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
-            Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
-            tes3mp.BanAddress(tes3mp.GetIP(pid))
-        else
-            Players[pid]:FinishLogin()
-            Players[pid]:Message("You have successfully logged in.\n")
-        end
-    elseif idGui == guiHelper.ID.REGISTER then
-        if data == nil then
-            Players[pid]:Message("Password can not be empty\n")
-            guiHelper.ShowRegister(pid)
-            return true
-        end
-        Players[pid]:Register(data)
-        Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or " ..
-            "change it from your client config.\n")
+                -- Because the window's item index starts from 0 while the Lua table for
+                -- inventories starts from 1, adjust the former here
+                local inventoryItemIndex = data + 1
+                local item = targetPlayer.data.inventory[inventoryItemIndex]
 
-    elseif idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
+                if item ~= nil then
+                
+                    inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
+                        item.enchantmentCharge, item.soul)
+                    Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
 
-        local targetName = Players[pid].confiscationTargetName
-        local targetPlayer = logicHandler.GetPlayerByName(targetName)
+                    -- If the item is equipped by the target, unequip it first
+                    if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
+                        local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment,
+                            item.refId, item.charge)
+                        targetPlayer.data.equipment[equipmentItemIndex] = nil
+                    end
 
-        -- Because the window's item index starts from 0 while the Lua table for
-        -- inventories starts from 1, adjust the former here
-        local inventoryItemIndex = data + 1
-        local item = targetPlayer.data.inventory[inventoryItemIndex]
+                    targetPlayer.data.inventory[inventoryItemIndex] = nil
+                    tableHelper.cleanNils(targetPlayer.data.inventory)
 
-        if item ~= nil then
-        
-            inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
-                item.enchantmentCharge, item.soul)
-            Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
+                    Players[pid]:Message("You've confiscated " .. item.refId .. " from " ..
+                        targetName .. "\n")
 
-            -- If the item is equipped by the target, unequip it first
-            if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
-                local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment,
-                    item.refId, item.charge)
-                targetPlayer.data.equipment[equipmentItemIndex] = nil
-            end
+                    if targetPlayer:IsLoggedIn() then
+                        targetPlayer:LoadItemChanges({item}, enumerations.inventory.REMOVE)
+                    end
+                else
+                    Players[pid]:Message("Invalid item index\n")
+                end
 
-            targetPlayer.data.inventory[inventoryItemIndex] = nil
-            tableHelper.cleanNils(targetPlayer.data.inventory)
+                targetPlayer:SetConfiscationState(false)
+                targetPlayer:Save()
 
-            Players[pid]:Message("You've confiscated " .. item.refId .. " from " ..
-                targetName .. "\n")
+                Players[pid].confiscationTargetName = nil
 
-            if targetPlayer:IsLoggedIn() then
-                targetPlayer:LoadItemChanges({item}, enumerations.inventory.REMOVE)
+            elseif idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
+
+                local buttonIndex = tonumber(data) + 1
+                local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
+
+                local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
+
+                menuHelper.ProcessEffects(pid, destination.effects)
+                menuHelper.DisplayMenu(pid, destination.targetMenu)
+
+                Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
+                Players[pid].currentCustomMenu = destination.targetMenu
             end
         else
-            Players[pid]:Message("Invalid item index\n")
+            if idGui == guiHelper.ID.LOGIN then
+                if data == nil then
+                    Players[pid]:Message("Incorrect password!\n")
+                    guiHelper.ShowLogin(pid)
+                    return true
+                end
+
+                Players[pid]:Load()
+
+                -- Just in case the password from the data file is a number, make sure to turn it into a string
+                if tostring(Players[pid].data.login.password) ~= data then
+                    Players[pid]:Message("Incorrect password!\n")
+                    guiHelper.ShowLogin(pid)
+                    return true
+                end
+
+                -- Is this player on the banlist? If so, store their new IP and ban them
+                if tableHelper.containsValue(banList.playerNames, string.lower(Players[pid].accountName)) == true then
+                    Players[pid]:SaveIpAddress()
+
+                    Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
+                    tes3mp.BanAddress(tes3mp.GetIP(pid))
+                else
+                    Players[pid]:FinishLogin()
+                    Players[pid]:Message("You have successfully logged in.\n")
+                end
+            elseif idGui == guiHelper.ID.REGISTER then
+                if data == nil then
+                    Players[pid]:Message("Password can not be empty\n")
+                    guiHelper.ShowRegister(pid)
+                    return true
+                end
+                Players[pid]:Register(data)
+                Players[pid]:Message("You have successfully registered.\nUse Y by default to chat or " ..
+                    "change it from your client config.\n")
+            end
         end
-
-        targetPlayer:SetConfiscationState(false)
-        targetPlayer:Save()
-
-        Players[pid].confiscationTargetName = nil
-
-    elseif idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
-
-        local buttonIndex = tonumber(data) + 1
-        local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
-
-        local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
-
-        menuHelper.ProcessEffects(pid, destination.effects)
-        menuHelper.DisplayMenu(pid, destination.targetMenu)
-
-        Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
-        Players[pid].currentCustomMenu = destination.targetMenu
     end
 
     return false
@@ -179,32 +188,36 @@ end
 
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
-    tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
 
-    if message:sub(1,1) == '/' then
+        if message:sub(1,1) == '/' then
 
-        local command = (message:sub(2, #message)):split(" ")
-        commandHandler.ProcessCommand(pid, command)
-        return false -- commands should be hidden
+            local command = (message:sub(2, #message)):split(" ")
+            commandHandler.ProcessCommand(pid, command)
+            return false -- commands should be hidden
 
-    -- Check for chat overrides that add extra text
-    elseif Players[pid]:IsServerStaff() then
+        -- Check for chat overrides that add extra text
+        elseif Players[pid]:IsServerStaff() then
 
-        local message = color.White .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            local message = color.White .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
 
-        if Players[pid]:IsServerOwner() then
-            message = config.rankColors.serverOwner .. "[Owner] " .. message
-        elseif Players[pid]:IsAdmin() then
-            message = config.rankColors.admin .. "[Admin] " .. message
-        elseif Players[pid]:IsModerator() then
-            message = config.rankColors.moderator .. "[Mod] " .. message
+            if Players[pid]:IsServerOwner() then
+                message = config.rankColors.serverOwner .. "[Owner] " .. message
+            elseif Players[pid]:IsAdmin() then
+                message = config.rankColors.admin .. "[Admin] " .. message
+            elseif Players[pid]:IsModerator() then
+                message = config.rankColors.moderator .. "[Mod] " .. message
+            end
+
+            tes3mp.SendMessage(pid, message, true)
+            return false
         end
 
-        tes3mp.SendMessage(pid, message, true)
-        return false
+        return true -- default behavior, regular chat messages should not be overridden
     end
 
-    return true -- default behavior, regular chat messages should not be overridden
+    return false
 end
 
 eventHandler.OnPlayerDeath = function(pid)
@@ -313,7 +326,7 @@ eventHandler.OnPlayerCellChange = function(pid)
 end
 
 eventHandler.OnPlayerEndCharGen = function(pid)
-    if Players[pid] ~= nil then
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         Players[pid]:EndCharGen()
     end
 end
@@ -547,11 +560,13 @@ eventHandler.OnActorAI = function(pid, cellDescription)
 end
 
 eventHandler.OnActorDeath = function(pid, cellDescription)
-    if LoadedCells[cellDescription] ~= nil then
-        LoadedCells[cellDescription]:SaveActorDeath(pid)
-    else
-        tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-            " sent ActorDeath for unloaded " .. cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        if LoadedCells[cellDescription] ~= nil then
+            LoadedCells[cellDescription]:SaveActorDeath(pid)
+        else
+            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+                " sent ActorDeath for unloaded " .. cellDescription)
+        end
     end
 end
 
