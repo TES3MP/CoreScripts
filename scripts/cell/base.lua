@@ -502,7 +502,8 @@ function BaseCell:SaveObjectsSpawned(pid)
 
                     if isPlayer then
                         local summonerPid = tes3mp.GetObjectSummonerPid(objectIndex)
-                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by pid " .. summonerPid)
+                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by player " ..
+                            logicHandler.GetChatName(summonerPid))
 
                         -- Track the player and the summon for each other
                         summon.summonerPlayer = Players[summonerPid].accountName
