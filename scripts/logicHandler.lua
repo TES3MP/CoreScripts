@@ -327,8 +327,6 @@ end
 
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 
-    local packetOriginEnums = enumerations.packetOrigin
-
     if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY or
         packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL then
 
@@ -339,8 +337,6 @@ logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 end
 
 logicHandler.IsPacketFromConsole = function(packetOrigin)
-
-    local packetOriginEnums = enumerations.packetOrigin
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_CONSOLE then
         return true
