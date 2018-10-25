@@ -673,6 +673,7 @@ function BaseCell:SaveContainers(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Saving Container from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
+    local packetOrigin = tes3mp.GetObjectListOrigin()
     local action = tes3mp.GetObjectListAction()
     local subAction = tes3mp.GetObjectListContainerSubAction()
 
@@ -764,13 +765,20 @@ function BaseCell:SaveContainers(pid)
     end
 
     -- Is this a player replying to our request for container contents?
-    -- If so, only send the reply to other visitors
+    -- If so, only send the reply to other players
     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
     if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
         tes3mp.SendContainer(true, true)
+    -- Is this a container packet originating from a client script or
+    -- dialogue? If so, its effects have already taken place on the
+    -- sending client, so only send it to other players
+    elseif packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL or
+        packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_GLOBAL or
+        packetOrigin == enumerations.packetOrigin.CLIENT_DIALOGUE then
+        tes3mp.SendContainer(true, true)
     -- Otherwise, send the received packet to everyone, including the
     -- player who sent it (because no clientside changes will be made
-    -- to the container they're in otherwise)
+    -- to the related container otherwise)
     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
     else
         tes3mp.SendContainer(true, false)
