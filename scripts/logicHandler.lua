@@ -327,9 +327,7 @@ end
 
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 
-    if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY or
-        packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL then
-
+    if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY then
         return true
     end
 
