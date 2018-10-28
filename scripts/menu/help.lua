@@ -239,7 +239,7 @@ Menus["help admin page 2"] = {
         color.Yellow .. "/storeconsole <pid> <command>\n" ..
             color.White .. "Store a certain console command for a player\n" ..
         color.Yellow .. "/runconsole <pid> (<count>) (<interval>)\n" ..
-            color.White .. "Run a stored console command on a player, with optional count and interval\n" ..
+            color.White .. "Run a stored console command on a player, with optional count and interval in miliseconds\n" ..
         color.Yellow .. "/placeat <pid> <refId>\n" ..
             color.White .. "Place a certain non-living object at a player's location\n" ..
         color.Yellow .. "/spawnat <pid> <refId>\n" ..
