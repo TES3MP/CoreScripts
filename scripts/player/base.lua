@@ -1121,7 +1121,7 @@ function BasePlayer:SaveSpellbook()
             if tableHelper.containsValue(self.data.spellbook, spellId) == true then
                 tes3mp.LogMessage(enumerations.log.INFO, "Removing spell " .. spellId .. " from " ..
                     logicHandler.GetChatName(self.pid))
-                local foundIndex = tableHelper.getIndexByPattern(self.data.spellbook, spellId)
+                local foundIndex = tableHelper.getIndexByValue(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
 
                 if logicHandler.IsGeneratedRecord(spellId) then

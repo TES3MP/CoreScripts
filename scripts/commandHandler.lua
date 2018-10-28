@@ -990,7 +990,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[pid]:Message("Could not find actor " .. uniqueIndex .. " in any loaded cell\n")
             else
 
-                local actionName = tableHelper.getIndexByPattern(enumerations.ai, actionNumericalId)
+                local actionName = tableHelper.getIndexByValue(enumerations.ai, actionNumericalId)
                 local messageAction = enumerations.aiPrintableAction[actionName]
                 local message = uniqueIndex .. " is now " .. messageAction
 

@@ -667,7 +667,7 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -720,7 +720,7 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -773,7 +773,7 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -831,7 +831,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -897,7 +897,7 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -951,7 +951,7 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -1006,7 +1006,7 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -1085,7 +1085,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -1163,7 +1163,7 @@ eventHandler.OnVideoPlay = function(pid)
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByPattern(enumerations.packetOrigin, packetOrigin))
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
             tes3mp.Kick(pid)
@@ -1220,7 +1220,7 @@ eventHandler.OnRecordDynamic = function(pid)
             return
         end
 
-        local storeType = string.lower(tableHelper.getIndexByPattern(enumerations.recordType, recordNumericalType))
+        local storeType = string.lower(tableHelper.getIndexByValue(enumerations.recordType, recordNumericalType))
         local recordStore = RecordStores[storeType]
         local isEnchantable, recordAdditions
 
