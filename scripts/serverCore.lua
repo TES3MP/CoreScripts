@@ -311,15 +311,14 @@ function OnPlayerConnect(pid)
     if not logicHandler.IsNameAllowed(playerName) then
         local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use a disallowed name.\n"
         tes3mp.SendMessage(pid, message, true)
-        return false -- deny player
+        tes3mp.Kick(pid)
     elseif logicHandler.IsPlayerNameLoggedIn(playerName) then
         local message = playerName .. " (" .. pid .. ") " .. "joined and tried to use an existing player's name.\n"
         tes3mp.SendMessage(pid, message, true)
-        return false -- deny player
+        tes3mp.Kick(pid)
     else
         tes3mp.LogAppend(enumerations.log.INFO, "- New player is named " .. playerName)
         eventHandler.OnPlayerConnect(pid, playerName)
-        return true -- accept player
     end
 end
 
