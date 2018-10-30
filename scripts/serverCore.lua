@@ -23,7 +23,6 @@ frametimeMultiplier = nil
 updateTimerId = nil
 
 banList = {}
-pluginList = {}
 
 if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
@@ -104,28 +103,6 @@ end
 
 function SaveBanList()
     jsonInterface.save("banlist.json", banList)
-end
-
-function LoadPluginList()
-    tes3mp.LogMessage(enumerations.log.WARN, "Reading pluginlist.json")
-
-    local jsonPluginList = jsonInterface.load("pluginlist.json")
-
-    -- Fix numerical keys to print plugins in the correct order
-    tableHelper.fixNumericalKeys(jsonPluginList, true)
-
-    for listIndex, pluginEntry in ipairs(jsonPluginList) do
-        for entryIndex, hashArray in pairs(pluginEntry) do
-            pluginList[listIndex] = {entryIndex}
-            io.write(("%d, {%s"):format(listIndex, entryIndex))
-            for _, hash in ipairs(hashArray) do
-                io.write((", %X"):format(tonumber(hash, 16)))
-                table.insert(pluginList[listIndex], tonumber(hash, 16))
-            end
-            table.insert(pluginList[listIndex], "")
-            io.write("}\n")
-        end
-    end
 end
 
 do
@@ -215,7 +192,6 @@ function OnServerInit()
     logicHandler.PushPlayerList(Players)
 
     LoadBanList()
-    LoadPluginList()
 
     tes3mp.SetPluginEnforcementState(config.enforcePlugins)
 end
@@ -289,13 +265,42 @@ function OnServerExit(error)
     tes3mp.LogMessage(enumerations.log.ERROR, tostring(error))
 end
 
-function OnRequestPluginList(id, field)
-    id = id + 1
-    field = field + 1
-    if #pluginList < id then
-        return ""
+
+function LoadPluginList()
+    local pluginList = {}
+    tes3mp.LogMessage(enumerations.log.WARN, "Reading pluginlist.json")
+
+    local jsonPluginList = jsonInterface.load("pluginlist.json")
+
+    -- Fix numerical keys to print plugins in the correct order
+    tableHelper.fixNumericalKeys(jsonPluginList, true)
+
+    for listIndex, pluginEntry in ipairs(jsonPluginList) do
+        for entryIndex, hashArray in pairs(pluginEntry) do
+            pluginList[listIndex] = {}
+            pluginList[listIndex].name = entryIndex
+            local hashes = {}
+            io.write(("%d - \"%s\": ["):format(listIndex, entryIndex))
+            for _, hash in ipairs(hashArray) do
+                io.write(("%X, "):format(tonumber(hash, 16)))
+                table.insert(hashes, tonumber(hash, 16))
+            end
+            pluginList[listIndex].hashes = hashes
+            table.insert(pluginList[listIndex], "")
+            io.write("\b\b]\n")
+        end
     end
-    return pluginList[id][field]
+    return pluginList
+end
+
+function OnRequestPluginList()
+    local pluginList = LoadPluginList()
+    for _, entry in ipairs(pluginList) do
+        local name = entry.name
+        for i, hash in ipairs(entry.hashes) do
+            tes3mp.AddPluginHash(name, hash)
+        end
+    end
 end
 
 function OnPlayerConnect(pid)
