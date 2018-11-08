@@ -350,13 +350,7 @@ function OnPlayerResurrect(pid)
 end
 
 function OnPlayerSendMessage(pid, message)
-    local ret = eventHandler.OnPlayerSendMessage(pid, message)
-
-    if ret then
-        local pname = tes3mp.GetName(pid)
-        local msg = ("%s (%d): %s\n"):format(pname, pid, message)
-        tes3mp.SendMessage(pid, msg, true)
-    end
+    eventHandler.OnPlayerSendMessage(pid, message)
 end
 
 function OnObjectLoopTimeExpiration(loopIndex)
