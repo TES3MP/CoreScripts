@@ -1029,10 +1029,11 @@ function BasePlayer:SaveInventory()
 
             elseif action == enumerations.inventory.REMOVE then
 
-                local remainingItem = inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,
-                    item.charge, item.enchantmentCharge, item.soul)
+                inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,
+                    nil, nil, item.soul)
 
-                if remainingItem == nil and logicHandler.IsGeneratedRecord(item.refId) then
+                if not inventoryHelper.containsItem(self.data.inventory, item.refId) and
+                    logicHandler.IsGeneratedRecord(item.refId) then
 
                     local recordStore = logicHandler.GetRecordStoreByRecordId(item.refId)
 
