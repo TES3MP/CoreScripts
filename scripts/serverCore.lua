@@ -277,17 +277,23 @@ function LoadPluginList()
 
     for listIndex, pluginEntry in ipairs(jsonPluginList) do
         for entryIndex, hashArray in pairs(pluginEntry) do
+
             pluginList[listIndex] = {}
             pluginList[listIndex].name = entryIndex
+
             local hashes = {}
-            io.write(("%d - \"%s\": ["):format(listIndex, entryIndex))
+            local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
+
             for _, hash in ipairs(hashArray) do
-                io.write(("%X, "):format(tonumber(hash, 16)))
+
+                debugMessage = debugMessage .. ("%X, "):format(tonumber(hash, 16))
                 table.insert(hashes, tonumber(hash, 16))
             end
             pluginList[listIndex].hashes = hashes
             table.insert(pluginList[listIndex], "")
-            io.write("\b\b]\n")
+
+            debugMessage = debugMessage .. "\b\b]"
+            tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
         end
     end
     return pluginList
