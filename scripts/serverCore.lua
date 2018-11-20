@@ -295,10 +295,16 @@ end
 
 function OnRequestPluginList()
     local pluginList = LoadPluginList()
+
     for _, entry in ipairs(pluginList) do
         local name = entry.name
-        for i, hash in ipairs(entry.hashes) do
-            tes3mp.AddPluginHash(name, hash)
+
+        if tableHelper.isEmpty(entry.hashes) then
+            tes3mp.AddPluginHash(name, "")
+        else
+            for _, hash in ipairs(entry.hashes) do
+                tes3mp.AddPluginHash(name, hash)
+            end
         end
     end
 end
