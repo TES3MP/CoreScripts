@@ -106,11 +106,13 @@ end
 
 logicHandler.IsNameAllowed = function(inputName)
 
-    for _, disallowedNameString in pairs(config.disallowedNameStrings) do
+    if type(config.disallowedNameStrings) == "table" then
+        for _, disallowedNameString in pairs(config.disallowedNameStrings) do
 
-        if string.find(string.lower(inputName), string.lower(disallowedNameString)) ~= nil then
+            if string.find(string.lower(inputName), string.lower(disallowedNameString)) ~= nil then
 
-            return false
+                return false
+            end
         end
     end
 
