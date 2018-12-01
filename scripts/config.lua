@@ -272,6 +272,11 @@ config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", 
 --          their usage of unshared plugins.
 config.enforcePlugins = true
 
+-- Whether the server should avoid crashing when Lua script errors occur
+-- Warning: Only set this to true if you want to have a highly experimental server where
+--          important data can potentially stay unloaded or get overwritten
+config.ignoreScriptErrors = false
+
 -- The type of database or data format used by the server
 -- Valid values: json, sqlite3
 -- Note: The latter is only partially implemented as of now
