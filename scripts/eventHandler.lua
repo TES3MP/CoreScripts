@@ -168,9 +168,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     tes3mp.BanAddress(tes3mp.GetIP(pid))
                 else
                     Players[pid]:FinishLogin()
-                    Players[pid]:Message("You have successfully logged in.\n")
-                    Players[pid]:Message("Use Y by default to chat or change it from your client config.\n" .. 
-                        "Use F2 by default to hide the chat window.\n")
+                    Players[pid]:Message("You have successfully logged in.\n" .. config.chatWindowInstructions)
                 end
             elseif idGui == guiHelper.ID.REGISTER then
                 if data == nil then
@@ -179,9 +177,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     return true
                 end
                 Players[pid]:Register(data)
-                Players[pid]:Message("You have successfully registered.\n")
-                Players[pid]:Message("Use Y by default to chat or change it from your client config.\n" .. 
-                    "Use F2 by default to hide the chat window.\n")
+                Players[pid]:Message("You have successfully registered.\n" .. config.chatWindowInstructions)
             end
         end
     end
