@@ -112,17 +112,47 @@ end
 -- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
 function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkNestedTables)
+
     if inputTable[keyToFind] ~= nil then
         if inputTable[keyToFind] == valueToFind then
             return true
         end
-    elseif checkNestedTables == true then
+    end
+
+    if checkNestedTables == true then
         for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValue(value, keyToFind, valueToFind, true) then
                 return true
             end
         end
     end
+
+    return false
+end
+
+-- Check whether a table contains a set of key/value pairs, optionally checking inside
+-- tables nested in the original one
+function tableHelper.containsKeyValuePairs(inputTable, keyValuePairsTable, checkNestedTables)
+
+    local foundMatches = true
+
+    for keyToFind, valueToFind in pairs(keyValuePairsTable) do
+        if inputTable[keyToFind] == nil or inputTable[keyToFind] ~= valueToFind then
+            foundMatches = false
+            break
+        end
+    end
+
+    if foundMatches then
+        return true
+    elseif checkNestedTables == true then
+        for key, value in pairs(inputTable) do
+            if type(value) == "table" and tableHelper.containsKeyValuePairs(value, keyValuePairsTable, true) then
+                return true
+            end
+        end
+    end
+
     return false
 end
 
