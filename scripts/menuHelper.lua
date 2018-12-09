@@ -51,6 +51,16 @@ function menuHelper.conditions.requireStaffRank(inputValue)
     return condition
 end
 
+function menuHelper.conditions.requirePlayerFunction(inputFunctionName, inputArguments)
+    local condition = {
+        conditionType = "playerFunction",
+        functionName = inputFunctionName,
+        arguments = inputArguments
+    }
+
+    return condition
+end
+
 -- Deprecated
 function menuHelper.conditions.requireAdminRank(inputValue)
     return menuHelper.conditions.requireStaffRank(inputValue)
@@ -225,6 +235,21 @@ function menuHelper.CheckCondition(pid, condition)
     elseif condition.conditionType == "staffRank" then
 
         if targetPlayer.data.settings.staffRank >= condition.rankValue then
+            return true
+        end
+    elseif condition.conditionType == "playerFunction" then
+
+        local functionName = condition.functionName
+        local arguments = condition.arguments
+
+        if arguments == nil then
+            arguments = {}
+        -- Fill in any variables placed inside the arguments
+        else
+            arguments = menuHelper.ProcessVariables(pid, arguments)
+        end
+
+        if targetPlayer[functionName](targetPlayer, unpack(arguments)) then
             return true
         end
     end
