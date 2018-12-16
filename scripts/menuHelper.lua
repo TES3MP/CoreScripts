@@ -183,6 +183,7 @@ end
 function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
     local variable = {
         variableType = "playerVariable",
+        subType = "data",
         source = "current",
         variableName = inputVariableName
     }
@@ -287,6 +288,7 @@ function menuHelper.ProcessVariables(pid, inputTable)
         if type(tableElement) == "table" and tableElement.variableType ~= nil then
 
             local variableType = tableElement.variableType
+            local subType = tableElement.subType
             local source = tableElement.source
 
             if variableType == "pid" then
@@ -298,10 +300,22 @@ function menuHelper.ProcessVariables(pid, inputTable)
                     resultValue = logicHandler.GetChatName(pid)
                 end
             elseif variableType == "playerVariable" then
+
+                if source == "current" and subType == "data" then
+                    resultValue = Players[pid].data
+                end
+
                 local variableName = tableElement.variableName
 
-                if source == "current" then
-                    resultValue = tostring(Players[pid].data[variableName])
+                -- Allow for nested variables (such as character.race or location.cell)
+                -- by iterating through every value separated by a period
+                for nestedName in string.gmatch(variableName, patterns.periodSplit) do
+                    if type(resultValue[nestedName]) ~= "nil" then
+                        resultValue = resultValue[nestedName]
+                    else
+                        resultValue = "nil"
+                        break
+                    end
                 end
             elseif variableType == "argumentArray" then
                 local operation = tableElement.operation

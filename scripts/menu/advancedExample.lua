@@ -1,7 +1,7 @@
 Menus["advanced example origin"] = {
     text = {
         color.Orange .. "Welcome, " .. color.Yellow,
-        menuHelper.variables.currentChatName(),
+        menuHelper.variables.currentPlayerDataVariable("login.name"),
         color.Orange .. "! This is an example of an advanced menu. Use it as a starting point for your own.\n\n" ..
             color.White .. "Select what kind of functions you want to run."
     },
