@@ -479,6 +479,13 @@ function menuHelper.DisplayMenu(pid, menuIndex)
     if menuIndex == nil or Menus[menuIndex] == nil then return end
 
     local text = Menus[menuIndex].text
+
+    -- Is this a table? If so, process the variables in it and then print all of them
+    if type(text) == "table" then
+        local processedTextVariables = menuHelper.ProcessVariables(pid, text)
+        text = tableHelper.concatenateArrayValues(processedTextVariables, 1, "")
+    end
+
     local displayedButtons = menuHelper.GetDisplayedButtons(pid, menuIndex)
     local buttonCount = tableHelper.getCount(displayedButtons)
     local buttonList = ""

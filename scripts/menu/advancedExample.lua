@@ -1,6 +1,10 @@
 Menus["advanced example origin"] = {
-    text = color.Orange .. "This is an example of an advanced menu. Use it as a starting point for your own.\n\n" ..
-                color.White .. "Select what kind of functions you want to run.",
+    text = {
+        color.Orange .. "Welcome, " .. color.Yellow,
+        menuHelper.variables.currentChatName(),
+        color.Orange .. "! This is an example of an advanced menu. Use it as a starting point for your own.\n\n" ..
+            color.White .. "Select what kind of functions you want to run."
+    },
     buttons = {
         { caption = "Player functions",
             destinations = { menuHelper.destinations.setDefault("advanced example player") }
