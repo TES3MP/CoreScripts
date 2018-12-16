@@ -282,6 +282,8 @@ function menuHelper.ProcessVariables(pid, inputTable)
 
     for tableIndex, tableElement in ipairs(inputTable) do
 
+        local resultValue = "nil"
+
         if type(tableElement) == "table" and tableElement.variableType ~= nil then
 
             local variableType = tableElement.variableType
@@ -289,31 +291,33 @@ function menuHelper.ProcessVariables(pid, inputTable)
 
             if variableType == "pid" then
                 if source == "current" then
-                    tableElement = pid
+                    resultValue = pid
                 end
             elseif variableType == "chatName" then
                 if source == "current" then
-                    tableElement = logicHandler.GetChatName(pid)
+                    resultValue = logicHandler.GetChatName(pid)
                 end
             elseif variableType == "playerVariable" then
                 local variableName = tableElement.variableName
 
                 if source == "current" then
-                    tableElement = tostring(Players[pid].data[variableName])
+                    resultValue = tostring(Players[pid].data[variableName])
                 end
             elseif variableType == "argumentArray" then
                 local operation = tableElement.operation
                 local delimiter = tableElement.delimiter
 
-                local result = menuHelper.ProcessVariables(pid, tableElement.containedVariables)
+                local processedVariables = menuHelper.ProcessVariables(pid, tableElement.containedVariables)
 
                 if operation == "concatenation" then
-                    tableElement = tableHelper.concatenateArrayValues(result, 1, delimiter)
+                    resultValue = tableHelper.concatenateArrayValues(processedVariables, 1, delimiter)
                 end
             end
+        else
+            resultValue = tostring(tableElement)
         end
 
-        table.insert(resultTable, tableElement)
+        table.insert(resultTable, resultValue)
     end
 
     return resultTable
