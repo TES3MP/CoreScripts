@@ -834,7 +834,11 @@ function commandHandler.ProcessCommand(pid, cmd)
         if config.allowFixmeCommand == true then
             local currentTime = os.time()
 
-            if Players[pid].data.customVariables.lastFixMe == nil or
+            if not tes3mp.IsInExterior(pid) then
+                local message = "Sorry! You can only use " .. color.Yellow .. "/fixme" ..
+                    color.White .. " in exteriors.\n"
+                tes3mp.SendMessage(pid, message, false)
+            elseif Players[pid].data.customVariables.lastFixMe == nil or
                 currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
 
                 logicHandler.RunConsoleCommandOnPlayer(pid, "fixme")
@@ -843,10 +847,11 @@ function commandHandler.ProcessCommand(pid, cmd)
             else
                 local remainingSeconds = Players[pid].data.customVariables.lastFixMe +
                     config.fixmeInterval - currentTime
-                local message = "Sorry! You can't use /fixme for another "
+                local message = "Sorry! You can't use " .. color.Yellow .. "/fixme" ..
+                    color.White .. " for another "
 
                 if remainingSeconds > 1 then
-                    message = message .. remainingSeconds .. " seconds"
+                    message = message .. color.Yellow .. remainingSeconds .. color.White .. " seconds"
                 else
                     message = message .. " second"
                 end
