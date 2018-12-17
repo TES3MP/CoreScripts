@@ -14,7 +14,8 @@ function BaseCell:__init(cellDescription)
     self.data =
     {
         entry = {
-            description = cellDescription
+            description = cellDescription,
+            creationTime = os.time()
         },
         lastVisit = {},
         objectData = {},
