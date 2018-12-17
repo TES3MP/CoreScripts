@@ -297,7 +297,10 @@ eventHandler.OnPlayerCellChange = function(pid)
 
                 -- Exchange generated records with the other players who have this cell loaded
                 local currentCellDescription = tes3mp.GetCell(pid)
-                logicHandler.ExchangeGeneratedRecords(pid, LoadedCells[currentCellDescription].visitors)
+
+                if LoadedCells[currentCellDescription] ~= nil then
+                    logicHandler.ExchangeGeneratedRecords(pid, LoadedCells[currentCellDescription].visitors)
+                end
 
                 Players[pid].data.location.regionName = regionName
                 Players[pid].hasFinishedInitialTeleportation = true
