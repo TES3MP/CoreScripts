@@ -8,21 +8,20 @@ function RecordStore:__init()
 
     if self.hasEntry == nil then
 
-        -- Fill in later
+        -- Not implemented yet
     end
 end
 
 function RecordStore:CreateEntry()
-    self:Save()
-    self.hasEntry = true
+    -- Not implemented yet
 end
 
 function RecordStore:Save()
-    Database:SaveRecordStore(self.data)
+    -- Not implemented yet
 end
 
 function RecordStore:Load()
-    self.data = Database:LoadRecordStore(self.data)
+    -- Not implemented yet
 end
 
 return RecordStore

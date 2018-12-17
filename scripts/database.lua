@@ -1,3 +1,5 @@
+-- This is a very unfinished and out-of-date example of using a database in TES3MP
+
 tableHelper = require("tableHelper")
 Database = class("Database")
 
