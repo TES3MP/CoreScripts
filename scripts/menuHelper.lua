@@ -498,7 +498,7 @@ function menuHelper.DisplayMenu(pid, menuIndex)
 
     local text = Menus[menuIndex].text
 
-    -- Is this a table? If so, process the variables in it and then print all of them
+    -- Is this a table? If so, process the variables in it and then concatenate them
     if type(text) == "table" then
         local processedTextVariables = menuHelper.ProcessVariables(pid, text)
         text = tableHelper.concatenateArrayValues(processedTextVariables, 1, "")
@@ -510,7 +510,15 @@ function menuHelper.DisplayMenu(pid, menuIndex)
 
     for buttonIndex, button in ipairs(displayedButtons) do
 
-        buttonList = buttonList .. button.caption
+        local caption = button.caption
+
+        -- Handle button captions the same way as menu text
+        if type(caption) == "table" then
+            local processedTextVariables = menuHelper.ProcessVariables(pid, caption)
+            caption = tableHelper.concatenateArrayValues(processedTextVariables, 1, "")
+        end
+
+        buttonList = buttonList .. caption
 
         if buttonIndex < buttonCount then
             buttonList = buttonList .. ";"
