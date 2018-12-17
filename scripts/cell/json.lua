@@ -10,36 +10,38 @@ function Cell:__init(cellDescription)
     BaseCell.__init(self, cellDescription)
 
     -- Ensure filename is valid
-    self.cellFile = cellDescription
-    self.cellFile = fileHelper.fixFilename(self.cellFile)
-    self.cellFile = self.cellFile .. ".json"
+    self.entryName = fileHelper.fixFilename(cellDescription)
 
-    if self.hasEntry == nil then
-        local home = os.getenv("MOD_DIR").."/cell/"
-        local file = io.open(home .. self.cellFile, "r")
-        if file ~= nil then
-            io.close()
-            self.hasEntry = true
-        else
-            self.hasEntry = false
-        end
+    self.entryFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR") .. "/cell/", self.entryName .. ".json")
+
+    if self.entryFile == "invalid" then
+        self.hasEntry = false
+        self.entryFile = self.entryName .. ".json"
+    else
+        self.hasEntry = true
     end
 end
 
 function Cell:CreateEntry()
-    jsonInterface.save("cell/" .. self.cellFile, self.data)
-    self.hasEntry = true
+    self.hasEntry = jsonInterface.save("cell/" .. self.entryFile, self.data)
+
+    if self.hasEntry then
+        tes3mp.LogMessage(enumerations.log.WARN, "Successfully created JSON file for cell " .. self.entryName)
+    else
+        local message = "Failed to create JSON file for " .. self.entryName
+        tes3mp.SendMessage(self.pid, message, true)
+    end
 end
 
 function Cell:Save()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
-        jsonInterface.save("cell/" .. self.cellFile, self.data, config.cellKeyOrder)
+        jsonInterface.save("cell/" .. self.entryFile, self.data, config.cellKeyOrder)
     end
 end
 
 function Cell:Load()
-    self.data = jsonInterface.load("cell/" .. self.cellFile)
+    self.data = jsonInterface.load("cell/" .. self.entryFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys

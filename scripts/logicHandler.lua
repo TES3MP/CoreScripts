@@ -644,7 +644,6 @@ logicHandler.LoadCell = function(cellDescription)
             LoadedCells[cellDescription]:Load()
         -- Otherwise, create a data file for it
         else
-            tes3mp.LogAppend(enumerations.log.INFO, "- Creating entry for new cell " .. cellDescription)
             LoadedCells[cellDescription]:CreateEntry()
         end
     -- Otherwise, save momentary actor data so it can be sent
