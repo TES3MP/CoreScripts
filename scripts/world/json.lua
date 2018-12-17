@@ -1,5 +1,4 @@
 require("config")
-jsonInterface = require("jsonInterface")
 tableHelper = require("tableHelper")
 local BaseWorld = require("world.base")
 

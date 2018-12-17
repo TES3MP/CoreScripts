@@ -1,4 +1,3 @@
-jsonInterface = require("jsonInterface")
 Database = require("database")
 local BaseCell = require("cell.base")
 

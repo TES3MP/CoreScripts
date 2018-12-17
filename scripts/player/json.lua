@@ -1,5 +1,4 @@
 require("config")
-jsonInterface = require("jsonInterface")
 fileHelper = require("fileHelper")
 tableHelper = require("tableHelper")
 local BasePlayer = require("player.base")
