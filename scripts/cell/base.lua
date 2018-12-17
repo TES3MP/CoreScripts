@@ -1853,7 +1853,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:EnsurePacketTables()
     self:EnsurePacketValidity()
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Sending data of cell " .. self.description .. " to " ..
+    tes3mp.LogMessage(enumerations.log.INFO, "Loading data of cell " .. self.description .. " for " ..
         logicHandler.GetChatName(pid))
 
     local objectData = self.data.objectData
