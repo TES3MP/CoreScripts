@@ -1186,7 +1186,8 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
             local location = objectData[uniqueIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            if type(location) == "table" and tableHelper.getCount(location) == 6 and
+                tableHelper.usesNumericalValues(location) and
                 self:ContainsPosition(location.posX, location.posY) then
 
                 packetBuilder.AddObjectPlace(uniqueIndex, objectData[uniqueIndex])
@@ -1218,7 +1219,8 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
             local location = objectData[uniqueIndex].location
 
             -- Ensure data integrity before proceeeding
-            if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
+            if type(location) == "table" and tableHelper.getCount(location) == 6 and
+                tableHelper.usesNumericalValues(location) and
                 self:ContainsPosition(location.posX, location.posY) then
 
                 local shouldSkip = false
