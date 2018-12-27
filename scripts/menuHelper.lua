@@ -180,15 +180,19 @@ function menuHelper.variables.currentChatName()
     return variable
 end
 
-function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
+function menuHelper.variables.currentPlayerVariable(inputVariableName)
     local variable = {
         variableType = "playerVariable",
-        subType = "data",
         source = "current",
         variableName = inputVariableName
     }
 
     return variable
+end
+
+-- Deprecated
+function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
+    return menuHelper.variables.currentPlayerVariable("data." .. inputVariableName)
 end
 
 function menuHelper.variables.concatenation(inputDelimiter, ...)
@@ -301,8 +305,8 @@ function menuHelper.ProcessVariables(pid, inputTable)
                 end
             elseif variableType == "playerVariable" then
 
-                if source == "current" and subType == "data" then
-                    resultValue = Players[pid].data
+                if source == "current" then
+                    resultValue = Players[pid]
                 end
 
                 local variableName = tableElement.variableName
