@@ -195,6 +195,16 @@ function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
     return menuHelper.variables.currentPlayerVariable("data." .. inputVariableName)
 end
 
+function menuHelper.variables.globalVariable(inputObjectName, inputVariableName)
+    local variable = {
+        variableType = "globalVariable",
+        objectName = inputObjectName,
+        variableName = inputVariableName
+    }
+
+    return variable
+end
+
 function menuHelper.variables.concatenation(inputDelimiter, ...)
     local variable = {
         variableType = "argumentArray",
@@ -303,22 +313,32 @@ function menuHelper.ProcessVariables(pid, inputTable)
                 if source == "current" then
                     resultValue = logicHandler.GetChatName(pid)
                 end
-            elseif variableType == "playerVariable" then
-
-                if source == "current" then
-                    resultValue = Players[pid]
-                end
+            elseif variableType == "playerVariable" or variableType == "globalVariable" then
 
                 local variableName = tableElement.variableName
 
-                -- Allow for nested variables (such as character.race or location.cell)
-                -- by iterating through every value separated by a period
-                for nestedName in string.gmatch(variableName, patterns.periodSplit) do
-                    if type(resultValue[nestedName]) ~= "nil" then
-                        resultValue = resultValue[nestedName]
+                if variableType == "playerVariable" and source == "current" then
+                    resultValue = Players[pid]
+                elseif variableType == "globalVariable" then
+                    local objectName = tableElement.objectName
+
+                    if objectName ~= nil then
+                        resultValue = _G[objectName]
                     else
-                        resultValue = "nil"
-                        break
+                        resultValue = _G
+                    end
+                end
+
+                if type(resultValue) == "table" then
+                    -- Allow for nested variables (such as character.race or location.cell)
+                    -- by iterating through every value separated by a period
+                    for nestedName in string.gmatch(variableName, patterns.periodSplit) do
+                        if type(resultValue[nestedName]) ~= "nil" then
+                            resultValue = resultValue[nestedName]
+                        else
+                            resultValue = "nil"
+                            break
+                        end
                     end
                 end
             elseif variableType == "argumentArray" then

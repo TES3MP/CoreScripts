@@ -47,7 +47,15 @@ Menus["advanced example player"] = {
 }
 
 Menus["advanced example world"] = {
-    text = color.Orange .. "Select a function to run on this world.",
+    text = {
+        color.Orange .. "The world time is set to year " .. color.Yellow,
+        menuHelper.variables.globalVariable("WorldInstance", "data.time.year"),
+        color.Orange .. ", month " .. color.Yellow,
+        menuHelper.variables.globalVariable("WorldInstance", "data.time.month"),
+        color.Orange .. " and day " .. color.Yellow,
+        menuHelper.variables.globalVariable("WorldInstance", "data.time.day"),
+        color.Orange .. ". Select a function to run on this world."
+    },
     buttons = {
         { caption = "IncrementDay() and LoadTime(nil, true)",
             destinations = {
