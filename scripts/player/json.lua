@@ -11,7 +11,7 @@ function Player:__init(pid, playerName)
     -- Ensure filename is valid
     self.accountName = fileHelper.fixFilename(playerName)
 
-    self.accountFile = tes3mp.GetCaseInsensitiveFilename(os.getenv("MOD_DIR") .. "/player/", self.accountName .. ".json")
+    self.accountFile = tes3mp.GetCaseInsensitiveFilename(tes3mp.GetModDir() .. "/player/", self.accountName .. ".json")
 
     if self.accountFile == "invalid" then
         self.hasAccount = false

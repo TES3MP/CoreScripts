@@ -289,7 +289,7 @@ config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
-config.databasePath = os.getenv("MOD_DIR") .. "/database.db" -- Path where database is stored
+config.databasePath = tes3mp.GetModDir() .. "/database.db" -- Path where database is stored
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

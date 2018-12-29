@@ -12,7 +12,7 @@ function RecordStore:__init(storeType)
     self.recordstoreFile = storeType .. ".json"
 
     if self.hasEntry == nil then
-        local home = os.getenv("MOD_DIR").."/recordstore/"
+        local home = tes3mp.GetModDir().."/recordstore/"
         local file = io.open(home .. self.recordstoreFile, "r")
         if file ~= nil then
             io.close()

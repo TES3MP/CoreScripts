@@ -15,7 +15,7 @@ function jsonInterface.load(fileName)
         return nil
     end
 
-    local home = os.getenv("MOD_DIR") .. "/"
+    local home = tes3mp.GetModDir() .. "/"
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'r')
 
     if file ~= nil then
@@ -34,7 +34,7 @@ function jsonInterface.save(fileName, data, keyOrderArray)
         return false
     end
 
-    local home = os.getenv("MOD_DIR") .. "/"
+    local home = tes3mp.GetModDir() .. "/"
     local content = json.encode(data, { indent = true, keyorder = keyOrderArray })
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'w+b')
 
