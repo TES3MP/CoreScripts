@@ -159,8 +159,6 @@ do
                 tes3mp.LogMessage(enumerations.log.WARN, "The world time hour is now " .. hourFloor)
                 WorldInstance.data.time.hour = hourCounter
 
-                WorldInstance:Save()
-
                 if tableHelper.getCount(Players) > 0 then
                     WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
                 end
