@@ -5,11 +5,16 @@ function string:split(sep)
     return fields
 end
 
-function prefixZeroes(inputString, lengthDesired)
+-- Check for case-insensitive equality
+function string:ciEqual(otherString)
+    return self:lower() == otherString:lower()
+end
+
+function prefixZeroes(inputString, desiredLength)
 
     local length = string.len(inputString)
 
-    while length < lengthDesired do
+    while length < desiredLength do
         inputString = "0" .. inputString
         length = length + 1
     end
