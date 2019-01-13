@@ -356,7 +356,7 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
-logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType)
+logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId, packetType)
 
     local mpNum = WorldInstance:GetCurrentMpNum() + 1
     local uniqueIndex =  0 .. "-" .. mpNum
@@ -367,11 +367,11 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
 
         if recordStore ~= nil then
-            LoadedCells[cell]:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+            LoadedCells[cellDescription]:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
 
             -- Do any of the visitors to this cell lack the generated record?
             -- If so, send it to them
-            for _, visitorPid in pairs(LoadedCells[cell].visitors) do
+            for _, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
                 recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
             end
         else
@@ -383,17 +383,17 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
     WorldInstance:SetCurrentMpNum(mpNum)
     tes3mp.SetCurrentMpNum(mpNum)
 
-    LoadedCells[cell]:InitializeObjectData(uniqueIndex, refId)
-    LoadedCells[cell].data.objectData[uniqueIndex].location = location
+    LoadedCells[cellDescription]:InitializeObjectData(uniqueIndex, refId)
+    LoadedCells[cellDescription].data.objectData[uniqueIndex].location = location
 
     if packetType == "place" then
-        table.insert(LoadedCells[cell].data.packets.place, uniqueIndex)
+        table.insert(LoadedCells[cellDescription].data.packets.place, uniqueIndex)
     elseif packetType == "spawn" then
-        table.insert(LoadedCells[cell].data.packets.spawn, uniqueIndex)
-        table.insert(LoadedCells[cell].data.packets.actorList, uniqueIndex)
+        table.insert(LoadedCells[cellDescription].data.packets.spawn, uniqueIndex)
+        table.insert(LoadedCells[cellDescription].data.packets.actorList, uniqueIndex)
     end
 
-    LoadedCells[cell]:Save()
+    LoadedCells[cellDescription]:Save()
 
     -- Are there any players on the server? If so, initialize the object
     -- list for the first one we find and just send the corresponding packet
@@ -403,7 +403,7 @@ logicHandler.CreateObjectAtLocation = function(cell, location, refId, packetType
         local pid = tableHelper.getAnyValue(Players).pid
         tes3mp.ClearObjectList()
         tes3mp.SetObjectListPid(pid)
-        tes3mp.SetObjectListCell(cell)
+        tes3mp.SetObjectListCell(cellDescription)
         tes3mp.SetObjectRefId(refId)
         tes3mp.SetObjectRefNum(0)
         tes3mp.SetObjectMpNum(mpNum)
