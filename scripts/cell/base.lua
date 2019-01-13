@@ -631,18 +631,26 @@ function BaseCell:SaveObjectStates(pid)
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
 
         if not state then
-            if Players[pid].stateSpam == nil then
-                Players[pid].stateSpam = {}
-            end
-            if Players[pid].stateSpam[refId] == nil then
-                Players[pid].stateSpam[refId] = 0
+            local player = Players[pid]
+
+            if player.stateSpam == nil then player.stateSpam = {} end
+
+            -- Track the number of ObjectState packets received from this player that have attempted
+            -- to disable this object
+            if player.stateSpam[refId] == nil then
+                player.stateSpam[refId] = 0
             else
-                Players[pid].stateSpam[refId] = Players[pid].stateSpam[refId] + 1
-                -- If the player gets 5 false object states for the same refid in that cell, delete it
-                if Players[pid].stateSpam[refId] >= 5 then
+                player.stateSpam[refId] = player.stateSpam[refId] + 1
+                
+                -- Kick a player that continues the spam
+                if player.stateSpam[refId] >= 15 then
+                    player:Kick()
+                    tes3mp.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
+                        " for continuing state spam")
+                -- If the player has sent 5 false object states for the same refId, delete the object
+                elseif player.stateSpam[refId] >= 5 then
                     logicHandler.DeleteObjectForPlayer(pid, self.description, uniqueIndex)
-                    tes3mp.LogMessage(enumerations.log.INFO, "- " .. uniqueIndex .. " with refId: " .. refId ..
-                        " was causing spam and has been deleted")
+                    tes3mp.LogAppend(enumerations.log.INFO, "- Deleting state spam object")
                 end
             end
         end
