@@ -616,9 +616,7 @@ function BaseCell:SaveObjectStates(pid)
 
     for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
 
-        local refNum = tes3mp.GetObjectRefNum(objectIndex)
-        local mpNum = tes3mp.GetObjectMpNum(objectIndex)
-        local uniqueIndex = refNum .. "-" .. mpNum
+        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
         local state = tes3mp.GetObjectState(objectIndex)
 
@@ -637,18 +635,18 @@ function BaseCell:SaveObjectStates(pid)
 
             -- Track the number of ObjectState packets received from this player that have attempted
             -- to disable this object
-            if player.stateSpam[refId] == nil then
-                player.stateSpam[refId] = 0
+            if player.stateSpam[uniqueIndex] == nil then
+                player.stateSpam[uniqueIndex] = 0
             else
-                player.stateSpam[refId] = player.stateSpam[refId] + 1
+                player.stateSpam[uniqueIndex] = player.stateSpam[uniqueIndex] + 1
                 
                 -- Kick a player that continues the spam
-                if player.stateSpam[refId] >= 15 then
+                if player.stateSpam[uniqueIndex] >= 15 then
                     player:Kick()
                     tes3mp.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
                         " for continuing state spam")
-                -- If the player has sent 5 false object states for the same refId, delete the object
-                elseif player.stateSpam[refId] >= 5 then
+                -- If the player has sent 5 false object states for the same uniqueIndex, delete the object
+                elseif player.stateSpam[uniqueIndex] >= 5 then
                     logicHandler.DeleteObjectForPlayer(pid, self.description, uniqueIndex)
                     tes3mp.LogAppend(enumerations.log.INFO, "- Deleting state spam object")
                 end
