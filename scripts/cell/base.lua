@@ -641,7 +641,7 @@ function BaseCell:SaveObjectStates(pid)
                 player.stateSpam[uniqueIndex] = player.stateSpam[uniqueIndex] + 1
                 
                 -- Kick a player that continues the spam
-                if player.stateSpam[uniqueIndex] >= 15 then
+                if player.stateSpam[uniqueIndex] >= 25 then
                     player:Kick()
                     tes3mp.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
                         " for continuing state spam")
