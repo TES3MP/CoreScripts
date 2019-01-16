@@ -1,16 +1,20 @@
 local inventoryHelper = {}
 
 function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul)
+
+    if charge ~= nil then charge = math.floor(charge) end
+    if enchantmentCharge ~= nil then enchantmentCharge = math.floor(enchantmentCharge) end
+
     for itemIndex, item in pairs(inventory) do
         if item.refId == refId then
 
-            isValid = true
+            local isValid = true
 
-            if charge ~= nil and item.charge ~= charge then
+            if soul ~= nil and item.soul ~= soul then
                 isValid = false
-            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= enchantmentCharge then
+            elseif charge ~= nil and math.floor(item.charge) ~= charge then
                 isValid = false
-            elseif soul ~= nil and item.soul ~= soul then
+            elseif enchantmentCharge ~= nil and math.floor(item.enchantmentCharge) ~= enchantmentCharge then
                 isValid = false
             end
 
@@ -19,21 +23,25 @@ function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharg
             end
         end
     end
+
     return false
 end
 
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
 
+    if charge ~= nil then charge = math.floor(charge) end
+    if enchantmentCharge ~= nil then enchantmentCharge = math.floor(enchantmentCharge) end
+
     for itemIndex, item in pairs(inventory) do
         if item.refId == refId then
 
-            isValid = true
+            local isValid = true
 
-            if charge ~= nil and item.charge ~= charge then
+            if soul ~= nil and item.soul ~= soul then
                 isValid = false
-            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= enchantmentCharge then
+            elseif charge ~= nil and math.floor(item.charge) ~= charge then
                 isValid = false
-            elseif soul ~= nil and item.soul ~= soul then
+            elseif enchantmentCharge ~= nil and math.floor(item.enchantmentCharge) ~= enchantmentCharge then
                 isValid = false
             end
 
@@ -42,6 +50,7 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
             end
         end
     end
+
     return nil
 end
 
