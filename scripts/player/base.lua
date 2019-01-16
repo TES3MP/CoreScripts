@@ -1036,8 +1036,8 @@ function BasePlayer:SaveInventory()
 
             elseif action == enumerations.inventory.REMOVE then
 
-                inventoryHelper.removeItem(self.data.inventory, item.refId, item.count,
-                    nil, nil, item.soul)
+                inventoryHelper.removeClosestItem(self.data.inventory, item.refId, item.count,
+                    item.charge, item.enchantmentCharge, item.soul)
 
                 if not inventoryHelper.containsItem(self.data.inventory, item.refId) and
                     logicHandler.IsGeneratedRecord(item.refId) then
