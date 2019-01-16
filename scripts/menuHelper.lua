@@ -401,9 +401,9 @@ function menuHelper.ProcessEffects(pid, effects)
                         local item = targetPlayer.data.inventory[inventoryItemIndex]
                         item.count = item.count - remainingCount
 
-                        if item.count < 0 then
+                        if item.count < 1 then
                             remainingCount = 0 - item.count
-                            item.count = 0
+                            item = nil
                         else
                             remainingCount = 0
                         end
