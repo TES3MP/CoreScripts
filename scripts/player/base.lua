@@ -928,11 +928,13 @@ function BasePlayer:SaveEquipment()
     end
 end
 
--- Iterate through inventory items and remove the ones whose records no longer exist
--- Note: This can only handle generated records for now
+-- Iterate through inventory items and remove nil values as well as items whose
+-- records no longer exist
+-- Note: The check for existing records can only handle generated records for now
 function BasePlayer:CleanInventory()
 
     for index, currentItem in pairs(self.data.inventory) do
+
         if logicHandler.IsGeneratedRecord(currentItem.refId) then
 
             local recordStore = logicHandler.GetRecordStoreByRecordId(currentItem.refId)
@@ -941,6 +943,10 @@ function BasePlayer:CleanInventory()
                 self.data.inventory[index] = nil
             end
         end
+    end
+
+    if not tableHelper.isArray(self.data.inventory) then
+        tableHelper.cleanNils(self.data.inventory)
     end
 end
 
@@ -1020,6 +1026,7 @@ function BasePlayer:SaveInventory()
                     item.enchantmentCharge, item.soul)
 
                 if logicHandler.IsGeneratedRecord(item.refId) then
+
                     local recordStore = logicHandler.GetRecordStoreByRecordId(item.refId)
 
                     if recordStore ~= nil then
@@ -1045,32 +1052,28 @@ function BasePlayer:SaveInventory()
         end
     end
 
-    if action == enumerations.inventory.REMOVE then
-        tableHelper.cleanNils(self.data.inventory)
-    end
-
     self:Save()
 end
 
--- Iterate through spells and remove the ones whose records no longer exist
--- Note: This can only handle generated records for now
+-- Iterate through spells and remove nil values as well as spells whose records
+-- no longer exist
+-- Note: The check for existing records can only handle generated records for now
 function BasePlayer:CleanSpellbook()
 
-    local shouldCleanNils = false
     local recordStore = RecordStores["spell"]
 
     for index, spellId in pairs(self.data.spellbook) do
+
         -- Make sure we skip over old spell tables from previous versions of TES3MP
         if type(spellId) ~= "table" and logicHandler.IsGeneratedRecord(spellId) then
 
             if recordStore.data.generatedRecords[spellId] == nil then
                 self.data.spellbook[index] = nil
-                shouldCleanNils = true
             end
         end
     end
 
-    if shouldCleanNils then
+    if not tableHelper.isArray(self.data.spellbook) then
         tableHelper.cleanNils(self.data.spellbook)
     end
 end
