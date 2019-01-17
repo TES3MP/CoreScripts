@@ -140,6 +140,7 @@ function StateHelper:LoadMap(pid, stateObject)
         stateObject.data.mapExplored = {}
     end
 
+    local tileCount = 0
     tes3mp.ClearMapChanges()
 
     for index, cellDescription in pairs(stateObject.data.mapExplored) do
@@ -150,12 +151,19 @@ function StateHelper:LoadMap(pid, stateObject)
 
             local cellX, cellY
             _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
+            cellX = tonumber(cellX)
+            cellY = tonumber(cellY)
 
-            tes3mp.LoadMapTileImageFile(tonumber(cellX), tonumber(cellY), filePath)
+            if type(cellX) == "number" and type(cellY) == "number" then
+                tes3mp.LoadMapTileImageFile(cellX, cellY, filePath)
+                tileCount = tileCount + 1
+            end
         end
     end
 
-    tes3mp.SendWorldMap(pid)
+    if tileCount > 0 then
+        tes3mp.SendWorldMap(pid)
+    end
 end
 
 function StateHelper:SaveJournal(pid, stateObject)
