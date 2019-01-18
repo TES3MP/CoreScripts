@@ -7,6 +7,9 @@ end
 
 -- Check for case-insensitive equality
 function string:ciEqual(otherString)
+
+    if type(otherString) ~= "string" then return false end
+
     return self:lower() == otherString:lower()
 end
 
