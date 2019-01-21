@@ -25,7 +25,7 @@ function Cell:CreateEntry()
     self.hasEntry = jsonInterface.save("cell/" .. self.entryFile, self.data)
 
     if self.hasEntry then
-        tes3mp.LogMessage(enumerations.log.WARN, "Successfully created JSON file for cell " .. self.entryName)
+        tes3mp.LogMessage(enumerations.log.INFO, "Successfully created JSON file for cell " .. self.entryName)
     else
         local message = "Failed to create JSON file for " .. self.entryName
         tes3mp.SendMessage(self.pid, message, true)
