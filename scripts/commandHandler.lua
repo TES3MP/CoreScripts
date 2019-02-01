@@ -938,9 +938,13 @@ function commandHandler.ProcessCommand(pid, cmd)
                 validList .. "\n", false)
         end
 
-    elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and
-        type(tonumber(cmd[3])) == "number" then
-        local isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+    elseif cmd[1] == "speech" or cmd[1] == "s" then
+
+        local isValid = false
+
+        if cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+            isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+        end
 
         if not isValid then
             local validList = speechHelper.GetValidList(pid)
