@@ -485,16 +485,18 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNum, mpNum)
+logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, objectUniqueIndex)
 
     local pid = tableHelper.getAnyValue(Players).pid
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
-    tes3mp.SetObjectRefId(refId)
-    tes3mp.SetObjectRefNum(refNum)
-    tes3mp.SetObjectMpNum(mpNum)
+
+    local splitIndex = objectUniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+
     tes3mp.AddObject()
 
     -- Always send this to everyone
