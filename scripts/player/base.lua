@@ -147,8 +147,8 @@ function BasePlayer:Register(password)
 end
 
 function BasePlayer:FinishLogin()
-    self.loggedIn = true
-    if self.hasAccount ~= false then -- load account
+
+    if self.hasAccount then
         self:SaveIpAddress()
 
         self:LoadSettings()
@@ -244,6 +244,8 @@ function BasePlayer:FinishLogin()
         end
 
         self:LoadCell()
+
+        self.loggedIn = true
     end
 end
 
