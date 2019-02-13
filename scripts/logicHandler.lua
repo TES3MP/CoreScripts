@@ -485,7 +485,7 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, objectUniqueIndex)
+logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
     local pid = tableHelper.getAnyValue(Players).pid
     tes3mp.ClearObjectList()
@@ -493,15 +493,19 @@ logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescriptio
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
 
-    local splitIndex = objectUniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
+    for _, uniqueIndex in pairs(objectUniqueIndexes) do
+        local splitIndex = objectUniqueIndex:split("-")
+        tes3mp.SetObjectRefNum(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
 
-    tes3mp.AddObject()
+        tes3mp.AddObject()
+    end
 
-    -- Always send this to everyone
-    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-    tes3mp.SendConsoleCommand(true, false)
+    tes3mp.SendConsoleCommand(forEveryone, false)
+end
+
+logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
+    logicHandler.RunConsoleCommandOnObjects(consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
 end
 
 logicHandler.IsGeneratedRecord = function(recordId)
