@@ -110,6 +110,7 @@ function BasePlayer:__init(pid, playerName)
 
     self.pid = pid
     self.loggedIn = false
+    self.isNewlyRegistered = false
     self.loginTimerId = nil
     self.hasAccount = nil
 
@@ -138,6 +139,7 @@ end
 
 function BasePlayer:Register(password)
     self.loggedIn = true
+    self.isNewlyRegistered = true
     self.data.login.password = password
     self.data.settings.consoleAllowed = "default"
 
