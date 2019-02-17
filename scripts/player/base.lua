@@ -523,28 +523,37 @@ function BasePlayer:Resurrect()
 
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
-    if config.deathPenaltyJailDays > 0 then
+    if config.deathPenaltyJailDays > 0 or config.bountyDeathPenalty then
+        local jailTime = 0
         local resurrectionText = "You've been revived and brought back here, " ..
             "but your skills have been affected by "
-        local jailTime = config.deathPenaltyJailDays
 
-        if config.bountyResetOnDeath == true then
-            if config.bountyDeathPenalty == true then
-                local currentBounty = tes3mp.GetBounty(self.pid)
+        if config.bountyDeathPenalty then
+            local currentBounty = tes3mp.GetBounty(self.pid)
 
-                if currentBounty > 0 then
-                    jailTime = jailTime + math.floor(currentBounty / 100)
-                    resurrectionText = resurrectionText .. "your bounty and "
-                end
+            if currentBounty > 0 then
+                jailTime = jailTime + math.floor(currentBounty / 100)
+                resurrectionText = resurrectionText .. "your bounty"
             end
-
-            tes3mp.SetBounty(self.pid, 0)
-            tes3mp.SendBounty(self.pid)
-            self:SaveBounty()
         end
 
-        resurrectionText = resurrectionText .. "your time spent incapacitated.\n"
+        if config.deathPenaltyJailDays > 0 then
+            if jailTime > 0 then
+                resurrectionText = resurrectionText .. " and "
+            end
+
+            jailTime = jailTime + config.deathPenaltyJailDays
+            resurrectionText = resurrectionText .. "your time spent incapacitated"    
+        end
+
+        resurrectionText = resurrectionText .. ".\n"
         tes3mp.Jail(self.pid, jailTime, true, true, "Recovering", resurrectionText)
+    end
+
+    if config.bountyResetOnDeath then
+        tes3mp.SetBounty(self.pid, 0)
+        tes3mp.SendBounty(self.pid)
+        self:SaveBounty()
     end
 
     tes3mp.SendMessage(self.pid, message, false)

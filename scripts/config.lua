@@ -120,7 +120,8 @@ config.deathPenaltyJailDays = 5
 config.bountyResetOnDeath = false
 
 -- Whether players spend time in jail proportional to their bounty after dying
--- Note: Requires bountyResetOnDeath to be enabled
+-- Note: If deathPenaltyJailDays is also enabled, that penalty will be added to
+--       this one
 config.bountyDeathPenalty = false
 
 -- Whether players should be allowed to use the /suicide command
