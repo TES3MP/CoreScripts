@@ -1309,7 +1309,7 @@ function commandHandler.CreateRecord(pid, cmd)
 
     if storedTable == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
-            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
+            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
     end
 
