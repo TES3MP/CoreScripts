@@ -186,15 +186,15 @@ function BaseWorld:LoadKills(pid)
 
     tes3mp.ClearKillChanges(pid)
 
-    for refId, number in pairs(self.data.kills) do
+    for refId, killCount in pairs(self.data.kills) do
 
-        tes3mp.AddKill(pid, refId, number)
+        tes3mp.AddKill(pid, refId, killCount)
     end
 
     tes3mp.SendKillChanges(pid)
 end
 
-function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
+function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
 
     local region = self.storedRegions[regionName]
 
@@ -206,24 +206,24 @@ function BaseWorld:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
         tes3mp.SetWeatherQueued(region.queuedWeather)
         tes3mp.SetWeatherTransitionFactor(region.transitionFactor)
         tes3mp.SetWeatherForceState(forceState)
-        tes3mp.SendWorldWeather(pid, sendToOthers)
+        tes3mp.SendWorldWeather(pid, forEveryone)
     else
         tes3mp.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName ..
             " for " .. logicHandler.GetChatName(pid) .. " because we have no weather information for it")
     end
 end
 
-function BaseWorld:LoadWeather(pid, sendToOthers, forceState)
+function BaseWorld:LoadWeather(pid, forEveryone, forceState)
 
     for regionName, region in pairs(self.storedRegions) do
 
         if region.currentWeather ~= nil then
-            self:LoadRegionWeather(regionName, pid, sendToOthers, forceState)
+            self:LoadRegionWeather(regionName, pid, forEveryone, forceState)
         end
     end
 end
 
-function BaseWorld:LoadTime(pid, sendToOthers)
+function BaseWorld:LoadTime(pid, forEveryone)
 
     tes3mp.SetHour(self.data.time.hour)
     tes3mp.SetDay(self.data.time.day)
@@ -238,7 +238,7 @@ function BaseWorld:LoadTime(pid, sendToOthers)
     tes3mp.SetDaysPassed(self.data.time.daysPassed)
     tes3mp.SetTimeScale(self.data.time.timeScale)
 
-    tes3mp.SendWorldTime(pid, sendToOthers)
+    tes3mp.SendWorldTime(pid, forEveryone)
 end
 
 function BaseWorld:SaveJournal(pid)
