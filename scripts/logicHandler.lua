@@ -494,7 +494,7 @@ logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescripti
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
 
     for _, uniqueIndex in pairs(objectUniqueIndexes) do
-        local splitIndex = objectUniqueIndex:split("-")
+        local splitIndex = uniqueIndex:split("-")
         tes3mp.SetObjectRefNum(splitIndex[1])
         tes3mp.SetObjectMpNum(splitIndex[2])
 
