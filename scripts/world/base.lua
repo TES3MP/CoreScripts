@@ -182,7 +182,7 @@ function BaseWorld:LoadMap(pid)
     stateHelper:LoadMap(pid, self)
 end
 
-function BaseWorld:LoadKills(pid)
+function BaseWorld:LoadKills(pid, forEveryone)
 
     tes3mp.ClearKillChanges(pid)
 
@@ -191,7 +191,7 @@ function BaseWorld:LoadKills(pid)
         tes3mp.AddKill(pid, refId, killCount)
     end
 
-    tes3mp.SendKillChanges(pid)
+    tes3mp.SendKillChanges(pid, forEveryone)
 end
 
 function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
