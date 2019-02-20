@@ -113,6 +113,8 @@ Menus["help moderator page 1"] = {
 
 Menus["help moderator page 2"] = {
     text = color.Orange .. "Moderator command list page 2:\n" ..
+        color.Yellow .. "/resetkills\n" ..
+            color.White .. "Reset the kill counts for NPCs and creatures, to allow quests requiring a specific number of kills to be done again\n" ..
         color.Yellow .. "/teleport <pid>/all\n" ..
             color.White .. "Teleport another player to your position " ..
             color.Yellow .. "(/tp)\n" ..
