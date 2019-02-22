@@ -487,11 +487,17 @@ end
 
 logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
+    tes3mp.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
+        tableHelper.concatenateArrayValues(objectUniqueIndexes, 1, ", "))
+
     local pid = tableHelper.getAnyValue(Players).pid
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
+
+    -- Set the object state to deal with the oversight mentioned below
+    tes3mp.SetObjectState(true)
 
     for _, uniqueIndex in pairs(objectUniqueIndexes) do
         local splitIndex = uniqueIndex:split("-")
@@ -500,6 +506,11 @@ logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescripti
 
         tes3mp.AddObject()
     end
+
+    -- Due to an oversight, console command packets do not include the cell for their
+    -- associated objects; as a result, the last cell received by players in an unrelated
+    -- object packet is used instead, so send them a dummy packet for that sake
+    tes3mp.SendObjectState(forEveryone, false)
 
     tes3mp.SendConsoleCommand(forEveryone, false)
 end
