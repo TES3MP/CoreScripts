@@ -471,6 +471,8 @@ function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
 
         if type(value) == "boolean" then
             value = tostring(value)
+        elseif type(value) == "function" then
+            value = "function"
         end
 
         if type(value) == "table" then
