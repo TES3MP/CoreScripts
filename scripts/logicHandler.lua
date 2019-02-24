@@ -485,12 +485,11 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
+logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
     tes3mp.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
         tableHelper.concatenateArrayValues(objectUniqueIndexes, 1, ", "))
 
-    local pid = tableHelper.getAnyValue(Players).pid
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(cellDescription)
@@ -515,8 +514,8 @@ logicHandler.RunConsoleCommandOnObjects = function(consoleCommand, cellDescripti
     tes3mp.SendConsoleCommand(forEveryone, false)
 end
 
-logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
-    logicHandler.RunConsoleCommandOnObjects(consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
+logicHandler.RunConsoleCommandOnObject = function(pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
+    logicHandler.RunConsoleCommandOnObjects(pid, consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
 end
 
 logicHandler.IsGeneratedRecord = function(recordId)
