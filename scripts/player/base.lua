@@ -655,7 +655,16 @@ function BasePlayer:SaveClass()
 end
 
 function BasePlayer:LoadStatsDynamic()
-    tes3mp.SetHealthBase(self.pid, self.data.stats.healthBase)
+
+    local healthBase
+
+    if tes3mp.IsWerewolf(self.pid) then
+        healthBase = self.data.shapeshift.werewolfHealthBase
+    else
+        healthBase = self.data.stats.healthBase
+    end
+
+    tes3mp.SetHealthBase(self.pid, healthBase)
     tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
     tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
     tes3mp.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
@@ -673,7 +682,12 @@ function BasePlayer:SaveStatsDynamic()
     -- use this temporary fix until we figure why
     if healthBase > 1 then
 
-        self.data.stats.healthBase = healthBase
+        if tes3mp.IsWerewolf(self.pid) then
+            self.data.shapeshift.werewolfHealthBase = healthBase
+        else
+            self.data.stats.healthBase = healthBase
+        end
+
         self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
         self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
         self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
