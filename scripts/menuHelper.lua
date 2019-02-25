@@ -523,7 +523,9 @@ function menuHelper.DisplayMenu(pid, menuIndex)
     local text = Menus[menuIndex].text
 
     -- Is this a table? If so, process the variables in it and then concatenate them
-    if type(text) == "table" then
+    if text == nil then
+        text = ""
+    elseif type(text) == "table" then
         local processedTextVariables = menuHelper.ProcessVariables(pid, text)
         text = tableHelper.concatenateArrayValues(processedTextVariables, 1, "")
     end
