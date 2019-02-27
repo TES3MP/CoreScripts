@@ -239,7 +239,7 @@ function menuHelper.CheckCondition(pid, condition)
         end
     elseif condition.conditionType == "attribute" then
 
-        if targetPlayer.data.skills[condition.attributeName] >= condition.attributeValue then
+        if targetPlayer.data.attributes[condition.attributeName] >= condition.attributeValue then
             return true
         end
     elseif condition.conditionType == "skill" then
