@@ -391,6 +391,7 @@ eventHandler.OnPlayerEndCharGen = function(pid)
             Players[pid]:EndCharGen()
         end
         eventManager.triggerHandlers("OnPlayerEndCharGen",eventStatus,{pid})
+        eventManager.triggerHandlers("OnPlayerAuthentified",eventStatus,{pid})
     end
 end
 
