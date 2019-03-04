@@ -27,9 +27,9 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
     
-    local isValid = eventManager.triggerValidators("OnPlayerConnect",{pid})
+    local eventStatus = eventManager.triggerValidators("OnPlayerConnect",{pid})
     
-    if(isValid) then 
+    if eventStatus.validDefaultHandler then 
         local message = logicHandler.GetChatName(pid) .. " joined the server.\n"
         tes3mp.SendMessage(pid, message, true)
 
@@ -51,16 +51,16 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
         tes3mp.StartTimer(Players[pid].loginTimerId)
     end
     
-    eventManager.triggerHandlers("OnPlayerConnect",isValid,{pid})
+    eventManager.triggerHandlers("OnPlayerConnect",eventStatus,{pid})
 end
 
 eventHandler.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
         if Players[pid]:IsLoggedIn() then
-            local isValid = eventManager.triggerValidators("OnPlayerDisconnect",{pid})
+            local eventStatus = eventManager.triggerValidators("OnPlayerDisconnect",{pid})
             
-            if(isValid) then
+            if eventStatus.validDefaultHandler then
                 Players[pid]:DeleteSummons()
 
                 -- Was this player confiscating from someone? If so, clear that
@@ -77,7 +77,11 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
                 -- Unload every cell for this player
                 for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
-                    logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
+                    local eventStatus = eventManager.triggerValidators("OnCellUnload",{pid,loadedCellDescription})
+                    if eventStatus.validDefaultHandler then
+                        logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
+                    end
+                    eventManager.triggerHandlers("OnCellUnload",{pid,loadedCellDescription})
                 end
 
                 if Players[pid].data.location.regionName ~= nil then
@@ -89,7 +93,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid] = nil
             end
             
-            eventManager.triggerHandlers("OnPlayerDisconnect",isValid,{pid})
+            eventManager.triggerHandlers("OnPlayerDisconnect",eventStatus,{pid})
         end
     end
 end
@@ -100,9 +104,9 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         
         data = tostring(data) -- data can be numeric, but we should convert it to a string
         
-        local isValid = eventManager.triggerValidators("OnGUIAction",{pid,idGui,data})
+        local eventStatus = eventManager.triggerValidators("OnGUIAction",{pid,idGui,data})
         
-        if(isValid) then
+        if eventStatus.validDefaultHandler then
         
             if Players[pid]:IsLoggedIn() then
                 
@@ -200,7 +204,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
             end
         end
         
-        eventManager.triggerHandlers("OnGUIAction",isValid,{pid,idGui,data})
+        eventManager.triggerHandlers("OnGUIAction",eventStatus,{pid,idGui,data})
     end
 
     return false
@@ -211,9 +215,9 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
 
-        local isValid = eventManager.triggerValidators("OnPlayerSendMessage",{pid,message})
+        local eventStatus = eventManager.triggerValidators("OnPlayerSendMessage",{pid,message})
             
-        if isValid then
+        if eventStatus.validDefaultHandler then
             -- Is this a chat command? If so, pass it over to the commandHandler
             if message:sub(1, 1) == '/' then
 
@@ -238,68 +242,68 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
             end
         end
         
-        eventManager.triggerHandlers("OnPlayerSendMessage",isValid,{pid,message})
+        eventManager.triggerHandlers("OnPlayerSendMessage",eventStatus,{pid,message})
     end
 end
 
 eventHandler.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerDeath",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerDeath",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:ProcessDeath()
         end
-        eventManager.triggerHandlers("OnPlayerDeath",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerDeath",eventStatus,{pid})
     end
 end
 
 eventHandler.OnDeathTimeExpiration = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnDeathTimeExpiration",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnDeathTimeExpiration",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:Resurrect()
         end
-        eventManager.triggerHandlers("OnDeathTimeExpiration",isValid,{pid})
+        eventManager.triggerHandlers("OnDeathTimeExpiration",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerAttribute = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerAttribute",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerAttribute",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveAttributes()
         end
-        eventManager.triggerHandlers("OnPlayerAttribute",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerAttribute",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerSkill = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerSkill",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerSkill",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveSkills()
         end
-        eventManager.triggerHandlers("OnPlayerSkill",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerSkill",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerLevel",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerLevel",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveLevel()
             Players[pid]:SaveStatsDynamic()
         end
-        eventManager.triggerHandlers("OnPlayerLevel",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerLevel",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerShapeshift = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerShapeshift",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerShapeshift",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveShapeshift()
         end
-        eventManager.triggerHandlers("OnPlayerShapeshift",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerShapeshift",eventStatus,{pid})
     end
 end
 
@@ -310,9 +314,9 @@ eventHandler.OnPlayerCellChange = function(pid)
             local previousCellDescription = Players[pid].data.location.cell
             local currentCellDescription = tes3mp.GetCell(pid)
             
-            local isValid = eventManager.triggerValidators("OnPlayerCellChange",{pid,previousCellDescription,currentCellDescription})
+            local eventStatus = eventManager.triggerValidators("OnPlayerCellChange",{pid,previousCellDescription,currentCellDescription})
             
-            if isValid then
+            if eventStatus.validDefaultHandler then
                 -- If this player is changing their region, add them to the visitors of the new
                 -- region while removing them from the visitors of their old region
                 if tes3mp.IsChangingRegion(pid) then
@@ -370,7 +374,7 @@ eventHandler.OnPlayerCellChange = function(pid)
                 end
             end
             
-            eventManager.triggerHandlers("OnPlayerCellChange",isValid,{pid,previousCellDescription,currentCellDescription})
+            eventManager.triggerHandlers("OnPlayerCellChange",eventStatus,{pid,previousCellDescription,currentCellDescription})
         else
             Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
             Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
@@ -382,58 +386,58 @@ end
 
 eventHandler.OnPlayerEndCharGen = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerEndCharGen",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerEndCharGen",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:EndCharGen()
         end
-        eventManager.triggerHandlers("OnPlayerEndCharGen",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerEndCharGen",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerEquipment",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerEquipment",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveEquipment()
         end
-        eventManager.triggerHandlers("OnPlayerEquipment",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerEquipment",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerInventory",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerInventory",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveInventory()
         end
-        eventManager.triggerHandlers("OnPlayerInventory",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerInventory",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerSpellbook",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerSpellbook",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveSpellbook()
         end
-        eventManager.triggerHandlers("OnPlayerSpellbook",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerSpellbook",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerQuickKeys = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerQuickKeys",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerQuickKeys",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:SaveQuickKeys()
         end
-        eventManager.triggerHandlers("OnPlayerQuickKeys",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerQuickKeys",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerJournal",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerJournal",{pid})
+        if eventStatus.validDefaultHandler then
             if config.shareJournal == true then
                 WorldInstance:SaveJournal(pid)
 
@@ -444,7 +448,7 @@ eventHandler.OnPlayerJournal = function(pid)
                 Players[pid]:SaveJournal()
             end
         end
-        eventManager.triggerHandlers("OnPlayerJournal",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerJournal",eventStatus,{pid})
     end
 end
 
@@ -453,9 +457,9 @@ eventHandler.OnPlayerFaction = function(pid)
 
         local action = tes3mp.GetFactionChangesAction(pid)
         
-        local isValid = eventManager.triggerValidators("OnPlayerFaction",{pid,action})
+        local eventStatus = eventManager.triggerValidators("OnPlayerFaction",{pid,action})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
             if action == enumerations.faction.RANK then
                 if config.shareFactionRanks == true then
 
@@ -487,15 +491,15 @@ eventHandler.OnPlayerFaction = function(pid)
             end
         end
         
-        eventManager.triggerHandlers("OnPlayerFaction",isValid,{pid,action})
+        eventManager.triggerHandlers("OnPlayerFaction",eventStatus,{pid,action})
     end
 end
 
 eventHandler.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerTopic",{pid})
+        local eventStatus = eventManager.triggerValidators("OnPlayerTopic",{pid})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
             if config.shareTopics == true then
                 WorldInstance:SaveTopics(pid)
                 -- Send this PlayerTopic packet to other players (sendToOthersPlayers is true),
@@ -506,16 +510,16 @@ eventHandler.OnPlayerTopic = function(pid)
             end
         end
         
-        eventManager.triggerHandlers("OnPlayerTopic",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerTopic",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerBounty = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         
-        local isValid = eventManager.triggerValidators("OnPlayerBounty",{pid})
+        local eventStatus = eventManager.triggerValidators("OnPlayerBounty",{pid})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
             if config.shareBounty == true then
                 WorldInstance:SaveBounty(pid)
 
@@ -539,15 +543,15 @@ eventHandler.OnPlayerBounty = function(pid)
             end
         end
         
-        eventManager.triggerHandlers("OnPlayerBounty",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerBounty",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerReputation = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerReputation",{pid})
+        local eventStatus = eventManager.triggerValidators("OnPlayerReputation",{pid})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
             if config.shareReputation == true then
 
                 WorldInstance:SaveReputation(pid)
@@ -559,33 +563,33 @@ eventHandler.OnPlayerReputation = function(pid)
             end
         
         end
-        eventManager.triggerHandlers("OnPlayerReputation",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerReputation",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnPlayerBook",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnPlayerBook",{pid})
+        if eventStatus.validDefaultHandler then
             Players[pid]:AddBooks()
         end
-        eventManager.triggerHandlers("OnPlayerBook",isValid,{pid})
+        eventManager.triggerHandlers("OnPlayerBook",eventStatus,{pid})
     end
 end
 
 eventHandler.OnPlayerItemUse = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local itemRefId = tes3mp.GetUsedItemRefId(pid)
-        local isValid = eventManager.triggerValidators("OnPlayerItemUse",{pid,itemRefId})
+        local eventStatus = eventManager.triggerValidators("OnPlayerItemUse",{pid,itemRefId})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
             tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. " used inventory item " .. itemRefId)
 
             -- Unilateral use of items is disabled on clients, so we need to send
             -- this packet back to the player before they can use the item
             tes3mp.SendItemUse(pid)
         end
-        eventManager.triggerHandlers("OnPlayerItemUse",isValid,{pid,itemRefId})
+        eventManager.triggerHandlers("OnPlayerItemUse",eventStatus,{pid,itemRefId})
     end
 end
 
@@ -594,28 +598,28 @@ eventHandler.OnPlayerMiscellaneous = function(pid)
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
 
         if changeType == enumerations.miscellaneous.MARK_LOCATION then
-            local isValid = eventManager.triggerValidators("OnPlayerMarkLocation",{pid})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnPlayerMarkLocation",{pid})
+            if eventStatus.validDefaultHandler then
                 Players[pid]:SaveMarkLocation()
             end
-            eventManager.triggerHandlers("OnPlayerMarkLocation",isValid,{pid})
+            eventManager.triggerHandlers("OnPlayerMarkLocation",eventStatus,{pid})
         elseif changeType == enumerations.miscellaneous.SELECTED_SPELL then
-            local isValid = eventManager.triggerValidators("OnPlayerSelectedSpell",{pid})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnPlayerSelectedSpell",{pid})
+            if eventStatus.validDefaultHandler then
                 Players[pid]:SaveSelectedSpell()
             end
-            eventManager.triggerHandlers("OnPlayerSelectedSpell",isValid,{pid})
+            eventManager.triggerHandlers("OnPlayerSelectedSpell",eventStatus,{pid})
         end
     end
 end
 
 eventHandler.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnCellLoad",{pid,cellDescription})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnCellLoad",{pid,cellDescription})
+        if eventStatus.validDefaultHandler then
             logicHandler.LoadCellForPlayer(pid, cellDescription)
         end
-        eventManager.triggerHandlers("OnCellLoad",isValid,{pid,cellDescription})
+        eventManager.triggerHandlers("OnCellLoad",eventStatus,{pid,cellDescription})
     else
         tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: invalid player " .. pid ..
             " loaded cell " .. cellDescription)
@@ -624,30 +628,30 @@ end
 
 eventHandler.OnCellUnload = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnCellUnload",{pid,cellDescription})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnCellUnload",{pid,cellDescription})
+        if eventStatus.validDefaultHandler then
             logicHandler.UnloadCellForPlayer(pid, cellDescription)
         end
-        eventManager.triggerHandlers("OnCellUnload",isValid,{pid,cellDescription})
+        eventManager.triggerHandlers("OnCellUnload",eventStatus,{pid,cellDescription})
     end
 end
 
 eventHandler.OnCellDeletion = function(cellDescription)
-    local isValid = eventManager.triggerValidators("OnCellDeletion",{cellDescription})
-    if isValid then
+    local eventStatus = eventManager.triggerValidators("OnCellDeletion",{cellDescription})
+    if eventStatus.validDefaultHandler then
         logicHandler.UnloadCell(cellDescription)
     end
-    eventManager.triggerHandlers("OnCellDeletion",isValid,{cellDescription})
+    eventManager.triggerHandlers("OnCellDeletion",eventStatus,{cellDescription})
 end
 
 eventHandler.OnActorList = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local isValid = eventManager.triggerValidators("OnActorList",{pid,cellDescription})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnActorList",{pid,cellDescription})
+            if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorList(pid)
             end
-            eventManager.triggerHandlers("OnActorList",isValid,{pid,cellDescription})
+            eventManager.triggerHandlers("OnActorList",eventStatus,{pid,cellDescription})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorList for unloaded " .. cellDescription)
@@ -660,11 +664,11 @@ end
 eventHandler.OnActorEquipment = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local isValid = eventManager.triggerValidators("OnActorEquipment",{pid,cellDescription})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnActorEquipment",{pid,cellDescription})
+            if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorEquipment(pid)
             end
-            eventManager.triggerHandlers("OnActorEquipment",isValid,{pid,cellDescription})
+            eventManager.triggerHandlers("OnActorEquipment",eventStatus,{pid,cellDescription})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorEquipment for unloaded " .. cellDescription)
@@ -677,8 +681,8 @@ end
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local isValid = eventManager.triggerValidators("OnActorAI",{pid,cellDescription})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnActorAI",{pid,cellDescription})
+            if eventStatus.validDefaultHandler then
                 tes3mp.ReadReceivedActorList()
                 tes3mp.CopyReceivedActorListToStore()
 
@@ -688,7 +692,7 @@ eventHandler.OnActorAI = function(pid, cellDescription)
                 -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is true
                 tes3mp.SendActorAI(true, true)
             end
-            eventManager.triggerHandlers("OnActorAI",isValid,{pid,cellDescription})
+            eventManager.triggerHandlers("OnActorAI",eventStatus,{pid,cellDescription})
             
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
@@ -702,11 +706,11 @@ end
 eventHandler.OnActorDeath = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local isValid = eventManager.triggerValidators("OnActorDeath",{pid,cellDescription})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnActorDeath",{pid,cellDescription})
+            if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorDeath(pid)
             end
-            eventManager.triggerHandlers("OnActorDeath",isValid,{pid,cellDescription})
+            eventManager.triggerHandlers("OnActorDeath",eventStatus,{pid,cellDescription})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorDeath for unloaded " .. cellDescription)
@@ -717,11 +721,11 @@ end
 eventHandler.OnActorCellChange = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local isValid = eventManager.triggerValidators("OnActorCellChange",{pid,cellDescription})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnActorCellChange",{pid,cellDescription})
+            if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorCellChanges(pid)
             end
-            eventManager.triggerHandlers("OnActorCellChange",isValid,{pid,cellDescription})
+            eventManager.triggerHandlers("OnActorCellChange",eventStatus,{pid,cellDescription})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorCellChange for unloaded " .. cellDescription)
@@ -794,11 +798,9 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                 tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
             end
             
-            local isValid = eventManager.triggerValidators("OnObjectActivate",{pid,cellDescription,objects,players})
-
-            -- Set isValid to false in the loop above if you want to override the default activation
-            -- associated with this packet
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnObjectActivate",{pid,cellDescription,objects,players})
+            
+            if eventStatus.validDefaultHandler then
                 tes3mp.CopyReceivedObjectListToStore()
                 -- Objects can't be activated clientside without the server's approval, so we send
                 -- the packet back to the player who sent it, but we avoid sending it to other
@@ -808,7 +810,7 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                 tes3mp.SendObjectActivate(false, false)
             end
             
-            eventManager.triggerHandlers("OnObjectActivate",isValid,{pid,cellDescription,objects,players})
+            eventManager.triggerHandlers("OnObjectActivate",eventStatus,{pid,cellDescription,objects,players})
 
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
@@ -855,9 +857,9 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
             end
             
             if isAllowed then
-                local isValid = eventManager.triggerValidators("OnObjectPlace",{pid,cellDescription,objects})
+                local eventStatus = eventManager.triggerValidators("OnObjectPlace",{pid,cellDescription,objects})
                 
-                if isValid then
+                if eventStatus.validDefaultHandler then
                     LoadedCells[cellDescription]:SaveObjectsPlaced(pid)
 
                     tes3mp.CopyReceivedObjectListToStore()
@@ -867,7 +869,7 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
                     tes3mp.SendObjectPlace(true, false)
                 end
                 
-                eventManager.triggerHandlers("OnObjectPlace",isValid,{pid,cellDescription,objects})
+                eventManager.triggerHandlers("OnObjectPlace",eventStatus,{pid,cellDescription,objects})
             else
                 tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
                     " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -918,9 +920,9 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
             end
 
             if isAllowed then
-                local isValid = eventManager.triggerValidators("OnObjectSpawn",{pid,cellDescription,objects})
+                local eventStatus = eventManager.triggerValidators("OnObjectSpawn",{pid,cellDescription,objects})
                 
-                if isValid then
+                if eventStatus.validDefaultHandler then
                     LoadedCells[cellDescription]:SaveObjectsSpawned(pid)
 
                     tes3mp.CopyReceivedObjectListToStore()
@@ -930,7 +932,7 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
                     tes3mp.SendObjectSpawn(true, false)
                 end
                 
-                eventManager.triggerHandlers("OnObjectSpawn",isValid,{pid,cellDescription,objects})
+                eventManager.triggerHandlers("OnObjectSpawn",eventStatus,{pid,cellDescription,objects})
             else
                 tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
                     " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -982,8 +984,8 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
             end
 
             if isAllowed then
-                local isValid = eventManager.triggerValidators("OnObjectDelete",{pid,cellDescription,objects})
-                if isValid then
+                local eventStatus = eventManager.triggerValidators("OnObjectDelete",{pid,cellDescription,objects})
+                if eventStatus.validDefaultHandler then
                     LoadedCells[cellDescription]:SaveObjectsDeleted(pid)
 
                     tes3mp.CopyReceivedObjectListToStore()
@@ -993,7 +995,7 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
                     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
                     tes3mp.SendObjectDelete(true, false)
                 end
-                eventManager.triggerHandlers("OnObjectDelete",isValid,{pid,cellDescription,objects})
+                eventManager.triggerHandlers("OnObjectDelete",eventStatus,{pid,cellDescription,objects})
             else
                 tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
                     " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1050,8 +1052,8 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
         end
 
         if isAllowed then
-            local isValid = eventManager.triggerValidators("OnObjectLock",{pid,cellDescription,objects})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnObjectLock",{pid,cellDescription,objects})
+            if eventStatus.validDefaultHandler then
                 local useTemporaryLoad = false
 
                 if not isCellLoaded then
@@ -1071,7 +1073,7 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
                 -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
                 tes3mp.SendObjectLock(true, false)
             end
-            eventManager.triggerHandlers("OnObjectLock",isValid,{pid,cellDescription,objects})
+            eventManager.triggerHandlers("OnObjectLock",eventStatus,{pid,cellDescription,objects})
         else
             tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1118,9 +1120,9 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
             end
 
             if isAllowed then
-                local isValid = eventManager.triggerValidators("OnObjectTrap",{pid,cellDescription,objects})
+                local eventStatus = eventManager.triggerValidators("OnObjectTrap",{pid,cellDescription,objects})
                 
-                if isValid then
+                if eventStatus.validDefaultHandler then
                     LoadedCells[cellDescription]:SaveObjectTrapsTriggered(pid)
 
                     tes3mp.CopyReceivedObjectListToStore()
@@ -1130,7 +1132,7 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
                     tes3mp.SendObjectTrap(true, false)
                 end
                 
-                eventManager.triggerHandlers("OnObjectTrap",isValid,{pid,cellDescription,objects})
+                eventManager.triggerHandlers("OnObjectTrap",eventStatus,{pid,cellDescription,objects})
             else
                 tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
                     " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1183,9 +1185,9 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
             end
 
             if isAllowed then
-                local isValid = eventManager.triggerValidators("OnObjectScale",{pid,cellDescription,objects})
+                local eventStatus = eventManager.triggerValidators("OnObjectScale",{pid,cellDescription,objects})
                 
-                if isValid then
+                if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveObjectsScaled(pid)
 
                 tes3mp.CopyReceivedObjectListToStore()
@@ -1195,7 +1197,7 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
                 tes3mp.SendObjectScale(true, false)
                 end
                 
-                eventManager.triggerHandlers("OnObjectScale",isValid,{pid,cellDescription,objects})
+                eventManager.triggerHandlers("OnObjectScale",eventStatus,{pid,cellDescription,objects})
             else
                 tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
                     " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1253,9 +1255,9 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         end
 
         if isAllowed then
-            local isValid = eventManager.triggerValidators("OnObjectState",{pid,cellDescription,objects})
+            local eventStatus = eventManager.triggerValidators("OnObjectState",{pid,cellDescription,objects})
             
-            if isValid then
+            if eventStatus.validDefaultHandler then
                 local useTemporaryLoad = false
 
                 if not isCellLoaded then
@@ -1276,7 +1278,7 @@ eventHandler.OnObjectState = function(pid, cellDescription)
                 tes3mp.SendObjectState(true, false)
             end
             
-            eventManager.triggerHandlers("OnObjectState",isValid,{pid,cellDescription,objects})
+            eventManager.triggerHandlers("OnObjectState",eventStatus,{pid,cellDescription,objects})
         else
             tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1301,9 +1303,9 @@ eventHandler.OnDoorState = function(pid, cellDescription)
                 table.insert(objects,object)
             end
             
-            local isValid = eventManager.triggerValidators("OnDoorState",{pid,cellDescription,objects})
+            local eventStatus = eventManager.triggerValidators("OnDoorState",{pid,cellDescription,objects})
             
-            if isValid then
+            if eventStatus.validDefaultHandler then
                 local cell = LoadedCells[cellDescription]
                 -- LoadedCells[cellDescription]:SaveDoorStates(pid)
                 for object in objects do
@@ -1314,7 +1316,7 @@ eventHandler.OnDoorState = function(pid, cellDescription)
                 end
             end
             
-            eventManager.triggerHandlers("OnDoorState",isValid,{pid,cellDescription,objects})
+            eventManager.triggerHandlers("OnDoorState",eventStatus,{pid,cellDescription,objects})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent DoorState for unloaded " .. cellDescription)
@@ -1385,8 +1387,8 @@ eventHandler.OnContainer = function(pid, cellDescription)
         end
 
         if isAllowed then
-            local isValid = eventManager.triggerValidators("OnContainer",{pid,cellDescription,objects})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnContainer",{pid,cellDescription,objects})
+            if eventStatus.validDefaultHandler then
                 local useTemporaryLoad = false
 
                 if not isCellLoaded then
@@ -1402,7 +1404,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
                     logicHandler.UnloadCell(cellDescription)
                 end
             end
-            eventManager.triggerHandlers("OnContainer",isValid,{pid,cellDescription,objects})
+            eventManager.triggerHandlers("OnContainer",eventStatus,{pid,cellDescription,objects})
         else
             tes3mp.LogMessage(enumerations.log.INFO, "Rejected Container from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
@@ -1436,14 +1438,14 @@ eventHandler.OnVideoPlay = function(pid)
                 table.insert(videos,videoFilename)
                 tes3mp.LogAppend(enumerations.log.WARN, "- videoFilename " .. videoFilename)
             end
-            local isValid = eventManager.triggerValidators("OnVideoPlay",{pid,videos})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnVideoPlay",{pid,videos})
+            if eventStatus.validDefaultHandler then
                 tes3mp.CopyReceivedObjectListToStore()
                 -- Send this VideoPlay packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                 tes3mp.SendVideoPlay(true, true)
             end
-            eventManager.triggerHandlers("OnVideoPlay",isValid,{pid,videos})
+            eventManager.triggerHandlers("OnVideoPlay",eventStatus,{pid,videos})
         end
     end
 end
@@ -1495,9 +1497,9 @@ eventHandler.OnRecordDynamic = function(pid)
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
         end
         
-        local isValid = eventManager.triggerValidators("OnRecordDynamic",{pid})
+        local eventStatus = eventManager.triggerValidators("OnRecordDynamic",{pid})
         
-        if isValid then
+        if eventStatus.validDefaultHandler then
         
             if storeType == "spell" then
                 recordAdditions = recordStore:SaveGeneratedSpells(pid)
@@ -1591,25 +1593,25 @@ eventHandler.OnRecordDynamic = function(pid)
             end
             
         end
-        eventManager.triggerHandlers("OnRecordDynamic",isValid,{pid})
+        eventManager.triggerHandlers("OnRecordDynamic",eventStatus,{pid})
     end
 end
 
 eventHandler.OnWorldKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnWorldKillCount",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnWorldKillCount",{pid})
+        if eventStatus.validDefaultHandler then
             WorldInstance:SaveKills(pid)
         end
-        eventManager.triggerHandlers("OnWorldKillCount",isValid,{pid})
+        eventManager.triggerHandlers("OnWorldKillCount",eventStatus,{pid})
         
     end
 end
 
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnWorldMap",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnWorldMap",{pid})
+        if eventStatus.validDefaultHandler then
             WorldInstance:SaveMapTiles(pid)
 
             if config.shareMapExploration == true then
@@ -1620,14 +1622,14 @@ eventHandler.OnWorldMap = function(pid)
                 tes3mp.SendWorldMap(pid, true, true)
             end
         end
-        eventManager.triggerHandlers("OnWorldMap",isValid,{pid})
+        eventManager.triggerHandlers("OnWorldMap",eventStatus,{pid})
     end
 end
 
 eventHandler.OnWorldWeather = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local isValid = eventManager.triggerValidators("OnWorldWeather",{pid})
-        if isValid then
+        local eventStatus = eventManager.triggerValidators("OnWorldWeather",{pid})
+        if eventStatus.validDefaultHandler then
             tes3mp.ReadReceivedWorldstate()
 
             local regionName = string.lower(tes3mp.GetWeatherRegion())
@@ -1656,7 +1658,7 @@ eventHandler.OnWorldWeather = function(pid)
                 end
             end
         end
-        eventManager.triggerHandlers("OnWorldWeather",isValid,{pid})
+        eventManager.triggerHandlers("OnWorldWeather",eventStatus,{pid})
     end
 end
 
@@ -1674,8 +1676,8 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
         if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and
             Players[pid].accountName == loop.targetName then
             
-            local isValid = eventManager.triggerValidators("OnObjectLoopTimeExpiration",{pid,loopIndex})
-            if isValid then
+            local eventStatus = eventManager.triggerValidators("OnObjectLoopTimeExpiration",{pid,loopIndex})
+            if eventStatus.validDefaultHandler then
 
                 if loop.packetType == "place" or loop.packetType == "spawn" then
                     logicHandler.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
@@ -1692,7 +1694,7 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
                     loopEnded = true
                 end
             end
-            eventManager.triggerHandlers("OnObjectLoopTimeExpiration",isValid,{pid,loopIndex})
+            eventManager.triggerHandlers("OnObjectLoopTimeExpiration",eventStatus,{pid,loopIndex})
         else
             loopEnded = true
         end

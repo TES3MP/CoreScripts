@@ -3,6 +3,33 @@ local eventManager = {}
 eventManager.validators = {}
 eventManager.handlers = {}
 
+function eventManager.getEventStatus(validDefaultHandler,validCustomHandlers)
+    return {
+        validDefaultHandler=validDefaultHandler,
+        validCustomHandlers=validCustomHandlers
+    }
+end
+
+function eventManager.updateEventStatus(oldStatus,newStatus)
+    if newStatus==nil then
+        return oldStatus
+    end
+    local result = {}
+    if newStatus.validDefaultHandler~=nil then
+        result.validDefaultHandler = newStatus.validDefaultHandler
+    else
+        result.validDefaultHandler = oldStatus.validDefaultHandler
+    end
+    
+    if newStatus.validCustomHandlers~=nil then
+        result.validCustomHandlers = newStatus.validCustomHandlers
+    else
+        result.validCustomHandlers = oldStatus.validCustomHandlers
+    end
+    
+    return result
+end
+
 function eventManager.registerValidator(event,callback)
     if(eventManager.validators[event]==nil) then
         eventManager.validators[event]={}
@@ -18,22 +45,19 @@ function eventManager.registerHandler(event,callback)
 end
 
 function eventManager.triggerValidators(event,args)
-    local isValid = true
-    if(eventManager.validators[event]~=nil) then
+    local eventStatus = eventManager.getEventStatus(true,true)
+    if eventManager.validators[event]~=nil then
         for _,callback in pairs(eventManager.validators[event]) do
-            local tempValid = callback(isValid,unpack(args))
-            if tempValid~=nil then
-                isValid = tempValid
-            end
+            eventStatus = eventManager.updateEventStatus(eventStatus,callback(eventStatus,unpack(args)))
         end
     end
-    return isValid
+    return eventStatus
 end
 
-function eventManager.triggerHandlers(event,isValid,args)
-    if(eventManager.handlers[event]~=nil) then
+function eventManager.triggerHandlers(event,eventStatus,args)
+    if eventManager.handlers[event]~=nil then
         for _,callback in pairs(eventManager.handlers[event]) do
-            callback(isValid,unpack(args))
+             eventStatus = eventManager.updateEventStatus(eventStatus,callback(eventStatus,unpack(args)))
         end
     end
 end
