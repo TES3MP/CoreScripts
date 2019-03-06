@@ -248,6 +248,9 @@ function BasePlayer:FinishLogin()
         self:LoadCell()
 
         self.loggedIn = true
+        
+        customEventHooks.triggerHandlers("OnPlayerFinishLogin", eventStatus, {self.pid})
+        customEventHooks.triggerHandlers("OnPlayerAuthentified", eventStatus, {self.pid})
     end
 end
 
