@@ -22,7 +22,7 @@ guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
-plugins = require("plugins")
+require("customScripts")
 
 Database = nil
 Player = nil
