@@ -17,6 +17,7 @@ require("time")
 
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
+customCommandHooks = require("customCommandHooks")
 eventHandler = require("eventHandler")
 guiHelper = require("guiHelper")
 animHelper = require("animHelper")
