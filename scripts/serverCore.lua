@@ -16,11 +16,13 @@ require("utils")
 require("time")
 
 logicHandler = require("logicHandler")
+customEventHooks = require("customEventHooks")
 eventHandler = require("eventHandler")
 guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
+plugins = require("plugins")
 
 Database = nil
 Player = nil
@@ -184,95 +186,102 @@ function OnServerInit()
             expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
+    
+    local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
+    if eventStatus.validDefaultHandler then
+        logicHandler.InitializeWorld()
 
-    logicHandler.InitializeWorld()
+        for _, storeType in ipairs(config.recordStoreLoadOrder) do
+            logicHandler.LoadRecordStore(storeType)
+        end
 
-    for _, storeType in ipairs(config.recordStoreLoadOrder) do
-        logicHandler.LoadRecordStore(storeType)
-    end
+        hourCounter = WorldInstance.data.time.hour
+        frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
 
-    hourCounter = WorldInstance.data.time.hour
-    frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
+        updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+        tes3mp.StartTimer(updateTimerId)
 
-    updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
-    tes3mp.StartTimer(updateTimerId)
+        logicHandler.PushPlayerList(Players)
 
-    logicHandler.PushPlayerList(Players)
+        LoadBanList()
 
-    LoadBanList()
-
-    tes3mp.SetPluginEnforcementState(config.enforcePlugins)
-    tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
+        tes3mp.SetPluginEnforcementState(config.enforcePlugins)
+        tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
+        end
+    customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
 end
 
 function OnServerPostInit()
-
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
+    local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
+    if eventStatus.validDefaultHandler then
+        tes3mp.SetGameMode(config.gameMode)
 
-    tes3mp.SetGameMode(config.gameMode)
-
-    local consoleRuleString = "allowed"
-    if not config.allowConsole then
-        consoleRuleString = "not " .. consoleRuleString
-    end
-
-    local bedRestRuleString = "allowed"
-    if not config.allowBedRest then
-        bedRestRuleString = "not " .. bedRestRuleString
-    end
-
-    local wildRestRuleString = "allowed"
-    if not config.allowWildernessRest then
-        wildRestRuleString = "not " .. wildRestRuleString
-    end
-
-    local waitRuleString = "allowed"
-    if not config.allowWait then
-        waitRuleString = "not " .. waitRuleString
-    end
-
-    tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
-    tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
-    tes3mp.SetRuleValue("difficulty", config.difficulty)
-    tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
-    tes3mp.SetRuleString("console", consoleRuleString)
-    tes3mp.SetRuleString("bedResting", bedRestRuleString)
-    tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
-    tes3mp.SetRuleString("waiting", waitRuleString)
-    tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
-    tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
-    tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
-    tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
-    tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
-    tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
-    tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
-    tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
-    tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
-    tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
-    tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
-    tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
-
-    local respawnCell
-
-    if config.respawnAtImperialShrine == true then
-        respawnCell = "nearest Imperial shrine"
-
-        if config.respawnAtTribunalTemple == true then
-            respawnCell = respawnCell .. " or Tribunal temple"
+        local consoleRuleString = "allowed"
+        if not config.allowConsole then
+            consoleRuleString = "not " .. consoleRuleString
         end
-    elseif config.respawnAtTribunalTemple == true then
-        respawnCell = "nearest Tribunal temple"
-    else
-        respawnCell = tostring(config.defaultRespawnCell)
-    end
 
-    tes3mp.SetRuleString("respawnCell", respawnCell)
-    ResetAdminCounter()
+        local bedRestRuleString = "allowed"
+        if not config.allowBedRest then
+            bedRestRuleString = "not " .. bedRestRuleString
+        end
+
+        local wildRestRuleString = "allowed"
+        if not config.allowWildernessRest then
+            wildRestRuleString = "not " .. wildRestRuleString
+        end
+
+        local waitRuleString = "allowed"
+        if not config.allowWait then
+            waitRuleString = "not " .. waitRuleString
+        end
+
+        tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
+        tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
+        tes3mp.SetRuleValue("difficulty", config.difficulty)
+        tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
+        tes3mp.SetRuleString("console", consoleRuleString)
+        tes3mp.SetRuleString("bedResting", bedRestRuleString)
+        tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
+        tes3mp.SetRuleString("waiting", waitRuleString)
+        tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
+        tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
+        tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
+        tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
+        tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
+        tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
+        tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
+        tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
+        tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
+        tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
+        tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
+        tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
+
+        local respawnCell
+
+        if config.respawnAtImperialShrine == true then
+            respawnCell = "nearest Imperial shrine"
+
+            if config.respawnAtTribunalTemple == true then
+                respawnCell = respawnCell .. " or Tribunal temple"
+            end
+        elseif config.respawnAtTribunalTemple == true then
+            respawnCell = "nearest Tribunal temple"
+        else
+            respawnCell = tostring(config.defaultRespawnCell)
+        end
+
+        tes3mp.SetRuleString("respawnCell", respawnCell)
+        ResetAdminCounter()
+    end
+    customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
 function OnServerExit(error)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, tostring(error))
+    customEventHooks.triggerHandlers("OnServerExit", eventStatus, {error})
 end
 
 
@@ -350,11 +359,15 @@ function OnPlayerConnect(pid)
 end
 
 function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
-    if logicHandler.AuthCheck(pid) then
-        if Players[pid]:IsModerator() then
-            IncrementAdminCounter()
+    local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
+    if eventStatus.validDefaultHandler then
+        if logicHandler.AuthCheck(pid) then
+            if Players[pid]:IsModerator() then
+                IncrementAdminCounter()
+            end
         end
     end
+    customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
 end
 
 function OnPlayerDisconnect(pid)
@@ -369,6 +382,7 @@ function OnPlayerDisconnect(pid)
 end
 
 function OnPlayerResurrect(pid)
+    customEventHooks.triggerHandlers("OnPlayerResurrect", eventStatus, {pid})
 end
 
 function OnPlayerSendMessage(pid, message)
