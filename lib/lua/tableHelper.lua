@@ -457,19 +457,19 @@ end
 
 -- Based on http://stackoverflow.com/a/13398936
 function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
-    local str = ""
 
+    if inputTable == nil then
+        return "nil"
+    end
+
+    local str = ""
     local currentIndent = ""
 
     if indentStr == nil then
         indentStr = "\t"
     end
 
-    if (inputTable == nil) then
-        return
-    end
-
-    if (indentLevel == nil) then
+    if indentLevel == nil then
         return tableHelper.getPrintableTable(inputTable, indentStr, 0)
     end
 
@@ -478,19 +478,18 @@ function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
     end
 
     for index, value in pairs(inputTable) do
-        str = str .. currentIndent .. index
-
-        if type(value) == "boolean" then
-            value = tostring(value)
-        elseif type(value) == "function" then
-            value = "function"
-        end
 
         if type(value) == "table" then
-            str = str .. ": \n" .. tableHelper.getPrintableTable(value, indentStr, (indentLevel + 1))
+            value = "\n" .. tableHelper.getPrintableTable(value, indentStr, (indentLevel + 1))
         else
-            str = str .. ": " .. value .. "\n"
+            if type(value) ~= "string" then
+                value = tostring(value)
+            end
+
+            value = value .. "\n"
         end
+
+        str = str .. currentIndent .. index .. ": " .. value
     end
 
     return str
