@@ -264,6 +264,9 @@ end
 
 -- Add a 2nd table's key/value pairs to the 1st table
 --
+-- Note: If the two tables share keys, the values of the 2nd table
+-- will be used in the final table
+--
 -- Based on http://stackoverflow.com/a/1283608
 function tableHelper.merge(mainTable, addedTable)
     for key, value in pairs(addedTable) do
@@ -276,6 +279,14 @@ function tableHelper.merge(mainTable, addedTable)
         else
             mainTable[key] = value
         end
+    end
+end
+
+-- Insert all the values from the 2nd table into the 1st table-- 
+function tableHelper.insertValues(mainTable, addedTable)
+
+    for _, value in pairs(addedTable) do
+        table.insert(mainTable, value)
     end
 end
 
