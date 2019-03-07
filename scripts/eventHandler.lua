@@ -81,7 +81,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                     if eventStatus.validDefaultHandler then
                         logicHandler.UnloadCellForPlayer(pid, loadedCellDescription)
                     end
-                    customEventHooks.triggerHandlers("OnCellUnload", {pid, loadedCellDescription})
+                    customEventHooks.triggerHandlers("OnCellUnload", eventStatus, {pid, loadedCellDescription})
                 end
 
                 if Players[pid].data.location.regionName ~= nil then
