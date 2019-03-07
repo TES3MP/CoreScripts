@@ -48,7 +48,7 @@ function customEventHooks.triggerValidators(event, args)
     local eventStatus = customEventHooks.getEventStatus(true, true)
     if customEventHooks.validators[event] ~= nil then
         for _,callback in pairs(customEventHooks.validators[event]) do
-            eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus,unpack(args)))
+            eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
         end
     end
     return eventStatus
@@ -57,7 +57,7 @@ end
 function customEventHooks.triggerHandlers(event, eventStatus, args)
     if customEventHooks.handlers[event] ~= nil then
         for _,callback in pairs(customEventHooks.handlers[event]) do
-             eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus,unpack(args)))
+             eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
         end
     end
 end
