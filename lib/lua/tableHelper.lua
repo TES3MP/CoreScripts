@@ -461,22 +461,16 @@ end
 -- Get a string with a table's contents where every value is on its own row
 --
 -- Based on http://stackoverflow.com/a/13398936
-function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
+function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
 
-    if inputTable == nil then
-        return "nil"
-    end
+    if inputTable == nil then return "nil" end
 
     local str = ""
     local currentIndent = ""
 
-    if indentStr == nil then
-        indentStr = "\t"
-    end
-
-    if indentLevel == nil then
-        return tableHelper.getPrintableTable(inputTable, indentStr, 0)
-    end
+    if indentLevel == nil then indentLevel = 0 end
+    if indentStr == nil then indentStr = "\t" end
+    if maxDepth == nil then maxDepth = 50 end
 
     for i = 0, indentLevel do
         currentIndent = currentIndent .. indentStr
@@ -484,8 +478,8 @@ function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
 
     for index, value in pairs(inputTable) do
 
-        if type(value) == "table" then
-            value = "\n" .. tableHelper.getPrintableTable(value, indentStr, (indentLevel + 1))
+        if type(value) == "table" and maxDepth > 0 then
+            value = "\n" .. tableHelper.getPrintableTable(value, maxDepth - 1, indentStr, indentLevel + 1)
         else
             if type(value) ~= "string" then
                 value = tostring(value)
@@ -500,8 +494,8 @@ function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
     return str
 end
 
-function tableHelper.print(inputTable, indentStr, indentLevel)
-    local text = tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
+function tableHelper.print(inputTable, maxDepth, indentStr, indentLevel)
+    local text = tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
     tes3mp.LogMessage(2, text)
 end
 
