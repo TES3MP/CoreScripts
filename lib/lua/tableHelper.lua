@@ -282,7 +282,7 @@ function tableHelper.merge(mainTable, addedTable)
     end
 end
 
--- Insert all the values from the 2nd table into the 1st table-- 
+-- Insert all the values from the 2nd table into the 1st table
 function tableHelper.insertValues(mainTable, addedTable)
 
     for _, value in pairs(addedTable) do
@@ -290,7 +290,7 @@ function tableHelper.insertValues(mainTable, addedTable)
     end
 end
 
--- Converts string keys containing numbers into numerical keys,
+-- Convert string keys containing numbers into numerical keys,
 -- useful for JSON tables
 --
 -- Because Lua arrays start from index 1, the fixZeroStart argument
@@ -327,7 +327,7 @@ function tableHelper.fixNumericalKeys(inputTable, fixZeroStart)
     tableHelper.merge(inputTable, newTable)
 end
 
--- Checks whether the table contains only numerical keys, though they
+-- Check whether the table contains only numerical keys, though they
 -- don't have to be consecutive
 function tableHelper.usesNumericalKeys(inputTable)
 
@@ -344,7 +344,7 @@ function tableHelper.usesNumericalKeys(inputTable)
     return true
 end
 
--- Checks whether the table contains only numerical values
+-- Check whether the table contains only numerical values
 function tableHelper.usesNumericalValues(inputTable)
 
     if tableHelper.getCount(inputTable) == 0 then
@@ -360,7 +360,7 @@ function tableHelper.usesNumericalValues(inputTable)
     return true
 end
 
--- Checks whether there are any items in the table
+-- Check whether there are any items in the table
 function tableHelper.isEmpty(inputTable)
     if next(inputTable) == nil then
         return true
@@ -369,7 +369,7 @@ function tableHelper.isEmpty(inputTable)
     return false
 end
 
--- Checks whether the table is an array with only consecutive numerical keys,
+-- Check whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
 function tableHelper.isArray(inputTable)
@@ -384,7 +384,7 @@ function tableHelper.isArray(inputTable)
     return true
 end
 
--- Checks whether the table has the same keys and values as another table, optionally
+-- Check whether the table has the same keys and values as another table, optionally
 -- ignoring certain keys
 function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
 
@@ -418,6 +418,8 @@ function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
     return true
 end
 
+-- Copy a table's top level values and direct children to another table
+--
 -- Based on http://lua-users.org/wiki/CopyTable
 function tableHelper.shallowCopy(inputTable)
     local inputType = type(inputTable)
@@ -433,6 +435,7 @@ function tableHelper.shallowCopy(inputTable)
     return newTable
 end
 
+-- Get a compact string with a table's contents
 function tableHelper.getSimplePrintableTable(inputTable)
 
     local text = ""
@@ -455,6 +458,8 @@ function tableHelper.getSimplePrintableTable(inputTable)
     return text
 end
 
+-- Get a string with a table's contents where every value is on its own row
+--
 -- Based on http://stackoverflow.com/a/13398936
 function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
 
