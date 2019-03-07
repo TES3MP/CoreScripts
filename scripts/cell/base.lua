@@ -1070,7 +1070,9 @@ function BaseCell:SaveActorCellChanges(pid)
                 -- If so, move its data back and remove all of its cell change data
                 if originalCellDescription == newCellDescription then
                     tes3mp.LogAppend(enumerations.log.INFO, "-- It is now back in its original cell " .. originalCellDescription)
-                    self:MoveObjectData(uniqueIndex, newCell)
+                    if newCellDescription ~= self.description then
+                        self:MoveObjectData(uniqueIndex, newCell)
+                    end
 
                     tableHelper.removeValue(newCell.data.packets.cellChangeTo, uniqueIndex)
                     tableHelper.removeValue(newCell.data.packets.cellChangeFrom, uniqueIndex)
