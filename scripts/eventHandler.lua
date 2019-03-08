@@ -1309,7 +1309,7 @@ eventHandler.OnDoorState = function(pid, cellDescription)
             if eventStatus.validDefaultHandler then
                 local cell = LoadedCells[cellDescription]
                 -- LoadedCells[cellDescription]:SaveDoorStates(pid)
-                for object in pairs(objects) do
+                for _, object in pairs(objects) do
                     cell:InitializeObjectData(object.UniqueIndex, object.RefId )
                     cell.data.objectData[object.UniqueIndex].doorState = object.doorState
 
