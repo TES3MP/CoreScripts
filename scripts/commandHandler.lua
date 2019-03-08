@@ -822,6 +822,27 @@ function commandHandler.ProcessCommand(pid, cmd)
         logicHandler.SendConfigCollisionOverrides(pid, true)
         Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
 
+    elseif cmd[1] == "load" and admin then
+
+        local scriptName = cmd[2]
+
+        if scriptName == nil then
+            Players[pid]:Message("Use /load <scriptName>\n")
+        else
+            if package.loaded[scriptName] then
+                Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
+                package.loaded[scriptName] = nil
+            end
+
+            local result = prequire(scriptName)
+
+            if result then
+                Players[pid]:Message(scriptName .. " was successfully loaded.\n")
+            else
+                Players[pid]:Message(scriptName .. " could not be found.\n")
+            end
+        end
+
     elseif cmd[1] == "resetkills" and moderator then
 
         -- Set all currently recorded kills to 0 for connected players
