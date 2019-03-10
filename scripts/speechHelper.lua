@@ -92,6 +92,16 @@ speechCollections["dark elf"] = {
             service = { count = 51 },
             thief = { count = 3, skip = { 1, 2 } }
         }
+    },
+    ord = {
+        folderPath = "ord",
+        malePrefix = "ORM",
+        maleFiles = {
+            attack = { count = 5 },
+            hello = { count = 20 },
+            idle = { count = 4 },
+            intruder = { count = 2 }
+        }
     }
 }
 speechCollections["high elf"] = {
