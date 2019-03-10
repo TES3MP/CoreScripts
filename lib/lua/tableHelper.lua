@@ -463,7 +463,9 @@ end
 -- Based on http://stackoverflow.com/a/13398936
 function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
 
-    if inputTable == nil then return "nil" end
+    if type(inputTable) ~= "table" then
+        return type(inputTable)
+    end
 
     local str = ""
     local currentIndent = ""
