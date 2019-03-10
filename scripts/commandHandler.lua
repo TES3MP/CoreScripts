@@ -829,12 +829,43 @@ function commandHandler.ProcessCommand(pid, cmd)
         if scriptName == nil then
             Players[pid]:Message("Use /load <scriptName>\n")
         else
+            local wasLoaded = false
+
             if package.loaded[scriptName] then
                 Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
-                package.loaded[scriptName] = nil
+                wasLoaded = true
             end
 
-            local result = prequire(scriptName)
+            local result
+
+            if wasLoaded then
+
+                -- Local objects that use functions from the script we are reloading
+                -- will keep their references to the old versions of those functions if
+                -- we do this:
+                --
+                -- package.loaded[scriptName] = nil
+                -- require(scriptName)
+                --
+                -- To get around that, we load up the script with dofile() instead and
+                -- then update the function references in package.loaded[scriptName], which
+                -- in turn also changes them in the local objects
+                --
+                local scriptPath = package.searchpath(scriptName, package.path)
+                result = dofile(scriptPath)
+
+                for key, value in pairs(package.loaded[scriptName]) do
+                    if result[key] == nil then
+                        package.loaded[scriptName][key] = nil
+                    end
+                end
+
+                for key, value in pairs(result) do
+                    package.loaded[scriptName][key] = value
+                end
+            else
+                result = prequire(scriptName)
+            end
 
             if result then
                 Players[pid]:Message(scriptName .. " was successfully loaded.\n")
