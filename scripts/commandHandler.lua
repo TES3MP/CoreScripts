@@ -1010,7 +1010,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         end
 
         if not isValid then
-            local validList = speechHelper.GetValidList(pid)
+            local validList = speechHelper.GetPrintableValidListForPid(pid)
             tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
                 .. validList .. "\n", false)
         end
