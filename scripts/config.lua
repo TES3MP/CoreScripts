@@ -66,10 +66,10 @@ config.shareVideos = true
 config.defaultSpawnCell = "-3, -2"
 
 -- The X, Y and Z position that newly created players are teleported to
-config.defaultSpawnPos = {-23980.693359375, -15561.556640625, 505}
+config.defaultSpawnPos = {-23894.0, -15079.0, 505}
 
 -- The X and Z rotation that newly created players are assigned
-config.defaultSpawnRot = {-0.000152587890625, 1.6182196140289}
+config.defaultSpawnRot = {0, 1.2}
 
 -- The cell that players respawn in, unless overridden below by other respawn options
 config.defaultRespawnCell = "Balmora, Temple"
