@@ -279,10 +279,10 @@ function OnServerPostInit()
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
-function OnServerExit(error)
+function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
-    tes3mp.LogMessage(enumerations.log.ERROR, tostring(error))
-    customEventHooks.triggerHandlers("OnServerExit", eventStatus, {error})
+    tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
+    customEventHooks.triggerHandlers("OnServerExit", eventStatus, {errorState})
 end
 
 function LoadDataFileList(filename)
