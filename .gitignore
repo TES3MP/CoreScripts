@@ -5,5 +5,3 @@ lib/*
 !/data/world/.gitkeep
 !/lib/lua
 !lib/.gitkeep
-!/data/pluginlist.example.json
-!/data/pluginlist.json

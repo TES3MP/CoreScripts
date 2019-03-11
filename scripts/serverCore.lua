@@ -285,21 +285,20 @@ function OnServerExit(error)
     customEventHooks.triggerHandlers("OnServerExit", eventStatus, {error})
 end
 
+function LoadDataFileList(filename)
+    local dataFileList = {}
+    tes3mp.LogMessage(enumerations.log.WARN, "Reading " .. filename)
 
-function LoadPluginList()
-    local pluginList = {}
-    tes3mp.LogMessage(enumerations.log.WARN, "Reading pluginlist.json")
-
-    local jsonPluginList = jsonInterface.load("pluginlist.json")
+    local jsonDataFileList = jsonInterface.load(filename)
 
     -- Fix numerical keys to print plugins in the correct order
-    tableHelper.fixNumericalKeys(jsonPluginList, true)
+    tableHelper.fixNumericalKeys(jsonDataFileList, true)
 
-    for listIndex, pluginEntry in ipairs(jsonPluginList) do
+    for listIndex, pluginEntry in ipairs(jsonDataFileList) do
         for entryIndex, hashArray in pairs(pluginEntry) do
 
-            pluginList[listIndex] = {}
-            pluginList[listIndex].name = entryIndex
+            dataFileList[listIndex] = {}
+            dataFileList[listIndex].name = entryIndex
 
             local hashes = {}
             local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
@@ -309,20 +308,20 @@ function LoadPluginList()
                 debugMessage = debugMessage .. ("%X, "):format(tonumber(hash, 16))
                 table.insert(hashes, tonumber(hash, 16))
             end
-            pluginList[listIndex].hashes = hashes
-            table.insert(pluginList[listIndex], "")
+            dataFileList[listIndex].hashes = hashes
+            table.insert(dataFileList[listIndex], "")
 
             debugMessage = debugMessage .. "\b\b]"
             tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
         end
     end
-    return pluginList
+    return dataFileList
 end
 
-function OnRequestPluginList()
-    local pluginList = LoadPluginList()
+function OnRequestDataFileList()
+    local dataFileList = LoadDataFileList("requiredDataFiles.json")
 
-    for _, entry in ipairs(pluginList) do
+    for _, entry in ipairs(dataFileList) do
         local name = entry.name
 
         if tableHelper.isEmpty(entry.hashes) then
@@ -333,6 +332,12 @@ function OnRequestPluginList()
             end
         end
     end
+end
+
+-- Older server builds will call an "OnRequestPluginList" event instead of
+-- "OnRequestDataFileList", so keep this around for backwards compatibility
+function OnRequestPluginList()
+    OnRequestDataFileList()
 end
 
 function OnPlayerConnect(pid)

@@ -272,7 +272,7 @@ config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", 
     "cellChangeFrom" }
 
 -- Whether the server should enforce that all clients connect with a specific list of plugins
--- defined in data/pluginlist.json
+-- defined in data/requiredDataFiles.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
 --          what they're doing. Otherwise, you risk getting corrupt server data from
 --          their usage of unshared plugins.
