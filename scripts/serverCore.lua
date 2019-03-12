@@ -31,6 +31,8 @@ Cell = nil
 RecordStore = nil
 World = nil
 
+clientDataFiles = {}
+
 hourCounter = nil
 frametimeMultiplier = nil
 updateTimerId = nil
@@ -328,6 +330,7 @@ function OnRequestDataFileList()
 
     for _, entry in ipairs(dataFileList) do
         local name = entry.name
+        table.insert(clientDataFiles, name)
 
         if tableHelper.isEmpty(entry.hashes) then
             tes3mp.AddPluginHash(name, "")
