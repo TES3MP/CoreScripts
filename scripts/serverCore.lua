@@ -191,6 +191,7 @@ function OnServerInit()
     end
     
     local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
+
     if eventStatus.validDefaultHandler then
         logicHandler.InitializeWorld()
 
@@ -210,7 +211,8 @@ function OnServerInit()
 
         tes3mp.SetPluginEnforcementState(config.enforcePlugins)
         tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
-        end
+    end
+
     customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
 end
 
