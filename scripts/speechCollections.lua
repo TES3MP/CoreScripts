@@ -304,6 +304,94 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
             }
         }
     }
+
+    if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tribunal.esm") then
+
+        speechCollections["dark elf"]["tb"] = {
+            folderPath = "d",
+            malePrefix = "DM",
+            femalePrefix = "DF",
+            maleFiles = {
+                hello = { count = 200, filePrefixOverride = "tHlo" },
+                idle = { count = 24, filePrefixOverride = "tIdl" }
+            },
+            femaleFiles = {
+                hello = { count = 173, filePrefixOverride = "tHlo" },
+                idle = { count = 17, filePrefixOverride = "tIdl"  }
+            }
+        }
+
+        speechCollections["imperial"]["tb"] = {
+            folderPath = "i",
+            malePrefix = "IM",
+            femalePrefix = "IF",
+            maleFiles = {
+                hello = { count = 116, filePrefixOverride = "tHlo" },
+                idle = { count = 13, filePrefixOverride = "tIdl" }
+            },
+            femaleFiles = {
+                hello = { count = 112, filePrefixOverride = "tHlo" },
+                idle = { count = 13, filePrefixOverride = "tIdl" }
+            }
+        }
+    end
+
+    if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Bloodmoon.esm") then
+
+        speechCollections["dark elf"]["bm"] = {
+            folderPath = "d",
+            malePrefix = "DM",
+            femalePrefix = "DF",
+            maleFiles = {
+                attack = { count = 6, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 7, filePrefixOverride = "bHlo" },
+                idle = { count = 14, skip = { 1 }, filePrefixOverride = "bIdl" }
+            },
+            femaleFiles = {
+                attack = { count = 6, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 1, filePrefixOverride = "bHlo" },
+                idle = { count = 15, skip = { 7, 8 }, filePrefixOverride = "bIdl" }
+            }
+        }
+
+        speechCollections["imperial"]["bm"] = {
+            folderPath = "i",
+            malePrefix = "IM",
+            femalePrefix = "IF",
+            maleFiles = {
+                attack = { count = 9, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 52, filePrefixOverride = "bHlo" },
+                idle = { count = 41, skip = { 16 }, filePrefixOverride = "bIdl" }
+            },
+            femaleFiles = {
+                attack = { count = 8, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 17, skip = { 8, 9, 10 }, filePrefixOverride = "bHlo" },
+                idle = { count = 13, filePrefixOverride = "bIdl" }
+            }
+        }
+
+        speechCollections["nord"]["bm"] = {
+            folderPath = "n",
+            malePrefix = "NM",
+            femalePrefix = "NF",
+            maleFiles = {
+                attack = { count = 9, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 75, filePrefixOverride = "bHlo" },
+                idle = { count = 37, filePrefixOverride = "bIdl" }
+            },
+            femaleFiles = {
+                attack = { count = 9, filePrefixOverride = "bAtk" },
+                flee = { count = 4, filePrefixOverride = "bFle" },
+                hello = { count = 21, skip = { 8, 9 }, filePrefixOverride = "bHlo" },
+                idle = { count = 23, skip = { 21 }, filePrefixOverride = "bIdl" }
+            }
+        }
+    end
 end
 
 return speechCollections
