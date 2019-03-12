@@ -19,7 +19,7 @@ speechCollections["argonian"] = {
             hello = { count = 139 },
             hit = { count = 16, skip = { 11 } },
             idle = { count = 8 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 12 },
             thief = { count = 5 }
         },
@@ -48,7 +48,7 @@ speechCollections["breton"] = {
             hello = { count = 138, skip = { 126 } },
             hit = { count = 15 },
             idle = { count = 8 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 12 },
             thief = { count = 5 }
         },
@@ -176,7 +176,7 @@ speechCollections["khajiit"] = {
             hello = { count = 139 },
             hit = { count = 16 },
             idle = { count = 9 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 9 },
             thief = { count = 5 }
         },
@@ -205,7 +205,7 @@ speechCollections["nord"] = {
             hello = { count = 138 },
             hit = { count = 14 },
             idle = { count = 9 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 6 },
             thief = { count = 5 }
         },
@@ -263,7 +263,7 @@ speechCollections["redguard"] = {
             hello = { count = 138 },
             hit = { count = 15 },
             idle = { count = 9 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 12 },
             thief = { count = 5 }
         },
@@ -292,7 +292,7 @@ speechCollections["wood elf"] = {
             hello = { count = 138 },
             hit = { count = 15 },
             idle = { count = 9 },
-            intruder = { count = 9, skip = { 7 }, prefixOverride = "OP" },
+            intruder = { count = 9, skip = { 7 }, indexPrefixOverride = "OP" },
             service = { count = 6 },
             thief = { count = 5 }
         },
@@ -316,7 +316,6 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
         return nil
     end
 
-    local filePrefix = speechTypesToFilePrefixes[speechType]
     local genderTableName
 
     if gender == 0 then genderTableName = "femaleFiles"
@@ -346,19 +345,25 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
         end
     end
 
-    speechPath = speechPath .. filePrefix .. "_"
+    local filePrefix
+
+    if speechTypeTable.filePrefixOverride ~= nil then
+        filePrefix = speechTypeTable.filePrefixOverride
+    else
+        filePrefix = speechTypesToFilePrefixes[speechType]
+    end
 
     local indexPrefix
 
-    if speechTypeTable.prefixOverride ~= nil then
-        indexPrefix = speechTypeTable.prefixOverride
+    if speechTypeTable.indexPrefixOverride ~= nil then
+        indexPrefix = speechTypeTable.indexPrefixOverride
     elseif gender == 0 then
         indexPrefix = speechCollectionTable.femalePrefix
     else
         indexPrefix = speechCollectionTable.malePrefix
     end
 
-    speechPath = speechPath .. indexPrefix .. prefixZeroes(speechIndex, 3) .. ".mp3"
+    speechPath = speechPath .. filePrefix .. "_" .. indexPrefix .. prefixZeroes(speechIndex, 3) .. ".mp3"
 
     return speechPath
 end
