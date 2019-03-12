@@ -119,7 +119,7 @@ function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkN
         end
     end
 
-    if checkNestedTables == true then
+    if checkNestedTables then
         for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValue(value, keyToFind, valueToFind, true) then
                 return true
@@ -145,7 +145,7 @@ function tableHelper.containsKeyValuePairs(inputTable, keyValuePairsTable, check
 
     if foundMatches then
         return true
-    elseif checkNestedTables == true then
+    elseif checkNestedTables then
         for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValuePairs(value, keyValuePairsTable, true) then
                 return true
@@ -160,8 +160,8 @@ end
 -- nested tables
 function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
     for key, value in pairs(inputTable) do
-        if checkNestedTables == true and type(value) == "table" then
-            if tableHelper.containsValue(value, valueToFind, true) == true then
+        if checkNestedTables and type(value) == "table" then
+            if tableHelper.containsValue(value, valueToFind, true) then
                 return true
             end
         elseif value == valueToFind then
