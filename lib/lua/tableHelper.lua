@@ -171,6 +171,24 @@ function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
     return false
 end
 
+-- Check whether a table contains a certain case insensitive string, optionally
+-- checking inside nested tables
+function tableHelper.containsCaseInsensitiveString(inputTable, stringToFind, checkNestedTables)
+
+    if type(stringToFind) ~= "string"  then return false end
+
+    for key, value in pairs(inputTable) do
+        if checkNestedTables and type(value) == "table" then
+            if tableHelper.containsCaseInsensitiveString(value, stringToFind, true) then
+                return true
+            end
+        elseif type(value) == "string" and string.lower(value) == string.lower(stringToFind) then
+            return true
+        end
+    end
+    return false
+end
+
 function tableHelper.insertValueIfMissing(inputTable, value)
     if tableHelper.containsValue(inputTable, value, false) == false then
         table.insert(inputTable, value)
