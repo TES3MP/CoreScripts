@@ -32,6 +32,7 @@ RecordStore = nil
 World = nil
 
 clientDataFiles = {}
+speechCollections = {}
 
 hourCounter = nil
 frametimeMultiplier = nil
@@ -220,6 +221,9 @@ function OnServerPostInit()
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
     local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
     if eventStatus.validDefaultHandler then
+
+        speechCollections = require("speechCollections")
+
         tes3mp.SetGameMode(config.gameMode)
 
         local consoleRuleString = "allowed"
@@ -328,6 +332,7 @@ function LoadDataFileList(filename)
 end
 
 function OnRequestDataFileList()
+
     local dataFileList = LoadDataFileList("requiredDataFiles.json")
 
     for _, entry in ipairs(dataFileList) do
