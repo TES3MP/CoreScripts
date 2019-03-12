@@ -282,7 +282,12 @@ end
 function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
-    customEventHooks.triggerHandlers("OnServerExit", eventStatus, {errorState})
+    customEventHooks.triggerHandlers("OnServerExit", true, {errorState})
+end
+
+function OnServerScriptCrash(errorMessage)
+    tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
+    customEventHooks.triggerHandlers("OnServerExit", true, {errorMessage})
 end
 
 function LoadDataFileList(filename)
