@@ -1343,7 +1343,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+        if not config.allowOnContainerForUnloadedCells and  not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
             tes3mp.LogMessage(enumerations.log.WARN, "Invalid Container: " .. logicHandler.GetChatName(pid) ..
                 " used impossible packetOrigin for unloaded " .. cellDescription)
             return

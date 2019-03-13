@@ -163,6 +163,9 @@ config.enforcedLogLevel = -1
 --       system requirements that make a default of 30 more appropriate.
 config.physicsFramerate = 30
 
+-- Whether players are allowed to interact with containers located in unloaded cells.
+config.allowOnContainerForUnloadedCells = false
+
 -- Whether players should collide with other actors
 config.enablePlayerCollision = true
 
