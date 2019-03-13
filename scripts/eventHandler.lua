@@ -353,13 +353,6 @@ eventHandler.OnPlayerCellChange = function(pid)
                         logicHandler.UnloadRegionForPlayer(pid, previousRegionName)
                     end
 
-                    -- Exchange generated records with the other players who have this cell loaded
-                    
-
-                    if LoadedCells[currentCellDescription] ~= nil then
-                        logicHandler.ExchangeGeneratedRecords(pid, LoadedCells[currentCellDescription].visitors)
-                    end
-
                     Players[pid].data.location.regionName = regionName
                     Players[pid].hasFinishedInitialTeleportation = true
                 end
@@ -367,6 +360,11 @@ eventHandler.OnPlayerCellChange = function(pid)
                 Players[pid]:SaveCell()
                 Players[pid]:SaveStatsDynamic()
                 Players[pid]:Save()
+
+                -- Exchange generated records with the other players who have this cell loaded
+                if LoadedCells[currentCellDescription] ~= nil then
+                    logicHandler.ExchangeGeneratedRecords(pid, LoadedCells[currentCellDescription].visitors)
+                end
 
                 if config.shareMapExploration == true then
                     WorldInstance:SaveMapExploration(pid)
