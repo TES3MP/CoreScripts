@@ -39,6 +39,12 @@ end
 
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
+    if self.data.generatedRecords[recordId] == nil then
+        tes3mp.LogMessage(enumerations.log.WARN, "Tried deleting " .. self.storeType .. " record " .. recordId ..
+            " which doesn't exist!")
+        return
+    end
+
     tes3mp.LogMessage(enumerations.log.WARN, "Deleting generated " .. self.storeType .. " record " .. recordId)
 
     -- Is this an enchantable record? If so, we should remove any links to it
