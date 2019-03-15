@@ -249,8 +249,8 @@ function BasePlayer:FinishLogin()
 
         self.loggedIn = true
         
-        customEventHooks.triggerHandlers("OnPlayerFinishLogin", eventStatus, {self.pid})
-        customEventHooks.triggerHandlers("OnPlayerAuthentified", eventStatus, {self.pid})
+        customEventHooks.triggerHandlers("OnPlayerFinishLogin", customEventHooks.makeEventStatus(true, true), {self.pid})
+        customEventHooks.triggerHandlers("OnPlayerAuthentified", customEventHooks.makeEventStatus(true, true), {self.pid})
     end
 end
 

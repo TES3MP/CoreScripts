@@ -290,12 +290,12 @@ end
 function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
-    customEventHooks.triggerHandlers("OnServerExit", true, {errorState})
+    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
 end
 
 function OnServerScriptCrash(errorMessage)
     tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
-    customEventHooks.triggerHandlers("OnServerExit", true, {errorMessage})
+    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
 end
 
 function LoadDataFileList(filename)
@@ -403,7 +403,7 @@ function OnPlayerDisconnect(pid)
 end
 
 function OnPlayerResurrect(pid)
-    customEventHooks.triggerHandlers("OnPlayerResurrect", eventStatus, {pid})
+    customEventHooks.triggerHandlers("OnPlayerResurrect", customEventHooks.makeEventStatus(true, true), {pid})
 end
 
 function OnPlayerSendMessage(pid, message)
