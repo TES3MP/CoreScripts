@@ -1,6 +1,8 @@
-###Using the customEventHooks API:
+Using the customEventHooks API:
+===
 
-#####Handling events:
+Handling events:
+---
 
 To handle various events you will need to use two functions: `customEventHooks.registerValidator` and `customEventHooks.registerHandler`.
 Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was peformed or not). 
@@ -14,7 +16,8 @@ However, their callbacks are still ran, and it is scripts' responsibility to han
 
 Validators can change the current eventStatus. If your validators returns nothing, it stays the same, however if you return a non-`nil` value for either of the two fields, it will override the previous one. You can use `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)` for this.
 
-#####Examples:
+Examples:
+---
 Imagine you want to taunt a player whenever they die.
 
 ```Lua
@@ -42,7 +45,8 @@ customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
 end)
 ```
 
-#####Custom events
+Custom events
+---
 
 You can also use this API to allow other scripts to interact with yours. For that you will need to add `customEventHooks.triggerValidators(event, args)` and `customEventHooks.triggerHandlers(event, eventStatus, args)` to your code. `event` is a string labeling the event, `eventStatus` should be whatever was returned by `triggerValidators` and `args` is a list or arguments relevant callbacks will receive.
 
@@ -61,7 +65,8 @@ If you don't want other scripts replacing logic from yours, you can provide just
 customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {})
 ```
 
-###Using the customCommandHooks API:
+Using the customCommandHooks API:
+===
 
 To add a command, simply run `customCommandHooks.registerCommand(cmd, callback)`. Here `cmd` is the word after `/` which you want to trigger your command (e.g. "help" for `/help`) and callback is a function which will be ran when someone sends a message starting with "/" and `cmd`.
 
@@ -69,7 +74,8 @@ Callback will receive as its arguments a player's `pid` and an array of all comm
 
 You can then perform staff rank checks by calling `Players[pid]:IsAdmin()` etc.
 
-###Event table
+Event table
+===
 
 This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*
 
