@@ -3,7 +3,7 @@ local customEventHooks = {}
 customEventHooks.validators = {}
 customEventHooks.handlers = {}
 
-function customEventHooks.getEventStatus(validDefaultHandler, validCustomHandlers)
+function customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)
     return {
         validDefaultHandler = validDefaultHandler,
         validCustomHandlers = validCustomHandlers
@@ -45,7 +45,7 @@ function customEventHooks.registerHandler(event, callback)
 end
 
 function customEventHooks.triggerValidators(event, args)
-    local eventStatus = customEventHooks.getEventStatus(true, true)
+    local eventStatus = customEventHooks.makeEventStatus(true, true)
     if customEventHooks.validators[event] ~= nil then
         for _,callback in ipairs(customEventHooks.validators[event]) do
             eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
