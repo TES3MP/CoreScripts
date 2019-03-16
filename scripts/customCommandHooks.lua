@@ -22,7 +22,7 @@ function customCommandHooks.validator(eventStatus, pid, message)
         local callback = customCommandHooks.getCallback(cmd[1])
         if callback~=nil then
             callback(pid, cmd)
-            return customEventHooks.getEventStatus(false, nil)
+            return customEventHooks.makeEventStatus(false, nil)
         end
     end
 end
