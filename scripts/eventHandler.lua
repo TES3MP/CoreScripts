@@ -757,9 +757,9 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                     object.pid = tes3mp.GetObjectPid(index)
                     debugMessage = debugMessage .. logicHandler.GetChatName(object.pid)
                 else
-                    object.RefId = tes3mp.GetObjectRefId(index)
-                    object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-                    debugMessage = debugMessage .. object.RefId .. " " .. object.UniqueIndex
+                    object.refId = tes3mp.GetObjectRefId(index)
+                    object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                    debugMessage = debugMessage .. object.refId .. " " .. object.uniqueIndex
                 end
 
                 debugMessage = debugMessage .. " has been activated by "
@@ -844,11 +844,11 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
                 local object = {}
-                object.RefId = tes3mp.GetObjectRefId(index)
-                object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                object.refId = tes3mp.GetObjectRefId(index)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-                if tableHelper.containsValue(config.disallowedCreateRefIds, object.RefId) then
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
                 else
                     table.insert(objects, object)
@@ -907,11 +907,11 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
                 local object = {}
-                object.RefId = tes3mp.GetObjectRefId(index)
-                object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                object.refId = tes3mp.GetObjectRefId(index)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-                if tableHelper.containsValue(config.disallowedCreateRefIds, object.RefId) then
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
                 else
                     table.insert(objects, object)
@@ -970,12 +970,12 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
                 local object = {}
-                object.RefId = tes3mp.GetObjectRefId(index)
-                object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                object.refId = tes3mp.GetObjectRefId(index)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-                if tableHelper.containsValue(config.disallowedDeleteRefIds, object.RefId) or
-                    tableHelper.containsValue(unusableContainerUniqueIndexes, object.UniqueIndex) then
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) or
+                    tableHelper.containsValue(unusableContainerUniqueIndexes, object.uniqueIndex) then
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
                 else
                     table.insert(objects, object)
@@ -1039,11 +1039,11 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
 
         for index = 0, tes3mp.GetObjectListSize() - 1 do
             local object = {}
-            object.RefId = tes3mp.GetObjectRefId(index)
-            object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+            object.refId = tes3mp.GetObjectRefId(index)
+            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-            if tableHelper.containsValue(config.disallowedLockRefIds, object.RefId) then
-                table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+            if tableHelper.containsValue(config.disallowedLockRefIds, object.refId) then
+                table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                 isAllowed = false
             else
                 table.insert(objects, object)
@@ -1107,11 +1107,11 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
                 local object = {}
-                object.RefId = tes3mp.GetObjectRefId(index)
-                object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                object.refId = tes3mp.GetObjectRefId(index)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-                if tableHelper.containsValue(config.disallowedTrapRefIds, object.RefId) then
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
                 else
                     table.insert(objects, object)
@@ -1171,12 +1171,12 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
             for index = 0, tes3mp.GetObjectListSize() - 1 do
 
                 local object = {}
-                object.RefId = tes3mp.GetObjectRefId(index)
-                object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+                object.refId = tes3mp.GetObjectRefId(index)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
                 object.scale = tes3mp.GetObjectScale(index)
 
                 if object.scale >= config.maximumObjectScale then
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
                 else
                     table.insert(objects, object)
@@ -1242,11 +1242,11 @@ eventHandler.OnObjectState = function(pid, cellDescription)
         for index = 0, tes3mp.GetObjectListSize() - 1 do
 
             local object = {}
-            object.RefId = tes3mp.GetObjectRefId(index)
-            object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+            object.refId = tes3mp.GetObjectRefId(index)
+            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
 
-            if tableHelper.containsValue(config.disallowedStateRefIds, object.RefId) then
-                table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+            if tableHelper.containsValue(config.disallowedStateRefIds, object.refId) then
+                table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                 isAllowed = false
             else
                 table.insert(objects, object)
@@ -1296,8 +1296,8 @@ eventHandler.OnDoorState = function(pid, cellDescription)
 
             for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
                 local object = {}
-                object.UniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
-                object.RefId = tes3mp.GetObjectRefId(objectIndex)
+                object.uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
+                object.refId = tes3mp.GetObjectRefId(objectIndex)
                 object.doorState = tes3mp.GetObjectDoorState(objectIndex)
                 table.insert(objects, object)
             end
@@ -1308,10 +1308,10 @@ eventHandler.OnDoorState = function(pid, cellDescription)
                 local cell = LoadedCells[cellDescription]
                 -- LoadedCells[cellDescription]:SaveDoorStates(pid)
                 for _, object in pairs(objects) do
-                    cell:InitializeObjectData(object.UniqueIndex, object.RefId )
-                    cell.data.objectData[object.UniqueIndex].doorState = object.doorState
+                    cell:InitializeObjectData(object.uniqueIndex, object.refId )
+                    cell.data.objectData[object.uniqueIndex].doorState = object.doorState
 
-                    tableHelper.insertValueIfMissing(cell.data.packets.doorState, object.UniqueIndex)
+                    tableHelper.insertValueIfMissing(cell.data.packets.doorState, object.uniqueIndex)
                 end
             end
             
@@ -1363,19 +1363,19 @@ eventHandler.OnContainer = function(pid, cellDescription)
 
         for index = 0, tes3mp.GetObjectListSize() - 1 do
             local object = {}
-            object.RefId = tes3mp.GetObjectRefId(index)
-            object.UniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+            object.refId = tes3mp.GetObjectRefId(index)
+            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
             
 
-            if tableHelper.containsValue(unusableContainerUniqueIndexes, object.UniqueIndex) then
+            if tableHelper.containsValue(unusableContainerUniqueIndexes, object.uniqueIndex) then
 
                 if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
-                    tableHelper.removeValue(unusableContainerUniqueIndexes, object.UniqueIndex)
-                    tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. object.UniqueIndex ..
+                    tableHelper.removeValue(unusableContainerUniqueIndexes, object.uniqueIndex)
+                    tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. object.uniqueIndex ..
                         " usable as a result of request reply")
                     table.insert(objects, object)
                 else
-                    table.insert(rejectedObjects, object.RefId .. " " .. object.UniqueIndex)
+                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
                     isAllowed = false
 
                     Players[pid]:Message("That container is currently unusable for synchronization reasons.\n")
