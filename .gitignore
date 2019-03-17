@@ -1,5 +1,6 @@
 data/*
 lib/*
+scripts/custom/*
 !/data/cell/.gitkeep
 !/data/player/.gitkeep
 !/data/world/.gitkeep
