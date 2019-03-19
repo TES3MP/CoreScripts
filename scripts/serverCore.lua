@@ -308,20 +308,20 @@ function LoadDataFileList(filename)
     tableHelper.fixNumericalKeys(jsonDataFileList, true)
 
     for listIndex, pluginEntry in ipairs(jsonDataFileList) do
-        for entryIndex, hashArray in pairs(pluginEntry) do
+        for entryIndex, checksumStringArray in pairs(pluginEntry) do
 
             dataFileList[listIndex] = {}
             dataFileList[listIndex].name = entryIndex
 
-            local hashes = {}
+            local checksums = {}
             local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
 
-            for _, hash in ipairs(hashArray) do
+            for _, checksumString in ipairs(checksumStringArray) do
 
-                debugMessage = debugMessage .. ("%X, "):format(tonumber(hash, 16))
-                table.insert(hashes, tonumber(hash, 16))
+                debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
+                table.insert(checksums, tonumber(checksumString, 16))
             end
-            dataFileList[listIndex].hashes = hashes
+            dataFileList[listIndex].checksums = checksums
             table.insert(dataFileList[listIndex], "")
 
             debugMessage = debugMessage .. "\b\b]"
@@ -339,11 +339,11 @@ function OnRequestDataFileList()
         local name = entry.name
         table.insert(clientDataFiles, name)
 
-        if tableHelper.isEmpty(entry.hashes) then
-            tes3mp.AddPluginHash(name, "")
+        if tableHelper.isEmpty(entry.checksums) then
+            tes3mp.AddDataFileRequirement(name, "")
         else
-            for _, hash in ipairs(entry.hashes) do
-                tes3mp.AddPluginHash(name, hash)
+            for _, checksum in ipairs(entry.checksums) do
+                tes3mp.AddDataFileRequirement(name, checksum)
             end
         end
     end

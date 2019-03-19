@@ -145,7 +145,7 @@ function StateHelper:LoadMap(pid, stateObject)
 
     for index, cellDescription in pairs(stateObject.data.mapExplored) do
 
-        local filePath = tes3mp.GetModDir() .. "/map/" .. cellDescription .. ".png"
+        local filePath = tes3mp.GetDataPath() .. "/map/" .. cellDescription .. ".png"
 
         if tes3mp.DoesFileExist(filePath) then
 

@@ -304,7 +304,7 @@ function BaseWorld:SaveMapTiles(pid)
         local cellY = tes3mp.GetMapTileCellY(index)
         local filename = cellX .. ", " .. cellY .. ".png"
 
-        tes3mp.SaveMapTileImageFile(index, tes3mp.GetModDir() .. "/map/" .. filename)
+        tes3mp.SaveMapTileImageFile(index, tes3mp.GetDataPath() .. "/map/" .. filename)
     end
 end
 
