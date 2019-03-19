@@ -147,7 +147,7 @@ function StateHelper:LoadMap(pid, stateObject)
 
         local filePath = tes3mp.GetDataPath() .. "/map/" .. cellDescription .. ".png"
 
-        if tes3mp.DoesFileExist(filePath) then
+        if tes3mp.DoesFilePathExist(filePath) then
 
             local cellX, cellY
             _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
