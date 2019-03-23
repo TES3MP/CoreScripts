@@ -68,7 +68,7 @@ else
 end
 
 function LoadBanList()
-    tes3mp.LogMessage(enumerations.log.WARN, "Reading banlist.json")
+    tes3mp.LogMessage(enumerations.log.INFO, "Reading banlist.json")
     banList = jsonInterface.load("banlist.json")
 
     if banList.playerNames == nil then
@@ -158,11 +158,11 @@ do
                     hourCounter = hourCounter - hourFloor
                     hourFloor = 0
 
-                    tes3mp.LogMessage(enumerations.log.WARN, "The world time day has been incremented")
+                    tes3mp.LogMessage(enumerations.log.INFO, "The world time day has been incremented")
                     WorldInstance:IncrementDay()
                 end
 
-                tes3mp.LogMessage(enumerations.log.WARN, "The world time hour is now " .. hourFloor)
+                tes3mp.LogMessage(enumerations.log.INFO, "The world time hour is now " .. hourFloor)
                 WorldInstance.data.time.hour = hourCounter
 
                 if tableHelper.getCount(Players) > 0 then
@@ -300,7 +300,7 @@ end
 
 function LoadDataFileList(filename)
     local dataFileList = {}
-    tes3mp.LogMessage(enumerations.log.WARN, "Reading " .. filename)
+    tes3mp.LogMessage(enumerations.log.INFO, "Reading " .. filename)
 
     local jsonDataFileList = jsonInterface.load(filename)
 

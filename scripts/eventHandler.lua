@@ -1428,10 +1428,10 @@ eventHandler.OnVideoPlay = function(pid)
         end
 
         if config.shareVideos == true then
-            tes3mp.LogMessage(enumerations.log.WARN, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
+            tes3mp.LogMessage(enumerations.log.INFO, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
                 
             local videos = {}
-            
+
             for i = 0, tes3mp.GetObjectListSize() - 1 do
                 local videoFilename = tes3mp.GetVideoFilename(i)
                 table.insert(videos, videoFilename)

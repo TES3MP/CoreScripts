@@ -25,7 +25,7 @@ function Player:CreateAccount()
     self.hasAccount = jsonInterface.save("player/" .. self.accountFile, self.data)
 
     if self.hasAccount then
-        tes3mp.LogMessage(enumerations.log.WARN, "Successfully created JSON file for player " .. self.accountName)
+        tes3mp.LogMessage(enumerations.log.INFO, "Successfully created JSON file for player " .. self.accountName)
     else
         local message = "Failed to create JSON file for " .. self.accountName
         tes3mp.SendMessage(self.pid, message, true)
