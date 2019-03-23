@@ -239,7 +239,7 @@ function menuHelper.CheckCondition(pid, condition)
         end
     elseif condition.conditionType == "attribute" then
 
-        if targetPlayer.data.skills[condition.attributeName] >= condition.attributeValue then
+        if targetPlayer.data.attributes[condition.attributeName] >= condition.attributeValue then
             return true
         end
     elseif condition.conditionType == "skill" then
@@ -523,7 +523,9 @@ function menuHelper.DisplayMenu(pid, menuIndex)
     local text = Menus[menuIndex].text
 
     -- Is this a table? If so, process the variables in it and then concatenate them
-    if type(text) == "table" then
+    if text == nil then
+        text = ""
+    elseif type(text) == "table" then
         local processedTextVariables = menuHelper.ProcessVariables(pid, text)
         text = tableHelper.concatenateArrayValues(processedTextVariables, 1, "")
     end

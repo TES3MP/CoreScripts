@@ -113,6 +113,8 @@ Menus["help moderator page 1"] = {
 
 Menus["help moderator page 2"] = {
     text = color.Orange .. "Moderator command list page 2:\n" ..
+        color.Yellow .. "/resetkills\n" ..
+            color.White .. "Reset the kill counts for NPCs and creatures, to allow quests requiring a specific number of kills to be done again\n" ..
         color.Yellow .. "/teleport <pid>/all\n" ..
             color.White .. "Teleport another player to your position " ..
             color.Yellow .. "(/tp)\n" ..
@@ -163,6 +165,8 @@ Menus["help moderator page 2"] = {
 
 Menus["help admin page 1"] = {
     text = color.Orange .. "Admin command list page 1:\n" ..
+        color.Yellow .. "/load <scriptName>\n" ..
+            color.White .. "Load or reload a script file on the fly\n" ..
         color.Yellow .. "/setai <uniqueIndex> activate/combat/follow <pid>/<uniqueIndex>\n" ..
             color.White .. "Make the actor with a certain uniqueIndex target a player or another uniqueIndex\n" ..
         color.Yellow .. "/setai <uniqueIndex> cancel\n" ..

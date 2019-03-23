@@ -119,7 +119,7 @@ function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkN
         end
     end
 
-    if checkNestedTables == true then
+    if checkNestedTables then
         for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValue(value, keyToFind, valueToFind, true) then
                 return true
@@ -145,7 +145,7 @@ function tableHelper.containsKeyValuePairs(inputTable, keyValuePairsTable, check
 
     if foundMatches then
         return true
-    elseif checkNestedTables == true then
+    elseif checkNestedTables then
         for key, value in pairs(inputTable) do
             if type(value) == "table" and tableHelper.containsKeyValuePairs(value, keyValuePairsTable, true) then
                 return true
@@ -160,11 +160,29 @@ end
 -- nested tables
 function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
     for key, value in pairs(inputTable) do
-        if checkNestedTables == true and type(value) == "table" then
-            if tableHelper.containsValue(value, valueToFind, true) == true then
+        if checkNestedTables and type(value) == "table" then
+            if tableHelper.containsValue(value, valueToFind, true) then
                 return true
             end
         elseif value == valueToFind then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check whether a table contains a certain case insensitive string, optionally
+-- checking inside nested tables
+function tableHelper.containsCaseInsensitiveString(inputTable, stringToFind, checkNestedTables)
+
+    if type(stringToFind) ~= "string"  then return false end
+
+    for key, value in pairs(inputTable) do
+        if checkNestedTables and type(value) == "table" then
+            if tableHelper.containsCaseInsensitiveString(value, stringToFind, true) then
+                return true
+            end
+        elseif type(value) == "string" and string.lower(value) == string.lower(stringToFind) then
             return true
         end
     end
@@ -264,6 +282,9 @@ end
 
 -- Add a 2nd table's key/value pairs to the 1st table
 --
+-- Note: If the two tables share keys, the values of the 2nd table
+-- will be used in the final table
+--
 -- Based on http://stackoverflow.com/a/1283608
 function tableHelper.merge(mainTable, addedTable)
     for key, value in pairs(addedTable) do
@@ -279,7 +300,15 @@ function tableHelper.merge(mainTable, addedTable)
     end
 end
 
--- Converts string keys containing numbers into numerical keys,
+-- Insert all the values from the 2nd table into the 1st table
+function tableHelper.insertValues(mainTable, addedTable)
+
+    for _, value in pairs(addedTable) do
+        table.insert(mainTable, value)
+    end
+end
+
+-- Convert string keys containing numbers into numerical keys,
 -- useful for JSON tables
 --
 -- Because Lua arrays start from index 1, the fixZeroStart argument
@@ -316,7 +345,7 @@ function tableHelper.fixNumericalKeys(inputTable, fixZeroStart)
     tableHelper.merge(inputTable, newTable)
 end
 
--- Checks whether the table contains only numerical keys, though they
+-- Check whether the table contains only numerical keys, though they
 -- don't have to be consecutive
 function tableHelper.usesNumericalKeys(inputTable)
 
@@ -333,7 +362,7 @@ function tableHelper.usesNumericalKeys(inputTable)
     return true
 end
 
--- Checks whether the table contains only numerical values
+-- Check whether the table contains only numerical values
 function tableHelper.usesNumericalValues(inputTable)
 
     if tableHelper.getCount(inputTable) == 0 then
@@ -349,7 +378,7 @@ function tableHelper.usesNumericalValues(inputTable)
     return true
 end
 
--- Checks whether there are any items in the table
+-- Check whether there are any items in the table
 function tableHelper.isEmpty(inputTable)
     if next(inputTable) == nil then
         return true
@@ -358,7 +387,7 @@ function tableHelper.isEmpty(inputTable)
     return false
 end
 
--- Checks whether the table is an array with only consecutive numerical keys,
+-- Check whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
 function tableHelper.isArray(inputTable)
@@ -373,7 +402,7 @@ function tableHelper.isArray(inputTable)
     return true
 end
 
--- Checks whether the table has the same keys and values as another table, optionally
+-- Check whether the table has the same keys and values as another table, optionally
 -- ignoring certain keys
 function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
 
@@ -407,6 +436,8 @@ function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
     return true
 end
 
+-- Copy a table's top level values and direct children to another table
+--
 -- Based on http://lua-users.org/wiki/CopyTable
 function tableHelper.shallowCopy(inputTable)
     local inputType = type(inputTable)
@@ -422,6 +453,7 @@ function tableHelper.shallowCopy(inputTable)
     return newTable
 end
 
+-- Get a compact string with a table's contents
 function tableHelper.getSimplePrintableTable(inputTable)
 
     local text = ""
@@ -444,47 +476,46 @@ function tableHelper.getSimplePrintableTable(inputTable)
     return text
 end
 
+-- Get a string with a table's contents where every value is on its own row
+--
 -- Based on http://stackoverflow.com/a/13398936
-function tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
-    local str = ""
+function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
 
+    if type(inputTable) ~= "table" then
+        return type(inputTable)
+    end
+
+    local str = ""
     local currentIndent = ""
 
-    if indentStr == nil then
-        indentStr = "\t"
-    end
-
-    if (inputTable == nil) then
-        return
-    end
-
-    if (indentLevel == nil) then
-        return tableHelper.getPrintableTable(inputTable, indentStr, 0)
-    end
+    if indentLevel == nil then indentLevel = 0 end
+    if indentStr == nil then indentStr = "\t" end
+    if maxDepth == nil then maxDepth = 50 end
 
     for i = 0, indentLevel do
         currentIndent = currentIndent .. indentStr
     end
 
     for index, value in pairs(inputTable) do
-        str = str .. currentIndent .. index
 
-        if type(value) == "boolean" then
-            value = tostring(value)
-        end
-
-        if type(value) == "table" then
-            str = str .. ": \n" .. tableHelper.getPrintableTable(value, indentStr, (indentLevel + 1))
+        if type(value) == "table" and maxDepth > 0 then
+            value = "\n" .. tableHelper.getPrintableTable(value, maxDepth - 1, indentStr, indentLevel + 1)
         else
-            str = str .. ": " .. value .. "\n"
+            if type(value) ~= "string" then
+                value = tostring(value)
+            end
+
+            value = value .. "\n"
         end
+
+        str = str .. currentIndent .. index .. ": " .. value
     end
 
     return str
 end
 
-function tableHelper.print(inputTable, indentStr, indentLevel)
-    local text = tableHelper.getPrintableTable(inputTable, indentStr, indentLevel)
+function tableHelper.print(inputTable, maxDepth, indentStr, indentLevel)
+    local text = tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
     tes3mp.LogMessage(2, text)
 end
 

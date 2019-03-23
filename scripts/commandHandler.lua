@@ -822,6 +822,69 @@ function commandHandler.ProcessCommand(pid, cmd)
         logicHandler.SendConfigCollisionOverrides(pid, true)
         Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
 
+    elseif cmd[1] == "load" and admin then
+
+        local scriptName = cmd[2]
+
+        if scriptName == nil then
+            Players[pid]:Message("Use /load <scriptName>\n")
+        else
+            local wasLoaded = false
+
+            if package.loaded[scriptName] then
+                Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
+                wasLoaded = true
+            end
+
+            local result
+
+            if wasLoaded then
+
+                -- Local objects that use functions from the script we are reloading
+                -- will keep their references to the old versions of those functions if
+                -- we do this:
+                --
+                -- package.loaded[scriptName] = nil
+                -- require(scriptName)
+                --
+                -- To get around that, we load up the script with dofile() instead and
+                -- then update the function references in package.loaded[scriptName], which
+                -- in turn also changes them in the local objects
+                --
+                local scriptPath = package.searchpath(scriptName, package.path)
+                result = dofile(scriptPath)
+
+                for key, value in pairs(package.loaded[scriptName]) do
+                    if result[key] == nil then
+                        package.loaded[scriptName][key] = nil
+                    end
+                end
+
+                for key, value in pairs(result) do
+                    package.loaded[scriptName][key] = value
+                end
+            else
+                result = prequire(scriptName)
+            end
+
+            if result then
+                Players[pid]:Message(scriptName .. " was successfully loaded.\n")
+            else
+                Players[pid]:Message(scriptName .. " could not be found.\n")
+            end
+        end
+
+    elseif cmd[1] == "resetkills" and moderator then
+
+        -- Set all currently recorded kills to 0 for connected players
+        for refId, killCount in pairs(WorldInstance.data.kills) do
+            WorldInstance.data.kills[refId] = 0
+        end
+
+        WorldInstance:Save()
+        WorldInstance:LoadKills(pid, true)
+        tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
+
     elseif cmd[1] == "suicide" then
         if config.allowSuicideCommand == true then
             tes3mp.SetHealthCurrent(pid, 0)
@@ -938,12 +1001,16 @@ function commandHandler.ProcessCommand(pid, cmd)
                 validList .. "\n", false)
         end
 
-    elseif (cmd[1] == "speech" or cmd[1] == "s") and cmd[2] ~= nil and cmd[3] ~= nil and
-        type(tonumber(cmd[3])) == "number" then
-        local isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+    elseif cmd[1] == "speech" or cmd[1] == "s" then
+
+        local isValid = false
+
+        if cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+            isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+        end
 
         if not isValid then
-            local validList = speechHelper.GetValidList(pid)
+            local validList = speechHelper.GetPrintableValidListForPid(pid)
             tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
                 .. validList .. "\n", false)
         end
@@ -1305,7 +1372,7 @@ function commandHandler.CreateRecord(pid, cmd)
 
     if storedTable == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
-            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", "))
+            "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
     end
 

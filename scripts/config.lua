@@ -66,10 +66,10 @@ config.shareVideos = true
 config.defaultSpawnCell = "-3, -2"
 
 -- The X, Y and Z position that newly created players are teleported to
-config.defaultSpawnPos = {-23980.693359375, -15561.556640625, 505}
+config.defaultSpawnPos = {-23894.0, -15079.0, 505}
 
 -- The X and Z rotation that newly created players are assigned
-config.defaultSpawnRot = {-0.000152587890625, 1.6182196140289}
+config.defaultSpawnRot = {0, 1.2}
 
 -- The cell that players respawn in, unless overridden below by other respawn options
 config.defaultRespawnCell = "Balmora, Temple"
@@ -120,7 +120,8 @@ config.deathPenaltyJailDays = 5
 config.bountyResetOnDeath = false
 
 -- Whether players spend time in jail proportional to their bounty after dying
--- Note: Requires bountyResetOnDeath to be enabled
+-- Note: If deathPenaltyJailDays is also enabled, that penalty will be added to
+--       this one
 config.bountyDeathPenalty = false
 
 -- Whether players should be allowed to use the /suicide command
@@ -161,6 +162,9 @@ config.enforcedLogLevel = -1
 -- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
 --       system requirements that make a default of 30 more appropriate.
 config.physicsFramerate = 30
+
+-- Whether players are allowed to interact with containers located in unloaded cells.
+config.allowOnContainerForUnloadedCells = false
 
 -- Whether players should collide with other actors
 config.enablePlayerCollision = true
@@ -271,7 +275,7 @@ config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", 
     "cellChangeFrom" }
 
 -- Whether the server should enforce that all clients connect with a specific list of plugins
--- defined in data/pluginlist.json
+-- defined in data/requiredDataFiles.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
 --          what they're doing. Otherwise, you risk getting corrupt server data from
 --          their usage of unshared plugins.
@@ -289,7 +293,7 @@ config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
-config.databasePath = tes3mp.GetModDir() .. "/database.db" -- Path where database is stored
+config.databasePath = tes3mp.GetDataPath() .. "/database.db" -- Path where database is stored
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

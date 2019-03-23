@@ -39,6 +39,12 @@ end
 
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
+    if self.data.generatedRecords[recordId] == nil then
+        tes3mp.LogMessage(enumerations.log.WARN, "Tried deleting " .. self.storeType .. " record " .. recordId ..
+            " which doesn't exist!")
+        return
+    end
+
     tes3mp.LogMessage(enumerations.log.WARN, "Deleting generated " .. self.storeType .. " record " .. recordId)
 
     -- Is this an enchantable record? If so, we should remove any links to it
@@ -183,7 +189,7 @@ function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
     end
 end
 
-function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray)
+function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
     if type(idArray) ~= "table" then return end
@@ -222,14 +228,14 @@ function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray)
     -- Load the associated generated enchantment records first
     if isEnchantable and not tableHelper.isEmpty(enchantmentIdArray) then
         local enchantmentStore = RecordStores["enchantment"]
-        enchantmentStore:LoadRecords(pid, enchantmentStore.data.generatedRecords, enchantmentIdArray)
+        enchantmentStore:LoadRecords(pid, enchantmentStore.data.generatedRecords, enchantmentIdArray, forEveryone)
     end
 
     -- Load our own valid generated records
-    self:LoadRecords(pid, recordList, validIdArray)
+    self:LoadRecords(pid, recordList, validIdArray, forEveryone)
 end
 
-function BaseRecordStore:LoadRecords(pid, recordList, idArray)
+function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
     if type(idArray) ~= "table" then return end
@@ -248,7 +254,7 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray)
     end
 
     if recordCount > 0 then
-        tes3mp.SendRecordDynamic(pid, false, false)
+        tes3mp.SendRecordDynamic(pid, forEveryone, false)
     end
 end
 

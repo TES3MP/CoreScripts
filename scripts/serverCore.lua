@@ -16,17 +16,23 @@ require("utils")
 require("time")
 
 logicHandler = require("logicHandler")
+customEventHooks = require("customEventHooks")
+customCommandHooks = require("customCommandHooks")
 eventHandler = require("eventHandler")
 guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
+require("customScripts")
 
 Database = nil
 Player = nil
 Cell = nil
 RecordStore = nil
 World = nil
+
+clientDataFiles = {}
+speechCollections = {}
 
 hourCounter = nil
 frametimeMultiplier = nil
@@ -184,145 +190,169 @@ function OnServerInit()
             expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
+    
+    local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
 
-    logicHandler.InitializeWorld()
+    if eventStatus.validDefaultHandler then
+        logicHandler.InitializeWorld()
 
-    for _, storeType in ipairs(config.recordStoreLoadOrder) do
-        logicHandler.LoadRecordStore(storeType)
+        for _, storeType in ipairs(config.recordStoreLoadOrder) do
+            logicHandler.LoadRecordStore(storeType)
+        end
+
+        hourCounter = WorldInstance.data.time.hour
+        frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
+
+        updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
+        tes3mp.StartTimer(updateTimerId)
+
+        logicHandler.PushPlayerList(Players)
+
+        LoadBanList()
+
+        tes3mp.SetPluginEnforcementState(config.enforcePlugins)
+        tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
     end
 
-    hourCounter = WorldInstance.data.time.hour
-    frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
-
-    updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
-    tes3mp.StartTimer(updateTimerId)
-
-    logicHandler.PushPlayerList(Players)
-
-    LoadBanList()
-
-    tes3mp.SetPluginEnforcementState(config.enforcePlugins)
-    tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
+    customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
 end
 
 function OnServerPostInit()
-
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
+    local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
+    if eventStatus.validDefaultHandler then
 
-    tes3mp.SetGameMode(config.gameMode)
+        speechCollections = require("speechCollections")
 
-    local consoleRuleString = "allowed"
-    if not config.allowConsole then
-        consoleRuleString = "not " .. consoleRuleString
-    end
+        tes3mp.SetGameMode(config.gameMode)
 
-    local bedRestRuleString = "allowed"
-    if not config.allowBedRest then
-        bedRestRuleString = "not " .. bedRestRuleString
-    end
-
-    local wildRestRuleString = "allowed"
-    if not config.allowWildernessRest then
-        wildRestRuleString = "not " .. wildRestRuleString
-    end
-
-    local waitRuleString = "allowed"
-    if not config.allowWait then
-        waitRuleString = "not " .. waitRuleString
-    end
-
-    tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
-    tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
-    tes3mp.SetRuleValue("difficulty", config.difficulty)
-    tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
-    tes3mp.SetRuleString("console", consoleRuleString)
-    tes3mp.SetRuleString("bedResting", bedRestRuleString)
-    tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
-    tes3mp.SetRuleString("waiting", waitRuleString)
-    tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
-    tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
-    tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
-    tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
-    tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
-    tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
-    tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
-    tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
-    tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
-    tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
-    tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
-    tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
-
-    local respawnCell
-
-    if config.respawnAtImperialShrine == true then
-        respawnCell = "nearest Imperial shrine"
-
-        if config.respawnAtTribunalTemple == true then
-            respawnCell = respawnCell .. " or Tribunal temple"
+        local consoleRuleString = "allowed"
+        if not config.allowConsole then
+            consoleRuleString = "not " .. consoleRuleString
         end
-    elseif config.respawnAtTribunalTemple == true then
-        respawnCell = "nearest Tribunal temple"
-    else
-        respawnCell = tostring(config.defaultRespawnCell)
+
+        local bedRestRuleString = "allowed"
+        if not config.allowBedRest then
+            bedRestRuleString = "not " .. bedRestRuleString
+        end
+
+        local wildRestRuleString = "allowed"
+        if not config.allowWildernessRest then
+            wildRestRuleString = "not " .. wildRestRuleString
+        end
+
+        local waitRuleString = "allowed"
+        if not config.allowWait then
+            waitRuleString = "not " .. waitRuleString
+        end
+
+        tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
+        tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
+        tes3mp.SetRuleValue("difficulty", config.difficulty)
+        tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
+        tes3mp.SetRuleString("console", consoleRuleString)
+        tes3mp.SetRuleString("bedResting", bedRestRuleString)
+        tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
+        tes3mp.SetRuleString("waiting", waitRuleString)
+        tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
+        tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
+        tes3mp.SetRuleString("spawnCell", tostring(config.defaultSpawnCell))
+        tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
+        tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
+        tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
+        tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
+        tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
+        tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
+        tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
+        tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
+        tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
+
+        local respawnCell
+
+        if config.respawnAtImperialShrine == true then
+            respawnCell = "nearest Imperial shrine"
+
+            if config.respawnAtTribunalTemple == true then
+                respawnCell = respawnCell .. " or Tribunal temple"
+            end
+        elseif config.respawnAtTribunalTemple == true then
+            respawnCell = "nearest Tribunal temple"
+        else
+            respawnCell = tostring(config.defaultRespawnCell)
+        end
+
+        tes3mp.SetRuleString("respawnCell", respawnCell)
+        ResetAdminCounter()
     end
-
-    tes3mp.SetRuleString("respawnCell", respawnCell)
-    ResetAdminCounter()
+    customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
-function OnServerExit(error)
+function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
-    tes3mp.LogMessage(enumerations.log.ERROR, tostring(error))
+    tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
+    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
 end
 
+function OnServerScriptCrash(errorMessage)
+    tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
+    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
+end
 
-function LoadPluginList()
-    local pluginList = {}
-    tes3mp.LogMessage(enumerations.log.INFO, "Reading pluginlist.json")
+function LoadDataFileList(filename)
+    local dataFileList = {}
+    tes3mp.LogMessage(enumerations.log.INFO, "Reading " .. filename)
 
-    local jsonPluginList = jsonInterface.load("pluginlist.json")
+    local jsonDataFileList = jsonInterface.load(filename)
 
     -- Fix numerical keys to print plugins in the correct order
-    tableHelper.fixNumericalKeys(jsonPluginList, true)
+    tableHelper.fixNumericalKeys(jsonDataFileList, true)
 
-    for listIndex, pluginEntry in ipairs(jsonPluginList) do
-        for entryIndex, hashArray in pairs(pluginEntry) do
+    for listIndex, pluginEntry in ipairs(jsonDataFileList) do
+        for entryIndex, checksumStringArray in pairs(pluginEntry) do
 
-            pluginList[listIndex] = {}
-            pluginList[listIndex].name = entryIndex
+            dataFileList[listIndex] = {}
+            dataFileList[listIndex].name = entryIndex
 
-            local hashes = {}
+            local checksums = {}
             local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
 
-            for _, hash in ipairs(hashArray) do
+            for _, checksumString in ipairs(checksumStringArray) do
 
-                debugMessage = debugMessage .. ("%X, "):format(tonumber(hash, 16))
-                table.insert(hashes, tonumber(hash, 16))
+                debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
+                table.insert(checksums, tonumber(checksumString, 16))
             end
-            pluginList[listIndex].hashes = hashes
-            table.insert(pluginList[listIndex], "")
+            dataFileList[listIndex].checksums = checksums
+            table.insert(dataFileList[listIndex], "")
 
             debugMessage = debugMessage .. "\b\b]"
             tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
         end
     end
-    return pluginList
+    return dataFileList
 end
 
-function OnRequestPluginList()
-    local pluginList = LoadPluginList()
+function OnRequestDataFileList()
 
-    for _, entry in ipairs(pluginList) do
+    local dataFileList = LoadDataFileList("requiredDataFiles.json")
+
+    for _, entry in ipairs(dataFileList) do
         local name = entry.name
+        table.insert(clientDataFiles, name)
 
-        if tableHelper.isEmpty(entry.hashes) then
-            tes3mp.AddPluginHash(name, "")
+        if tableHelper.isEmpty(entry.checksums) then
+            tes3mp.AddDataFileRequirement(name, "")
         else
-            for _, hash in ipairs(entry.hashes) do
-                tes3mp.AddPluginHash(name, hash)
+            for _, checksum in ipairs(entry.checksums) do
+                tes3mp.AddDataFileRequirement(name, checksum)
             end
         end
     end
+end
+
+-- Older server builds will call an "OnRequestPluginList" event instead of
+-- "OnRequestDataFileList", so keep this around for backwards compatibility
+function OnRequestPluginList()
+    OnRequestDataFileList()
 end
 
 function OnPlayerConnect(pid)
@@ -350,11 +380,15 @@ function OnPlayerConnect(pid)
 end
 
 function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
-    if logicHandler.AuthCheck(pid) then
-        if Players[pid]:IsModerator() then
-            IncrementAdminCounter()
+    local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
+    if eventStatus.validDefaultHandler then
+        if logicHandler.AuthCheck(pid) then
+            if Players[pid]:IsModerator() then
+                IncrementAdminCounter()
+            end
         end
     end
+    customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
 end
 
 function OnPlayerDisconnect(pid)
@@ -369,6 +403,7 @@ function OnPlayerDisconnect(pid)
 end
 
 function OnPlayerResurrect(pid)
+    customEventHooks.triggerHandlers("OnPlayerResurrect", customEventHooks.makeEventStatus(true, true), {pid})
 end
 
 function OnPlayerSendMessage(pid, message)

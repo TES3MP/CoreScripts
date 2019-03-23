@@ -485,21 +485,37 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
-logicHandler.RunConsoleCommandOnObject = function(consoleCommand, cellDescription, refId, refNum, mpNum)
+logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
-    local pid = tableHelper.getAnyValue(Players).pid
+    tes3mp.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
+        tableHelper.concatenateArrayValues(objectUniqueIndexes, 1, ", "))
+
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
-    tes3mp.SetObjectRefId(refId)
-    tes3mp.SetObjectRefNum(refNum)
-    tes3mp.SetObjectMpNum(mpNum)
-    tes3mp.AddObject()
 
-    -- Always send this to everyone
-    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-    tes3mp.SendConsoleCommand(true, false)
+    -- Set the object state to deal with the oversight mentioned below
+    tes3mp.SetObjectState(true)
+
+    for _, uniqueIndex in pairs(objectUniqueIndexes) do
+        local splitIndex = uniqueIndex:split("-")
+        tes3mp.SetObjectRefNum(splitIndex[1])
+        tes3mp.SetObjectMpNum(splitIndex[2])
+
+        tes3mp.AddObject()
+    end
+
+    -- Due to an oversight, console command packets do not include the cell for their
+    -- associated objects; as a result, the last cell received by players in an unrelated
+    -- object packet is used instead, so send them a dummy packet for that sake
+    tes3mp.SendObjectState(forEveryone, false)
+
+    tes3mp.SendConsoleCommand(forEveryone, false)
+end
+
+logicHandler.RunConsoleCommandOnObject = function(pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
+    logicHandler.RunConsoleCommandOnObjects(pid, consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
 end
 
 logicHandler.IsGeneratedRecord = function(recordId)

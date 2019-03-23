@@ -110,6 +110,7 @@ function BasePlayer:__init(pid, playerName)
 
     self.pid = pid
     self.loggedIn = false
+    self.isNewlyRegistered = false
     self.loginTimerId = nil
     self.hasAccount = nil
 
@@ -138,6 +139,7 @@ end
 
 function BasePlayer:Register(password)
     self.loggedIn = true
+    self.isNewlyRegistered = true
     self.data.login.password = password
     self.data.settings.consoleAllowed = "default"
 
@@ -147,8 +149,8 @@ function BasePlayer:Register(password)
 end
 
 function BasePlayer:FinishLogin()
-    self.loggedIn = true
-    if self.hasAccount ~= false then -- load account
+
+    if self.hasAccount then
         self:SaveIpAddress()
 
         self:LoadSettings()
@@ -244,6 +246,11 @@ function BasePlayer:FinishLogin()
         end
 
         self:LoadCell()
+
+        self.loggedIn = true
+        
+        customEventHooks.triggerHandlers("OnPlayerFinishLogin", customEventHooks.makeEventStatus(true, true), {self.pid})
+        customEventHooks.triggerHandlers("OnPlayerAuthentified", customEventHooks.makeEventStatus(true, true), {self.pid})
     end
 end
 
@@ -519,28 +526,37 @@ function BasePlayer:Resurrect()
 
     tes3mp.Resurrect(self.pid, currentResurrectType)
 
-    if config.deathPenaltyJailDays > 0 then
+    if config.deathPenaltyJailDays > 0 or config.bountyDeathPenalty then
+        local jailTime = 0
         local resurrectionText = "You've been revived and brought back here, " ..
             "but your skills have been affected by "
-        local jailTime = config.deathPenaltyJailDays
 
-        if config.bountyResetOnDeath == true then
-            if config.bountyDeathPenalty == true then
-                local currentBounty = tes3mp.GetBounty(self.pid)
+        if config.bountyDeathPenalty then
+            local currentBounty = tes3mp.GetBounty(self.pid)
 
-                if currentBounty > 0 then
-                    jailTime = jailTime + math.floor(currentBounty / 100)
-                    resurrectionText = resurrectionText .. "your bounty and "
-                end
+            if currentBounty > 0 then
+                jailTime = jailTime + math.floor(currentBounty / 100)
+                resurrectionText = resurrectionText .. "your bounty"
             end
-
-            tes3mp.SetBounty(self.pid, 0)
-            tes3mp.SendBounty(self.pid)
-            self:SaveBounty()
         end
 
-        resurrectionText = resurrectionText .. "your time spent incapacitated.\n"
+        if config.deathPenaltyJailDays > 0 then
+            if jailTime > 0 then
+                resurrectionText = resurrectionText .. " and "
+            end
+
+            jailTime = jailTime + config.deathPenaltyJailDays
+            resurrectionText = resurrectionText .. "your time spent incapacitated"    
+        end
+
+        resurrectionText = resurrectionText .. ".\n"
         tes3mp.Jail(self.pid, jailTime, true, true, "Recovering", resurrectionText)
+    end
+
+    if config.bountyResetOnDeath then
+        tes3mp.SetBounty(self.pid, 0)
+        tes3mp.SendBounty(self.pid)
+        self:SaveBounty()
     end
 
     tes3mp.SendMessage(self.pid, message, false)
@@ -642,7 +658,16 @@ function BasePlayer:SaveClass()
 end
 
 function BasePlayer:LoadStatsDynamic()
-    tes3mp.SetHealthBase(self.pid, self.data.stats.healthBase)
+
+    local healthBase
+
+    if tes3mp.IsWerewolf(self.pid) then
+        healthBase = self.data.shapeshift.werewolfHealthBase
+    else
+        healthBase = self.data.stats.healthBase
+    end
+
+    tes3mp.SetHealthBase(self.pid, healthBase)
     tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
     tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
     tes3mp.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
@@ -660,7 +685,12 @@ function BasePlayer:SaveStatsDynamic()
     -- use this temporary fix until we figure why
     if healthBase > 1 then
 
-        self.data.stats.healthBase = healthBase
+        if tes3mp.IsWerewolf(self.pid) then
+            self.data.shapeshift.werewolfHealthBase = healthBase
+        else
+            self.data.stats.healthBase = healthBase
+        end
+
         self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
         self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
         self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
@@ -762,6 +792,10 @@ function BasePlayer:SaveSkills()
 end
 
 function BasePlayer:LoadLevel()
+
+    if self.data.stats.level == nil then self.data.stats.level = 1 end
+    if self.data.stats.levelProgress == nil then self.data.stats.levelProgress = 0 end
+
     tes3mp.SetLevel(self.pid, self.data.stats.level)
     tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
     tes3mp.SendLevel(self.pid)
@@ -774,25 +808,11 @@ end
 
 function BasePlayer:LoadShapeshift()
 
-    if self.data.shapeshift == nil then
-        self.data.shapeshift = {}
-    end
-
-    if self.data.shapeshift.scale == nil then
-        self.data.shapeshift.scale = 1
-    end
-
-    if self.data.shapeshift.isWerewolf == nil then
-        self.data.shapeshift.isWerewolf = false
-    end
-
-    if self.data.shapeshift.creatureRefId == nil then
-        self.data.shapeshift.creatureRefId = ""
-    end
-
-    if self.data.shapeshift.displayCreatureName == nil then
-        self.data.shapeshift.displayCreatureName = false
-    end
+    if self.data.shapeshift == nil then self.data.shapeshift = {} end
+    if self.data.shapeshift.scale == nil then self.data.shapeshift.scale = 1 end
+    if self.data.shapeshift.isWerewolf == nil then self.data.shapeshift.isWerewolf = false end
+    if self.data.shapeshift.creatureRefId == nil then self.data.shapeshift.creatureRefId = "" end
+    if self.data.shapeshift.displayCreatureName == nil then self.data.shapeshift.displayCreatureName = false end
 
     tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
     tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
@@ -803,9 +823,7 @@ end
 
 function BasePlayer:SaveShapeshift()
 
-    if self.data.shapeshift == nil then
-        self.data.shapeshift = {}
-    end
+    if self.data.shapeshift == nil then self.data.shapeshift = {} end
 
     local newScale = tes3mp.GetScale(self.pid)
 
@@ -857,14 +875,10 @@ end
 
 function BasePlayer:SaveCell()
 
-    if self.data.location == nil then
-        self.data.location = {}
-    end
+    if self.data.location == nil then self.data.location = {} end
 
     -- Keep this around to update old player files
-    if self.data.mapExplored == nil then
-        self.data.mapExplored = {}
-    end
+    if self.data.mapExplored == nil then self.data.mapExplored = {} end
 
     local cell = tes3mp.GetCell(self.pid)
 
@@ -972,9 +986,7 @@ end
 
 function BasePlayer:LoadInventory()
 
-    if self.data.inventory == nil then
-        self.data.inventory = {}
-    end
+    if self.data.inventory == nil then self.data.inventory = {} end
 
     tes3mp.ClearInventoryChanges(self.pid)
     tes3mp.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
@@ -999,9 +1011,7 @@ function BasePlayer:SaveInventory()
     tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
         tableHelper.getIndexByValue(enumerations.inventory, action))
 
-    if action == enumerations.inventory.SET then
-        self.data.inventory = {}
-    end
+    if action == enumerations.inventory.SET then self.data.inventory = {} end
 
     for index = 0, itemChangesCount - 1 do
         local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, index)
@@ -1080,9 +1090,7 @@ end
 
 function BasePlayer:LoadSpellbook()
 
-    if self.data.spellbook == nil then
-        self.data.spellbook = {}
-    end
+    if self.data.spellbook == nil then self.data.spellbook = {} end
 
     tes3mp.ClearSpellbookChanges(self.pid)
     tes3mp.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
@@ -1146,9 +1154,7 @@ end
 
 function BasePlayer:LoadQuickKeys()
 
-    if self.data.quickKeys == nil then
-        self.data.quickKeys = {}
-    end
+    if self.data.quickKeys == nil then self.data.quickKeys = {} end
 
     tes3mp.ClearQuickKeyChanges(self.pid)
 
@@ -1237,9 +1243,7 @@ end
 
 function BasePlayer:LoadBooks()
 
-    if self.data.books == nil then
-        self.data.books = {}
-    end
+    if self.data.books == nil then self.data.books = {} end
 
     tes3mp.ClearBookChanges(self.pid)
 
@@ -1267,9 +1271,7 @@ end
 
 function BasePlayer:LoadMarkLocation()
 
-    if self.data.miscellaneous == nil then
-        self.data.miscellaneous = {}
-    end
+    if self.data.miscellaneous == nil then self.data.miscellaneous = {} end
 
     if self.data.miscellaneous.markLocation ~= nil then
         local markLocation = self.data.miscellaneous.markLocation
@@ -1282,9 +1284,7 @@ end
 
 function BasePlayer:SaveMarkLocation()
 
-    if self.data.miscellaneous == nil then
-        self.data.miscellaneous = {}
-    end
+    if self.data.miscellaneous == nil then self.data.miscellaneous = {} end
 
     self.data.miscellaneous.markLocation = {
         cell = tes3mp.GetMarkCell(self.pid),
@@ -1310,9 +1310,7 @@ end
 
 function BasePlayer:SaveSelectedSpell()
 
-    if self.data.miscellaneous == nil then
-        self.data.miscellaneous = {}
-    end
+    if self.data.miscellaneous == nil then self.data.miscellaneous = {} end
 
     self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
 end

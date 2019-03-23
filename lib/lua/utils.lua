@@ -25,6 +25,14 @@ function prefixZeroes(inputString, desiredLength)
     return inputString
 end
 
+-- Based on https://stackoverflow.com/a/34965917
+function prequire(...)
+    local status, lib = pcall(require, ...)
+    if status then return lib end
+
+    return nil
+end
+
 function doesModuleExist(name)
     if package.loaded[name] then
         return true

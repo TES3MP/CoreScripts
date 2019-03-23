@@ -1,9 +1,4 @@
 data/*
 lib/*
-!/data/cell/.gitkeep
-!/data/player/.gitkeep
-!/data/world/.gitkeep
+scripts/custom/*
 !/lib/lua
-!lib/.gitkeep
-!/data/pluginlist.example.json
-!/data/pluginlist.json
