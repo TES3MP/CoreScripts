@@ -103,12 +103,14 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
     end
 
     -- A difference in souls also instantly resolves the comparison
-    if idealItem.soul ~= nil and not comparedItem.soul:ciEqual(otherItem.soul) then
-        if idealItem.soul:ciEqual(comparedItem.soul) then
-            return true
-        elseif idealItem.soul:ciEqual(otherItem.soul) then
-            return false
-        end
+    if otherItem.soul ~= "" then
+		if idealItem.soul ~= nil and not comparedItem.soul:ciEqual(otherItem.soul) then
+			if idealItem.soul:ciEqual(comparedItem.soul) then
+				return true
+			elseif idealItem.soul:ciEqual(otherItem.soul) then
+				return false
+			end
+		end
     end
 
     -- The TES3MP server doesn't yet load up data files, so it doesn't actually know what the
