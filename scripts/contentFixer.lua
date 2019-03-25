@@ -11,7 +11,7 @@ refNumDeletionsByCell["-1, -9"] = { 268178, 297457, 297459, 297460, 299125 }
 refNumDeletionsByCell["-2, -9"] = { 172848, 172850, 172852, 289104, 297461, 397559 }
 refNumDeletionsByCell["-2, -10"] = { 297463, 297464, 297465, 297466 }
 
-local deadlyItems = { "keening" }
+local deadlyItems = { "keening", "sunder" }
 
 function contentFixer.FixCell(pid, cellDescription)
 
