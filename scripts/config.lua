@@ -114,7 +114,7 @@ config.playersRespawn = true
 config.deathTime = 5
 
 -- The number of days spent in jail as a penalty for dying, when respawning
-config.deathPenaltyJailDays = 5
+config.deathPenaltyJailDays = 0
 
 -- Whether players' bounties are reset to 0 after dying
 config.bountyResetOnDeath = false
