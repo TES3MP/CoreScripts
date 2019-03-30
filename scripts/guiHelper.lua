@@ -1,8 +1,8 @@
 tableHelper = require("tableHelper")
 
 guiHelper = {}
-
-guiHelper.ID = tableHelper.enum({"LOGIN", "REGISTER", "PLAYERSLIST", "CELLSLIST"})
+guiHelper.names = {"LOGIN", "REGISTER", "PLAYERSLIST", "CELLSLIST"}
+guiHelper.ID = tableHelper.enum(guiHelper.names)
 
 guiHelper.ShowLogin = function(pid)
     tes3mp.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
