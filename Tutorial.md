@@ -40,7 +40,7 @@ customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
         player:LoadLevel()
         --cancel the level increase on the server side
         --there have been no level up anymore, so don't run custom handlers for it either
-        return eventStatus.makeEventStatus(false,false) 
+        return customEventHooks.makeEventStatus(false,false) 
     end
 end)
 ```
@@ -120,8 +120,8 @@ Most of the events are the same as `eventHandler.lua` functions, with some extra
     `objects` elements have form
     `
     {
-        UniqueIndex = ...,
-        RefId = ...
+        uniqueIndex = ...,
+        refId = ...
     }
     `
     
