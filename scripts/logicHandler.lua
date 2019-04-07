@@ -76,6 +76,9 @@ end
 
 -- Get the "Name (pid)" representation of a player used in chat
 logicHandler.GetChatName = function(pid)
+    if pid == nil then
+        return "Unlogged player (nil)"
+    end
 
     if Players[pid] ~= nil then
         return Players[pid].name .. " (" .. pid .. ")"
