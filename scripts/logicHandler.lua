@@ -321,8 +321,9 @@ logicHandler.AuthCheck = function(pid)
         return true
     end
 
-    local playerName = tes3mp.GetName(pid)
-    local message = playerName .. " (" .. pid .. ") " .. "failed to log in.\n"
+    local playerName = logicHandler.GetChatName(pid)
+
+    local message = playerName .. " failed to log in.\n"
     tes3mp.SendMessage(pid, message, true)
     Players[pid]:Kick()
 
