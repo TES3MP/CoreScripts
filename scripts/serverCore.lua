@@ -1,4 +1,5 @@
 require("utils")
+require("enumerations")
 
 jsonInterface = require("jsonInterface")
 

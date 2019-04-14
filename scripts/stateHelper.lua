@@ -1,4 +1,3 @@
-require("enumerations")
 StateHelper = class("StateHelper")
 
 function StateHelper:LoadJournal(pid, stateObject)

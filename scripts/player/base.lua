@@ -1,5 +1,4 @@
 require("config")
-require("enumerations")
 require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")

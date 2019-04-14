@@ -1,5 +1,3 @@
-require("enumerations")
-
 tableHelper = require("tableHelper")
 fileHelper = require("fileHelper")
 inventoryHelper = require("inventoryHelper")

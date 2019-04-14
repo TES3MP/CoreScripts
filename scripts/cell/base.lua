@@ -1,6 +1,4 @@
-require("enumerations")
 require("patterns")
-require("utils")
 
 contentFixer = require("contentFixer")
 tableHelper = require("tableHelper")
