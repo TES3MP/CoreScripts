@@ -1,4 +1,16 @@
 local dkjson = require("dkjson")
+local cjson
+local cjsonExists = doesModuleExist("cjson")
+
+if cjsonExists then
+    cjson = require("cjson")
+    cjson.encode_sparse_array(true)
+    cjson.encode_invalid_numbers("null")
+    cjson.encode_empty_table_as_object(false)
+    cjson.decode_null_as_lightuserdata(false)
+else
+    tes3mp.LogMessage(enumerations.log.ERROR, "Could not find Lua CJSON! The decoding and encoding of JSON files will always use dkjson and be slower as a result.")
+end
 
 local jsonInterface = {}
 
@@ -39,17 +51,24 @@ function jsonInterface.load(fileName)
         local content = file:read("*all")
         file:close()
 
-        if content:sub(1, 2) == "//" then
-            content = jsonInterface.removeHeader(content)
-        end
+        if cjsonExists then
+            -- Lua CJSON does not support comments before the JSON data, so remove them if
+            -- they are present
+            if content:sub(1, 2) == "//" then
+                content = jsonInterface.removeHeader(content)
+            end
 
-        return dkjson.decode(content)
+            return cjson.decode(content)
+        else
+            return dkjson.decode(content)
+        end
     else
         return nil
     end
 end
 
-function jsonInterface.save(fileName, data, keyOrderArray)
+
+function jsonInterface.writeToFile(fileName, content)
 
     if jsonInterface.ioLibrary == nil then
         tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
@@ -57,7 +76,6 @@ function jsonInterface.save(fileName, data, keyOrderArray)
     end
 
     local home = tes3mp.GetDataPath() .. "/"
-    local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'w+b')
 
     if file ~= nil then
@@ -66,6 +84,27 @@ function jsonInterface.save(fileName, data, keyOrderArray)
         return true
     else
         return false
+    end
+end
+
+-- Save data to JSON in a slower but human-readable way, with identation and a specific order
+-- to the keys, provided via dkjson
+function jsonInterface.save(fileName, data, keyOrderArray)
+
+    local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
+
+    return jsonInterface.writeToFile(fileName, content)
+end
+
+-- Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
+-- that need to be saved over and over
+function jsonInterface.quicksave(fileName, data)
+
+    if cjsonExists then
+        local content = cjson.encode(data)
+        return jsonInterface.writeToFile(fileName, content)
+    else
+        return jsonInterface.save(fileName, data)
     end
 end
 
