@@ -1,3 +1,5 @@
+require("utils")
+
 jsonInterface = require("jsonInterface")
 
 -- Lua's default io library for input/output can't open Unicode filenames on Windows,
@@ -12,7 +14,6 @@ require("color")
 require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
-require("utils")
 require("time")
 
 logicHandler = require("logicHandler")
