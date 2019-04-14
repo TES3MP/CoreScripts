@@ -8,6 +8,23 @@ function jsonInterface.setLibrary(ioLibrary)
     jsonInterface.ioLibrary = ioLibrary
 end
 
+-- Remove all text from before the actual JSON content starts
+function jsonInterface.removeHeader(content)
+
+    local closestBracketIndex
+
+    local bracketIndex1 = content:find("\n%[")
+    local bracketIndex2 = content:find("\n{")
+
+    if bracketIndex1 and bracketIndex2 then
+        closestBracketIndex = math.min(bracketIndex1, bracketIndex2)
+    else
+        closestBracketIndex = bracketIndex1 or bracketIndex2
+    end
+
+    return content:sub(closestBracketIndex)
+end
+
 function jsonInterface.load(fileName)
 
     if jsonInterface.ioLibrary == nil then
@@ -21,7 +38,12 @@ function jsonInterface.load(fileName)
     if file ~= nil then
         local content = file:read("*all")
         file:close()
-        return json.decode(content, 1, nil)
+
+        if content:sub(1, 2) == "//" then
+            content = jsonInterface.removeHeader(content)
+        end
+
+        return json.decode(content)
     else
         return nil
     end
