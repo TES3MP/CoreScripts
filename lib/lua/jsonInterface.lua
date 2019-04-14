@@ -58,10 +58,19 @@ function jsonInterface.load(fileName)
                 content = jsonInterface.removeHeader(content)
             end
 
-            return cjson.decode(content)
-        else
-            return dkjson.decode(content)
+            local decodedContent
+            local status, result = pcall(function() decodedContent = cjson.decode(content) end)
+
+            if status then
+                return decodedContent
+            else
+                tes3mp.LogMessage(enumerations.log.ERROR, "Could not load " .. fileName .. " using Lua CJSON " ..
+                    "due to improperly formatted JSON! Error:\n" .. result .. "\n" .. fileName .. " is being read " ..
+                    "via the slower dkjson instead.")
+            end
         end
+
+        return dkjson.decode(content)
     else
         return nil
     end
