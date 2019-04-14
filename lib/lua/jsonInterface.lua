@@ -28,7 +28,7 @@ end
 function jsonInterface.load(fileName)
 
     if jsonInterface.ioLibrary == nil then
-        print(jsonInterface.libraryMissingMessage)
+        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
         return nil
     end
 
@@ -52,7 +52,7 @@ end
 function jsonInterface.save(fileName, data, keyOrderArray)
 
     if jsonInterface.ioLibrary == nil then
-        print(jsonInterface.libraryMissingMessage)
+        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
         return false
     end
 
