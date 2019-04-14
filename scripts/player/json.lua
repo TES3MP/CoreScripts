@@ -33,19 +33,34 @@ function Player:CreateAccount()
     end
 end
 
-function Player:Save()
+function Player:SaveToDisk()
     if self.hasAccount then
         tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(self.pid))
         jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end
 
-function Player:Load()
+function Player:QuicksaveToDisk()
+    if self.hasAccount then
+        jsonInterface.quicksave("player/" .. self.accountFile, self.data)
+    end
+end
+
+function Player:LoadFromDisk()
     self.data = jsonInterface.load("player/" .. self.accountFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
     tableHelper.fixNumericalKeys(self.data)
+end
+
+-- Deprecated functions with confusing names, kept around for backwards compatibility
+function Player:Save()
+    self:SaveToDisk()
+end
+
+function Player:Load()
+    self:LoadFromDisk()
 end
 
 return Player

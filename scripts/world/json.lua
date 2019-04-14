@@ -26,18 +26,34 @@ function World:CreateEntry()
     self.hasEntry = true
 end
 
-function World:Save()
+function World:SaveToDisk()
     if self.hasEntry then
         jsonInterface.save("world/" .. self.worldFile, self.data, config.worldKeyOrder)
     end
 end
 
-function World:Load()
+function World:QuicksaveToDisk()
+    if self.hasEntry then
+        jsonInterface.quicksave("world/" .. self.worldFile, self.data)
+    end
+end
+
+function World:LoadFromDisk()
     self.data = jsonInterface.load("world/" .. self.worldFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
     tableHelper.fixNumericalKeys(self.data)
+end
+
+
+-- Deprecated functions with confusing names, kept around for backwards compatibility
+function World:Save()
+    self:SaveToDisk()
+end
+
+function World:Load()
+    self:LoadFromDisk()
 end
 
 return World

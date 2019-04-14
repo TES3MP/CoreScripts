@@ -25,7 +25,7 @@ end
 
 function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
     self.data.general.currentGeneratedNum = currentGeneratedNum
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseRecordStore:IncrementGeneratedNum()
@@ -55,7 +55,7 @@ function BaseRecordStore:DeleteGeneratedRecord(recordId)
         if enchantmentId ~= nil and logicHandler.IsGeneratedRecord(enchantmentId) then
             local enchantmentStore = RecordStores["enchantment"]
             enchantmentStore:RemoveLinkToRecord(enchantmentId, recordId, self.storeType)
-            enchantmentStore:Save()
+            enchantmentStore:QuicksaveToDisk()
         end
     end
 
@@ -65,7 +65,7 @@ function BaseRecordStore:DeleteGeneratedRecord(recordId)
         self.data.recordLinks[recordId] = nil
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 -- Check whether there are any links remaining to a certain generated record
@@ -317,7 +317,7 @@ function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
         end
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
     return recordAdditions
 end
 
@@ -348,7 +348,7 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
             clientsideId = tes3mp.GetRecordId(recordIndex) })
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
     return recordAdditions
 end
 
@@ -388,7 +388,7 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
     return recordAdditions
 end
 
@@ -418,7 +418,7 @@ function BaseRecordStore:SaveGeneratedSpells(pid)
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
     return recordAdditions
 end
 

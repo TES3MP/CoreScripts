@@ -452,7 +452,7 @@ function menuHelper.ProcessEffects(pid, effects)
         end
     end
 
-    targetPlayer:Save()
+    targetPlayer:QuicksaveToDisk()
 
     if shouldReloadInventory then
         targetPlayer:LoadInventory()

@@ -25,13 +25,13 @@ function Player:CreateAccount()
     self.hasAccount = true
 end
 
-function Player:Save()
+function Player:SaveToDisk()
     if self.hasAccount and self.loggedIn then
         Database:SavePlayer(self.dbPid, self.data)
     end
 end
 
-function Player:Load()
+function Player:LoadFromDisk()
     self.data = Database:LoadPlayer(self.dbPid, self.data)
 end
 

@@ -16,11 +16,11 @@ function Cell:CreateEntry()
     -- Not implemented yet
 end
 
-function Cell:Save()
+function Cell:SaveToDisk()
     -- Not implemented yet
 end
 
-function Cell:Load()
+function Cell:LoadFromDisk()
     -- Not implemented yet
 end
 

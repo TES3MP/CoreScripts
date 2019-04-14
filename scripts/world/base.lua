@@ -147,7 +147,7 @@ end
 
 function BaseWorld:SetCurrentMpNum(currentMpNum)
     self.data.general.currentMpNum = currentMpNum
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseWorld:LoadJournal(pid)
@@ -278,7 +278,7 @@ function BaseWorld:SaveKills(pid)
         self.data.kills[refId] = number
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseWorld:SaveRegionWeather(regionName)

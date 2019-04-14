@@ -32,19 +32,34 @@ function Cell:CreateEntry()
     end
 end
 
-function Cell:Save()
+function Cell:SaveToDisk()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
         jsonInterface.save("cell/" .. self.entryFile, self.data, config.cellKeyOrder)
     end
 end
 
-function Cell:Load()
+function Cell:QuicksaveToDisk()
+    if self.hasEntry then
+        jsonInterface.quicksave("cell/" .. self.entryFile, self.data)
+    end
+end
+
+function Cell:LoadFromDisk()
     self.data = jsonInterface.load("cell/" .. self.entryFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
     tableHelper.fixNumericalKeys(self.data)
+end
+
+-- Deprecated function with confusing name, kept around for backwards compatibility
+function Cell:Save()
+    self:SaveToDisk()
+end
+
+function Cell:Load()
+    self:LoadFromDisk()
 end
 
 return Cell

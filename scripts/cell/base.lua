@@ -112,7 +112,7 @@ function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
         end
 
         recordStore:AddLinkToCell(recordId, self)
-        recordStore:Save()
+        recordStore:QuicksaveToDisk()
     end
 end
 
@@ -138,7 +138,7 @@ function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
                 recordLinks[storeType][recordId] = nil
 
                 recordStore:RemoveLinkToCell(recordId, self)
-                recordStore:Save()
+                recordStore:QuicksaveToDisk()
             end
         end
     end
@@ -450,7 +450,7 @@ function BaseCell:SaveObjectsPlaced(pid)
         end
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 
     if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
@@ -796,7 +796,7 @@ function BaseCell:SaveContainers(pid)
         tes3mp.SendContainer(true, false)
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 
     if action == enumerations.container.SET then
         self.isRequestingContainers = false
@@ -820,7 +820,7 @@ function BaseCell:SaveActorList(pid)
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 
     self.isRequestingActorList = false
 end
@@ -925,7 +925,7 @@ function BaseCell:SaveActorEquipment(pid)
         end
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseCell:SaveActorDeath(pid)
@@ -994,7 +994,7 @@ function BaseCell:SaveActorDeath(pid)
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseCell:SaveActorCellChanges(pid)
@@ -1140,7 +1140,7 @@ function BaseCell:SaveActorCellChanges(pid)
         logicHandler.UnloadCell(newCellDescription)
     end
 
-    self:Save()
+    self:QuicksaveToDisk()
 end
 
 function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)

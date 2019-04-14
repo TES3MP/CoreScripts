@@ -73,7 +73,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid]:SaveCell()
                 Players[pid]:SaveStatsDynamic()
                 tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
-                Players[pid]:Save()
+                Players[pid]:SaveToDisk()
 
                 -- Unload every cell for this player
                 for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
@@ -148,7 +148,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     end
 
                     targetPlayer:SetConfiscationState(false)
-                    targetPlayer:Save()
+                    targetPlayer:QuicksaveToDisk()
 
                     Players[pid].confiscationTargetName = nil
 
@@ -173,7 +173,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                         return true
                     end
 
-                    Players[pid]:Load()
+                    Players[pid]:LoadFromDisk()
 
                     -- Just in case the password from the data file is a number, make sure to turn it into a string
                     if tostring(Players[pid].data.login.password) ~= data then
@@ -359,7 +359,7 @@ eventHandler.OnPlayerCellChange = function(pid)
 
                 Players[pid]:SaveCell()
                 Players[pid]:SaveStatsDynamic()
-                Players[pid]:Save()
+                Players[pid]:QuicksaveToDisk()
 
                 -- Exchange generated records with the other players who have this cell loaded
                 if LoadedCells[currentCellDescription] ~= nil then
@@ -368,7 +368,7 @@ eventHandler.OnPlayerCellChange = function(pid)
 
                 if config.shareMapExploration == true then
                     WorldInstance:SaveMapExploration(pid)
-                    WorldInstance:Save()
+                    WorldInstance:QuicksaveToDisk()
                 end
             end
             
@@ -1554,8 +1554,8 @@ eventHandler.OnRecordDynamic = function(pid)
                     Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
                 end
 
-                recordStore:Save()
-                Players[pid]:Save()
+                recordStore:QuicksaveToDisk()
+                Players[pid]:QuicksaveToDisk()
                 tes3mp.SendSpellbookChanges(pid)
 
             -- Add the final items to the player's inventory
@@ -1584,10 +1584,10 @@ eventHandler.OnRecordDynamic = function(pid)
                     end
                 end
 
-                if isEnchantable then enchantmentStore:Save() end
+                if isEnchantable then enchantmentStore:QuicksaveToDisk() end
 
-                recordStore:Save()
-                Players[pid]:Save()
+                recordStore:QuicksaveToDisk()
+                Players[pid]:QuicksaveToDisk()
                 Players[pid]:LoadItemChanges(itemArray, enumerations.inventory.ADD)
             end
             
