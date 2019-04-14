@@ -1,4 +1,4 @@
-local json = require ("dkjson")
+local dkjson = require("dkjson")
 
 local jsonInterface = {}
 
@@ -32,7 +32,7 @@ function jsonInterface.load(fileName)
         return nil
     end
 
-    local home = tes3mp.GetModDir() .. "/"
+    local home = tes3mp.GetDataPath() .. "/"
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'r')
 
     if file ~= nil then
@@ -43,7 +43,7 @@ function jsonInterface.load(fileName)
             content = jsonInterface.removeHeader(content)
         end
 
-        return json.decode(content)
+        return dkjson.decode(content)
     else
         return nil
     end
@@ -56,8 +56,8 @@ function jsonInterface.save(fileName, data, keyOrderArray)
         return false
     end
 
-    local home = tes3mp.GetModDir() .. "/"
-    local content = json.encode(data, { indent = true, keyorder = keyOrderArray })
+    local home = tes3mp.GetDataPath() .. "/"
+    local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'w+b')
 
     if file ~= nil then
