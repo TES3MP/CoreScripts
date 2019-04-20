@@ -245,7 +245,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = targetName .. " was promoted to Admin!\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 2
-                Players[targetPid]:QuicksaveToDisk()
+                Players[targetPid]:QuicksaveToDrive()
             end
         end
 
@@ -262,7 +262,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = targetName .. " was demoted from Admin to Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 1
-                Players[targetPid]:QuicksaveToDisk()
+                Players[targetPid]:QuicksaveToDrive()
             else
                 message = targetName .. " is not an Admin.\n"
                 tes3mp.SendMessage(pid, message, false)
@@ -285,7 +285,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = targetName .. " was promoted to Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 1
-                Players[targetPid]:QuicksaveToDisk()
+                Players[targetPid]:QuicksaveToDrive()
             end
         end
 
@@ -302,7 +302,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 message = targetName .. " was demoted from Moderator!\n"
                 tes3mp.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 0
-                Players[targetPid]:QuicksaveToDisk()
+                Players[targetPid]:QuicksaveToDrive()
             else
                 message = targetName .. " is not a Moderator.\n"
                 tes3mp.SendMessage(pid, message, false)
@@ -703,7 +703,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if inputValue >= 0 and inputValue < 24 then
                 WorldInstance.data.time.hour = inputValue
-                WorldInstance:QuicksaveToDisk()
+                WorldInstance:QuicksaveToDrive()
                 WorldInstance:LoadTime(pid, true)
                 hourCounter = inputValue
             else
@@ -721,7 +721,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if inputValue <= daysInMonth then
                 WorldInstance.data.time.day = inputValue
-                WorldInstance:QuicksaveToDisk()
+                WorldInstance:QuicksaveToDrive()
                 WorldInstance:LoadTime(pid, true)
             else
                 tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
@@ -734,7 +734,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
         if type(inputValue) == "number" then
             WorldInstance.data.time.month = inputValue
-            WorldInstance:QuicksaveToDisk()
+            WorldInstance:QuicksaveToDrive()
             WorldInstance:LoadTime(pid, true)
         end
 
@@ -744,7 +744,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
         if type(inputValue) == "number" then
             WorldInstance.data.time.timeScale = inputValue
-            WorldInstance:QuicksaveToDisk()
+            WorldInstance:QuicksaveToDrive()
             WorldInstance:LoadTime(pid, true)
             frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
         end
@@ -881,7 +881,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             WorldInstance.data.kills[refId] = 0
         end
 
-        WorldInstance:QuicksaveToDisk()
+        WorldInstance:QuicksaveToDrive()
         WorldInstance:LoadKills(pid, true)
         tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
 
@@ -1477,14 +1477,14 @@ function commandHandler.CreateRecord(pid, cmd)
         -- If so, add a link to this record for that enchantment record
         if hasGeneratedEnchantment then
             enchantmentStore:AddLinkToRecord(savedTable.enchantmentId, id, inputType)
-            enchantmentStore:QuicksaveToDisk()
+            enchantmentStore:QuicksaveToDrive()
         end
     else
         message = message .. "permanent record that you'll have to remove manually when you no longer need it.\n"
         recordStore.data.permanentRecords[id] = savedTable
     end
 
-    recordStore:QuicksaveToDisk()
+    recordStore:QuicksaveToDrive()
 
     tes3mp.ClearRecords()
     tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])

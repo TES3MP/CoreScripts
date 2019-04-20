@@ -19,15 +19,15 @@ function World:__init()
 end
 
 function World:CreateEntry()
-    self:SaveToDisk()
+    self:SaveToDrive()
     self.hasEntry = true
 end
 
-function World:SaveToDisk()
+function World:SaveToDrive()
     Database:SaveWorld(self.data)
 end
 
-function World:LoadFromDisk()
+function World:LoadFromDrive()
     self.data = Database:LoadWorld(self.data)
 end
 

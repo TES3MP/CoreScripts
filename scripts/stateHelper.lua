@@ -199,7 +199,7 @@ function StateHelper:SaveJournal(pid, stateObject)
         end
     end
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionRanks(pid, stateObject)
@@ -214,7 +214,7 @@ function StateHelper:SaveFactionRanks(pid, stateObject)
         stateObject.data.factionRanks[factionId] = tes3mp.GetFactionRank(pid, i)
     end
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionExpulsion(pid, stateObject)
@@ -229,7 +229,7 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
         stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
     end
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionReputation(pid, stateObject)
@@ -244,7 +244,7 @@ function StateHelper:SaveFactionReputation(pid, stateObject)
         stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
     end
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveTopics(pid, stateObject)
@@ -262,7 +262,7 @@ function StateHelper:SaveTopics(pid, stateObject)
         end
     end
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveBounty(pid, stateObject)
@@ -273,7 +273,7 @@ function StateHelper:SaveBounty(pid, stateObject)
 
     stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveReputation(pid, stateObject)
@@ -284,7 +284,7 @@ function StateHelper:SaveReputation(pid, stateObject)
 
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
 
-    stateObject:QuicksaveToDisk()
+    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveMapExploration(pid, stateObject)

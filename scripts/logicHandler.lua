@@ -25,7 +25,7 @@ logicHandler.InitializeWorld = function()
 
     -- If the world has a data entry, load it
     if WorldInstance:HasEntry() then
-        WorldInstance:LoadFromDisk()
+        WorldInstance:LoadFromDrive()
         WorldInstance:EnsureTimeDataExists()
 
         -- Get the current mpNum from the loaded world
@@ -169,7 +169,7 @@ logicHandler.GetPlayerByName = function(targetName)
     local targetPlayer = Player(nil, targetName)
 
     if targetPlayer:HasAccount() == true then
-        targetPlayer:LoadFromDisk()
+        targetPlayer:LoadFromDrive()
         return targetPlayer
     else
         return nil
@@ -395,7 +395,7 @@ logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId,
         table.insert(LoadedCells[cellDescription].data.packets.actorList, uniqueIndex)
     end
 
-    LoadedCells[cellDescription]:QuicksaveToDisk()
+    LoadedCells[cellDescription]:QuicksaveToDrive()
 
     -- Are there any players on the server? If so, initialize the object
     -- list for the first one we find and just send the corresponding packet
@@ -604,7 +604,7 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
 
             cell.data.objectData[actorUniqueIndex].ai = aiData
             tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
-            cell:QuicksaveToDisk()
+            cell:QuicksaveToDrive()
         end
 
         -- Initialize the packet for the current cell authority
@@ -642,7 +642,7 @@ logicHandler.LoadRecordStore = function(storeType)
 
         -- If this record store has a data entry, load it
         if RecordStores[storeType]:HasEntry() then
-            RecordStores[storeType]:LoadFromDisk()
+            RecordStores[storeType]:LoadFromDrive()
         -- Otherwise, create a data file for it
         else
             RecordStores[storeType]:CreateEntry()
@@ -659,7 +659,7 @@ logicHandler.LoadCell = function(cellDescription)
 
         -- If this cell has a data entry, load it
         if LoadedCells[cellDescription]:HasEntry() then
-            LoadedCells[cellDescription]:LoadFromDisk()
+            LoadedCells[cellDescription]:LoadFromDrive()
         -- Otherwise, create a data file for it
         else
             LoadedCells[cellDescription]:CreateEntry()
@@ -698,7 +698,7 @@ logicHandler.UnloadCell = function(cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
 
-        LoadedCells[cellDescription]:SaveToDisk()
+        LoadedCells[cellDescription]:SaveToDrive()
         LoadedCells[cellDescription] = nil
     end
 end
@@ -711,7 +711,7 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
         LoadedCells[cellDescription]:RemoveVisitor(pid)
         LoadedCells[cellDescription]:SaveActorPositions()
         LoadedCells[cellDescription]:SaveActorStatsDynamic()
-        LoadedCells[cellDescription]:QuicksaveToDisk()
+        LoadedCells[cellDescription]:QuicksaveToDrive()
 
         -- If this player was the cell's authority, set another player
         -- as the authority

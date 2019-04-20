@@ -64,7 +64,7 @@ function contentFixer.UnequipDeadlyItems(pid)
     end
 
     if itemsFound > 0 then
-        Players[pid]:QuicksaveToDisk()
+        Players[pid]:QuicksaveToDrive()
         Players[pid]:LoadEquipment()
     end
 end

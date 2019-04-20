@@ -28,19 +28,19 @@ function RecordStore:CreateEntry()
     self.hasEntry = true
 end
 
-function RecordStore:SaveToDisk()
+function RecordStore:SaveToDrive()
     if self.hasEntry then
         jsonInterface.save("recordstore/" .. self.recordstoreFile, self.data, config.recordstoreKeyOrder)
     end
 end
 
-function RecordStore:QuicksaveToDisk()
+function RecordStore:QuicksaveToDrive()
     if self.hasEntry then
         jsonInterface.quicksave("recordstore/" .. self.recordstoreFile, self.data)
     end
 end
 
-function RecordStore:LoadFromDisk()
+function RecordStore:LoadFromDrive()
     self.data = jsonInterface.load("recordstore/" .. self.recordstoreFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
@@ -50,11 +50,11 @@ end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility
 function RecordStore:Save()
-    self:SaveToDisk()
+    self:SaveToDrive()
 end
 
 function RecordStore:Load()
-    self:LoadFromDisk()
+    self:LoadFromDrive()
 end
 
 return RecordStore

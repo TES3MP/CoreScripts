@@ -358,7 +358,7 @@ function BasePlayer:AddLinkToRecord(storeType, recordId)
         end
 
         recordStore:AddLinkToPlayer(recordId, self)
-        recordStore:QuicksaveToDisk()
+        recordStore:QuicksaveToDrive()
     end
 end
 
@@ -380,7 +380,7 @@ function BasePlayer:RemoveLinkToRecord(storeType, recordId)
             end
 
             recordStore:RemoveLinkToPlayer(recordId, self)
-            recordStore:QuicksaveToDisk()
+            recordStore:QuicksaveToDrive()
         end
     end
 end
@@ -417,11 +417,11 @@ function BasePlayer:CreateAccount()
     error("Not implemented")
 end
 
-function BasePlayer:SaveToDisk()
+function BasePlayer:SaveToDrive()
     error("Not implemented")
 end
 
-function BasePlayer:LoadFromDisk()
+function BasePlayer:LoadFromDrive()
     error("Not implemented")
 end
 
@@ -1061,7 +1061,7 @@ function BasePlayer:SaveInventory()
         end
     end
 
-    self:QuicksaveToDisk()
+    self:QuicksaveToDrive()
 end
 
 -- Iterate through spells and remove nil values as well as spells whose records

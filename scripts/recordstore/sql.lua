@@ -16,11 +16,11 @@ function RecordStore:CreateEntry()
     -- Not implemented yet
 end
 
-function RecordStore:SaveToDisk()
+function RecordStore:SaveToDrive()
     -- Not implemented yet
 end
 
-function RecordStore:LoadFromDisk()
+function RecordStore:LoadFromDrive()
     -- Not implemented yet
 end
 

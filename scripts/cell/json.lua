@@ -32,20 +32,20 @@ function Cell:CreateEntry()
     end
 end
 
-function Cell:SaveToDisk()
+function Cell:SaveToDrive()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
         jsonInterface.save("cell/" .. self.entryFile, self.data, config.cellKeyOrder)
     end
 end
 
-function Cell:QuicksaveToDisk()
+function Cell:QuicksaveToDrive()
     if self.hasEntry then
         jsonInterface.quicksave("cell/" .. self.entryFile, self.data)
     end
 end
 
-function Cell:LoadFromDisk()
+function Cell:LoadFromDrive()
     self.data = jsonInterface.load("cell/" .. self.entryFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert
@@ -55,11 +55,11 @@ end
 
 -- Deprecated function with confusing name, kept around for backwards compatibility
 function Cell:Save()
-    self:SaveToDisk()
+    self:SaveToDrive()
 end
 
 function Cell:Load()
-    self:LoadFromDisk()
+    self:LoadFromDrive()
 end
 
 return Cell
