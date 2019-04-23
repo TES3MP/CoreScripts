@@ -274,12 +274,12 @@ config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", 
     "container", "equipment", "ai", "death", "actorList", "position", "statsDynamic", "cellChangeTo",
     "cellChangeFrom" }
 
--- Whether the server should enforce that all clients connect with a specific list of plugins
+-- Whether the server should enforce that all clients connect with a specific list of data files
 -- defined in data/requiredDataFiles.json
 -- Warning: Only set this to false if you trust the people connecting and are sure they know
 --          what they're doing. Otherwise, you risk getting corrupt server data from
 --          their usage of unshared plugins.
-config.enforcePlugins = true
+config.enforceDataFiles = true
 
 -- Whether the server should avoid crashing when Lua script errors occur
 -- Warning: Only set this to true if you want to have a highly experimental server where

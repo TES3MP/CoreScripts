@@ -212,7 +212,7 @@ function OnServerInit()
 
         LoadBanList()
 
-        tes3mp.SetPluginEnforcementState(config.enforcePlugins)
+        tes3mp.SetDataFileEnforcementState(config.enforceDataFiles)
         tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
     end
 
@@ -248,7 +248,7 @@ function OnServerPostInit()
             waitRuleString = "not " .. waitRuleString
         end
 
-        tes3mp.SetRuleString("enforcePlugins", tostring(config.enforcePlugins))
+        tes3mp.SetRuleString("enforceDataFiles", tostring(config.enforceDataFiles))
         tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
         tes3mp.SetRuleValue("difficulty", config.difficulty)
         tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
