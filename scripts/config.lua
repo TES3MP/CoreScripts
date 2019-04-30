@@ -13,7 +13,7 @@ config.difficulty = 0
 
 -- The world time used for a newly created world
 config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
-    daysPassed = 1, timeScale = 30 }
+    daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }
 
 -- The chat window instructions that show up when players join the server
 config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
@@ -22,6 +22,11 @@ config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. 
 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false
+
+-- The hours at which night is regarded as starting and ending, used to pass time differently
+-- when it's night
+config.nightStartHour = 20
+config.nightEndHour = 6
 
 -- Whether players should be allowed to use the ingame tilde (~) console by default
 config.allowConsole = false

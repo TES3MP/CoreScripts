@@ -82,7 +82,7 @@ Menus["help moderator page 1"] = {
             color.White .. "Set the current day of the month in the world's time\n" ..
         color.Yellow .. "/setmonth <value>\n" ..
             color.White .. "Set the current month in the world's time\n" ..
-        color.Yellow .. "/settimescale <value>\n" ..
+        color.Yellow .. "/settimescale day/night/both <value>\n" ..
             color.White .. "Set the timescale in the world's time (30 by default, which is 120 real seconds " ..
             "per ingame hour)\n",
     buttons = {

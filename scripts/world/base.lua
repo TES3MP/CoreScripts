@@ -108,6 +108,7 @@ function BaseWorld:GetRegionAuthority(regionName)
 end
 
 function BaseWorld:SetRegionAuthority(pid, regionName)
+
     self.storedRegions[regionName].authority = pid
     tes3mp.LogMessage(enumerations.log.INFO, "Authority of region " .. regionName .. " is now " ..
         logicHandler.GetChatName(pid))
@@ -139,6 +140,22 @@ function BaseWorld:IncrementDay()
 
         self.data.time.day = day + 1
     end
+end
+
+function BaseWorld:GetCurrentTimeScale()
+
+    if self.data.time.dayTimeScale == nil then self.data.time.dayTimeScale = self.defaultTimeScale end
+    if self.data.time.nightTimeScale == nil then self.data.time.nightTimeScale = self.defaultTimeScale end
+
+    if self.data.time.hour >= config.nightStartHour or self.data.time.hour <= config.nightEndHour then
+        return self.data.time.nightTimeScale
+    else
+        return self.data.time.dayTimeScale
+    end
+end
+
+function BaseWorld:UpdateFrametimeMultiplier()
+    self.frametimeMultiplier = WorldInstance:GetCurrentTimeScale() / WorldInstance.defaultTimeScale
 end
 
 function BaseWorld:GetCurrentMpNum()
@@ -236,7 +253,8 @@ function BaseWorld:LoadTime(pid, forEveryone)
     tes3mp.SetYear(self.data.time.year)
 
     tes3mp.SetDaysPassed(self.data.time.daysPassed)
-    tes3mp.SetTimeScale(self.data.time.timeScale)
+
+    tes3mp.SetTimeScale(self:GetCurrentTimeScale())
 
     tes3mp.SendWorldTime(pid, forEveryone)
 end

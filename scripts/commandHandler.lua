@@ -740,13 +740,24 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "settimescale" and moderator then
 
-        local inputValue = tonumber(cmd[2])
+        local inputPeriod = string.lower(tostring(cmd[2]))
+        local inputValue = tonumber(cmd[3])
 
-        if type(inputValue) == "number" then
-            WorldInstance.data.time.timeScale = inputValue
+        if tableHelper.containsValue({"day", "night", "both"}, inputPeriod) and type(inputValue) == "number" then
+
+            if inputPeriod == "day" or inputPeriod == "both" then
+                WorldInstance.data.time.dayTimeScale = inputValue
+            end
+
+            if inputPeriod == "night" or inputPeriod == "both" then
+                WorldInstance.data.time.nightTimeScale = inputValue
+            end
+
             WorldInstance:QuicksaveToDrive()
+            WorldInstance:UpdateFrametimeMultiplier()
             WorldInstance:LoadTime(pid, true)
-            frametimeMultiplier = inputValue / WorldInstance.defaultTimeScale
+        else
+            tes3mp.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
         end
 
     elseif cmd[1] == "setcollision" and admin then

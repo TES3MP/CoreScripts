@@ -37,7 +37,6 @@ clientDataFiles = {}
 speechCollections = {}
 
 hourCounter = nil
-frametimeMultiplier = nil
 updateTimerId = nil
 
 banList = {}
@@ -146,7 +145,9 @@ do
 
         if config.passTimeWhenEmpty or tableHelper.getCount(Players) > 0 then
 
-            hourCounter = hourCounter + (0.0083 * frametimeMultiplier)
+            hourCounter = hourCounter + (0.0083 * WorldInstance.frametimeMultiplier)
+
+            tes3mp.LogMessage(enumerations.log.INFO, "hourCounter is now " .. hourCounter)
 
             local hourFloor = math.floor(hourCounter)
 
@@ -166,6 +167,8 @@ do
 
                 tes3mp.LogMessage(enumerations.log.INFO, "The world time hour is now " .. hourFloor)
                 WorldInstance.data.time.hour = hourCounter
+
+                WorldInstance:UpdateFrametimeMultiplier()
 
                 if tableHelper.getCount(Players) > 0 then
                     WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
@@ -203,7 +206,7 @@ function OnServerInit()
         end
 
         hourCounter = WorldInstance.data.time.hour
-        frametimeMultiplier = WorldInstance.data.time.timeScale / WorldInstance.defaultTimeScale
+        WorldInstance:UpdateFrametimeMultiplier()
 
         updateTimerId = tes3mp.CreateTimer("UpdateTime", time.seconds(1))
         tes3mp.StartTimer(updateTimerId)
