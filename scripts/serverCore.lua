@@ -147,8 +147,6 @@ do
 
             hourCounter = hourCounter + (0.0083 * WorldInstance.frametimeMultiplier)
 
-            tes3mp.LogMessage(enumerations.log.INFO, "hourCounter is now " .. hourCounter)
-
             local hourFloor = math.floor(hourCounter)
 
             if previousHourFloor == nil then
