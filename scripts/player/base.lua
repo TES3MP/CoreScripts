@@ -685,7 +685,7 @@ function BasePlayer:SaveStatsDynamic()
     local healthBase = tes3mp.GetHealthBase(self.pid)
 
     -- Sometimes, the player's base health gets set to 1 serverside;
-    -- use this temporary fix until we figure why
+    -- use this temporary fix until we figure out why
     if healthBase > 1 then
 
         if tes3mp.IsWerewolf(self.pid) then
@@ -706,9 +706,16 @@ function BasePlayer:LoadAttributes()
 
     for name, value in pairs(self.data.attributes) do
         local attributeId = tes3mp.GetAttributeId(name)
-        tes3mp.SetAttributeBase(self.pid, attributeId, value.base)
-        tes3mp.SetAttributeDamage(self.pid, attributeId, value.damage)
-        tes3mp.SetSkillIncrease(self.pid, attributeId, value.skillIncrease)
+
+        if type(value) == "table" then
+            tes3mp.SetAttributeBase(self.pid, attributeId, value.base)
+            tes3mp.SetAttributeDamage(self.pid, attributeId, value.damage)
+            tes3mp.SetSkillIncrease(self.pid, attributeId, value.skillIncrease)
+
+        -- Maintain backwards compatibility with the old way of storing skills
+        elseif type(value) == "number" then
+            tes3mp.SetAttributeBase(self.pid, attributeId, value)
+        end
     end
 
     tes3mp.SendAttributes(self.pid)
@@ -747,21 +754,42 @@ function BasePlayer:SaveAttributes()
                 damage = tes3mp.GetAttributeDamage(self.pid, attributeId),
                 skillIncrease = tes3mp.GetSkillIncrease(self.pid, attributeId)
             }
+
+            -- Remove old tables for attribute bonuses on level up from skill increases
+            if self.data.attributeSkillIncreases ~= nil and self.data.attributeSkillIncreases[name] ~= nil then
+                self.data.attributeSkillIncreases[name] = nil
+            end
         end
+    end
+
+    -- Remove traces of old way of saving attribute bonuses on level up
+    if self.data.attributeSkillIncreases ~= nil and tableHelper.isEmpty(self.data.attributeSkillIncreases) then
+        self.data.attributeSkillIncreases = nil
     end
 end
 
 function BasePlayer:LoadSkills()
+
     for name, value in pairs(self.data.skills) do
-        tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value.base)
-        tes3mp.SetSkillDamage(self.pid, tes3mp.GetSkillId(name), value.damage)
-        tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value.progress)
+
+        local skillId = tes3mp.GetSkillId(name)
+
+        if type(value) == "table" then
+            tes3mp.SetSkillBase(self.pid, skillId, value.base)
+            tes3mp.SetSkillDamage(self.pid, skillId, value.damage)
+            tes3mp.SetSkillProgress(self.pid, skillId, value.progress)
+
+        -- Maintain backwards compatibility with the old way of storing skills
+        elseif type(value) == "number" then
+            tes3mp.SetSkillBase(self.pid, skillId, value)
+        end
     end
 
     tes3mp.SendSkills(self.pid)
 end
 
 function BasePlayer:SaveSkills()
+
     for name in pairs(self.data.skills) do
 
         local skillId = tes3mp.GetSkillId(name)
@@ -793,7 +821,17 @@ function BasePlayer:SaveSkills()
                 damage = tes3mp.GetSkillDamage(self.pid, skillId),
                 progress = tes3mp.GetSkillProgress(self.pid, skillId)
             }
+
+            -- Removes old tables for skill progress
+            if self.data.skillProgress ~= nil and self.data.skillProgress[name] ~= nil then
+                self.data.skillProgress[name] = nil
+            end
         end
+    end
+
+    -- Remove traces of old way of saving skill progress
+    if self.data.skillProgress ~= nil and tableHelper.isEmpty(self.data.skillProgress) then
+        self.data.skillProgress = nil
     end
 end
 
