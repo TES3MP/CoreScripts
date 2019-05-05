@@ -67,9 +67,7 @@ function BasePlayer:__init(pid, playerName)
         },
         customClass = {},
         attributes = {},
-        attributeSkillIncreases = {},
         skills = {},
-        skillProgress = {},
         equipment = {},
         inventory = {},
         spellbook = {},
@@ -89,14 +87,20 @@ function BasePlayer:__init(pid, playerName)
 
     for index = 0, (tes3mp.GetAttributeCount() - 1) do
         local attributeName = tes3mp.GetAttributeName(index)
-        self.data.attributes[attributeName] = 1
-        self.data.attributeSkillIncreases[attributeName] = 0
+        self.data.attributes[attributeName] = {
+            base = 1,
+            damage = 0,
+            skillIncrease = 0
+        }
     end
 
     for index = 0, (tes3mp.GetSkillCount() - 1) do
         local skillName = tes3mp.GetSkillName(index)
-        self.data.skills[skillName] = 1
-        self.data.skillProgress[skillName] = 0
+        self.data.skills[skillName] = {
+            base = 1,
+            damage = 0,
+            progress = 0
+        }
     end
 
     self.initTimestamp = os.time()
@@ -701,11 +705,10 @@ end
 function BasePlayer:LoadAttributes()
 
     for name, value in pairs(self.data.attributes) do
-        tes3mp.SetAttributeBase(self.pid, tes3mp.GetAttributeId(name), value)
-    end
-
-    for name, value in pairs(self.data.attributeSkillIncreases) do
-        tes3mp.SetSkillIncrease(self.pid, tes3mp.GetAttributeId(name), value)
+        local attributeId = tes3mp.GetAttributeId(name)
+        tes3mp.SetAttributeBase(self.pid, attributeId, value.base)
+        tes3mp.SetAttributeDamage(self.pid, attributeId, value.damage)
+        tes3mp.SetSkillIncrease(self.pid, attributeId, value.skillIncrease)
     end
 
     tes3mp.SendAttributes(self.pid)
@@ -739,19 +742,20 @@ function BasePlayer:SaveAttributes()
                 "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
-            self.data.attributes[name] = baseValue
-            self.data.attributeSkillIncreases[name] = tes3mp.GetSkillIncrease(self.pid, attributeId)
+            self.data.attributes[name] = {
+                base = baseValue,
+                damage = tes3mp.GetAttributeDamage(self.pid, attributeId),
+                skillIncrease = tes3mp.GetSkillIncrease(self.pid, attributeId)
+            }
         end
     end
 end
 
 function BasePlayer:LoadSkills()
     for name, value in pairs(self.data.skills) do
-        tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value)
-    end
-
-    for name, value in pairs(self.data.skillProgress) do
-        tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value)
+        tes3mp.SetSkillBase(self.pid, tes3mp.GetSkillId(name), value.base)
+        tes3mp.SetSkillDamage(self.pid, tes3mp.GetSkillId(name), value.damage)
+        tes3mp.SetSkillProgress(self.pid, tes3mp.GetSkillId(name), value.progress)
     end
 
     tes3mp.SendSkills(self.pid)
@@ -784,8 +788,11 @@ function BasePlayer:SaveSkills()
                 "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
-            self.data.skills[name] = baseValue
-            self.data.skillProgress[name] = tes3mp.GetSkillProgress(self.pid, skillId)
+            self.data.skills[name] = {
+                base = baseValue,
+                damage = tes3mp.GetSkillDamage(self.pid, skillId),
+                progress = tes3mp.GetSkillProgress(self.pid, skillId)
+            }
         end
     end
 end
