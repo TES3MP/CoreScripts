@@ -436,21 +436,26 @@ function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
     return true
 end
 
--- Copy a table's top level values and direct children to another table
+-- Copy the value of a variable, useful for copying a table's top level values and direct
+-- children to another table
 --
 -- Based on http://lua-users.org/wiki/CopyTable
-function tableHelper.shallowCopy(inputTable)
-    local inputType = type(inputTable)
-    local newTable
-    if inputType == 'table' then
-        newTable = {}
-        for key, value in pairs(inputTable) do
-            newTable[key] = value
+function tableHelper.shallowCopy(inputValue)
+
+    local inputType = type(inputValue)
+
+    local newValue
+
+    if inputType == "table" then
+        newValue = {}
+        for innerKey, innerValue in pairs(inputValue) do
+            newValue[innerKey] = innerValue
         end
     else -- number, string, boolean, etc
-        newTable = inputTable
+        newValue = inputValue
     end
-    return newTable
+
+    return newValue
 end
 
 -- Get a compact string with a table's contents
