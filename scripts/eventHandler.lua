@@ -87,7 +87,6 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 if Players[pid].data.location.regionName ~= nil then
                     logicHandler.UnloadRegionForPlayer(pid, Players[pid].data.location.regionName)
                 end
-            
 
                 Players[pid]:Destroy()
                 Players[pid] = nil
@@ -103,6 +102,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
         WorldInstance:SaveToDrive()
 
         for _, recordStore in pairs(RecordStores) do
+            recordStore:DeleteUnlinkedRecords()
             recordStore:SaveToDrive()
         end
     end

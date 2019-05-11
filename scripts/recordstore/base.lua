@@ -7,7 +7,8 @@ BaseRecordStore.defaultData =
         },
         permanentRecords = {},
         generatedRecords = {},
-        recordLinks = {}
+        recordLinks = {},
+        unlinkedRecordsToCheck = {}
     }
 
 function BaseRecordStore:__init(storeType)
@@ -47,6 +48,21 @@ function BaseRecordStore:GenerateRecordId()
     return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementGeneratedNum()
 end
 
+-- Go through all the generated records that were at some point tracked as having no links remaining
+-- and delete them if they still have no links
+function BaseRecordStore:DeleteUnlinkedRecords()
+
+    if type(self.data.unlinkedRecordsToCheck) == "table" then
+        for arrayIndex, recordId in pairs(self.data.unlinkedRecordsToCheck) do
+            if not self:HasLinks(recordId) then
+                self:DeleteGeneratedRecord(recordId)
+            end
+
+            self.data.unlinkedRecordsToCheck[arrayIndex] = nil
+        end
+    end
+end
+
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
     if self.data.generatedRecords[recordId] == nil then
@@ -83,7 +99,9 @@ function BaseRecordStore:HasLinks(recordId)
 
     local recordLinks = self.data.recordLinks
 
-    if (recordLinks[recordId].cells ~= nil and not tableHelper.isEmpty(recordLinks[recordId].cells)) or
+    if recordLinks[recordId] == nil then
+        return false
+    elseif (recordLinks[recordId].cells ~= nil and not tableHelper.isEmpty(recordLinks[recordId].cells)) or
         (recordLinks[recordId].players ~= nil and not tableHelper.isEmpty(recordLinks[recordId].players)) then
         return true
     -- Is this an enchantment record? If so, check for links to other records for enchantable items
@@ -128,7 +146,7 @@ function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreT
         end
 
         if not self:HasLinks(recordId) then
-            self:DeleteGeneratedRecord(recordId)
+            table.insert(self.data.unlinkedRecordsToCheck, recordId)
         end
     end
 end
@@ -161,7 +179,7 @@ function BaseRecordStore:RemoveLinkToCell(recordId, cell)
         end
 
         if not self:HasLinks(recordId) then
-            self:DeleteGeneratedRecord(recordId)
+            table.insert(self.data.unlinkedRecordsToCheck, recordId)
         end
     end
 end
@@ -195,7 +213,7 @@ function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
     end
 
     if not self:HasLinks(recordId) then
-        self:DeleteGeneratedRecord(recordId)
+        table.insert(self.data.unlinkedRecordsToCheck, recordId)
     end
 end
 
