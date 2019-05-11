@@ -1,8 +1,6 @@
 local BaseRecordStore = class("BaseRecordStore")
 
-function BaseRecordStore:__init(storeType)
-
-    self.data =
+BaseRecordStore.defaultData = 
     {
         general = {
             currentGeneratedNum = 0
@@ -12,11 +10,23 @@ function BaseRecordStore:__init(storeType)
         recordLinks = {}
     }
 
+function BaseRecordStore:__init(storeType)
+
+    self.data = tableHelper.shallowCopy(self.defaultData)
     self.storeType = storeType
 end
 
 function BaseRecordStore:HasEntry()
     return self.hasEntry
+end
+
+function BaseRecordStore:EnsureDataStructure()
+
+    for key, value in pairs(self.defaultData) do
+        if self.data[key] == nil then
+            self.data[key] = tableHelper.shallowCopy(value)
+        end
+    end
 end
 
 function BaseRecordStore:GetCurrentGeneratedNum()

@@ -643,6 +643,7 @@ logicHandler.LoadRecordStore = function(storeType)
         -- If this record store has a data entry, load it
         if RecordStores[storeType]:HasEntry() then
             RecordStores[storeType]:LoadFromDrive()
+            RecordStores[storeType]:EnsureDataStructure()
         -- Otherwise, create a data file for it
         else
             RecordStores[storeType]:CreateEntry()
