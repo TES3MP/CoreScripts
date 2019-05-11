@@ -96,6 +96,16 @@ eventHandler.OnPlayerDisconnect = function(pid)
             customEventHooks.triggerHandlers("OnPlayerDisconnect", eventStatus, {pid})
         end
     end
+
+    -- If the server is now empty, quick saving of data isn't important anymore, so do a slower save of
+    -- the world and record store data to human-readable JSON
+    if tableHelper.isEmpty(Players) then
+        WorldInstance:SaveToDrive()
+
+        for _, recordStore in pairs(RecordStores) do
+            recordStore:SaveToDrive()
+        end
+    end
 end
 
 eventHandler.OnGUIAction = function(pid, idGui, data)
