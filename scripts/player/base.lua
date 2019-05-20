@@ -1027,6 +1027,7 @@ function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
 
     tes3mp.SendInventoryChanges(self.pid)
 end
+
 function BasePlayer:LoadInventory()
 
     if self.data.inventory == nil then self.data.inventory = {} end
