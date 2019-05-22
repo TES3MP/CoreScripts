@@ -1611,6 +1611,9 @@ eventHandler.OnWorldKillCount = function(pid)
         local eventStatus = customEventHooks.triggerValidators("OnWorldKillCount", {pid})
         if eventStatus.validDefaultHandler then
             WorldInstance:SaveKills(pid)
+            -- Send this WorldKillCount packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendKillChanges(pid, true, true)
         end
         customEventHooks.triggerHandlers("OnWorldKillCount", eventStatus, {pid})
         
