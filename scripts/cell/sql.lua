@@ -21,12 +21,12 @@ function Cell:CreateEntry()
     -- Not implemented yet
 end
 
---- Ceate entry <bold> Not implemented yet </bold>
+--- Save to drive <bold> Not implemented yet </bold>
 function Cell:SaveToDrive()
     -- Not implemented yet
 end
 
---- Ceate entry <bold> Not implemented yet </bold>
+--- Load from drive <bold> Not implemented yet </bold>
 function Cell:LoadFromDrive()
     -- Not implemented yet
 end
