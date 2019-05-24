@@ -1,3 +1,6 @@
+--- JSON cell class - if opted for json storage instead of SQL
+-- @classmod cell-base
+
 require("config")
 fileHelper = require("fileHelper")
 tableHelper = require("tableHelper")
@@ -5,6 +8,8 @@ local BaseCell = require("cell.base")
 
 local Cell = class("Cell", BaseCell)
 
+--- Init function
+-- @string cellDescription
 function Cell:__init(cellDescription)
     BaseCell.__init(self, cellDescription)
 
@@ -21,6 +26,7 @@ function Cell:__init(cellDescription)
     end
 end
 
+--- Create entry
 function Cell:CreateEntry()
     self.hasEntry = jsonInterface.save("cell/" .. self.entryFile, self.data)
 
@@ -32,6 +38,7 @@ function Cell:CreateEntry()
     end
 end
 
+--- Save cell to drive (removes nills)
 function Cell:SaveToDrive()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
@@ -39,12 +46,14 @@ function Cell:SaveToDrive()
     end
 end
 
+--- Quick save cell to drive (doesn't remove nills)
 function Cell:QuicksaveToDrive()
     if self.hasEntry then
         jsonInterface.quicksave("cell/" .. self.entryFile, self.data)
     end
 end
 
+--- Load from drive
 function Cell:LoadFromDrive()
     self.data = jsonInterface.load("cell/" .. self.entryFile)
 
@@ -53,11 +62,12 @@ function Cell:LoadFromDrive()
     tableHelper.fixNumericalKeys(self.data)
 end
 
--- Deprecated function with confusing name, kept around for backwards compatibility
+--- Deprecated function with confusing name, kept around for backwards compatibility
 function Cell:Save()
     self:SaveToDrive()
 end
 
+--- Deprecated function with confusing name, kept around for backwards compatibility
 function Cell:Load()
     self:LoadFromDrive()
 end

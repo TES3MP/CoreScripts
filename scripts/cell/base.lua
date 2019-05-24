@@ -1,3 +1,5 @@
+--- Base cell class
+-- @classmod cell-base
 require("patterns")
 
 contentFixer = require("contentFixer")
@@ -7,6 +9,7 @@ packetBuilder = require("packetBuilder")
 
 local BaseCell = class("BaseCell")
 
+--- Init function create base structure for cell
 function BaseCell:__init(cellDescription)
 
     self.data =
@@ -47,6 +50,10 @@ function BaseCell:__init(cellDescription)
     end
 end
 
+--- Check if the cell contains certain XY coordinate
+-- @int posX X coordinate
+-- @int posY Y coordinate
+-- @return boolean of success status
 function BaseCell:ContainsPosition(posX, posY)
 
     local cellSize = 8192
@@ -63,11 +70,13 @@ function BaseCell:ContainsPosition(posX, posY)
     return true
 end
 
+--- Check if cell has entry
+-- @return boolean
 function BaseCell:HasEntry()
     return self.hasEntry
 end
 
--- Iterate through the packets table and ensure all packet types are included in it
+--- Iterate through the packets table and ensure all packet types are included in it
 function BaseCell:EnsurePacketTables()
 
     if self.data.packets == nil then self.data.packets = {} end
@@ -79,7 +88,7 @@ function BaseCell:EnsurePacketTables()
     end
 end
 
--- Iterate through saved packets and ensure the object uniqueIndexes they refer to
+--- Iterate through saved packets and ensure the object uniqueIndexes they refer to
 -- actually exist
 function BaseCell:EnsurePacketValidity()
 
@@ -92,8 +101,11 @@ function BaseCell:EnsurePacketValidity()
     end
 end
 
--- Adding record links to cells is special because we'll keep track of the uniqueIndex
+--- Adding record links to cells is special because we'll keep track of the uniqueIndex
 -- of every object that uses a particular generated record
+-- @string storeType
+-- @string recordId
+-- @string uniqueIndex
 function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end
@@ -116,6 +128,10 @@ function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
     end
 end
 
+--- Removing record link from cell
+-- @string storeType
+-- @string recordId
+-- @string uniqueIndex
 function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
 
     local recordStore = RecordStores[storeType]
@@ -144,10 +160,14 @@ function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
     end
 end
 
+--- Get the amount of visitors in cell
+-- @return int visitor count
 function BaseCell:GetVisitorCount()
     return tableHelper.getCount(self.visitors)
 end
 
+--- Add visitor to cell
+-- @int pid player ID
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them
@@ -183,6 +203,8 @@ function BaseCell:AddVisitor(pid)
     end
 end
 
+--- Remove visitor from cell
+-- @int pid player ID
 function BaseCell:RemoveVisitor(pid)
 
     -- Only remove visitor if they are actually recorded as one
@@ -210,10 +232,14 @@ function BaseCell:RemoveVisitor(pid)
     end
 end
 
+--- Get the current authority of cell
+-- @return pid player ID
 function BaseCell:GetAuthority()
     return self.authority
 end
 
+--- Set the current authority of cell
+-- @int pid playerID
 function BaseCell:SetAuthority(pid)
     self.authority = pid
     tes3mp.LogMessage(enumerations.log.INFO, "Authority of cell " .. self.data.entry.description ..
@@ -222,7 +248,9 @@ function BaseCell:SetAuthority(pid)
     self:LoadActorAuthority(pid)
 end
 
--- Check whether an object is in this cell
+--- Check whether an object is in this cell
+-- @string uniqueIndex
+-- @return boolean of success status
 function BaseCell:ContainsObject(uniqueIndex)
     if self.data.objectData[uniqueIndex] ~= nil and self.data.objectData[uniqueIndex].refId ~= nil then
         return true
@@ -231,6 +259,8 @@ function BaseCell:ContainsObject(uniqueIndex)
     return false
 end
 
+--- Check if cell has container data
+-- @return boolean of success status
 function BaseCell:HasContainerData()
 
     if tableHelper.isEmpty(self.data.packets.container) == true then
@@ -240,6 +270,8 @@ function BaseCell:HasContainerData()
     return true
 end
 
+--- Check if cell has actor data
+-- @return boolean of success status
 function BaseCell:HasActorData()
 
     if tableHelper.isEmpty(self.data.packets.actorList) == true then
@@ -249,6 +281,7 @@ function BaseCell:HasActorData()
     return true
 end
 
+--- Initialize object data
 function BaseCell:InitializeObjectData(uniqueIndex, refId)
 
     if uniqueIndex ~= nil and refId ~= nil and self.data.objectData[uniqueIndex] == nil then
@@ -257,6 +290,8 @@ function BaseCell:InitializeObjectData(uniqueIndex, refId)
     end
 end
 
+--- Delete object data in cell
+-- @string uniqueIndex
 function BaseCell:DeleteObjectData(uniqueIndex)
 
     if self.data.objectData[uniqueIndex] == nil then
@@ -282,6 +317,9 @@ function BaseCell:DeleteObjectData(uniqueIndex)
     self.data.objectData[uniqueIndex] = nil
 end
 
+--- Move object data to new cell
+-- @string uniqueIndex
+-- @string newCell name of the new cell
 function BaseCell:MoveObjectData(uniqueIndex, newCell)
 
     -- Ensure we're not trying to move the object to the cell it's already in
@@ -301,10 +339,13 @@ function BaseCell:MoveObjectData(uniqueIndex, newCell)
     self.data.objectData[uniqueIndex] = nil
 end
 
+--- Saves the last visitor's player name to cell
 function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
+--- Save deleted objects to cell
+-- @int pid player ID
 function BaseCell:SaveObjectsDeleted(pid)
 
     local temporaryLoadedCells = {}
@@ -372,6 +413,8 @@ function BaseCell:SaveObjectsDeleted(pid)
     end
 end
 
+--- Save the placed objects to cell
+-- @int pid player ID
 function BaseCell:SaveObjectsPlaced(pid)
 
     local containerUniqueIndexesRequested = {}
@@ -460,6 +503,8 @@ function BaseCell:SaveObjectsPlaced(pid)
     end
 end
 
+--- Save spawned objects to cell
+-- @int pid player ID
 function BaseCell:SaveObjectsSpawned(pid)
 
     local containerUniqueIndexesRequested = {}
@@ -542,6 +587,8 @@ function BaseCell:SaveObjectsSpawned(pid)
     end
 end
 
+--- Save locked objects to cell
+-- @int pid player ID
 function BaseCell:SaveObjectsLocked(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -564,6 +611,8 @@ function BaseCell:SaveObjectsLocked(pid)
     end
 end
 
+--- Save objects with triggered traps to cell
+-- @int pid player ID
 function BaseCell:SaveObjectTrapsTriggered(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -583,6 +632,8 @@ function BaseCell:SaveObjectTrapsTriggered(pid)
     end
 end
 
+--- Save scaled objects to cell
+-- @int pid player ID
 function BaseCell:SaveObjectsScaled(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -605,6 +656,8 @@ function BaseCell:SaveObjectsScaled(pid)
     end
 end
 
+--- Save object states to cell
+-- @int pid player ID
 function BaseCell:SaveObjectStates(pid)
 
     if self.data.packets.state == nil then
@@ -656,6 +709,8 @@ function BaseCell:SaveObjectStates(pid)
     end
 end
 
+--- Save door states to cell
+-- @int pid player ID
 function BaseCell:SaveDoorStates(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -673,6 +728,8 @@ function BaseCell:SaveDoorStates(pid)
     end
 end
 
+--- Save containers to cell
+-- @int pid player ID
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -806,6 +863,8 @@ function BaseCell:SaveContainers(pid)
     end
 end
 
+--- Save acterlist to cell
+-- @int pid player ID
 function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadReceivedActorList()
@@ -828,6 +887,8 @@ function BaseCell:SaveActorList(pid)
     self.isRequestingActorList = false
 end
 
+--- Save actor positions to cell
+-- @int pid player ID
 function BaseCell:SaveActorPositions()
 
     tes3mp.ReadCellActorList(self.description)
@@ -857,6 +918,7 @@ function BaseCell:SaveActorPositions()
     end
 end
 
+--- Save actors stats dynamic to cell
 function BaseCell:SaveActorStatsDynamic()
 
     tes3mp.ReadCellActorList(self.description)
@@ -889,6 +951,8 @@ function BaseCell:SaveActorStatsDynamic()
     end
 end
 
+--- Save actor equipment to cell
+-- @int pid player ID
 function BaseCell:SaveActorEquipment(pid)
 
     tes3mp.ReadReceivedActorList()
@@ -931,6 +995,8 @@ function BaseCell:SaveActorEquipment(pid)
     self:QuicksaveToDrive()
 end
 
+--- Save actor death to cell
+-- @int pid player ID
 function BaseCell:SaveActorDeath(pid)
 
     if self.data.packets.death == nil then
@@ -1000,6 +1066,8 @@ function BaseCell:SaveActorDeath(pid)
     self:QuicksaveToDrive()
 end
 
+--- Save acter cell changes to cell
+-- @int pid player ID
 function BaseCell:SaveActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
@@ -1151,6 +1219,10 @@ function BaseCell:SaveActorCellChanges(pid)
     self:QuicksaveToDrive()
 end
 
+--- Load actor packets
+-- @int pid player ID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
 
     local packets = self.data.packets
@@ -1171,6 +1243,10 @@ function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load objects deleted
+-- @int pid player ID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1190,6 +1266,10 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load objects placed
+-- @int pid player ID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1223,6 +1303,10 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- load objects spawned in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1274,6 +1358,10 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load locked objects in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1300,6 +1388,10 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load triggered trap objects in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1318,6 +1410,10 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load scaled objects in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1342,6 +1438,10 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load object states in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1366,6 +1466,10 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load door states in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1384,6 +1488,10 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load containers in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1439,6 +1547,10 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load actor list in cell
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1473,6 +1585,8 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load cell's actor authority
+-- @int pid playerID
 function BaseCell:LoadActorAuthority(pid)
 
     tes3mp.ClearActorList()
@@ -1482,6 +1596,10 @@ function BaseCell:LoadActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
+--- Load cell's actor positions
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1522,6 +1640,10 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load cell's actor stats dynamic
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1564,6 +1686,10 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load cell's actor equipment
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1612,6 +1738,10 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load cell's actor AI
+-- @int pid playerID
+-- @param objectData
+-- @param uniqueIndexArray
 function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1699,6 +1829,9 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
     end
 end
 
+--- Load actor cell changes
+-- @int pid playerID
+-- @param objectData
 function BaseCell:LoadActorCellChanges(pid, objectData)
 
     local temporaryLoadedCells = {}
@@ -1823,6 +1956,9 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     end
 end
 
+--- Request containers
+-- @int pid playerID
+-- @param requestUniqueIndexes
 function BaseCell:RequestContainers(pid, requestUniqueIndexes)
 
     self.isRequestingContainers = true
@@ -1854,6 +1990,8 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
     tes3mp.SendContainer()
 end
 
+--- Request actor list
+-- @int pid player ID
 function BaseCell:RequestActorList(pid)
 
     self.isRequestingActorList = true
@@ -1869,6 +2007,8 @@ function BaseCell:RequestActorList(pid)
     tes3mp.SendActorList()
 end
 
+--- Load cell's initial data
+-- @int pid player ID
 function BaseCell:LoadInitialCellData(pid)
 
     self:EnsurePacketTables()
@@ -1908,6 +2048,8 @@ function BaseCell:LoadInitialCellData(pid)
     end
 end
 
+--- Load momentary cell data
+-- @int pid player ID
 function BaseCell:LoadMomentaryCellData(pid)
 
     if self:HasActorData() == true then
@@ -1919,6 +2061,8 @@ function BaseCell:LoadMomentaryCellData(pid)
     end
 end
 
+--- Load generated records
+-- @int pid player ID
 function BaseCell:LoadGeneratedRecords(pid)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end
