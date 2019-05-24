@@ -112,6 +112,7 @@ end
 -- @string fileName
 -- @param data
 -- @param keyOrderArray
+-- @return bool which is true on success and false on fail
 function jsonInterface.save(fileName, data, keyOrderArray)
 
     local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
@@ -123,6 +124,7 @@ end
 -- that need to be saved over and over
 -- @string fileName
 -- @param data to save
+-- @return bool which is true on success and false on fail
 function jsonInterface.quicksave(fileName, data)
 
     if cjsonExists then
