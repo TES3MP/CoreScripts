@@ -1,8 +1,11 @@
+--- World SQL
+-- @classmod world-sql
 Database = require("database")
 local BaseWorld = require("world.base")
 
 local World = class("World", BaseWorld)
 
+--- Init funtion
 function World:__init()
     BaseWorld.__init(self)
 
@@ -18,15 +21,18 @@ function World:__init()
     end
 end
 
+--- Create entry
 function World:CreateEntry()
     self:SaveToDrive()
     self.hasEntry = true
 end
 
+--- Save to drive
 function World:SaveToDrive()
     Database:SaveWorld(self.data)
 end
 
+--- Load from drive
 function World:LoadFromDrive()
     self.data = Database:LoadWorld(self.data)
 end

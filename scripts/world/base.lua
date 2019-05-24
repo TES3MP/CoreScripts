@@ -1,13 +1,20 @@
+--- World Base
+-- @classmod world-base
 stateHelper = require("stateHelper")
 local BaseWorld = class("BaseWorld")
 
--- Keep this here because it's required in mathematical operations
+--- Keep this here because it's required in mathematical operations
 BaseWorld.defaultTimeScale = 30
 
+--- Month lengths
+-- @table BaseWorld.monthLengths
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
+--- stored regions
+-- @table BaseWorld.storedRegions
 BaseWorld.storedRegions = {}
 
+--- Init function
 function BaseWorld:__init()
 
     self.data =
@@ -31,10 +38,13 @@ function BaseWorld:__init()
     }
 end
 
+--- Check if world has entry
+-- @return boolean
 function BaseWorld:HasEntry()
     return self.hasEntry
 end
 
+--- Ensure time data exists
 function BaseWorld:EnsureTimeDataExists()
 
     if self.data.time == nil then
@@ -42,6 +52,9 @@ function BaseWorld:EnsureTimeDataExists()
     end
 end
 
+--- Get region visitor count
+-- @string regionName
+-- @return int visitor count
 function BaseWorld:GetRegionVisitorCount(regionName)
 
     if self.storedRegions[regionName] == nil then return 0 end
@@ -49,6 +62,9 @@ function BaseWorld:GetRegionVisitorCount(regionName)
     return tableHelper.getCount(self.storedRegions[regionName].visitors)
 end
 
+--- Add region visitor
+-- @int pid
+-- @string regionName
 function BaseWorld:AddRegionVisitor(pid, regionName)
 
     if self.storedRegions[regionName] == nil then
@@ -61,6 +77,9 @@ function BaseWorld:AddRegionVisitor(pid, regionName)
     end
 end
 
+--- Remove region visitor
+-- @int pid
+-- @string regionName
 function BaseWorld:RemoveRegionVisitor(pid, regionName)
 
     local loadedRegion = self.storedRegions[regionName]
@@ -75,18 +94,27 @@ function BaseWorld:RemoveRegionVisitor(pid, regionName)
     self:RemoveForcedWeatherUpdatePid(pid, regionName)
 end
 
+--- Add forced weather update pid
+-- @int pid
+-- @string regionName
 function BaseWorld:AddForcedWeatherUpdatePid(pid, regionName)
 
     local loadedRegion = self.storedRegions[regionName]
     table.insert(loadedRegion.forcedWeatherUpdatePids, pid)
 end
 
+--- Remove forced weather update pid
+-- @int pid
+-- @string regionName
 function BaseWorld:RemoveForcedWeatherUpdatePid(pid, regionName)
 
     local loadedRegion = self.storedRegions[regionName]
     tableHelper.removeValue(loadedRegion.forcedWeatherUpdatePids, pid)
 end
 
+--- Is forced wather update pid
+-- @int pid
+-- @string regionName
 function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
 
     local loadedRegion = self.storedRegions[regionName]
@@ -98,6 +126,9 @@ function BaseWorld:IsForcedWeatherUpdatePid(pid, regionName)
     return false
 end
 
+--- Get region Authority
+-- @string regionName
+-- @return playerName or nil
 function BaseWorld:GetRegionAuthority(regionName)
 
     if self.storedRegions[regionName] ~= nil then
@@ -107,6 +138,9 @@ function BaseWorld:GetRegionAuthority(regionName)
     return nil
 end
 
+--- Get region Authority
+-- @int pid
+-- @string regionName
 function BaseWorld:SetRegionAuthority(pid, regionName)
 
     self.storedRegions[regionName].authority = pid
@@ -117,6 +151,7 @@ function BaseWorld:SetRegionAuthority(pid, regionName)
     tes3mp.SendWorldRegionAuthority(pid)
 end
 
+--- Increment day
 function BaseWorld:IncrementDay()
 
     self.data.time.daysPassed = self.data.time.daysPassed + 1
@@ -142,6 +177,8 @@ function BaseWorld:IncrementDay()
     end
 end
 
+--- Get current time scale
+-- @return timeScale
 function BaseWorld:GetCurrentTimeScale()
 
     if self.data.time.dayTimeScale == nil then self.data.time.dayTimeScale = self.defaultTimeScale end
@@ -154,51 +191,75 @@ function BaseWorld:GetCurrentTimeScale()
     end
 end
 
+--- Update frametiem multiplier
 function BaseWorld:UpdateFrametimeMultiplier()
     self.frametimeMultiplier = WorldInstance:GetCurrentTimeScale() / WorldInstance.defaultTimeScale
 end
 
+--- Get current MpNum
+-- @return string currentMpNum
 function BaseWorld:GetCurrentMpNum()
     return self.data.general.currentMpNum
 end
 
+--- Get current MpNum
+-- @string currentMpNum
 function BaseWorld:SetCurrentMpNum(currentMpNum)
     self.data.general.currentMpNum = currentMpNum
     self:QuicksaveToDrive()
 end
 
+--- Load journal
+-- @int pid
 function BaseWorld:LoadJournal(pid)
     stateHelper:LoadJournal(pid, self)
 end
 
+--- Load faction ranks
+-- @int pid
 function BaseWorld:LoadFactionRanks(pid)
     stateHelper:LoadFactionRanks(pid, self)
 end
 
+--- Load faction expulsions
+-- @int pid
 function BaseWorld:LoadFactionExpulsion(pid)
     stateHelper:LoadFactionExpulsion(pid, self)
 end
 
+--- Load faction reputation
+-- @int pid
 function BaseWorld:LoadFactionReputation(pid)
     stateHelper:LoadFactionReputation(pid, self)
 end
 
+--- Load topics
+-- @int pid
 function BaseWorld:LoadTopics(pid)
     stateHelper:LoadTopics(pid, self)
 end
 
+--- Load bounty
+-- @int pid
 function BaseWorld:LoadBounty(pid)
     stateHelper:LoadBounty(pid, self)
 end
 
+--- Load reputation
+-- @int pid
 function BaseWorld:LoadReputation(pid)
     stateHelper:LoadReputation(pid, self)
 end
 
+--- Load map
+-- @int pid
 function BaseWorld:LoadMap(pid)
     stateHelper:LoadMap(pid, self)
 end
 
+--- Load kills
+-- @int pid
+-- @boolean forEveryone
 function BaseWorld:LoadKills(pid, forEveryone)
 
     tes3mp.ClearKillChanges(pid)
@@ -211,6 +272,11 @@ function BaseWorld:LoadKills(pid, forEveryone)
     tes3mp.SendKillChanges(pid, forEveryone)
 end
 
+--- Loading region weather
+-- @string regionName
+-- @int pid
+-- @boolean forEveryone
+-- @param forceState
 function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
 
     local region = self.storedRegions[regionName]
@@ -230,6 +296,10 @@ function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
     end
 end
 
+--- Load weather
+-- @int pid
+-- @boolean forEveryone
+-- @param forceState
 function BaseWorld:LoadWeather(pid, forEveryone, forceState)
 
     for regionName, region in pairs(self.storedRegions) do
@@ -240,6 +310,9 @@ function BaseWorld:LoadWeather(pid, forEveryone, forceState)
     end
 end
 
+--- Load time
+-- @int pid
+-- @boolean forEveryone
 function BaseWorld:LoadTime(pid, forEveryone)
 
     tes3mp.SetHour(self.data.time.hour)
@@ -259,34 +332,50 @@ function BaseWorld:LoadTime(pid, forEveryone)
     tes3mp.SendWorldTime(pid, forEveryone)
 end
 
+--- Save journal
+-- @int pid
 function BaseWorld:SaveJournal(pid)
     stateHelper:SaveJournal(pid, self)
 end
 
+--- Save faction ranks
+-- @int pid
 function BaseWorld:SaveFactionRanks(pid)
     stateHelper:SaveFactionRanks(pid, self)
 end
 
+--- Save faction expulsions
+-- @int pid
 function BaseWorld:SaveFactionExpulsion(pid)
     stateHelper:SaveFactionExpulsion(pid, self)
 end
 
+--- Save faction reputation
+-- @int pid
 function BaseWorld:SaveFactionReputation(pid)
     stateHelper:SaveFactionReputation(pid, self)
 end
 
+--- Save topics
+-- @int pid
 function BaseWorld:SaveTopics(pid)
     stateHelper:SaveTopics(pid, self)
 end
 
+--- Save bounty
+-- @int pid
 function BaseWorld:SaveBounty(pid)
     stateHelper:SaveBounty(pid, self)
 end
 
+--- Save reputation
+-- @int pid
 function BaseWorld:SaveReputation(pid)
     stateHelper:SaveReputation(pid, self)
 end
 
+--- Save kills
+-- @int pid
 function BaseWorld:SaveKills(pid)
 
     for index = 0, tes3mp.GetKillChangesSize(pid) - 1 do
@@ -299,6 +388,8 @@ function BaseWorld:SaveKills(pid)
     self:QuicksaveToDrive()
 end
 
+--- Save region weather
+-- @string regionName
 function BaseWorld:SaveRegionWeather(regionName)
 
     local loadedRegion = self.storedRegions[regionName]
@@ -308,10 +399,14 @@ function BaseWorld:SaveRegionWeather(regionName)
     loadedRegion.transitionFactor = tes3mp.GetWeatherTransitionFactor()
 end
 
+--- Save map exploration
+-- @int pid
 function BaseWorld:SaveMapExploration(pid)
     stateHelper:SaveMapExploration(pid, self)
 end
 
+--- Save map tiles
+-- @int pid
 function BaseWorld:SaveMapTiles(pid)
 
     tes3mp.ReadReceivedWorldstate()

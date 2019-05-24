@@ -1,9 +1,12 @@
+--- World JSON
+-- @classmod world-json
 require("config")
 tableHelper = require("tableHelper")
 local BaseWorld = require("world.base")
 
 local World = class("World", BaseWorld)
 
+--- Init function
 function World:__init()
     BaseWorld.__init(self)
 
@@ -21,23 +24,27 @@ function World:__init()
     end
 end
 
+--- Create entry
 function World:CreateEntry()
     jsonInterface.save("world/" .. self.worldFile, self.data)
     self.hasEntry = true
 end
 
+--- Save to drive
 function World:SaveToDrive()
     if self.hasEntry then
         jsonInterface.save("world/" .. self.worldFile, self.data, config.worldKeyOrder)
     end
 end
 
+--- Quick save to drive
 function World:QuicksaveToDrive()
     if self.hasEntry then
         jsonInterface.quicksave("world/" .. self.worldFile, self.data)
     end
 end
 
+--- Load from drive
 function World:LoadFromDrive()
     self.data = jsonInterface.load("world/" .. self.worldFile)
 
@@ -47,11 +54,12 @@ function World:LoadFromDrive()
 end
 
 
--- Deprecated functions with confusing names, kept around for backwards compatibility
+--- Deprecated functions with confusing names, kept around for backwards compatibility
 function World:Save()
     self:SaveToDrive()
 end
 
+--- Deprecated functions with confusing names, kept around for backwards compatibility
 function World:Load()
     self:LoadFromDrive()
 end
