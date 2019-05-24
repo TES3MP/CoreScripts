@@ -1,3 +1,5 @@
+--- An interface for JSON
+-- @module jsonInterface
 local dkjson = require("dkjson")
 local cjson
 local cjsonExists = doesModuleExist("cjson")
@@ -16,11 +18,14 @@ local jsonInterface = {}
 
 jsonInterface.libraryMissingMessage = "No input/output library selected for JSON interface!"
 
+--- Sets the I/O library for jsonInterface
+-- @param ioLibrary the IO library (depending on OS)
 function jsonInterface.setLibrary(ioLibrary)
     jsonInterface.ioLibrary = ioLibrary
 end
 
--- Remove all text from before the actual JSON content starts
+--- Remove all text from before the actual JSON content starts
+-- @string content text to remove header from
 function jsonInterface.removeHeader(content)
 
     local closestBracketIndex
@@ -37,6 +42,9 @@ function jsonInterface.removeHeader(content)
     return content:sub(closestBracketIndex)
 end
 
+--- loads an json file from '%home%/data'
+-- @param fileName name of file
+-- @return table from json in file, or nil if it can't
 function jsonInterface.load(fileName)
 
     if jsonInterface.ioLibrary == nil then
@@ -76,7 +84,10 @@ function jsonInterface.load(fileName)
     end
 end
 
-
+--- Saves content to fileName
+-- @param fileName name of file
+-- @param content content to be saved to file
+-- @return bool which is true on success and false on fail
 function jsonInterface.writeToFile(fileName, content)
 
     if jsonInterface.ioLibrary == nil then
