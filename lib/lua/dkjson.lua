@@ -1,3 +1,6 @@
+--- JSON module for Lua <a target="_blank" href="http://dkolf.de/src/dkjson-lua.fsl/home">Documentation</a>
+-- @module dkjson
+
 -- Module options:
 local always_try_using_lpeg = true
 local register_global_module_table = false
