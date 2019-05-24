@@ -1,5 +1,11 @@
+--- Command handler
+-- @module commandHandler
 local commandHandler = {}
 
+--- Process command
+-- @int pid player ID
+-- @param cmd
+-- @return false if it can't process command
 function commandHandler.ProcessCommand(pid, cmd)
 
     if cmd[1] == nil then
@@ -1172,6 +1178,9 @@ function commandHandler.ProcessCommand(pid, cmd)
     end
 end
 
+--- Store record
+-- @int pid
+-- @param cmd
 function commandHandler.StoreRecord(pid, cmd)
 
     if Players[pid].data.customVariables == nil then
@@ -1362,6 +1371,9 @@ function commandHandler.StoreRecord(pid, cmd)
     end
 end
 
+--- Create record
+-- @int pid
+-- @param cmd
 function commandHandler.CreateRecord(pid, cmd)
 
     if Players[pid].data.customVariables == nil then

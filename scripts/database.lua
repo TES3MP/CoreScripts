@@ -1,8 +1,11 @@
--- This is a very unfinished and out-of-date example of using a database in TES3MP
+--- This is a very unfinished and out-of-date example of using a database in TES3MP
+-- @classmod database
 
 tableHelper = require("tableHelper")
 Database = class("Database")
 
+--- Load driver
+-- @param driver
 function Database:LoadDriver(driver)
 
     self.driver = require("luasql." .. driver)
@@ -15,11 +18,16 @@ function Database:LoadDriver(driver)
     end
 end
 
+--- Connect
+-- @param databasePath
 function Database:Connect(databasePath)
 
     self.connection = assert(self.env:connect(databasePath))
 end
 
+--- Execute
+-- @string query
+-- @return response
 function Database:Execute(query)
 
     local response = self.connection:execute(query)
@@ -31,15 +39,18 @@ function Database:Execute(query)
     return response
 end
 
+--- Escape
+-- @string string
+-- @return string escaped
 function Database:Escape(string)
 
     string = self.connection:escape(string)
     return string
 end
 
---- Create a table if it does not already exist
---@param tableName The name of the table. [string]
---@param columnArray An array (to keep column ordering) of key/value pairs. [table]
+---- Create a table if it does not already exist
+-- @param tableName The name of the table. [string]
+-- @param columnArray An array (to keep column ordering) of key/value pairs. [table]
 function Database:CreateTable(tableName, columnArray)
 
     local query = string.format("CREATE TABLE IF NOT EXISTS %s(", tableName)
@@ -63,6 +74,9 @@ function Database:CreateTable(tableName, columnArray)
     self:Execute(query)
 end
 
+--- Delete rows
+-- @param tableName
+-- @param condition
 function Database:DeleteRows(tableName, condition)
 
     local query = string.format("DELETE FROM %s %s", tableName, condition)
@@ -70,8 +84,8 @@ function Database:DeleteRows(tableName, condition)
 end
 
 --- Insert a row into a table
---@param tableName The name of the table. [string]
---@param valueTable A key/value table where the keys are the names of columns. [table]
+-- @param tableName The name of the table. [string]
+-- @param valueTable A key/value table where the keys are the names of columns. [table]
 function Database:InsertRow(tableName, valueTable)
 
     local query = string.format("INSERT OR REPLACE INTO %s", tableName)
@@ -99,12 +113,20 @@ function Database:InsertRow(tableName, valueTable)
     end
 end
 
+--- Select row
+-- @param tableName
+-- @param condition
+-- @return row
 function Database:SelectRow(tableName, condition)
 
     local rows = self:SelectRows(tableName, condition)
     return rows[1]
 end
 
+--- Select rows
+-- @param tableName
+-- @param condition
+-- @return rows
 function Database:SelectRows(tableName, condition)
 
     local query = string.format("SELECT * FROM %s %s", tableName, condition)
@@ -120,6 +142,11 @@ function Database:SelectRows(tableName, condition)
     return rows
 end
 
+--- Get single value
+-- @param tableName
+-- @param column
+-- @param condition
+-- @return row[column] or nil
 function Database:GetSingleValue(tableName, column, condition)
 
     local query = string.format("SELECT %s FROM %s %s", column, tableName, condition)
@@ -133,6 +160,9 @@ function Database:GetSingleValue(tableName, column, condition)
     end
 end
 
+--- Save player
+-- @int dbPid
+-- @param data
 function Database:SavePlayer(dbPid, data)
 
     -- Put all of these INSERT statements into a single transaction to avoid freezes
@@ -165,6 +195,10 @@ function Database:SavePlayer(dbPid, data)
     self:Execute("END TRANSACTION;")
 end
 
+--- Load player
+-- @int dbPid
+-- @param data
+-- @return player data
 function Database:LoadPlayer(dbPid, data)
 
     local slotTables = { "equipment", "inventory", "spellbook" }
@@ -202,6 +236,8 @@ function Database:LoadPlayer(dbPid, data)
     return data
 end
 
+--- Save world
+-- @param data
 function Database:SaveWorld(data)
 
     for category, categoryTable in pairs(data) do
@@ -213,6 +249,9 @@ function Database:SaveWorld(data)
     end
 end
 
+--- Load world
+-- @param data
+-- @return data
 function Database:LoadWorld(data)
 
     for category, categoryTable in pairs(data) do
@@ -228,6 +267,7 @@ function Database:LoadWorld(data)
     return data
 end
 
+--- Create cell tables
 function Database:CreateCellTables()
 
     local columnList, valueTable
@@ -244,6 +284,7 @@ function Database:CreateCellTables()
     self:CreateTable("cell_entry", columnList)
 end
 
+--- Create world tables
 function Database:CreateWorldTables()
 
     local columnList
@@ -255,6 +296,7 @@ function Database:CreateWorldTables()
     self:CreateTable("world_general", columnList)
 end
 
+--- Create player tables
 function Database:CreatePlayerTables()
 
     local columnList, valueTable

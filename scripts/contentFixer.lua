@@ -1,18 +1,28 @@
+--- Content fixer
+-- @module contentFixer
 tableHelper = require("tableHelper")
 require("utils")
 
 local contentFixer = {}
 
+--- refNumDeltionsByCell
+-- @table refNumDeletionsByCell
 local refNumDeletionsByCell = {}
--- Delete Socucius Ergalla
+--- Delete Socucius Ergalla
 refNumDeletionsByCell["Seyda Neen, Census and Excise Office"] = { 119636 }
--- Delete the chargen boat and associated guards and objects
+--- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-1, -9"] = { 268178, 297457, 297459, 297460, 299125 }
+--- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-2, -9"] = { 172848, 172850, 172852, 289104, 297461, 397559 }
+--- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-2, -10"] = { 297463, 297464, 297465, 297466 }
 
+--- deadlyItems
 local deadlyItems = { "keening", "sunder" }
 
+--- Fix cell
+-- @int pid
+-- @string cellDescription
 function contentFixer.FixCell(pid, cellDescription)
 
     if refNumDeletionsByCell[cellDescription] ~= nil then
@@ -32,6 +42,9 @@ function contentFixer.FixCell(pid, cellDescription)
     end
 end
 
+--- Validate cell change
+-- @int pid
+-- @return boolean of success state
 function contentFixer.ValidateCellChange(pid)
 
     local cell = tes3mp.GetCell(pid)
@@ -45,12 +58,12 @@ function contentFixer.ValidateCellChange(pid)
     return true
 end
 
--- Unequip items that damage the player when worn
+--- Unequip items that damage the player when worn
 --
 -- Note: Items with constant damage effects like Whitewalker and the Mantle of Woe
 --       are already unequipped by default in the TES3MP client, so this only needs
 --       to account for scripted items that are missed there
---
+-- @int pid
 function contentFixer.UnequipDeadlyItems(pid)
 
     local itemsFound = 0

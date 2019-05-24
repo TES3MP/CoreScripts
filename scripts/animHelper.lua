@@ -1,16 +1,31 @@
+--- Animation helper
+-- @module animHelper
 tableHelper = require("tableHelper")
 
 local animHelper = {}
 
+--- Default animation names
+-- @table defaultAnimNames
 local defaultAnimNames = { "hit1", "hit2", "hit3", "hit4", "hit5", "idle2", "idle3", "idle4",
     "idle5", "idle6", "idle7", "idle8", "idle9", "pickprobe" }
 
+--- General animation aliases
+-- @table generalAnimAliases 
 local generalAnimAliases = { act_impatient = "idle6", check_missing_item = "idle9", examine_hand = "idle7",
     look_behind = "idle3", shift_feet = "idle2", scratch_neck = "idle4", touch_chin = "idle8",
     touch_shoulder = "idle5" }
+
+--- Female animation aliases
+-- @table femaleAnimAliases 
 local femaleAnimAliases = { adjust_hair = "idle4", touch_hip = "idle5" }
+--- Beast animation aliases
+-- @table beastAnimAliases 
 local beastAnimAliases = { act_confused = "idle9", look_around = "idle2", touch_hands = "idle6" }
 
+--- Get animation
+-- @int pid
+-- @string animAlias
+-- @return animAlias or "invalid"
 function animHelper.GetAnimation(pid, animAlias)
 
     -- Is this animation included in the default animation names?
@@ -49,6 +64,9 @@ function animHelper.GetAnimation(pid, animAlias)
     return "invalid"
 end
 
+--- Get valid list
+-- @int pid
+-- @return string validList
 function animHelper.GetValidList(pid)
 
     local validList = {}
@@ -89,6 +107,10 @@ function animHelper.GetValidList(pid)
     return tableHelper.concatenateFromIndex(validList, 1, ", ")
 end
 
+--- Play animation
+-- @int pid
+-- @string animAlias
+-- @return boolean of sucess status
 function animHelper.PlayAnimation(pid, animAlias)
 
     local defaultAnim = animHelper.GetAnimation(pid, animAlias)

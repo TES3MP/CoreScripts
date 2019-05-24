@@ -1,5 +1,17 @@
+--- Data table builder
+-- @module dataTableBuilder
 dataTableBuilder = {}
 
+--- Build AI data
+-- @int targetPid target player ID
+-- @param targetUniqueIndex
+-- @param action
+-- @double posX
+-- @double posY
+-- @double posZ
+-- @double distance
+-- @param duration
+-- @bool shouldRepeat
 dataTableBuilder.BuildAIData = function(targetPid, targetUniqueIndex, action,
     posX, posY, posZ, distance, duration, shouldRepeat)
 

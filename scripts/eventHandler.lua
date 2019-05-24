@@ -1,9 +1,14 @@
+--- Event handler
+-- @module eventHandler
 local eventHandler = {}
 
 commandHandler = require("commandHandler")
 
 local consoleKickMessage = " has been kicked for using the console despite not having the permission to do so.\n"
 
+--- On player connect
+-- @int pid player ID
+-- @string playerName
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
     tes3mp.SetDifficulty(pid, config.difficulty)
@@ -54,6 +59,8 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     customEventHooks.triggerHandlers("OnPlayerConnect", eventStatus, {pid})
 end
 
+--- On player disconnect
+-- @int pid player ID
 eventHandler.OnPlayerDisconnect = function(pid)
 
     if Players[pid] ~= nil then
@@ -108,6 +115,11 @@ eventHandler.OnPlayerDisconnect = function(pid)
     end
 end
 
+--- On GUI action
+-- @int pid player ID
+-- @string idGui
+-- @param data
+-- @return bool
 eventHandler.OnGUIAction = function(pid, idGui, data)
 
     if Players[pid] ~= nil then
@@ -220,6 +232,9 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
     return false
 end
 
+--- On player send message
+-- @int pid player ID
+-- @string message
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
@@ -256,6 +271,8 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     end
 end
 
+--- On player death
+-- @int pid player ID
 eventHandler.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerDeath", {pid})
@@ -266,6 +283,8 @@ eventHandler.OnPlayerDeath = function(pid)
     end
 end
 
+--- On death time expiration
+-- @int pid player ID
 eventHandler.OnDeathTimeExpiration = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnDeathTimeExpiration", {pid})
@@ -276,6 +295,8 @@ eventHandler.OnDeathTimeExpiration = function(pid)
     end
 end
 
+--- On player attribute
+-- @int pid player ID
 eventHandler.OnPlayerAttribute = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerAttribute", {pid})
@@ -286,6 +307,8 @@ eventHandler.OnPlayerAttribute = function(pid)
     end
 end
 
+--- On player skill
+-- @int pid player ID
 eventHandler.OnPlayerSkill = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSkill", {pid})
@@ -296,6 +319,8 @@ eventHandler.OnPlayerSkill = function(pid)
     end
 end
 
+--- On player level
+-- @int pid player ID
 eventHandler.OnPlayerLevel = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerLevel", {pid})
@@ -307,6 +332,8 @@ eventHandler.OnPlayerLevel = function(pid)
     end
 end
 
+--- On player shapeshift
+-- @int pid
 eventHandler.OnPlayerShapeshift = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerShapeshift", {pid})
@@ -317,6 +344,8 @@ eventHandler.OnPlayerShapeshift = function(pid)
     end
 end
 
+--- On player cell change
+-- @int pid player ID
 eventHandler.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -392,6 +421,8 @@ eventHandler.OnPlayerCellChange = function(pid)
     end
 end
 
+--- On player end char gen
+-- @int pid player ID
 eventHandler.OnPlayerEndCharGen = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerEndCharGen", {pid})
@@ -403,6 +434,8 @@ eventHandler.OnPlayerEndCharGen = function(pid)
     end
 end
 
+--- On player equipment
+-- @int pid player ID
 eventHandler.OnPlayerEquipment = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerEquipment", {pid})
@@ -413,6 +446,8 @@ eventHandler.OnPlayerEquipment = function(pid)
     end
 end
 
+--- On player inventory
+-- @int pid player ID
 eventHandler.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerInventory", {pid})
@@ -423,6 +458,8 @@ eventHandler.OnPlayerInventory = function(pid)
     end
 end
 
+--- On player spellbook
+-- @int pid player ID
 eventHandler.OnPlayerSpellbook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellbook", {pid})
@@ -433,6 +470,8 @@ eventHandler.OnPlayerSpellbook = function(pid)
     end
 end
 
+--- On player quick keys
+-- @int pid player ID
 eventHandler.OnPlayerQuickKeys = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerQuickKeys", {pid})
@@ -443,6 +482,8 @@ eventHandler.OnPlayerQuickKeys = function(pid)
     end
 end
 
+--- On player journal
+-- @int pid player ID
 eventHandler.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid})
@@ -461,6 +502,8 @@ eventHandler.OnPlayerJournal = function(pid)
     end
 end
 
+--- On player faction
+-- @int pid player ID
 eventHandler.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -504,6 +547,8 @@ eventHandler.OnPlayerFaction = function(pid)
     end
 end
 
+--- On player topic
+-- @int pid player ID
 eventHandler.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerTopic", {pid})
@@ -523,6 +568,8 @@ eventHandler.OnPlayerTopic = function(pid)
     end
 end
 
+--- On player bounty
+-- @int pid player ID
 eventHandler.OnPlayerBounty = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         
@@ -556,6 +603,8 @@ eventHandler.OnPlayerBounty = function(pid)
     end
 end
 
+--- On player reputation
+-- @int pid player ID
 eventHandler.OnPlayerReputation = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerReputation", {pid})
@@ -576,6 +625,8 @@ eventHandler.OnPlayerReputation = function(pid)
     end
 end
 
+--- On player book
+-- @int pid player ID
 eventHandler.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerBook", {pid})
@@ -586,6 +637,8 @@ eventHandler.OnPlayerBook = function(pid)
     end
 end
 
+--- On player item use
+-- @int pid player ID
 eventHandler.OnPlayerItemUse = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local itemRefId = tes3mp.GetUsedItemRefId(pid)
@@ -602,6 +655,8 @@ eventHandler.OnPlayerItemUse = function(pid)
     end
 end
 
+--- On player miscellaneous
+-- @int pid player ID
 eventHandler.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
@@ -622,6 +677,9 @@ eventHandler.OnPlayerMiscellaneous = function(pid)
     end
 end
 
+--- On cell load
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnCellLoad", {pid, cellDescription})
@@ -635,6 +693,9 @@ eventHandler.OnCellLoad = function(pid, cellDescription)
     end
 end
 
+--- On cell unload
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnCellUnload = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnCellUnload", {pid, cellDescription})
@@ -645,6 +706,8 @@ eventHandler.OnCellUnload = function(pid, cellDescription)
     end
 end
 
+--- On cell deletion
+-- @string cellDescription
 eventHandler.OnCellDeletion = function(cellDescription)
     local eventStatus = customEventHooks.triggerValidators("OnCellDeletion", {cellDescription})
     if eventStatus.validDefaultHandler then
@@ -653,6 +716,9 @@ eventHandler.OnCellDeletion = function(cellDescription)
     customEventHooks.triggerHandlers("OnCellDeletion", eventStatus, {cellDescription})
 end
 
+--- On actor list
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnActorList = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -670,6 +736,9 @@ eventHandler.OnActorList = function(pid, cellDescription)
     end
 end
 
+--- On actor equipment
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnActorEquipment = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -687,6 +756,9 @@ eventHandler.OnActorEquipment = function(pid, cellDescription)
     end
 end
 
+--- On actor AI
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -712,6 +784,9 @@ eventHandler.OnActorAI = function(pid, cellDescription)
     end
 end
 
+--- On actor death
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnActorDeath = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -727,6 +802,9 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
     end
 end
 
+--- On actor cell change
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnActorCellChange = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -744,6 +822,9 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
     end
 end
 
+--- On object activate
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectActivate = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -830,6 +911,9 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
     end
 end
 
+--- On object place
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectPlace = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -892,6 +976,9 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
     end
 end
 
+--- On object spawn
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectSpawn = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -955,6 +1042,9 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
     end
 end
 
+--- On object delete
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectDelete = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1019,6 +1109,9 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
     end
 end
 
+--- On object lock
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnObjectLock = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1092,6 +1185,9 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
     end
 end
 
+--- On object trap
+-- @int pid player ID
+-- @string cellDescription
 eventHandler.OnObjectTrap = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1156,6 +1252,9 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
     end
 end
 
+--- On object scale
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectScale = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1221,6 +1320,9 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
     end
 end
 
+--- On object state
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnObjectState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1297,6 +1399,9 @@ eventHandler.OnObjectState = function(pid, cellDescription)
     end
 end
 
+--- On door state
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnDoorState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -1335,6 +1440,9 @@ eventHandler.OnDoorState = function(pid, cellDescription)
     end
 end
 
+--- On container
+-- @int pid player ID
+-- @string cellDescription cell name
 eventHandler.OnContainer = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1423,6 +1531,8 @@ eventHandler.OnContainer = function(pid, cellDescription)
     end
 end
 
+--- On video play
+-- @int pid player ID
 eventHandler.OnVideoPlay = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1459,6 +1569,8 @@ eventHandler.OnVideoPlay = function(pid)
     end
 end
 
+--- On record dynamic
+-- @int pid player ID
 eventHandler.OnRecordDynamic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         tes3mp.ReadReceivedWorldstate()
@@ -1606,6 +1718,8 @@ eventHandler.OnRecordDynamic = function(pid)
     end
 end
 
+--- On world kill count
+-- @int pid player ID
 eventHandler.OnWorldKillCount = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnWorldKillCount", {pid})
@@ -1620,6 +1734,8 @@ eventHandler.OnWorldKillCount = function(pid)
     end
 end
 
+--- On world map
+-- @int pid player ID
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid})
@@ -1638,6 +1754,8 @@ eventHandler.OnWorldMap = function(pid)
     end
 end
 
+--- On world weather
+-- @int pid player ID
 eventHandler.OnWorldWeather = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnWorldWeather", {pid})
@@ -1674,10 +1792,14 @@ eventHandler.OnWorldWeather = function(pid)
     end
 end
 
+--- On mpNum increment
+-- @int currentMpNum the current mp num (racknet packet count)
 eventHandler.OnMpNumIncrement = function(currentMpNum)
     WorldInstance:SetCurrentMpNum(currentMpNum)
 end
 
+--- On object loop time expiration
+-- @int loopIndex
 eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
     if ObjectLoops[loopIndex] ~= nil then
 

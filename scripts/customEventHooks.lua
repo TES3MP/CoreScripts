@@ -1,8 +1,16 @@
+--- Custom event hooks
+-- @module customEventHooks
 local customEventHooks = {}
 
+--- Validators
 customEventHooks.validators = {}
+--- Handlers
 customEventHooks.handlers = {}
 
+--- Make event status
+-- @param validDefaultHandler
+-- @param validCustomHandlers
+-- @return table = { boolean, boolean }
 function customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)
     return {
         validDefaultHandler = validDefaultHandler,
@@ -10,6 +18,10 @@ function customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandle
     }
 end
 
+--- Update event status
+-- @param oldStatus
+-- @param newStatus
+-- @return the updated event status
 function customEventHooks.updateEventStatus(oldStatus, newStatus)
     if newStatus == nil then
         return oldStatus
@@ -30,6 +42,9 @@ function customEventHooks.updateEventStatus(oldStatus, newStatus)
     return result
 end
 
+--- Register validator
+-- @param event
+-- @param callback
 function customEventHooks.registerValidator(event, callback)
     if customEventHooks.validators[event] == nil then
         customEventHooks.validators[event] = {}
@@ -37,6 +52,9 @@ function customEventHooks.registerValidator(event, callback)
     table.insert(customEventHooks.validators[event], callback)
 end
 
+--- Register handler
+-- @param event
+-- @param callback
 function customEventHooks.registerHandler(event, callback)
     if customEventHooks.handlers[event] == nil then
         customEventHooks.handlers[event] = {}
@@ -44,6 +62,10 @@ function customEventHooks.registerHandler(event, callback)
     table.insert(customEventHooks.handlers[event], callback)
 end
 
+--- Trigger validators
+-- @param event
+-- @param args
+-- @return event status
 function customEventHooks.triggerValidators(event, args)
     local eventStatus = customEventHooks.makeEventStatus(true, true)
     if customEventHooks.validators[event] ~= nil then
@@ -54,6 +76,10 @@ function customEventHooks.triggerValidators(event, args)
     return eventStatus
 end
 
+--- Trigger handlers
+-- @param event
+-- @param eventStatus
+-- @param args
 function customEventHooks.triggerHandlers(event, eventStatus, args)
     if customEventHooks.handlers[event] ~= nil then
         for _,callback in ipairs(customEventHooks.handlers[event]) do

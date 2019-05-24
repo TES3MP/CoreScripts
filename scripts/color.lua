@@ -1,3 +1,5 @@
+--- Defines color variables that can be used instead of HEX values
+-- @script color
 color = {}
 
 color.AliceBlue = "#F0F8FF"

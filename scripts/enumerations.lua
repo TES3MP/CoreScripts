@@ -1,5 +1,7 @@
+--- enumerations:
 -- This file is used to track and simplify dealing with all enumerations
 -- currently implemented in packets
+-- @script enumerations
 
 enumerations = {}
 enumerations.ai = { CANCEL = 0, ACTIVATE = 1, COMBAT = 2, ESCORT = 3, FOLLOW = 4, TRAVEL = 5, WANDER = 6 }
