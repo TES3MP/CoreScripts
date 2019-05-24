@@ -1,3 +1,5 @@
+--- player-json
+-- @classmod player-json
 require("config")
 fileHelper = require("fileHelper")
 tableHelper = require("tableHelper")
@@ -5,6 +7,9 @@ local BasePlayer = require("player.base")
 
 local Player = class("Player", BasePlayer)
 
+--- Init function
+-- @int pid
+-- @string playerName
 function Player:__init(pid, playerName)
     BasePlayer.__init(self, pid, playerName)
 
@@ -21,6 +26,7 @@ function Player:__init(pid, playerName)
     end
 end
 
+--- Create acount
 function Player:CreateAccount()
     self.hasAccount = jsonInterface.save("player/" .. self.accountFile, self.data)
 
@@ -33,6 +39,7 @@ function Player:CreateAccount()
     end
 end
 
+--- Save to drive
 function Player:SaveToDrive()
     if self.hasAccount then
         tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(self.pid))
@@ -40,12 +47,14 @@ function Player:SaveToDrive()
     end
 end
 
+--- Quick save to drive
 function Player:QuicksaveToDrive()
     if self.hasAccount then
         jsonInterface.quicksave("player/" .. self.accountFile, self.data)
     end
 end
 
+--- Load from drive
 function Player:LoadFromDrive()
     self.data = jsonInterface.load("player/" .. self.accountFile)
 
@@ -54,11 +63,12 @@ function Player:LoadFromDrive()
     tableHelper.fixNumericalKeys(self.data)
 end
 
--- Deprecated functions with confusing names, kept around for backwards compatibility
+--- Deprecated functions with confusing names, kept around for backwards compatibility
 function Player:Save()
     self:SaveToDrive()
 end
 
+--- Deprecated functions with confusing names, kept around for backwards compatibility
 function Player:Load()
     self:LoadFromDrive()
 end
