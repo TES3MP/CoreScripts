@@ -107,8 +107,11 @@ function jsonInterface.writeToFile(fileName, content)
     end
 end
 
--- Save data to JSON in a slower but human-readable way, with identation and a specific order
+--- Save data to JSON in a slower but human-readable way, with identation and a specific order
 -- to the keys, provided via dkjson
+-- @string fileName
+-- @param data
+-- @param keyOrderArray
 function jsonInterface.save(fileName, data, keyOrderArray)
 
     local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
@@ -118,6 +121,8 @@ end
 
 -- Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
 -- that need to be saved over and over
+-- @string fileName
+-- @param data to save
 function jsonInterface.quicksave(fileName, data)
 
     if cjsonExists then
