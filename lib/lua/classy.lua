@@ -1,4 +1,5 @@
--- class-based OO module for Lua
+--- class-based OO module for Lua <a target="_blank" href="https://github.com/siffiejoe/lua-classy">documentation</a>
+-- @module classy
 
 -- cache globals
 local assert = assert
