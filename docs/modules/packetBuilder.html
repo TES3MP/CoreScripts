@@ -1,0 +1,815 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><strong>packetBuilder</strong></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>packetBuilder</code></h1>
+<p>packet builder</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#AddPlayerInventoryItemChange">AddPlayerInventoryItemChange (pid, item)</a></td>
+	<td class="summary">packet player inventory item change</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectDelete">AddObjectDelete (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object delete</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectPlace">AddObjectPlace (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object place</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectSpawn">AddObjectSpawn (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object spawn</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectLock">AddObjectLock (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object lock</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectTrap">AddObjectTrap (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object trap</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectScale">AddObjectScale (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object scale</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddObjectState">AddObjectState (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet object state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddDoorState">AddDoorState (uniqueIndex, objectData)</a></td>
+	<td class="summary">packet door state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddAIActor">AddAIActor (actorUniqueIndex, targetPid, aiData)</a></td>
+	<td class="summary">packet add AI actor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddEffectToRecord">AddEffectToRecord (effect)</a></td>
+	<td class="summary">packet add effect to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddBodyPartToRecord">AddBodyPartToRecord (part)</a></td>
+	<td class="summary">packet add body part to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddInventoryItemToRecord">AddInventoryItemToRecord (item)</a></td>
+	<td class="summary">packet add inventory item to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddRecordByType">AddRecordByType (id, record, storeType)</a></td>
+	<td class="summary">packet add record by type</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddArmorRecord">AddArmorRecord (id, record)</a></td>
+	<td class="summary">packet add armor record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddBookRecord">AddBookRecord (id, record)</a></td>
+	<td class="summary">packet add book record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddClothingRecord">AddClothingRecord (id, record)</a></td>
+	<td class="summary">packet add clothing record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddCreatureRecord">AddCreatureRecord (id, record)</a></td>
+	<td class="summary">packet add creature record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddEnchantmentRecord">AddEnchantmentRecord (id, record)</a></td>
+	<td class="summary">packet add enchantment record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddMiscellaneousRecord">AddMiscellaneousRecord (id, record)</a></td>
+	<td class="summary">packet add miscellaneous record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddNpcRecord">AddNpcRecord (id, record)</a></td>
+	<td class="summary">packet add npc record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddPotionRecord">AddPotionRecord (id, record)</a></td>
+	<td class="summary">packet add potion record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddSpellRecord">AddSpellRecord (id, record)</a></td>
+	<td class="summary">packet add spell record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AddWeaponRecord">AddWeaponRecord (id, record)</a></td>
+	<td class="summary">packet add weapon record</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "AddPlayerInventoryItemChange"></a>
+    <strong>AddPlayerInventoryItemChange (pid, item)</strong>
+    </dt>
+    <dd>
+    packet player inventory item change
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">item</span>
+         table with item info
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectDelete"></a>
+    <strong>AddObjectDelete (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object delete
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectPlace"></a>
+    <strong>AddObjectPlace (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object place
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectSpawn"></a>
+    <strong>AddObjectSpawn (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object spawn
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectLock"></a>
+    <strong>AddObjectLock (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object lock
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectTrap"></a>
+    <strong>AddObjectTrap (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object trap
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectScale"></a>
+    <strong>AddObjectScale (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object scale
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddObjectState"></a>
+    <strong>AddObjectState (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet object state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddDoorState"></a>
+    <strong>AddDoorState (uniqueIndex, objectData)</strong>
+    </dt>
+    <dd>
+    packet door state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+         data of object
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddAIActor"></a>
+    <strong>AddAIActor (actorUniqueIndex, targetPid, aiData)</strong>
+    </dt>
+    <dd>
+    packet add AI actor
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">actorUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">targetPid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">aiData</span>
+         date about AI
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddEffectToRecord"></a>
+    <strong>AddEffectToRecord (effect)</strong>
+    </dt>
+    <dd>
+    packet add effect to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">effect</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddBodyPartToRecord"></a>
+    <strong>AddBodyPartToRecord (part)</strong>
+    </dt>
+    <dd>
+    packet add body part to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">part</span>
+         table with bodypart info
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddInventoryItemToRecord"></a>
+    <strong>AddInventoryItemToRecord (item)</strong>
+    </dt>
+    <dd>
+    packet add inventory item to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">item</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddRecordByType"></a>
+    <strong>AddRecordByType (id, record, storeType)</strong>
+    </dt>
+    <dd>
+    packet add record by type
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddArmorRecord"></a>
+    <strong>AddArmorRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add armor record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddBookRecord"></a>
+    <strong>AddBookRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add book record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddClothingRecord"></a>
+    <strong>AddClothingRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add clothing record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddCreatureRecord"></a>
+    <strong>AddCreatureRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add creature record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddEnchantmentRecord"></a>
+    <strong>AddEnchantmentRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add enchantment record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddMiscellaneousRecord"></a>
+    <strong>AddMiscellaneousRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add miscellaneous record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddNpcRecord"></a>
+    <strong>AddNpcRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add npc record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddPotionRecord"></a>
+    <strong>AddPotionRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add potion record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddSpellRecord"></a>
+    <strong>AddSpellRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add spell record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AddWeaponRecord"></a>
+    <strong>AddWeaponRecord (id, record)</strong>
+    </dt>
+    <dd>
+    packet add weapon record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">int</span></span>
+         ID
+        </li>
+        <li><span class="parameter">record</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><strong>customEventHooks</strong></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>customEventHooks</code></h1>
+<p>Custom event hooks</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#makeEventStatus">makeEventStatus (validDefaultHandler, validCustomHandlers)</a></td>
+	<td class="summary">Make event status</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#updateEventStatus">updateEventStatus (oldStatus, newStatus)</a></td>
+	<td class="summary">Update event status</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#registerValidator">registerValidator (event, callback)</a></td>
+	<td class="summary">Register validator</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#registerHandler">registerHandler (event, callback)</a></td>
+	<td class="summary">Register handler</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#triggerValidators">triggerValidators (event, args)</a></td>
+	<td class="summary">Trigger validators</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#triggerHandlers">triggerHandlers (event, eventStatus, args)</a></td>
+	<td class="summary">Trigger handlers</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#validators">validators</a></td>
+	<td class="summary">Validators</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#handlers">handlers</a></td>
+	<td class="summary">Handlers</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "makeEventStatus"></a>
+    <strong>makeEventStatus (validDefaultHandler, validCustomHandlers)</strong>
+    </dt>
+    <dd>
+    Make event status
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">validDefaultHandler</span>
+
+
+
+        </li>
+        <li><span class="parameter">validCustomHandlers</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table = { bool, bool }
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "updateEventStatus"></a>
+    <strong>updateEventStatus (oldStatus, newStatus)</strong>
+    </dt>
+    <dd>
+    Update event status
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">oldStatus</span>
+
+
+
+        </li>
+        <li><span class="parameter">newStatus</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the updated event status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "registerValidator"></a>
+    <strong>registerValidator (event, callback)</strong>
+    </dt>
+    <dd>
+    Register validator
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">event</span>
+
+
+
+        </li>
+        <li><span class="parameter">callback</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "registerHandler"></a>
+    <strong>registerHandler (event, callback)</strong>
+    </dt>
+    <dd>
+    Register handler
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">event</span>
+
+
+
+        </li>
+        <li><span class="parameter">callback</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "triggerValidators"></a>
+    <strong>triggerValidators (event, args)</strong>
+    </dt>
+    <dd>
+    Trigger validators
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">event</span>
+
+
+
+        </li>
+        <li><span class="parameter">args</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        event status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "triggerHandlers"></a>
+    <strong>triggerHandlers (event, eventStatus, args)</strong>
+    </dt>
+    <dd>
+    Trigger handlers
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">event</span>
+
+
+
+        </li>
+        <li><span class="parameter">eventStatus</span>
+
+
+
+        </li>
+        <li><span class="parameter">args</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "validators"></a>
+    <strong>validators</strong>
+    </dt>
+    <dd>
+    Validators
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "handlers"></a>
+    <strong>handlers</strong>
+    </dt>
+    <dd>
+    Handlers
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

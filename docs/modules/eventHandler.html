@@ -1,0 +1,1472 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><strong>eventHandler</strong></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>eventHandler</code></h1>
+<p>Event handler</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerConnect">OnPlayerConnect (pid, playerName)</a></td>
+	<td class="summary">On player connect</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerDisconnect">OnPlayerDisconnect (pid)</a></td>
+	<td class="summary">On player disconnect</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnGUIAction">OnGUIAction (pid, idGui, data)</a></td>
+	<td class="summary">On GUI action</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerSendMessage">OnPlayerSendMessage (pid, message)</a></td>
+	<td class="summary">On player send message</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerDeath">OnPlayerDeath (pid)</a></td>
+	<td class="summary">On player death</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnDeathTimeExpiration">OnDeathTimeExpiration (pid)</a></td>
+	<td class="summary">On death time expiration</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerAttribute">OnPlayerAttribute (pid)</a></td>
+	<td class="summary">On player attribute</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerSkill">OnPlayerSkill (pid)</a></td>
+	<td class="summary">On player skill</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerLevel">OnPlayerLevel (pid)</a></td>
+	<td class="summary">On player level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerShapeshift">OnPlayerShapeshift (pid)</a></td>
+	<td class="summary">On player shapeshift</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerCellChange">OnPlayerCellChange (pid)</a></td>
+	<td class="summary">On player cell change</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerEndCharGen">OnPlayerEndCharGen (pid)</a></td>
+	<td class="summary">On player end char gen</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerEquipment">OnPlayerEquipment (pid)</a></td>
+	<td class="summary">On player equipment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerInventory">OnPlayerInventory (pid)</a></td>
+	<td class="summary">On player inventory</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerSpellbook">OnPlayerSpellbook (pid)</a></td>
+	<td class="summary">On player spellbook</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerQuickKeys">OnPlayerQuickKeys (pid)</a></td>
+	<td class="summary">On player quick keys</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerJournal">OnPlayerJournal (pid)</a></td>
+	<td class="summary">On player journal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerFaction">OnPlayerFaction (pid)</a></td>
+	<td class="summary">On player faction</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerTopic">OnPlayerTopic (pid)</a></td>
+	<td class="summary">On player topic</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerBounty">OnPlayerBounty (pid)</a></td>
+	<td class="summary">On player bounty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerReputation">OnPlayerReputation (pid)</a></td>
+	<td class="summary">On player reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerBook">OnPlayerBook (pid)</a></td>
+	<td class="summary">On player book</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerItemUse">OnPlayerItemUse (pid)</a></td>
+	<td class="summary">On player item use</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnPlayerMiscellaneous">OnPlayerMiscellaneous (pid)</a></td>
+	<td class="summary">On player miscellaneous</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnCellLoad">OnCellLoad (pid, cellDescription)</a></td>
+	<td class="summary">On cell load</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnCellUnload">OnCellUnload (pid, cellDescription)</a></td>
+	<td class="summary">On cell unload</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnCellDeletion">OnCellDeletion (cellDescription)</a></td>
+	<td class="summary">On cell deletion</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnActorList">OnActorList (pid, cellDescription)</a></td>
+	<td class="summary">On actor list</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnActorEquipment">OnActorEquipment (pid, cellDescription)</a></td>
+	<td class="summary">On actor equipment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnActorAI">OnActorAI (pid, cellDescription)</a></td>
+	<td class="summary">On actor AI</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnActorDeath">OnActorDeath (pid, cellDescription)</a></td>
+	<td class="summary">On actor death</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnActorCellChange">OnActorCellChange (pid, cellDescription)</a></td>
+	<td class="summary">On actor cell change</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectActivate">OnObjectActivate (pid, cellDescription)</a></td>
+	<td class="summary">On object activate</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectPlace">OnObjectPlace (pid, cellDescription)</a></td>
+	<td class="summary">On object place</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectSpawn">OnObjectSpawn (pid, cellDescription)</a></td>
+	<td class="summary">On object spawn</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectDelete">OnObjectDelete (pid, cellDescription)</a></td>
+	<td class="summary">On object delete</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectLock">OnObjectLock (pid, cellDescription)</a></td>
+	<td class="summary">On object lock</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectTrap">OnObjectTrap (pid, cellDescription)</a></td>
+	<td class="summary">On object trap</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectScale">OnObjectScale (pid, cellDescription)</a></td>
+	<td class="summary">On object scale</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectState">OnObjectState (pid, cellDescription)</a></td>
+	<td class="summary">On object state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnDoorState">OnDoorState (pid, cellDescription)</a></td>
+	<td class="summary">On door state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnContainer">OnContainer (pid, cellDescription)</a></td>
+	<td class="summary">On container</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnVideoPlay">OnVideoPlay (pid)</a></td>
+	<td class="summary">On video play</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnRecordDynamic">OnRecordDynamic (pid)</a></td>
+	<td class="summary">On record dynamic</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnWorldKillCount">OnWorldKillCount (pid)</a></td>
+	<td class="summary">On world kill count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnWorldMap">OnWorldMap (pid)</a></td>
+	<td class="summary">On world map</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnWorldWeather">OnWorldWeather (pid)</a></td>
+	<td class="summary">On world weather</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnMpNumIncrement">OnMpNumIncrement (currentMpNum)</a></td>
+	<td class="summary">On mpNum increment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#OnObjectLoopTimeExpiration">OnObjectLoopTimeExpiration (loopIndex)</a></td>
+	<td class="summary">On object loop time expiration</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "OnPlayerConnect"></a>
+    <strong>OnPlayerConnect (pid, playerName)</strong>
+    </dt>
+    <dd>
+    On player connect
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">playerName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerDisconnect"></a>
+    <strong>OnPlayerDisconnect (pid)</strong>
+    </dt>
+    <dd>
+    On player disconnect
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnGUIAction"></a>
+    <strong>OnGUIAction (pid, idGui, data)</strong>
+    </dt>
+    <dd>
+    On GUI action
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">idGui</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">data</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerSendMessage"></a>
+    <strong>OnPlayerSendMessage (pid, message)</strong>
+    </dt>
+    <dd>
+    On player send message
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">message</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerDeath"></a>
+    <strong>OnPlayerDeath (pid)</strong>
+    </dt>
+    <dd>
+    On player death
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnDeathTimeExpiration"></a>
+    <strong>OnDeathTimeExpiration (pid)</strong>
+    </dt>
+    <dd>
+    On death time expiration
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerAttribute"></a>
+    <strong>OnPlayerAttribute (pid)</strong>
+    </dt>
+    <dd>
+    On player attribute
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerSkill"></a>
+    <strong>OnPlayerSkill (pid)</strong>
+    </dt>
+    <dd>
+    On player skill
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerLevel"></a>
+    <strong>OnPlayerLevel (pid)</strong>
+    </dt>
+    <dd>
+    On player level
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerShapeshift"></a>
+    <strong>OnPlayerShapeshift (pid)</strong>
+    </dt>
+    <dd>
+    On player shapeshift
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerCellChange"></a>
+    <strong>OnPlayerCellChange (pid)</strong>
+    </dt>
+    <dd>
+    On player cell change
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerEndCharGen"></a>
+    <strong>OnPlayerEndCharGen (pid)</strong>
+    </dt>
+    <dd>
+    On player end char gen
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerEquipment"></a>
+    <strong>OnPlayerEquipment (pid)</strong>
+    </dt>
+    <dd>
+    On player equipment
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerInventory"></a>
+    <strong>OnPlayerInventory (pid)</strong>
+    </dt>
+    <dd>
+    On player inventory
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerSpellbook"></a>
+    <strong>OnPlayerSpellbook (pid)</strong>
+    </dt>
+    <dd>
+    On player spellbook
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerQuickKeys"></a>
+    <strong>OnPlayerQuickKeys (pid)</strong>
+    </dt>
+    <dd>
+    On player quick keys
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerJournal"></a>
+    <strong>OnPlayerJournal (pid)</strong>
+    </dt>
+    <dd>
+    On player journal
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerFaction"></a>
+    <strong>OnPlayerFaction (pid)</strong>
+    </dt>
+    <dd>
+    On player faction
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerTopic"></a>
+    <strong>OnPlayerTopic (pid)</strong>
+    </dt>
+    <dd>
+    On player topic
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerBounty"></a>
+    <strong>OnPlayerBounty (pid)</strong>
+    </dt>
+    <dd>
+    On player bounty
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerReputation"></a>
+    <strong>OnPlayerReputation (pid)</strong>
+    </dt>
+    <dd>
+    On player reputation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerBook"></a>
+    <strong>OnPlayerBook (pid)</strong>
+    </dt>
+    <dd>
+    On player book
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerItemUse"></a>
+    <strong>OnPlayerItemUse (pid)</strong>
+    </dt>
+    <dd>
+    On player item use
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnPlayerMiscellaneous"></a>
+    <strong>OnPlayerMiscellaneous (pid)</strong>
+    </dt>
+    <dd>
+    On player miscellaneous
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnCellLoad"></a>
+    <strong>OnCellLoad (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On cell load
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnCellUnload"></a>
+    <strong>OnCellUnload (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On cell unload
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnCellDeletion"></a>
+    <strong>OnCellDeletion (cellDescription)</strong>
+    </dt>
+    <dd>
+    On cell deletion
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnActorList"></a>
+    <strong>OnActorList (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On actor list
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnActorEquipment"></a>
+    <strong>OnActorEquipment (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On actor equipment
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnActorAI"></a>
+    <strong>OnActorAI (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On actor AI
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnActorDeath"></a>
+    <strong>OnActorDeath (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On actor death
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnActorCellChange"></a>
+    <strong>OnActorCellChange (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On actor cell change
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectActivate"></a>
+    <strong>OnObjectActivate (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object activate
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectPlace"></a>
+    <strong>OnObjectPlace (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object place
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectSpawn"></a>
+    <strong>OnObjectSpawn (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object spawn
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectDelete"></a>
+    <strong>OnObjectDelete (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object delete
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectLock"></a>
+    <strong>OnObjectLock (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object lock
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectTrap"></a>
+    <strong>OnObjectTrap (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object trap
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectScale"></a>
+    <strong>OnObjectScale (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object scale
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectState"></a>
+    <strong>OnObjectState (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On object state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnDoorState"></a>
+    <strong>OnDoorState (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On door state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnContainer"></a>
+    <strong>OnContainer (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    On container
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         cell name
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnVideoPlay"></a>
+    <strong>OnVideoPlay (pid)</strong>
+    </dt>
+    <dd>
+    On video play
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnRecordDynamic"></a>
+    <strong>OnRecordDynamic (pid)</strong>
+    </dt>
+    <dd>
+    On record dynamic
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnWorldKillCount"></a>
+    <strong>OnWorldKillCount (pid)</strong>
+    </dt>
+    <dd>
+    On world kill count
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnWorldMap"></a>
+    <strong>OnWorldMap (pid)</strong>
+    </dt>
+    <dd>
+    On world map
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnWorldWeather"></a>
+    <strong>OnWorldWeather (pid)</strong>
+    </dt>
+    <dd>
+    On world weather
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnMpNumIncrement"></a>
+    <strong>OnMpNumIncrement (currentMpNum)</strong>
+    </dt>
+    <dd>
+    On mpNum increment
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">currentMpNum</span>
+            <span class="types"><span class="type">int</span></span>
+         the current mp num (racknet packet count)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "OnObjectLoopTimeExpiration"></a>
+    <strong>OnObjectLoopTimeExpiration (loopIndex)</strong>
+    </dt>
+    <dd>
+    On object loop time expiration
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">loopIndex</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

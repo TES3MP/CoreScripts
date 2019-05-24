@@ -1,0 +1,1627 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><strong>logicHandler</strong></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>logicHandler</code></h1>
+<p>Logic handler</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#InitializeWorld">InitializeWorld ()</a></td>
+	<td class="summary">initializes world</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckPlayerValidity">CheckPlayerValidity (pid, targetPid)</a></td>
+	<td class="summary">check player validity</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetChatName">GetChatName (pid)</a></td>
+	<td class="summary">Get the "Name (pid)" representation of a player used in chat</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetLowestPingPid">GetLowestPingPid (pidArray)</a></td>
+	<td class="summary">Iterate through a table of pids and find the player with the
+ lowest ping in it</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#IsNameAllowed">IsNameAllowed (inputName)</a></td>
+	<td class="summary">check if name is allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#IsPlayerNameLoggedIn">IsPlayerNameLoggedIn (newName)</a></td>
+	<td class="summary">Check if there is already a player with this name on the server</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#IsPlayerAllowedConsole">IsPlayerAllowedConsole (pid)</a></td>
+	<td class="summary">Check if player is allowed to use console</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetPlayerByName">GetPlayerByName (targetName)</a></td>
+	<td class="summary">Get the Player object of either an online player or an offline one</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BanPlayer">BanPlayer (pid, targetName)</a></td>
+	<td class="summary">Ban player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UnbanPlayer">UnbanPlayer (pid, targetName)</a></td>
+	<td class="summary">unban player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TeleportToPlayer">TeleportToPlayer (pid, originPid, targetPid)</a></td>
+	<td class="summary">Teleport to player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetConnectedPlayerCount">GetConnectedPlayerCount ()</a></td>
+	<td class="summary">get connected player count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetLoadedCellCount">GetLoadedCellCount ()</a></td>
+	<td class="summary">get loaded cell count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#PrintPlayerPosition">PrintPlayerPosition (pid, targetPid)</a></td>
+	<td class="summary">print player position</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#PushPlayerList">PushPlayerList (pls)</a></td>
+	<td class="summary">push player list</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#AuthCheck">AuthCheck (pid)</a></td>
+	<td class="summary">auth check</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DoesPacketOriginRequireLoadedCell">DoesPacketOriginRequireLoadedCell (packetOrigin)</a></td>
+	<td class="summary">does packet origin require loaded cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#IsPacketFromConsole">IsPacketFromConsole (packetOrigin)</a></td>
+	<td class="summary">Is packet from console?</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SendConfigCollisionOverrides">SendConfigCollisionOverrides (pid, forEveryone)</a></td>
+	<td class="summary">send config collision overrides</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CreateObjectAtLocation">CreateObjectAtLocation (cellDescription, location, refId, packetType)</a></td>
+	<td class="summary">create object at location</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CreateObjectAtPlayer">CreateObjectAtPlayer (pid, refId, packetType)</a></td>
+	<td class="summary">create object at player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteObject">DeleteObject (pid, objectCellDescription, objectUniqueIndex, forEveryone)</a></td>
+	<td class="summary">delete object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteObjectForPlayer">DeleteObjectForPlayer (pid, objectCellDescription, objectUniqueIndex)</a></td>
+	<td class="summary">delete opbject for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteObjectForEveryone">DeleteObjectForEveryone (objectCellDescription, objectUniqueIndex)</a></td>
+	<td class="summary">delete object for everyone</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ActivateObjectForPlayer">ActivateObjectForPlayer (pid, objectCellDescription, objectUniqueIndex)</a></td>
+	<td class="summary">activate objevt for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#RunConsoleCommandOnPlayer">RunConsoleCommandOnPlayer (pid, consoleCommand, forEveryone)</a></td>
+	<td class="summary">Run console command on player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#RunConsoleCommandOnObjects">RunConsoleCommandOnObjects (pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)</a></td>
+	<td class="summary">Run console command on objects</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#RunConsoleCommandOnObject">RunConsoleCommandOnObject (pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)</a></td>
+	<td class="summary">Run console command on object</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetRecordStoreByRecordId">GetRecordStoreByRecordId (recordId)</a></td>
+	<td class="summary">Get record store by record id</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ExchangeGeneratedRecords">ExchangeGeneratedRecords (pid, otherPidsArray)</a></td>
+	<td class="summary">Exchange generated records</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetCellContainingActor">GetCellContainingActor (actorUniqueIndex)</a></td>
+	<td class="summary">Get the cell that contains the actor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SetAIForActor">SetAIForActor (cell, actorUniqueIndex, action, targetPid, targetUniqueIndex, posX, posY, posZ, distance, duration, shouldRepeat)</a></td>
+	<td class="summary">Set AI for actor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#IsCellLoaded">IsCellLoaded (cellDescription)</a></td>
+	<td class="summary">Check if cell is loaded</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SetCellAuthority">SetCellAuthority (pid, cellDescription)</a></td>
+	<td class="summary">Set cell authority</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadRecordStore">LoadRecordStore (storeType)</a></td>
+	<td class="summary">Load record store</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadCell">LoadCell (cellDescription)</a></td>
+	<td class="summary">Load cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadCellForPlayer">LoadCellForPlayer (pid, cellDescription)</a></td>
+	<td class="summary">Load cell for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UnloadCell">UnloadCell (cellDescription)</a></td>
+	<td class="summary">Unload cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UnloadCellForPlayer">UnloadCellForPlayer (pid, cellDescription)</a></td>
+	<td class="summary">Unload cell for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadRegionForPlayer">LoadRegionForPlayer (pid, regionName, isTeleported)</a></td>
+	<td class="summary">Load region for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UnloadRegionForPlayer">UnloadRegionForPlayer (pid, regionName)</a></td>
+	<td class="summary">Unload region for player</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Players">Players</a></td>
+	<td class="summary">Players</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadedCells">LoadedCells</a></td>
+	<td class="summary">LoadedCells</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#RecordStores">RecordStores</a></td>
+	<td class="summary">RecordStores</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ObjectLoops">ObjectLoops</a></td>
+	<td class="summary">ObjectLoops</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Menus">Menus</a></td>
+	<td class="summary">Menus</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#WorldInstance">WorldInstance</a></td>
+	<td class="summary">WorldInstance</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "InitializeWorld"></a>
+    <strong>InitializeWorld ()</strong>
+    </dt>
+    <dd>
+    initializes world
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckPlayerValidity"></a>
+    <strong>CheckPlayerValidity (pid, targetPid)</strong>
+    </dt>
+    <dd>
+    check player validity
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">targetPid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetChatName"></a>
+    <strong>GetChatName (pid)</strong>
+    </dt>
+    <dd>
+    Get the "Name (pid)" representation of a player used in chat
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetLowestPingPid"></a>
+    <strong>GetLowestPingPid (pidArray)</strong>
+    </dt>
+    <dd>
+    Iterate through a table of pids and find the player with the
+ lowest ping in it
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pidArray</span>
+         player table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        lowest ping player ID
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "IsNameAllowed"></a>
+    <strong>IsNameAllowed (inputName)</strong>
+    </dt>
+    <dd>
+    check if name is allowed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "IsPlayerNameLoggedIn"></a>
+    <strong>IsPlayerNameLoggedIn (newName)</strong>
+    </dt>
+    <dd>
+    Check if there is already a player with this name on the server
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">newName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "IsPlayerAllowedConsole"></a>
+    <strong>IsPlayerAllowedConsole (pid)</strong>
+    </dt>
+    <dd>
+    Check if player is allowed to use console
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetPlayerByName"></a>
+    <strong>GetPlayerByName (targetName)</strong>
+    </dt>
+    <dd>
+    Get the Player object of either an online player or an offline one
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">targetName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        player table/object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BanPlayer"></a>
+    <strong>BanPlayer (pid, targetName)</strong>
+    </dt>
+    <dd>
+    Ban player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">targetName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UnbanPlayer"></a>
+    <strong>UnbanPlayer (pid, targetName)</strong>
+    </dt>
+    <dd>
+    unban player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">targetName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TeleportToPlayer"></a>
+    <strong>TeleportToPlayer (pid, originPid, targetPid)</strong>
+    </dt>
+    <dd>
+    Teleport to player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">originPid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">targetPid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetConnectedPlayerCount"></a>
+    <strong>GetConnectedPlayerCount ()</strong>
+    </dt>
+    <dd>
+    get connected player count
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int player count
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetLoadedCellCount"></a>
+    <strong>GetLoadedCellCount ()</strong>
+    </dt>
+    <dd>
+    get loaded cell count
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int loaded cells count
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "PrintPlayerPosition"></a>
+    <strong>PrintPlayerPosition (pid, targetPid)</strong>
+    </dt>
+    <dd>
+    print player position
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">targetPid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "PushPlayerList"></a>
+    <strong>PushPlayerList (pls)</strong>
+    </dt>
+    <dd>
+    push player list
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pls</span>
+         playerlist
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "AuthCheck"></a>
+    <strong>AuthCheck (pid)</strong>
+    </dt>
+    <dd>
+    auth check
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DoesPacketOriginRequireLoadedCell"></a>
+    <strong>DoesPacketOriginRequireLoadedCell (packetOrigin)</strong>
+    </dt>
+    <dd>
+    does packet origin require loaded cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">packetOrigin</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "IsPacketFromConsole"></a>
+    <strong>IsPacketFromConsole (packetOrigin)</strong>
+    </dt>
+    <dd>
+    Is packet from console?
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">packetOrigin</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SendConfigCollisionOverrides"></a>
+    <strong>SendConfigCollisionOverrides (pid, forEveryone)</strong>
+    </dt>
+    <dd>
+    send config collision overrides
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CreateObjectAtLocation"></a>
+    <strong>CreateObjectAtLocation (cellDescription, location, refId, packetType)</strong>
+    </dt>
+    <dd>
+    create object at location
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         name of cell
+        </li>
+        <li><span class="parameter">location</span>
+
+
+
+        </li>
+        <li><span class="parameter">refId</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">packetType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        unique index
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CreateObjectAtPlayer"></a>
+    <strong>CreateObjectAtPlayer (pid, refId, packetType)</strong>
+    </dt>
+    <dd>
+    create object at player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">refId</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">packetType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        uniqueIndex
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteObject"></a>
+    <strong>DeleteObject (pid, objectCellDescription, objectUniqueIndex, forEveryone)</strong>
+    </dt>
+    <dd>
+    delete object
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectCellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteObjectForPlayer"></a>
+    <strong>DeleteObjectForPlayer (pid, objectCellDescription, objectUniqueIndex)</strong>
+    </dt>
+    <dd>
+    delete opbject for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">objectCellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteObjectForEveryone"></a>
+    <strong>DeleteObjectForEveryone (objectCellDescription, objectUniqueIndex)</strong>
+    </dt>
+    <dd>
+    delete object for everyone
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">objectCellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ActivateObjectForPlayer"></a>
+    <strong>ActivateObjectForPlayer (pid, objectCellDescription, objectUniqueIndex)</strong>
+    </dt>
+    <dd>
+    activate objevt for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectCellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "RunConsoleCommandOnPlayer"></a>
+    <strong>RunConsoleCommandOnPlayer (pid, consoleCommand, forEveryone)</strong>
+    </dt>
+    <dd>
+    Run console command on player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">consoleCommand</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "RunConsoleCommandOnObjects"></a>
+    <strong>RunConsoleCommandOnObjects (pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)</strong>
+    </dt>
+    <dd>
+    Run console command on objects
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">consoleCommand</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndexes</span>
+         table
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "RunConsoleCommandOnObject"></a>
+    <strong>RunConsoleCommandOnObject (pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)</strong>
+    </dt>
+    <dd>
+    Run console command on object
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">consoleCommand</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">objectUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetRecordStoreByRecordId"></a>
+    <strong>GetRecordStoreByRecordId (recordId)</strong>
+    </dt>
+    <dd>
+    Get record store by record id
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        record or nil if invalid recordId
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ExchangeGeneratedRecords"></a>
+    <strong>ExchangeGeneratedRecords (pid, otherPidsArray)</strong>
+    </dt>
+    <dd>
+    Exchange generated records
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">otherPidsArray</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetCellContainingActor"></a>
+    <strong>GetCellContainingActor (actorUniqueIndex)</strong>
+    </dt>
+    <dd>
+    Get the cell that contains the actor
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">actorUniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         actor's uniqie index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table cell or nil if not found
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SetAIForActor"></a>
+    <strong>SetAIForActor (cell, actorUniqueIndex, action, targetPid, targetUniqueIndex, posX, posY, posZ, distance, duration, shouldRepeat)</strong>
+    </dt>
+    <dd>
+    Set AI for actor
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cell</span>
+
+
+
+        </li>
+        <li><span class="parameter">actorUniqueIndex</span>
+
+
+
+        </li>
+        <li><span class="parameter">action</span>
+
+
+
+        </li>
+        <li><span class="parameter">targetPid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">targetUniqueIndex</span>
+
+
+
+        </li>
+        <li><span class="parameter">posX</span>
+
+
+
+        </li>
+        <li><span class="parameter">posY</span>
+
+
+
+        </li>
+        <li><span class="parameter">posZ</span>
+
+
+
+        </li>
+        <li><span class="parameter">distance</span>
+
+
+
+        </li>
+        <li><span class="parameter">duration</span>
+
+
+
+        </li>
+        <li><span class="parameter">shouldRepeat</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "IsCellLoaded"></a>
+    <strong>IsCellLoaded (cellDescription)</strong>
+    </dt>
+    <dd>
+    Check if cell is loaded
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SetCellAuthority"></a>
+    <strong>SetCellAuthority (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    Set cell authority
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadRecordStore"></a>
+    <strong>LoadRecordStore (storeType)</strong>
+    </dt>
+    <dd>
+    Load record store
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadCell"></a>
+    <strong>LoadCell (cellDescription)</strong>
+    </dt>
+    <dd>
+    Load cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadCellForPlayer"></a>
+    <strong>LoadCellForPlayer (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    Load cell for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UnloadCell"></a>
+    <strong>UnloadCell (cellDescription)</strong>
+    </dt>
+    <dd>
+    Unload cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UnloadCellForPlayer"></a>
+    <strong>UnloadCellForPlayer (pid, cellDescription)</strong>
+    </dt>
+    <dd>
+    Unload cell for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadRegionForPlayer"></a>
+    <strong>LoadRegionForPlayer (pid, regionName, isTeleported)</strong>
+    </dt>
+    <dd>
+    Load region for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">isTeleported</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UnloadRegionForPlayer"></a>
+    <strong>UnloadRegionForPlayer (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Unload region for player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Players"></a>
+    <strong>Players</strong>
+    </dt>
+    <dd>
+    Players
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadedCells"></a>
+    <strong>LoadedCells</strong>
+    </dt>
+    <dd>
+    LoadedCells
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "RecordStores"></a>
+    <strong>RecordStores</strong>
+    </dt>
+    <dd>
+    RecordStores
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ObjectLoops"></a>
+    <strong>ObjectLoops</strong>
+    </dt>
+    <dd>
+    ObjectLoops
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Menus"></a>
+    <strong>Menus</strong>
+    </dt>
+    <dd>
+    Menus
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "WorldInstance"></a>
+    <strong>WorldInstance</strong>
+    </dt>
+    <dd>
+    WorldInstance
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

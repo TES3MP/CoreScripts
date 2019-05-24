@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><strong>player-sql</strong></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>player-sql</code></h1>
+<p>player-sql</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Player:__init">Player:__init (pid, playerName)</a></td>
+	<td class="summary">Init function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Player:CreateAccount">Player:CreateAccount ()</a></td>
+	<td class="summary">Create account</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Player:SaveToDrive">Player:SaveToDrive ()</a></td>
+	<td class="summary">Save to drive</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Player:LoadFromDrive">Player:LoadFromDrive ()</a></td>
+	<td class="summary">Load from drive</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Player:GetDatabaseId">Player:GetDatabaseId ()</a></td>
+	<td class="summary">Get database Id</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "Player:__init"></a>
+    <strong>Player:__init (pid, playerName)</strong>
+    </dt>
+    <dd>
+    Init function
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">playerName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Player:CreateAccount"></a>
+    <strong>Player:CreateAccount ()</strong>
+    </dt>
+    <dd>
+    Create account
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Player:SaveToDrive"></a>
+    <strong>Player:SaveToDrive ()</strong>
+    </dt>
+    <dd>
+    Save to drive
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Player:LoadFromDrive"></a>
+    <strong>Player:LoadFromDrive ()</strong>
+    </dt>
+    <dd>
+    Load from drive
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Player:GetDatabaseId"></a>
+    <strong>Player:GetDatabaseId ()</strong>
+    </dt>
+    <dd>
+    Get database Id
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int database player ID
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

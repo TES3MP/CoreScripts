@@ -1,3 +1,5 @@
+--- default crafting
+-- @module examples
 Menus["default crafting origin"] = {
     text = color.Orange .. "What would you like to craft?\n" ..
             color.Yellow .. "White pillow" .. color.White .. " - 1 per 2 folded cloth\n" ..

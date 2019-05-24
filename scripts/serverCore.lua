@@ -599,7 +599,6 @@ function OnCellUnload(pid, cellDescription)
 end
 
 --- On cell deletion
--- @int pid player ID
 -- @string cellDescription
 function OnCellDeletion(cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnCellDeletion\" for cell " .. cellDescription)
@@ -743,7 +742,6 @@ end
 
 --- On video play
 -- @int pid player ID
--- @string cellDescription
 function OnVideoPlay(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnVideoPlay\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnVideoPlay(pid)
@@ -751,7 +749,6 @@ end
 
 --- On record dynamic
 -- @int pid player ID
--- @string cellDescription
 function OnRecordDynamic(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnRecordDynamic\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnRecordDynamic(pid)
@@ -759,7 +756,6 @@ end
 
 --- Onworld killcount
 -- @int pid player ID
--- @string cellDescription
 function OnWorldKillCount(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldKillCount\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldKillCount(pid)
@@ -767,7 +763,6 @@ end
 
 --- On world map
 -- @int pid player ID
--- @string cellDescription
 function OnWorldMap(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldMap\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldMap(pid)
@@ -775,7 +770,6 @@ end
 
 --- On world weather
 -- @int pid player ID
--- @string cellDescription
 function OnWorldWeather(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldWeather\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldWeather(pid)
@@ -783,15 +777,15 @@ end
 
 --- On GUI action
 -- @int pid player ID
--- @string cellDescription
+-- @int idGui
+-- @param data
 function OnGUIAction(pid, idGui, data)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnGUIAction\" for " .. logicHandler.GetChatName(pid))
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called
 end
 
 --- On MpNum increment
--- @int pid player ID
--- @string cellDescription
+-- @string currentMpNum
 function OnMpNumIncrement(currentMpNum)
     eventHandler.OnMpNumIncrement(currentMpNum)
 end

@@ -110,7 +110,7 @@ end
 --- Play animation
 -- @int pid
 -- @string animAlias
--- @return boolean of sucess status
+-- @return bool of sucess status
 function animHelper.PlayAnimation(pid, animAlias)
 
     local defaultAnim = animHelper.GetAnimation(pid, animAlias)

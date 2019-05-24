@@ -1,0 +1,621 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><strong>database</strong></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>database</code></h1>
+<p>This is a very unfinished and out-of-date example of using a database in TES3MP</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Database:LoadDriver">Database:LoadDriver (driver)</a></td>
+	<td class="summary">Load driver</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:Connect">Database:Connect (databasePath)</a></td>
+	<td class="summary">Connect</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:Execute">Database:Execute (query)</a></td>
+	<td class="summary">Execute</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:Escape">Database:Escape (string)</a></td>
+	<td class="summary">Escape</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:CreateTable">Database:CreateTable (tableName, columnArray)</a></td>
+	<td class="summary">Create a table if it does not already exist</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:DeleteRows">Database:DeleteRows (tableName, condition)</a></td>
+	<td class="summary">Delete rows</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:InsertRow">Database:InsertRow (tableName, valueTable)</a></td>
+	<td class="summary">Insert a row into a table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:SelectRow">Database:SelectRow (tableName, condition)</a></td>
+	<td class="summary">Select row</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:SelectRows">Database:SelectRows (tableName, condition)</a></td>
+	<td class="summary">Select rows</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:GetSingleValue">Database:GetSingleValue (tableName, column, condition)</a></td>
+	<td class="summary">Get single value</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:SavePlayer">Database:SavePlayer (dbPid, data)</a></td>
+	<td class="summary">Save player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:LoadPlayer">Database:LoadPlayer (dbPid, data)</a></td>
+	<td class="summary">Load player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:SaveWorld">Database:SaveWorld (data)</a></td>
+	<td class="summary">Save world</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:LoadWorld">Database:LoadWorld (data)</a></td>
+	<td class="summary">Load world</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:CreateCellTables">Database:CreateCellTables ()</a></td>
+	<td class="summary">Create cell tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:CreateWorldTables">Database:CreateWorldTables ()</a></td>
+	<td class="summary">Create world tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Database:CreatePlayerTables">Database:CreatePlayerTables ()</a></td>
+	<td class="summary">Create player tables</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "Database:LoadDriver"></a>
+    <strong>Database:LoadDriver (driver)</strong>
+    </dt>
+    <dd>
+    Load driver
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">driver</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:Connect"></a>
+    <strong>Database:Connect (databasePath)</strong>
+    </dt>
+    <dd>
+    Connect
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">databasePath</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:Execute"></a>
+    <strong>Database:Execute (query)</strong>
+    </dt>
+    <dd>
+    Execute
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">query</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        response
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:Escape"></a>
+    <strong>Database:Escape (string)</strong>
+    </dt>
+    <dd>
+    Escape
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">string</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string escaped
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:CreateTable"></a>
+    <strong>Database:CreateTable (tableName, columnArray)</strong>
+    </dt>
+    <dd>
+    Create a table if it does not already exist
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+         The name of the table. [string]
+        </li>
+        <li><span class="parameter">columnArray</span>
+         An array (to keep column ordering) of key/value pairs. [table]
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:DeleteRows"></a>
+    <strong>Database:DeleteRows (tableName, condition)</strong>
+    </dt>
+    <dd>
+    Delete rows
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+
+
+
+        </li>
+        <li><span class="parameter">condition</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:InsertRow"></a>
+    <strong>Database:InsertRow (tableName, valueTable)</strong>
+    </dt>
+    <dd>
+    Insert a row into a table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+         The name of the table. [string]
+        </li>
+        <li><span class="parameter">valueTable</span>
+         A key/value table where the keys are the names of columns. [table]
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:SelectRow"></a>
+    <strong>Database:SelectRow (tableName, condition)</strong>
+    </dt>
+    <dd>
+    Select row
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+
+
+
+        </li>
+        <li><span class="parameter">condition</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        row
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:SelectRows"></a>
+    <strong>Database:SelectRows (tableName, condition)</strong>
+    </dt>
+    <dd>
+    Select rows
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+
+
+
+        </li>
+        <li><span class="parameter">condition</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        rows
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:GetSingleValue"></a>
+    <strong>Database:GetSingleValue (tableName, column, condition)</strong>
+    </dt>
+    <dd>
+    Get single value
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tableName</span>
+
+
+
+        </li>
+        <li><span class="parameter">column</span>
+
+
+
+        </li>
+        <li><span class="parameter">condition</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        row[column] or nil
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:SavePlayer"></a>
+    <strong>Database:SavePlayer (dbPid, data)</strong>
+    </dt>
+    <dd>
+    Save player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dbPid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">data</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:LoadPlayer"></a>
+    <strong>Database:LoadPlayer (dbPid, data)</strong>
+    </dt>
+    <dd>
+    Load player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">dbPid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">data</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        player data
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:SaveWorld"></a>
+    <strong>Database:SaveWorld (data)</strong>
+    </dt>
+    <dd>
+    Save world
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:LoadWorld"></a>
+    <strong>Database:LoadWorld (data)</strong>
+    </dt>
+    <dd>
+    Load world
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        data
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:CreateCellTables"></a>
+    <strong>Database:CreateCellTables ()</strong>
+    </dt>
+    <dd>
+    Create cell tables
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:CreateWorldTables"></a>
+    <strong>Database:CreateWorldTables ()</strong>
+    </dt>
+    <dd>
+    Create world tables
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Database:CreatePlayerTables"></a>
+    <strong>Database:CreatePlayerTables ()</strong>
+    </dt>
+    <dd>
+    Create player tables
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

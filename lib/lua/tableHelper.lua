@@ -131,7 +131,6 @@ end
 -- @int startIndex
 -- @string delimiter
 -- @return string of concated table values from inputTable delimted by delimiter
--- @see tableHelper.concatenateArrayValues()
 function tableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
 
     return tableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
@@ -529,8 +528,8 @@ end
 
 --- Copy a table's top level values and direct children to another table
 -- Based on <a href="http://lua-users.org/wiki/CopyTable">this</a>
--- @param inputTable table
--- @return shallow copy of inputTable
+-- @param inputValue table
+-- @return shallow copy of inputValue
 function tableHelper.shallowCopy(inputValue)
 
     local inputType = type(inputValue)
@@ -542,7 +541,7 @@ function tableHelper.shallowCopy(inputValue)
         for innerKey, innerValue in pairs(inputValue) do
             newValue[innerKey] = innerValue
         end
-    else -- number, string, boolean, etc
+    else -- number, string, bool, etc
         newValue = inputValue
     end
 

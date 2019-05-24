@@ -281,7 +281,7 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
     end
     buflen = buflen + 1
     buffer[buflen] = s
-  elseif valtype == 'boolean' then
+  elseif valtype == 'bool' then
     buflen = buflen + 1
     buffer[buflen] = value and "true" or "false"
   elseif valtype == 'string' then

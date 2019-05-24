@@ -23,7 +23,7 @@ function BaseRecordStore:__init(storeType)
 end
 
 --- Has entry
--- @return boolean of success status
+-- @return bool of success status
 function BaseRecordStore:HasEntry()
     return self.hasEntry
 end
@@ -114,7 +114,7 @@ end
 
 --- Check whether there are any links remaining to a certain generated record
 -- @string recordId
--- @return boolean of success status
+-- @return bool of success status
 function BaseRecordStore:HasLinks(recordId)
 
     local recordLinks = self.data.recordLinks
@@ -258,7 +258,7 @@ end
 -- @int pid
 -- @param recordList
 -- @param idArray
--- @boolean forEveryone
+-- @bool forEveryone
 function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
@@ -309,7 +309,7 @@ end
 -- @int pid
 -- @param recordList
 -- @param idArray
--- @boolean forEveryone
+-- @bool forEveryone
 function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end

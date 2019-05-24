@@ -1,0 +1,1204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><strong>menuHelper</strong></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>menuHelper</code></h1>
+<p>menu helper</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requireItem">menuHelper.conditions.requireItem (inputRefIds, inputCount)</a></td>
+	<td class="summary">require item</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requireAttribute">menuHelper.conditions.requireAttribute (inputName, inputValue)</a></td>
+	<td class="summary">require Attribute</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requireSkill">menuHelper.conditions.requireSkill (inputName, inputValue)</a></td>
+	<td class="summary">require skill</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requireStaffRank">menuHelper.conditions.requireStaffRank (inputValue)</a></td>
+	<td class="summary">require staff rank</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requirePlayerFunction">menuHelper.conditions.requirePlayerFunction (inputFunctionName, inputArguments)</a></td>
+	<td class="summary">require player function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.conditions.requireAdminRank">menuHelper.conditions.requireAdminRank (inputValue)</a></td>
+	<td class="summary">Deprecated</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.giveItem">menuHelper.effects.giveItem (inputRefId, inputCount)</a></td>
+	<td class="summary">give item</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.removeItem">menuHelper.effects.removeItem (inputRefIds, inputCount)</a></td>
+	<td class="summary">remove item</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.setPlayerDataVariable">menuHelper.effects.setPlayerDataVariable (inputVariable, inputValue)</a></td>
+	<td class="summary">set player data variable</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.runPlayerFunction">menuHelper.effects.runPlayerFunction (inputFunctionName, inputArguments)</a></td>
+	<td class="summary">run player function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.runGlobalFunction">menuHelper.effects.runGlobalFunction (inputObjectName, inputFunctionName, inputArguments)</a></td>
+	<td class="summary">run global function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.setDataVariable">menuHelper.effects.setDataVariable (inputVariable, inputValue)</a></td>
+	<td class="summary">Deprecated</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.effects.runFunction">menuHelper.effects.runFunction (inputFunctionName, inputArguments)</a></td>
+	<td class="summary">Deprecated</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.destinations.setDefault">menuHelper.destinations.setDefault (inputMenu, inputEffects)</a></td>
+	<td class="summary">set default</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.destinations.setFromCustomVariable">menuHelper.destinations.setFromCustomVariable (inputVariable)</a></td>
+	<td class="summary">set from custom variable</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.destinations.setConditional">menuHelper.destinations.setConditional (inputMenu, inputConditions, inputEffects)</a></td>
+	<td class="summary">set conditional</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.currentPid">menuHelper.variables.currentPid ()</a></td>
+	<td class="summary">current player ID</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.currentChatName">menuHelper.variables.currentChatName ()</a></td>
+	<td class="summary">current chat name</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.currentPlayerVariable">menuHelper.variables.currentPlayerVariable (inputVariableName)</a></td>
+	<td class="summary">current player variable</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.currentPlayerDataVariable">menuHelper.variables.currentPlayerDataVariable (inputVariableName)</a></td>
+	<td class="summary">Deprecated</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.globalVariable">menuHelper.variables.globalVariable (inputObjectName, inputVariableName)</a></td>
+	<td class="summary">global variables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelper.variables.concatenation">menuHelper.variables.concatenation (inputDelimiter, ...)</a></td>
+	<td class="summary">concatenation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckCondition">CheckCondition (pid, condition)</a></td>
+	<td class="summary">Check condition</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckConditionTable">CheckConditionTable (pid, conditions)</a></td>
+	<td class="summary">check condition table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ProcessVariables">ProcessVariables (pid, inputTable)</a></td>
+	<td class="summary">Process variables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ProcessEffects">ProcessEffects (pid, effects)</a></td>
+	<td class="summary">Process effects</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetButtonDestination">GetButtonDestination (pid, buttonPressed)</a></td>
+	<td class="summary">Get button destination</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetDisplayedButtons">GetDisplayedButtons (pid, menuIndex)</a></td>
+	<td class="summary">Get displayed buttons</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DisplayMenu">DisplayMenu (pid, menuIndex)</a></td>
+	<td class="summary">display menu</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#conditions">conditions</a></td>
+	<td class="summary">Conditions</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#effects">effects</a></td>
+	<td class="summary">Effects</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#destinations">destinations</a></td>
+	<td class="summary">Destinations</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#variables">variables</a></td>
+	<td class="summary">Variables</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "menuHelper.conditions.requireItem"></a>
+    <strong>menuHelper.conditions.requireItem (inputRefIds, inputCount)</strong>
+    </dt>
+    <dd>
+    require item
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputRefIds</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputCount</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        condition table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.conditions.requireAttribute"></a>
+    <strong>menuHelper.conditions.requireAttribute (inputName, inputValue)</strong>
+    </dt>
+    <dd>
+    require Attribute
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        condition table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.conditions.requireSkill"></a>
+    <strong>menuHelper.conditions.requireSkill (inputName, inputValue)</strong>
+    </dt>
+    <dd>
+    require skill
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        condition table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.conditions.requireStaffRank"></a>
+    <strong>menuHelper.conditions.requireStaffRank (inputValue)</strong>
+    </dt>
+    <dd>
+    require staff rank
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         return condition table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.conditions.requirePlayerFunction"></a>
+    <strong>menuHelper.conditions.requirePlayerFunction (inputFunctionName, inputArguments)</strong>
+    </dt>
+    <dd>
+    require player function
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputFunctionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputArguments</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        condition table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.conditions.requireAdminRank"></a>
+    <strong>menuHelper.conditions.requireAdminRank (inputValue)</strong>
+    </dt>
+    <dd>
+    Deprecated
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.giveItem"></a>
+    <strong>menuHelper.effects.giveItem (inputRefId, inputCount)</strong>
+    </dt>
+    <dd>
+    give item
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputRefId</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputCount</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.removeItem"></a>
+    <strong>menuHelper.effects.removeItem (inputRefIds, inputCount)</strong>
+    </dt>
+    <dd>
+    remove item
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputRefIds</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputCount</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.setPlayerDataVariable"></a>
+    <strong>menuHelper.effects.setPlayerDataVariable (inputVariable, inputValue)</strong>
+    </dt>
+    <dd>
+    set player data variable
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputVariable</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.runPlayerFunction"></a>
+    <strong>menuHelper.effects.runPlayerFunction (inputFunctionName, inputArguments)</strong>
+    </dt>
+    <dd>
+    run player function
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputFunctionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputArguments</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.runGlobalFunction"></a>
+    <strong>menuHelper.effects.runGlobalFunction (inputObjectName, inputFunctionName, inputArguments)</strong>
+    </dt>
+    <dd>
+    run global function
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputObjectName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputFunctionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputArguments</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.setDataVariable"></a>
+    <strong>menuHelper.effects.setDataVariable (inputVariable, inputValue)</strong>
+    </dt>
+    <dd>
+    Deprecated
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputVariable</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.effects.runFunction"></a>
+    <strong>menuHelper.effects.runFunction (inputFunctionName, inputArguments)</strong>
+    </dt>
+    <dd>
+    Deprecated
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputFunctionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputArguments</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        effect
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.destinations.setDefault"></a>
+    <strong>menuHelper.destinations.setDefault (inputMenu, inputEffects)</strong>
+    </dt>
+    <dd>
+    set default
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputMenu</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputEffects</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        destination table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.destinations.setFromCustomVariable"></a>
+    <strong>menuHelper.destinations.setFromCustomVariable (inputVariable)</strong>
+    </dt>
+    <dd>
+    set from custom variable
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputVariable</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        destination string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.destinations.setConditional"></a>
+    <strong>menuHelper.destinations.setConditional (inputMenu, inputConditions, inputEffects)</strong>
+    </dt>
+    <dd>
+    set conditional
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputMenu</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputConditions</span>
+
+
+
+        </li>
+        <li><span class="parameter">inputEffects</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.currentPid"></a>
+    <strong>menuHelper.variables.currentPid ()</strong>
+    </dt>
+    <dd>
+    current player ID
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        variable table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.currentChatName"></a>
+    <strong>menuHelper.variables.currentChatName ()</strong>
+    </dt>
+    <dd>
+    current chat name
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        variable table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.currentPlayerVariable"></a>
+    <strong>menuHelper.variables.currentPlayerVariable (inputVariableName)</strong>
+    </dt>
+    <dd>
+    current player variable
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputVariableName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        variable table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.currentPlayerDataVariable"></a>
+    <strong>menuHelper.variables.currentPlayerDataVariable (inputVariableName)</strong>
+    </dt>
+    <dd>
+    Deprecated
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputVariableName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        variable
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.globalVariable"></a>
+    <strong>menuHelper.variables.globalVariable (inputObjectName, inputVariableName)</strong>
+    </dt>
+    <dd>
+    global variables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputObjectName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">inputVariableName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        variable table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelper.variables.concatenation"></a>
+    <strong>menuHelper.variables.concatenation (inputDelimiter, ...)</strong>
+    </dt>
+    <dd>
+    concatenation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputDelimiter</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">...</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        contatenated table of strings
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckCondition"></a>
+    <strong>CheckCondition (pid, condition)</strong>
+    </dt>
+    <dd>
+    Check condition
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">condition</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of succes status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckConditionTable"></a>
+    <strong>CheckConditionTable (pid, conditions)</strong>
+    </dt>
+    <dd>
+    check condition table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">conditions</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ProcessVariables"></a>
+    <strong>ProcessVariables (pid, inputTable)</strong>
+    </dt>
+    <dd>
+    Process variables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ProcessEffects"></a>
+    <strong>ProcessEffects (pid, effects)</strong>
+    </dt>
+    <dd>
+    Process effects
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">effects</span>
+         table
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetButtonDestination"></a>
+    <strong>GetButtonDestination (pid, buttonPressed)</strong>
+    </dt>
+    <dd>
+    Get button destination
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">buttonPressed</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        destination table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetDisplayedButtons"></a>
+    <strong>GetDisplayedButtons (pid, menuIndex)</strong>
+    </dt>
+    <dd>
+    Get displayed buttons
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">menuIndex</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table of displayed buttons
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DisplayMenu"></a>
+    <strong>DisplayMenu (pid, menuIndex)</strong>
+    </dt>
+    <dd>
+    display menu
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">menuIndex</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "conditions"></a>
+    <strong>conditions</strong>
+    </dt>
+    <dd>
+    Conditions
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "effects"></a>
+    <strong>effects</strong>
+    </dt>
+    <dd>
+    Effects
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "destinations"></a>
+    <strong>destinations</strong>
+    </dt>
+    <dd>
+    Destinations
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "variables"></a>
+    <strong>variables</strong>
+    </dt>
+    <dd>
+    Variables
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

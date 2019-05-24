@@ -10,7 +10,7 @@ customEventHooks.handlers = {}
 --- Make event status
 -- @param validDefaultHandler
 -- @param validCustomHandlers
--- @return table = { boolean, boolean }
+-- @return table = { bool, bool }
 function customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)
     return {
         validDefaultHandler = validDefaultHandler,

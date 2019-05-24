@@ -337,31 +337,31 @@ function BasePlayer:EndCharGen()
 end
 
 --- check if player is logged in
--- @return boolean of success status
+-- @return bool of success status
 function BasePlayer:IsLoggedIn()
     return self.loggedIn
 end
 
 --- check if player is staff
--- @return boolean of success status
+-- @return bool of success status
 function BasePlayer:IsServerStaff()
     return self.data.settings.staffRank > 0
 end
 
 --- check if player is server owner
--- @return boolean of success status
+-- @return bool of success status
 function BasePlayer:IsServerOwner()
     return self.data.settings.staffRank == 3
 end
 
 --- check if player is admin
--- @return boolean of success status
+-- @return bool of success status
 function BasePlayer:IsAdmin()
     return self.data.settings.staffRank >= 2
 end
 
 --- check if player is moderator
--- @return boolean of success status
+-- @return bool of success status
 function BasePlayer:IsModerator()
     return self.data.settings.staffRank >= 1
 end
@@ -417,28 +417,28 @@ function BasePlayer:RemoveLinkToRecord(storeType, recordId)
 end
 
 --- Get current health
--- @return double healthCurrent
+-- @return int healthCurrent
 function BasePlayer:GetHealthCurrent()
     self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
     return self.data.stats.healthCurrent
 end
 
 --- Get current health
--- @double health
+-- @int health
 function BasePlayer:SetHealthCurrent(health)
     self.data.stats.healthCurrent = health
     tes3mp.SetHealthCurrent(self.pid, health)
 end
 
 --- Get health base
--- @return double healthBase
+-- @return int healthBase
 function BasePlayer:GetHealthBase()
     self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
     return self.data.stats.healthBase
 end
 
 --- Set health base
--- @double healthBase
+-- @int health
 function BasePlayer:SetHealthBase(health)
     self.data.stats.healthBase = health
     tes3mp.SetHealthBase(self.pid, health)
@@ -1612,7 +1612,7 @@ function BasePlayer:SetScale(scale)
 end
 
 --- Set confiscation state
--- @boolean state
+-- @bool state
 function BasePlayer:SetConfiscationState(state)
 
     self.data.customVariables.isConfiscationTarget = state

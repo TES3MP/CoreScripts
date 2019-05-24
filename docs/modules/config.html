@@ -1,0 +1,2866 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><strong>config</strong></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>config</code></h1>
+<p>Configure server, not all values can be shown in LDOC I implore you to open the file instead</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#defaultTimeTable">defaultTimeTable</a></td>
+	<td class="summary">The world time used for a newly created world</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bannedEquipmentItems">bannedEquipmentItems</a></td>
+	<td class="summary">The refIds of items that players are not allowed to equip for balancing reasons</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rankColors">rankColors</a></td>
+	<td class="summary">The colors used for different ranks on the server</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#customMenuIds">customMenuIds</a></td>
+	<td class="summary">Which numerical IDs should be used by custom menus implemented in the Lua scripts,
+ to prevent other menu inputs from being taken into account for them</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menuHelperFiles">menuHelperFiles</a></td>
+	<td class="summary">The menu files that should be loaded for menuHelper, from the scripts/menu subfolder</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enforcedCollisionRefIds">enforcedCollisionRefIds</a></td>
+	<td class="summary">Enforce collision for certain placed object refIds even when enablePlacedObjectCollision
+ is false</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedDeleteRefIds">disallowedDeleteRefIds</a></td>
+	<td class="summary">Prevent certain object refIds from being deleted as a result of player-sent packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedCreateRefIds">disallowedCreateRefIds</a></td>
+	<td class="summary">Prevent certain object refIds from being placed or spawned as a result of player-sent packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedLockRefIds">disallowedLockRefIds</a></td>
+	<td class="summary">Prevent certain object refIds from being locked or unlocked as a result of player-sent packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedTrapRefIds">disallowedTrapRefIds</a></td>
+	<td class="summary">Prevent certain object refIds from being trapped or untrapped as a result of player-sent packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedStateRefIds">disallowedStateRefIds</a></td>
+	<td class="summary">Prevent certain object refIds from being enabled or disabled as a result of player-sent packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recordStoreLoadOrder">recordStoreLoadOrder</a></td>
+	<td class="summary">The types of record stores used on this server in the order in which they should be loaded for
+ players, with the correct order ensuring that enchantments are loaded before items that might be
+ using those enchantments or ensuring that NPCs are loaded after the items they might have in their
+ inventories</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enchantableRecordTypes">enchantableRecordTypes</a></td>
+	<td class="summary">The types of records that can be enchanted and therefore have links to enchantment records</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#carriableRecordTypes">carriableRecordTypes</a></td>
+	<td class="summary">The types of records that can be stored by players and therefore have links to players,
+ listed in the order in which they should be loaded</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#validRecordSettings">validRecordSettings</a></td>
+	<td class="summary">The settings which are accepted as input for different record types when using /storerecord</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#requiredRecordSettings">requiredRecordSettings</a></td>
+	<td class="summary">The settings which need to be provided when creating a new record that isn't based at all
+ on an existing one, i.e.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#numericalRecordSettings">numericalRecordSettings</a></td>
+	<td class="summary">The record type settings whose input should be converted to numerical values when using /storerecord</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#boolRecordSettings">boolRecordSettings</a></td>
+	<td class="summary">The record type settings whose input should be converted to bools when using /storerecord</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#minMaxRecordSettings">minMaxRecordSettings</a></td>
+	<td class="summary">The record type settings whose input should be converted to tables with a min and a max numerical value</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cellPacketTypes">cellPacketTypes</a></td>
+	<td class="summary">The types of object and actor packets stored in cell data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disallowedNameStrings">disallowedNameStrings</a></td>
+	<td class="summary">Disallow players from including the following in their own names or the names of their custom items
+ Note: Unfortunately, these are based on real names that trolls have been using on servers</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#playerKeyOrder">playerKeyOrder</a></td>
+	<td class="summary">The order in which table keys should be saved to player JSON files</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cellKeyOrder">cellKeyOrder</a></td>
+	<td class="summary">The order in which table keys should be saved to cell JSON files</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#recordstoreKeyOrder">recordstoreKeyOrder</a></td>
+	<td class="summary">The order in which table keys should be saved to recordstore JSON files</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#worldKeyOrder">worldKeyOrder</a></td>
+	<td class="summary">The order in which table keys should be saved to world JSON files</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#gameMode">gameMode</a></td>
+	<td class="summary">The game mode displayed for this server in the server browser</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#loginTime">loginTime</a></td>
+	<td class="summary">Time to login, in seconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#difficulty">difficulty</a></td>
+	<td class="summary">
+<p>The difficulty level used by default
+ Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,</p>
+<pre><code>   though you can use any integer value here
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#chatWindowInstructions">chatWindowInstructions</a></td>
+	<td class="summary">The chat window instructions that show up when players join the server</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#passTimeWhenEmpty">passTimeWhenEmpty</a></td>
+	<td class="summary">Whether the world time should continue passing when there are no players on the server</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#nightStartHour">nightStartHour</a></td>
+	<td class="summary">The hours at which night is regarded as starting and ending, used to pass time differently
+ when it's night</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowConsole">allowConsole</a></td>
+	<td class="summary">Whether players should be allowed to use the ingame tilde (~) console by default</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowBedRest">allowBedRest</a></td>
+	<td class="summary">Whether players should be allowed to rest in bed by default</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowWildernessRest">allowWildernessRest</a></td>
+	<td class="summary">Whether players should be allowed to rest in the wilderness by default</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowWait">allowWait</a></td>
+	<td class="summary">Whether players should be allowed to wait by default</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareJournal">shareJournal</a></td>
+	<td class="summary">Whether journal entries should be shared across the players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareFactionRanks">shareFactionRanks</a></td>
+	<td class="summary">Whether faction ranks should be shared across the players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareFactionExpulsion">shareFactionExpulsion</a></td>
+	<td class="summary">Whether faction expulsion should be shared across the players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareFactionReputation">shareFactionReputation</a></td>
+	<td class="summary">Whether faction reputation should be shared across the players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareTopics">shareTopics</a></td>
+	<td class="summary">Whether dialogue topics should be shared across the players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareBounty">shareBounty</a></td>
+	<td class="summary">Whether crime bounties should be shared across players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareReputation">shareReputation</a></td>
+	<td class="summary">Whether reputation should be shared across players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareMapExploration">shareMapExploration</a></td>
+	<td class="summary">Whether map exploration should be shared across players on the server or not</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shareVideos">shareVideos</a></td>
+	<td class="summary">Whether ingame videos should be played for other players when triggered by one player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#defaultSpawnCell">defaultSpawnCell</a></td>
+	<td class="summary">The cell that newly created players are teleported to</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#defaultRespawnCell">defaultRespawnCell</a></td>
+	<td class="summary">The cell that players respawn in, unless overridden below by other respawn options</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#respawnAtImperialShrine">respawnAtImperialShrine</a></td>
+	<td class="summary">Whether the default respawn location should be ignored in favor of respawning the
+ player at the nearest Imperial shrine</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#respawnAtTribunalTemple">respawnAtTribunalTemple</a></td>
+	<td class="summary">
+<p>Whether the default respawn location should be ignored in favor of respawning the
+ player at the nearest Tribunal temple
+ Note: When both this and the Imperial shrine option are enabled, there is a 50%</p>
+<pre><code>   chance of the player being respawned at either
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maxAttributeValue">maxAttributeValue</a></td>
+	<td class="summary">The maximum value that any attribute except Speed is allowed to have</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maxSpeedValue">maxSpeedValue</a></td>
+	<td class="summary">The maximum value that Speed is allowed to have
+ Note: Speed is given special treatment because of the Boots of Blinding Speed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maxSkillValue">maxSkillValue</a></td>
+	<td class="summary">The maximum value that any skill except Acrobatics is allowed to have</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maxAcrobaticsValue">maxAcrobaticsValue</a></td>
+	<td class="summary">The maximum value that Acrobatics is allowed to have
+ Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#playersRespawn">playersRespawn</a></td>
+	<td class="summary">Whether players should respawn when dying</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#deathTime">deathTime</a></td>
+	<td class="summary">Time to stay dead before being respawned, in seconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#deathPenaltyJailDays">deathPenaltyJailDays</a></td>
+	<td class="summary">The number of days spent in jail as a penalty for dying, when respawning</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bountyResetOnDeath">bountyResetOnDeath</a></td>
+	<td class="summary">Whether players' bounties are reset to 0 after dying</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bountyDeathPenalty">bountyDeathPenalty</a></td>
+	<td class="summary">
+<p>Whether players spend time in jail proportional to their bounty after dying
+ Note: If deathPenaltyJailDays is also enabled, that penalty will be added to</p>
+<pre><code>   this one
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowSuicideCommand">allowSuicideCommand</a></td>
+	<td class="summary">Whether players should be allowed to use the /suicide command</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowFixmeCommand">allowFixmeCommand</a></td>
+	<td class="summary">Whether players should be allowed to use the /fixme command</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fixmeInterval">fixmeInterval</a></td>
+	<td class="summary">How many seconds need to pass between uses of the /fixme command by a player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pingDifferenceRequiredForAuthority">pingDifferenceRequiredForAuthority</a></td>
+	<td class="summary">What the difference in ping needs to be in favor of a new arrival to a cell or region
+ compared to that cell or region's current player authority for the new arrival to become
+ the authority there
+ Note: Setting this too low will lead to constant authority changes which cause more lag</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enforcedLogLevel">enforcedLogLevel</a></td>
+	<td class="summary">
+<p>The log level enforced on clients by default, determining how much debug information
+ is displayed in their debug window and logs
+ Note 1: Set this to -1 to allow clients to use whatever log level they have set in</p>
+<pre><code>     their client settings
+</code></pre>
+<p> Note 2: If you set this to 0 or 1, clients will be able to read about the movements</p>
+<pre><code>     and actions of other players that they would otherwise not know about,
+     while also incurring a framerate loss on highly populated servers
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#physicsFramerate">physicsFramerate</a></td>
+	<td class="summary">
+<p>The physics framerate used by default
+ Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher</p>
+<pre><code>   system requirements that make a default of 30 more appropriate.
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#allowOnContainerForUnloadedCells">allowOnContainerForUnloadedCells</a></td>
+	<td class="summary">Whether players are allowed to interact with containers located in unloaded cells.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enablePlayerCollision">enablePlayerCollision</a></td>
+	<td class="summary">Whether players should collide with other actors</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enableActorCollision">enableActorCollision</a></td>
+	<td class="summary">Whether actors should collide with other actors</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enablePlacedObjectCollision">enablePlacedObjectCollision</a></td>
+	<td class="summary">Whether placed objects should collide with actors</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#useActorCollisionForPlacedObjects">useActorCollisionForPlacedObjects</a></td>
+	<td class="summary">Whether placed object collision (when turned on) resembles actor collision, in that it
+ prevents players from standing on top of the placed objects without slipping</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maximumObjectScale">maximumObjectScale</a></td>
+	<td class="summary">Prevent object scales from being set this high</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#generatedRecordIdPrefix">generatedRecordIdPrefix</a></td>
+	<td class="summary">The prefix used for automatically generated record IDs
+ Note 1: Records with automatically generated IDs get erased when there are no more instances of
+ them in player inventories/spellbooks or in cells
+ Note 2: By default, records created through regular gameplay (i.e.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#enforceDataFiles">enforceDataFiles</a></td>
+	<td class="summary">
+<p>Whether the server should enforce that all clients connect with a specific list of data files
+ defined in data/requiredDataFiles.json
+ Warning: Only set this to false if you trust the people connecting and are sure they know</p>
+<pre><code>      what they're doing.
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ignoreScriptErrors">ignoreScriptErrors</a></td>
+	<td class="summary">
+<p>Whether the server should avoid crashing when Lua script errors occur
+ Warning: Only set this to true if you want to have a highly experimental server where</p>
+<pre><code>      important data can potentially stay unloaded or get overwritten
+</code></pre>
+</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#databaseType">databaseType</a></td>
+	<td class="summary">The type of database or data format used by the server
+ Valid values: json, sqlite3
+ Note: The latter is only partially implemented as of now</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#databasePath">databasePath</a></td>
+	<td class="summary">The location of the database file
+ Note: Not applicable when using json</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "defaultTimeTable"></a>
+    <strong>defaultTimeTable</strong>
+    </dt>
+    <dd>
+    The world time used for a newly created world
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">year</span>
+
+
+
+        </li>
+        <li><span class="parameter">month</span>
+
+
+
+        </li>
+        <li><span class="parameter">day</span>
+
+
+
+        </li>
+        <li><span class="parameter">hour</span>
+
+
+
+        </li>
+        <li><span class="parameter">daysPassed</span>
+
+
+
+        </li>
+        <li><span class="parameter">dayTimeScale</span>
+
+
+
+        </li>
+        <li><span class="parameter">nightTimeScale</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bannedEquipmentItems"></a>
+    <strong>bannedEquipmentItems</strong>
+    </dt>
+    <dd>
+    The refIds of items that players are not allowed to equip for balancing reasons
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">helseth's ring</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rankColors"></a>
+    <strong>rankColors</strong>
+    </dt>
+    <dd>
+    The colors used for different ranks on the server
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">serverOwner</span>
+
+
+
+        </li>
+        <li><span class="parameter">admin</span>
+
+
+
+        </li>
+        <li><span class="parameter">moderator</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "customMenuIds"></a>
+    <strong>customMenuIds</strong>
+    </dt>
+    <dd>
+    Which numerical IDs should be used by custom menus implemented in the Lua scripts,
+ to prevent other menu inputs from being taken into account for them
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">menuHelper</span>
+
+
+
+        </li>
+        <li><span class="parameter">confiscate</span>
+
+
+
+        </li>
+        <li><span class="parameter">recordPrint</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "menuHelperFiles"></a>
+    <strong>menuHelperFiles</strong>
+    </dt>
+    <dd>
+    The menu files that should be loaded for menuHelper, from the scripts/menu subfolder
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">help</span>
+
+
+
+        </li>
+        <li><span class="parameter">defaultCrafting</span>
+
+
+
+        </li>
+        <li><span class="parameter">advancedExample</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enforcedCollisionRefIds"></a>
+    <strong>enforcedCollisionRefIds</strong>
+    </dt>
+    <dd>
+    Enforce collision for certain placed object refIds even when enablePlacedObjectCollision
+ is false
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">misc_uni_pillow_01</span>
+
+
+
+        </li>
+        <li><span class="parameter">misc_uni_pillow_02</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedDeleteRefIds"></a>
+    <strong>disallowedDeleteRefIds</strong>
+    </dt>
+    <dd>
+    Prevent certain object refIds from being deleted as a result of player-sent packets
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">m'aiq</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedCreateRefIds"></a>
+    <strong>disallowedCreateRefIds</strong>
+    </dt>
+    <dd>
+    Prevent certain object refIds from being placed or spawned as a result of player-sent packets
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedLockRefIds"></a>
+    <strong>disallowedLockRefIds</strong>
+    </dt>
+    <dd>
+    Prevent certain object refIds from being locked or unlocked as a result of player-sent packets
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedTrapRefIds"></a>
+    <strong>disallowedTrapRefIds</strong>
+    </dt>
+    <dd>
+    Prevent certain object refIds from being trapped or untrapped as a result of player-sent packets
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedStateRefIds"></a>
+    <strong>disallowedStateRefIds</strong>
+    </dt>
+    <dd>
+    Prevent certain object refIds from being enabled or disabled as a result of player-sent packets
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recordStoreLoadOrder"></a>
+    <strong>recordStoreLoadOrder</strong>
+    </dt>
+    <dd>
+    The types of record stores used on this server in the order in which they should be loaded for
+ players, with the correct order ensuring that enchantments are loaded before items that might be
+ using those enchantments or ensuring that NPCs are loaded after the items they might have in their
+ inventories
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">spell</span>
+
+
+
+        </li>
+        <li><span class="parameter">potion</span>
+
+
+
+        </li>
+        <li><span class="parameter">enchantment</span>
+
+
+
+        </li>
+        <li><span class="parameter">armor</span>
+
+
+
+        </li>
+        <li><span class="parameter">book</span>
+
+
+
+        </li>
+        <li><span class="parameter">clothing</span>
+
+
+
+        </li>
+        <li><span class="parameter">weapon</span>
+
+
+
+        </li>
+        <li><span class="parameter">miscellaneous</span>
+
+
+
+        </li>
+        <li><span class="parameter">creature</span>
+
+
+
+        </li>
+        <li><span class="parameter">npc</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enchantableRecordTypes"></a>
+    <strong>enchantableRecordTypes</strong>
+    </dt>
+    <dd>
+    The types of records that can be enchanted and therefore have links to enchantment records
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">armor</span>
+
+
+
+        </li>
+        <li><span class="parameter">book</span>
+
+
+
+        </li>
+        <li><span class="parameter">clothing</span>
+
+
+
+        </li>
+        <li><span class="parameter">weapon</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "carriableRecordTypes"></a>
+    <strong>carriableRecordTypes</strong>
+    </dt>
+    <dd>
+    The types of records that can be stored by players and therefore have links to players,
+ listed in the order in which they should be loaded
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">spell</span>
+
+
+
+        </li>
+        <li><span class="parameter">potion</span>
+
+
+
+        </li>
+        <li><span class="parameter">armor</span>
+
+
+
+        </li>
+        <li><span class="parameter">book</span>
+
+
+
+        </li>
+        <li><span class="parameter">clothing</span>
+
+
+
+        </li>
+        <li><span class="parameter">weapon</span>
+
+
+
+        </li>
+        <li><span class="parameter">miscellaneous</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "validRecordSettings"></a>
+    <strong>validRecordSettings</strong>
+    </dt>
+    <dd>
+    The settings which are accepted as input for different record types when using /storerecord
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">armor</span>
+
+
+
+        </li>
+        <li><span class="parameter">id</span>
+
+
+
+        </li>
+        <li><span class="parameter">name</span>
+
+
+
+        </li>
+        <li><span class="parameter">model</span>
+
+
+
+        </li>
+        <li><span class="parameter">icon</span>
+
+
+
+        </li>
+        <li><span class="parameter">script</span>
+
+
+
+        </li>
+        <li><span class="parameter">enchantmentId</span>
+
+
+
+        </li>
+        <li><span class="parameter">enchantmentCharge</span>
+
+
+
+        </li>
+        <li><span class="parameter">subtype</span>
+
+
+
+        </li>
+        <li><span class="parameter">weight</span>
+
+
+
+        </li>
+        <li><span class="parameter">value</span>
+
+
+
+        </li>
+        <li><span class="parameter">health</span>
+
+
+
+        </li>
+        <li><span class="parameter">armorRating</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "requiredRecordSettings"></a>
+    <strong>requiredRecordSettings</strong>
+    </dt>
+    <dd>
+    The settings which need to be provided when creating a new record that isn't based at all
+ on an existing one, i.e.  a new record that is missing a baseId
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">armor</span>
+
+
+
+        </li>
+        <li><span class="parameter">model</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "numericalRecordSettings"></a>
+    <strong>numericalRecordSettings</strong>
+    </dt>
+    <dd>
+    The record type settings whose input should be converted to numerical values when using /storerecord
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">subtype</span>
+
+
+
+        </li>
+        <li><span class="parameter">weight</span>
+
+
+
+        </li>
+        <li><span class="parameter">value</span>
+
+
+
+        </li>
+        <li><span class="parameter">cost</span>
+
+
+
+        </li>
+        <li><span class="parameter">charge</span>
+
+
+
+        </li>
+        <li><span class="parameter">health</span>
+
+
+
+        </li>
+        <li><span class="parameter">armorRating</span>
+
+
+
+        </li>
+        <li><span class="parameter">speed</span>
+
+
+
+        </li>
+        <li><span class="parameter">reach</span>
+
+
+
+        </li>
+        <li><span class="parameter">level</span>
+
+
+
+        </li>
+        <li><span class="parameter">magicka</span>
+
+
+
+        </li>
+        <li><span class="parameter">fatigue</span>
+
+
+
+        </li>
+        <li><span class="parameter">aiFight</span>
+
+
+
+        </li>
+        <li><span class="parameter">autoCalc</span>
+
+
+
+        </li>
+        <li><span class="parameter">gender</span>
+
+
+
+        </li>
+        <li><span class="parameter">flags</span>
+
+
+
+        </li>
+        <li><span class="parameter">enchantmentCharge</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "boolRecordSettings"></a>
+    <strong>boolRecordSettings</strong>
+    </dt>
+    <dd>
+    The record type settings whose input should be converted to bools when using /storerecord
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">scrollState</span>
+
+
+
+        </li>
+        <li><span class="parameter">keyState</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "minMaxRecordSettings"></a>
+    <strong>minMaxRecordSettings</strong>
+    </dt>
+    <dd>
+    The record type settings whose input should be converted to tables with a min and a max numerical value
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">damageChop</span>
+
+
+
+        </li>
+        <li><span class="parameter">damageSlash</span>
+
+
+
+        </li>
+        <li><span class="parameter">damageThrust</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cellPacketTypes"></a>
+    <strong>cellPacketTypes</strong>
+    </dt>
+    <dd>
+    The types of object and actor packets stored in cell data
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">delete</span>
+
+
+
+        </li>
+        <li><span class="parameter">place</span>
+
+
+
+        </li>
+        <li><span class="parameter">spawn</span>
+
+
+
+        </li>
+        <li><span class="parameter">lock</span>
+
+
+
+        </li>
+        <li><span class="parameter">trap</span>
+
+
+
+        </li>
+        <li><span class="parameter">scale</span>
+
+
+
+        </li>
+        <li><span class="parameter">state</span>
+
+
+
+        </li>
+        <li><span class="parameter">doorState</span>
+
+
+
+        </li>
+        <li><span class="parameter">container</span>
+
+
+
+        </li>
+        <li><span class="parameter">equipment</span>
+
+
+
+        </li>
+        <li><span class="parameter">ai</span>
+
+
+
+        </li>
+        <li><span class="parameter">death</span>
+
+
+
+        </li>
+        <li><span class="parameter">actorList</span>
+
+
+
+        </li>
+        <li><span class="parameter">position</span>
+
+
+
+        </li>
+        <li><span class="parameter">statsDynamic</span>
+
+
+
+        </li>
+        <li><span class="parameter">cellChangeTo</span>
+
+
+
+        </li>
+        <li><span class="parameter">cellChangeFrom</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "disallowedNameStrings"></a>
+    <strong>disallowedNameStrings</strong>
+    </dt>
+    <dd>
+    Disallow players from including the following in their own names or the names of their custom items
+ Note: Unfortunately, these are based on real names that trolls have been using on servers
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">bitch</span>
+
+
+
+        </li>
+        <li><span class="parameter">blowjob</span>
+
+
+
+        </li>
+        <li><span class="parameter">blow job</span>
+
+
+
+        </li>
+        <li><span class="parameter">cocksuck</span>
+
+
+
+        </li>
+        <li><span class="parameter">cunt</span>
+
+
+
+        </li>
+        <li><span class="parameter">ejaculat</span>
+
+
+
+        </li>
+        <li><span class="parameter">faggot</span>
+
+
+
+        </li>
+        <li><span class="parameter">fellatio</span>
+
+
+
+        </li>
+        <li><span class="parameter">fuck</span>
+
+
+
+        </li>
+        <li><span class="parameter">gas the </span>
+
+
+
+        </li>
+        <li><span class="parameter">Hitler</span>
+
+
+
+        </li>
+        <li><span class="parameter">jizz</span>
+
+
+
+        </li>
+        <li><span class="parameter">nigga</span>
+
+
+
+        </li>
+        <li><span class="parameter">nigger</span>
+
+
+
+        </li>
+        <li><span class="parameter">smegma</span>
+
+
+
+        </li>
+        <li><span class="parameter">vagina</span>
+
+
+
+        </li>
+        <li><span class="parameter">whore</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "playerKeyOrder"></a>
+    <strong>playerKeyOrder</strong>
+    </dt>
+    <dd>
+    The order in which table keys should be saved to player JSON files
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">login</span>
+
+
+
+        </li>
+        <li><span class="parameter">settings</span>
+
+
+
+        </li>
+        <li><span class="parameter">character</span>
+
+
+
+        </li>
+        <li><span class="parameter">customClass</span>
+
+
+
+        </li>
+        <li><span class="parameter">location</span>
+
+
+
+        </li>
+        <li><span class="parameter">stats</span>
+
+
+
+        </li>
+        <li><span class="parameter">fame</span>
+
+
+
+        </li>
+        <li><span class="parameter">shapeshift</span>
+
+
+
+        </li>
+        <li><span class="parameter">attributes</span>
+
+
+
+        </li>
+        <li><span class="parameter">attributeSkillIncreases</span>
+
+
+
+        </li>
+        <li><span class="parameter">skills</span>
+
+
+
+        </li>
+        <li><span class="parameter">skillProgress</span>
+
+
+
+        </li>
+        <li><span class="parameter">recordLinks</span>
+
+
+
+        </li>
+        <li><span class="parameter">equipment</span>
+
+
+
+        </li>
+        <li><span class="parameter">inventory</span>
+
+
+
+        </li>
+        <li><span class="parameter">spellbook</span>
+
+
+
+        </li>
+        <li><span class="parameter">books</span>
+
+
+
+        </li>
+        <li><span class="parameter">factionRanks</span>
+
+
+
+        </li>
+        <li><span class="parameter">factionReputation</span>
+
+
+
+        </li>
+        <li><span class="parameter">factionExpulsion</span>
+
+
+
+        </li>
+        <li><span class="parameter">mapExplored</span>
+
+
+
+        </li>
+        <li><span class="parameter">ipAddresses</span>
+
+
+
+        </li>
+        <li><span class="parameter">customVariables</span>
+
+
+
+        </li>
+        <li><span class="parameter">admin</span>
+
+
+
+        </li>
+        <li><span class="parameter">difficulty</span>
+
+
+
+        </li>
+        <li><span class="parameter">enforcedLogLevel</span>
+
+
+
+        </li>
+        <li><span class="parameter">physicsFramerate</span>
+
+
+
+        </li>
+        <li><span class="parameter">consoleAllowed</span>
+
+
+
+        </li>
+        <li><span class="parameter">bedRestAllowed</span>
+
+
+
+        </li>
+        <li><span class="parameter">wildernessRestAllowed</span>
+
+
+
+        </li>
+        <li><span class="parameter">waitAllowed</span>
+
+
+
+        </li>
+        <li><span class="parameter">gender</span>
+
+
+
+        </li>
+        <li><span class="parameter">race</span>
+
+
+
+        </li>
+        <li><span class="parameter">head</span>
+
+
+
+        </li>
+        <li><span class="parameter">hair</span>
+
+
+
+        </li>
+        <li><span class="parameter">class</span>
+
+
+
+        </li>
+        <li><span class="parameter">birthsign</span>
+
+
+
+        </li>
+        <li><span class="parameter">cell</span>
+
+
+
+        </li>
+        <li><span class="parameter">posX</span>
+
+
+
+        </li>
+        <li><span class="parameter">posY</span>
+
+
+
+        </li>
+        <li><span class="parameter">posZ</span>
+
+
+
+        </li>
+        <li><span class="parameter">rotX</span>
+
+
+
+        </li>
+        <li><span class="parameter">rotZ</span>
+
+
+
+        </li>
+        <li><span class="parameter">healthBase</span>
+
+
+
+        </li>
+        <li><span class="parameter">healthCurrent</span>
+
+
+
+        </li>
+        <li><span class="parameter">magickaBase</span>
+
+
+
+        </li>
+        <li><span class="parameter">magickaCurrent</span>
+
+
+
+        </li>
+        <li><span class="parameter">fatigueBase</span>
+
+
+
+        </li>
+        <li><span class="parameter">fatigueCurrent</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cellKeyOrder"></a>
+    <strong>cellKeyOrder</strong>
+    </dt>
+    <dd>
+    The order in which table keys should be saved to cell JSON files
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">packets</span>
+
+
+
+        </li>
+        <li><span class="parameter">entry</span>
+
+
+
+        </li>
+        <li><span class="parameter">lastVisit</span>
+
+
+
+        </li>
+        <li><span class="parameter">recordLinks</span>
+
+
+
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">refId</span>
+
+
+
+        </li>
+        <li><span class="parameter">count</span>
+
+
+
+        </li>
+        <li><span class="parameter">charge</span>
+
+
+
+        </li>
+        <li><span class="parameter">enchantmentCharge</span>
+
+
+
+        </li>
+        <li><span class="parameter">location</span>
+
+
+
+        </li>
+        <li><span class="parameter">actorList</span>
+
+
+
+        </li>
+        <li><span class="parameter">ai</span>
+
+
+
+        </li>
+        <li><span class="parameter">summon</span>
+
+
+
+        </li>
+        <li><span class="parameter">stats</span>
+
+
+
+        </li>
+        <li><span class="parameter">cellChangeFrom</span>
+
+
+
+        </li>
+        <li><span class="parameter">cellChangeTo</span>
+
+
+
+        </li>
+        <li><span class="parameter">container</span>
+
+
+
+        </li>
+        <li><span class="parameter">death</span>
+
+
+
+        </li>
+        <li><span class="parameter">delete</span>
+
+
+
+        </li>
+        <li><span class="parameter">doorState</span>
+
+
+
+        </li>
+        <li><span class="parameter">equipment</span>
+
+
+
+        </li>
+        <li><span class="parameter">inventory</span>
+
+
+
+        </li>
+        <li><span class="parameter">lock</span>
+
+
+
+        </li>
+        <li><span class="parameter">place</span>
+
+
+
+        </li>
+        <li><span class="parameter">position</span>
+
+
+
+        </li>
+        <li><span class="parameter">scale</span>
+
+
+
+        </li>
+        <li><span class="parameter">spawn</span>
+
+
+
+        </li>
+        <li><span class="parameter">state</span>
+
+
+
+        </li>
+        <li><span class="parameter">statsDynamic</span>
+
+
+
+        </li>
+        <li><span class="parameter">trap</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "recordstoreKeyOrder"></a>
+    <strong>recordstoreKeyOrder</strong>
+    </dt>
+    <dd>
+    The order in which table keys should be saved to recordstore JSON files
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">general</span>
+
+
+
+        </li>
+        <li><span class="parameter">permanentRecords</span>
+
+
+
+        </li>
+        <li><span class="parameter">generatedRecords</span>
+
+
+
+        </li>
+        <li><span class="parameter">recordLinks</span>
+
+
+
+        </li>
+        <li><span class="parameter">id</span>
+
+
+
+        </li>
+        <li><span class="parameter">baseId</span>
+
+
+
+        </li>
+        <li><span class="parameter">name</span>
+
+
+
+        </li>
+        <li><span class="parameter">subtype</span>
+
+
+
+        </li>
+        <li><span class="parameter">gender</span>
+
+
+
+        </li>
+        <li><span class="parameter">race</span>
+
+
+
+        </li>
+        <li><span class="parameter">hair</span>
+
+
+
+        </li>
+        <li><span class="parameter">head</span>
+
+
+
+        </li>
+        <li><span class="parameter">class</span>
+
+
+
+        </li>
+        <li><span class="parameter">faction</span>
+
+
+
+        </li>
+        <li><span class="parameter">cost</span>
+
+
+
+        </li>
+        <li><span class="parameter">value</span>
+
+
+
+        </li>
+        <li><span class="parameter">charge</span>
+
+
+
+        </li>
+        <li><span class="parameter">weight</span>
+
+
+
+        </li>
+        <li><span class="parameter">autoCalc</span>
+
+
+
+        </li>
+        <li><span class="parameter">flags</span>
+
+
+
+        </li>
+        <li><span class="parameter">icon</span>
+
+
+
+        </li>
+        <li><span class="parameter">model</span>
+
+
+
+        </li>
+        <li><span class="parameter">script</span>
+
+
+
+        </li>
+        <li><span class="parameter">attribute</span>
+
+
+
+        </li>
+        <li><span class="parameter">skill</span>
+
+
+
+        </li>
+        <li><span class="parameter">rangeType</span>
+
+
+
+        </li>
+        <li><span class="parameter">area</span>
+
+
+
+        </li>
+        <li><span class="parameter">duration</span>
+
+
+
+        </li>
+        <li><span class="parameter">magnitudeMax</span>
+
+
+
+        </li>
+        <li><span class="parameter">magnitudeMin</span>
+
+
+
+        </li>
+        <li><span class="parameter">effects</span>
+
+
+
+        </li>
+        <li><span class="parameter">players</span>
+
+
+
+        </li>
+        <li><span class="parameter">cells</span>
+
+
+
+        </li>
+        <li><span class="parameter">global</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "worldKeyOrder"></a>
+    <strong>worldKeyOrder</strong>
+    </dt>
+    <dd>
+    The order in which table keys should be saved to world JSON files
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">general</span>
+
+
+
+        </li>
+        <li><span class="parameter">time</span>
+
+
+
+        </li>
+        <li><span class="parameter">topics</span>
+
+
+
+        </li>
+        <li><span class="parameter">kills</span>
+
+
+
+        </li>
+        <li><span class="parameter">journal</span>
+
+
+
+        </li>
+        <li><span class="parameter">customVariables</span>
+
+
+
+        </li>
+        <li><span class="parameter">type</span>
+
+
+
+        </li>
+        <li><span class="parameter">index</span>
+
+
+
+        </li>
+        <li><span class="parameter">quest</span>
+
+
+
+        </li>
+        <li><span class="parameter">actorRefId</span>
+
+
+
+        </li>
+        <li><span class="parameter">year</span>
+
+
+
+        </li>
+        <li><span class="parameter">month</span>
+
+
+
+        </li>
+        <li><span class="parameter">day</span>
+
+
+
+        </li>
+        <li><span class="parameter">hour</span>
+
+
+
+        </li>
+        <li><span class="parameter">daysPassed</span>
+
+
+
+        </li>
+        <li><span class="parameter">timeScale</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "gameMode"></a>
+    <strong>gameMode</strong>
+    </dt>
+    <dd>
+    The game mode displayed for this server in the server browser
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "loginTime"></a>
+    <strong>loginTime</strong>
+    </dt>
+    <dd>
+    Time to login, in seconds
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "difficulty"></a>
+    <strong>difficulty</strong>
+    </dt>
+    <dd>
+
+<p>The difficulty level used by default
+ Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,</p>
+<pre><code>   though you can use any integer value here
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "chatWindowInstructions"></a>
+    <strong>chatWindowInstructions</strong>
+    </dt>
+    <dd>
+    The chat window instructions that show up when players join the server
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "passTimeWhenEmpty"></a>
+    <strong>passTimeWhenEmpty</strong>
+    </dt>
+    <dd>
+    Whether the world time should continue passing when there are no players on the server
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "nightStartHour"></a>
+    <strong>nightStartHour</strong>
+    </dt>
+    <dd>
+    The hours at which night is regarded as starting and ending, used to pass time differently
+ when it's night
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowConsole"></a>
+    <strong>allowConsole</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to use the ingame tilde (~) console by default
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowBedRest"></a>
+    <strong>allowBedRest</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to rest in bed by default
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowWildernessRest"></a>
+    <strong>allowWildernessRest</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to rest in the wilderness by default
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowWait"></a>
+    <strong>allowWait</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to wait by default
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareJournal"></a>
+    <strong>shareJournal</strong>
+    </dt>
+    <dd>
+    Whether journal entries should be shared across the players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareFactionRanks"></a>
+    <strong>shareFactionRanks</strong>
+    </dt>
+    <dd>
+    Whether faction ranks should be shared across the players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareFactionExpulsion"></a>
+    <strong>shareFactionExpulsion</strong>
+    </dt>
+    <dd>
+    Whether faction expulsion should be shared across the players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareFactionReputation"></a>
+    <strong>shareFactionReputation</strong>
+    </dt>
+    <dd>
+    Whether faction reputation should be shared across the players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareTopics"></a>
+    <strong>shareTopics</strong>
+    </dt>
+    <dd>
+    Whether dialogue topics should be shared across the players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareBounty"></a>
+    <strong>shareBounty</strong>
+    </dt>
+    <dd>
+    Whether crime bounties should be shared across players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareReputation"></a>
+    <strong>shareReputation</strong>
+    </dt>
+    <dd>
+    Whether reputation should be shared across players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareMapExploration"></a>
+    <strong>shareMapExploration</strong>
+    </dt>
+    <dd>
+    Whether map exploration should be shared across players on the server or not
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shareVideos"></a>
+    <strong>shareVideos</strong>
+    </dt>
+    <dd>
+    Whether ingame videos should be played for other players when triggered by one player
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "defaultSpawnCell"></a>
+    <strong>defaultSpawnCell</strong>
+    </dt>
+    <dd>
+    The cell that newly created players are teleported to
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "defaultRespawnCell"></a>
+    <strong>defaultRespawnCell</strong>
+    </dt>
+    <dd>
+    The cell that players respawn in, unless overridden below by other respawn options
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "respawnAtImperialShrine"></a>
+    <strong>respawnAtImperialShrine</strong>
+    </dt>
+    <dd>
+    Whether the default respawn location should be ignored in favor of respawning the
+ player at the nearest Imperial shrine
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "respawnAtTribunalTemple"></a>
+    <strong>respawnAtTribunalTemple</strong>
+    </dt>
+    <dd>
+
+<p>Whether the default respawn location should be ignored in favor of respawning the
+ player at the nearest Tribunal temple
+ Note: When both this and the Imperial shrine option are enabled, there is a 50%</p>
+<pre><code>   chance of the player being respawned at either
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maxAttributeValue"></a>
+    <strong>maxAttributeValue</strong>
+    </dt>
+    <dd>
+    The maximum value that any attribute except Speed is allowed to have
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maxSpeedValue"></a>
+    <strong>maxSpeedValue</strong>
+    </dt>
+    <dd>
+    The maximum value that Speed is allowed to have
+ Note: Speed is given special treatment because of the Boots of Blinding Speed
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maxSkillValue"></a>
+    <strong>maxSkillValue</strong>
+    </dt>
+    <dd>
+    The maximum value that any skill except Acrobatics is allowed to have
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maxAcrobaticsValue"></a>
+    <strong>maxAcrobaticsValue</strong>
+    </dt>
+    <dd>
+    The maximum value that Acrobatics is allowed to have
+ Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "playersRespawn"></a>
+    <strong>playersRespawn</strong>
+    </dt>
+    <dd>
+    Whether players should respawn when dying
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "deathTime"></a>
+    <strong>deathTime</strong>
+    </dt>
+    <dd>
+    Time to stay dead before being respawned, in seconds
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "deathPenaltyJailDays"></a>
+    <strong>deathPenaltyJailDays</strong>
+    </dt>
+    <dd>
+    The number of days spent in jail as a penalty for dying, when respawning
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bountyResetOnDeath"></a>
+    <strong>bountyResetOnDeath</strong>
+    </dt>
+    <dd>
+    Whether players' bounties are reset to 0 after dying
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bountyDeathPenalty"></a>
+    <strong>bountyDeathPenalty</strong>
+    </dt>
+    <dd>
+
+<p>Whether players spend time in jail proportional to their bounty after dying
+ Note: If deathPenaltyJailDays is also enabled, that penalty will be added to</p>
+<pre><code>   this one
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowSuicideCommand"></a>
+    <strong>allowSuicideCommand</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to use the /suicide command
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowFixmeCommand"></a>
+    <strong>allowFixmeCommand</strong>
+    </dt>
+    <dd>
+    Whether players should be allowed to use the /fixme command
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fixmeInterval"></a>
+    <strong>fixmeInterval</strong>
+    </dt>
+    <dd>
+    How many seconds need to pass between uses of the /fixme command by a player
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pingDifferenceRequiredForAuthority"></a>
+    <strong>pingDifferenceRequiredForAuthority</strong>
+    </dt>
+    <dd>
+    What the difference in ping needs to be in favor of a new arrival to a cell or region
+ compared to that cell or region's current player authority for the new arrival to become
+ the authority there
+ Note: Setting this too low will lead to constant authority changes which cause more lag
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enforcedLogLevel"></a>
+    <strong>enforcedLogLevel</strong>
+    </dt>
+    <dd>
+
+<p>The log level enforced on clients by default, determining how much debug information
+ is displayed in their debug window and logs
+ Note 1: Set this to -1 to allow clients to use whatever log level they have set in</p>
+<pre><code>     their client settings
+</code></pre>
+<p> Note 2: If you set this to 0 or 1, clients will be able to read about the movements</p>
+<pre><code>     and actions of other players that they would otherwise not know about,
+     while also incurring a framerate loss on highly populated servers
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "physicsFramerate"></a>
+    <strong>physicsFramerate</strong>
+    </dt>
+    <dd>
+
+<p>The physics framerate used by default
+ Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher</p>
+<pre><code>   system requirements that make a default of 30 more appropriate.
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "allowOnContainerForUnloadedCells"></a>
+    <strong>allowOnContainerForUnloadedCells</strong>
+    </dt>
+    <dd>
+    Whether players are allowed to interact with containers located in unloaded cells.
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enablePlayerCollision"></a>
+    <strong>enablePlayerCollision</strong>
+    </dt>
+    <dd>
+    Whether players should collide with other actors
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enableActorCollision"></a>
+    <strong>enableActorCollision</strong>
+    </dt>
+    <dd>
+    Whether actors should collide with other actors
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enablePlacedObjectCollision"></a>
+    <strong>enablePlacedObjectCollision</strong>
+    </dt>
+    <dd>
+    Whether placed objects should collide with actors
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "useActorCollisionForPlacedObjects"></a>
+    <strong>useActorCollisionForPlacedObjects</strong>
+    </dt>
+    <dd>
+    Whether placed object collision (when turned on) resembles actor collision, in that it
+ prevents players from standing on top of the placed objects without slipping
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maximumObjectScale"></a>
+    <strong>maximumObjectScale</strong>
+    </dt>
+    <dd>
+    Prevent object scales from being set this high
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "generatedRecordIdPrefix"></a>
+    <strong>generatedRecordIdPrefix</strong>
+    </dt>
+    <dd>
+    The prefix used for automatically generated record IDs
+ Note 1: Records with automatically generated IDs get erased when there are no more instances of
+ them in player inventories/spellbooks or in cells
+ Note 2: By default, records created through regular gameplay (i.e.  player-created spells, potions,
+ enchantments and enchanted items) use automatically generated record IDs, as do records created
+ via the /createrecord command when no ID is specified there
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "enforceDataFiles"></a>
+    <strong>enforceDataFiles</strong>
+    </dt>
+    <dd>
+
+<p>Whether the server should enforce that all clients connect with a specific list of data files
+ defined in data/requiredDataFiles.json
+ Warning: Only set this to false if you trust the people connecting and are sure they know</p>
+<pre><code>      what they're doing.  Otherwise, you risk getting corrupt server data from
+      their usage of unshared plugins.
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ignoreScriptErrors"></a>
+    <strong>ignoreScriptErrors</strong>
+    </dt>
+    <dd>
+
+<p>Whether the server should avoid crashing when Lua script errors occur
+ Warning: Only set this to true if you want to have a highly experimental server where</p>
+<pre><code>      important data can potentially stay unloaded or get overwritten
+</code></pre>
+
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "databaseType"></a>
+    <strong>databaseType</strong>
+    </dt>
+    <dd>
+    The type of database or data format used by the server
+ Valid values: json, sqlite3
+ Note: The latter is only partially implemented as of now
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "databasePath"></a>
+    <strong>databasePath</strong>
+    </dt>
+    <dd>
+    The location of the database file
+ Note: Not applicable when using json
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

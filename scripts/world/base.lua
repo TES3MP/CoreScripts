@@ -6,8 +6,7 @@ local BaseWorld = class("BaseWorld")
 --- Keep this here because it's required in mathematical operations
 BaseWorld.defaultTimeScale = 30
 
---- Month lengths
--- @table BaseWorld.monthLengths
+-- Month lengths
 BaseWorld.monthLengths = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 
 --- stored regions
@@ -39,7 +38,7 @@ function BaseWorld:__init()
 end
 
 --- Check if world has entry
--- @return boolean
+-- @return bool
 function BaseWorld:HasEntry()
     return self.hasEntry
 end
@@ -259,7 +258,7 @@ end
 
 --- Load kills
 -- @int pid
--- @boolean forEveryone
+-- @bool forEveryone
 function BaseWorld:LoadKills(pid, forEveryone)
 
     tes3mp.ClearKillChanges(pid)
@@ -275,7 +274,7 @@ end
 --- Loading region weather
 -- @string regionName
 -- @int pid
--- @boolean forEveryone
+-- @bool forEveryone
 -- @param forceState
 function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
 
@@ -298,7 +297,7 @@ end
 
 --- Load weather
 -- @int pid
--- @boolean forEveryone
+-- @bool forEveryone
 -- @param forceState
 function BaseWorld:LoadWeather(pid, forEveryone, forceState)
 
@@ -312,7 +311,7 @@ end
 
 --- Load time
 -- @int pid
--- @boolean forEveryone
+-- @bool forEveryone
 function BaseWorld:LoadTime(pid, forEveryone)
 
     tes3mp.SetHour(self.data.time.hour)

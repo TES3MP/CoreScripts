@@ -6,10 +6,10 @@ dataTableBuilder = {}
 -- @int targetPid target player ID
 -- @param targetUniqueIndex
 -- @param action
--- @double posX
--- @double posY
--- @double posZ
--- @double distance
+-- @int posX
+-- @int posY
+-- @int posZ
+-- @int distance
 -- @param duration
 -- @bool shouldRepeat
 dataTableBuilder.BuildAIData = function(targetPid, targetUniqueIndex, action,

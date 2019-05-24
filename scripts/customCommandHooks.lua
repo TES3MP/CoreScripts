@@ -4,8 +4,7 @@ local customCommandHooks = {}
 --- special character "/"
 local specialCharacter = "/"
 
---- commands
--- @tablecustomCommandHooks.commands
+-- commands
 customCommandHooks.commands = {}
 
 --- Register command

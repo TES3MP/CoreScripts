@@ -1,0 +1,1270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><strong>world-base</strong></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>world-base</code></h1>
+<p>World Base</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:__init">BaseWorld:__init ()</a></td>
+	<td class="summary">Init function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:HasEntry">BaseWorld:HasEntry ()</a></td>
+	<td class="summary">Check if world has entry</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:EnsureTimeDataExists">BaseWorld:EnsureTimeDataExists ()</a></td>
+	<td class="summary">Ensure time data exists</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:GetRegionVisitorCount">BaseWorld:GetRegionVisitorCount (regionName)</a></td>
+	<td class="summary">Get region visitor count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:AddRegionVisitor">BaseWorld:AddRegionVisitor (pid, regionName)</a></td>
+	<td class="summary">Add region visitor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:RemoveRegionVisitor">BaseWorld:RemoveRegionVisitor (pid, regionName)</a></td>
+	<td class="summary">Remove region visitor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:AddForcedWeatherUpdatePid">BaseWorld:AddForcedWeatherUpdatePid (pid, regionName)</a></td>
+	<td class="summary">Add forced weather update pid</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:RemoveForcedWeatherUpdatePid">BaseWorld:RemoveForcedWeatherUpdatePid (pid, regionName)</a></td>
+	<td class="summary">Remove forced weather update pid</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:IsForcedWeatherUpdatePid">BaseWorld:IsForcedWeatherUpdatePid (pid, regionName)</a></td>
+	<td class="summary">Is forced wather update pid</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:GetRegionAuthority">BaseWorld:GetRegionAuthority (regionName)</a></td>
+	<td class="summary">Get region Authority</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SetRegionAuthority">BaseWorld:SetRegionAuthority (pid, regionName)</a></td>
+	<td class="summary">Get region Authority</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:IncrementDay">BaseWorld:IncrementDay ()</a></td>
+	<td class="summary">Increment day</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:GetCurrentTimeScale">BaseWorld:GetCurrentTimeScale ()</a></td>
+	<td class="summary">Get current time scale</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:UpdateFrametimeMultiplier">BaseWorld:UpdateFrametimeMultiplier ()</a></td>
+	<td class="summary">Update frametiem multiplier</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:GetCurrentMpNum">BaseWorld:GetCurrentMpNum ()</a></td>
+	<td class="summary">Get current MpNum</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SetCurrentMpNum">BaseWorld:SetCurrentMpNum (currentMpNum)</a></td>
+	<td class="summary">Get current MpNum</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadJournal">BaseWorld:LoadJournal (pid)</a></td>
+	<td class="summary">Load journal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadFactionRanks">BaseWorld:LoadFactionRanks (pid)</a></td>
+	<td class="summary">Load faction ranks</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadFactionExpulsion">BaseWorld:LoadFactionExpulsion (pid)</a></td>
+	<td class="summary">Load faction expulsions</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadFactionReputation">BaseWorld:LoadFactionReputation (pid)</a></td>
+	<td class="summary">Load faction reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadTopics">BaseWorld:LoadTopics (pid)</a></td>
+	<td class="summary">Load topics</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadBounty">BaseWorld:LoadBounty (pid)</a></td>
+	<td class="summary">Load bounty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadReputation">BaseWorld:LoadReputation (pid)</a></td>
+	<td class="summary">Load reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadMap">BaseWorld:LoadMap (pid)</a></td>
+	<td class="summary">Load map</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadKills">BaseWorld:LoadKills (pid, forEveryone)</a></td>
+	<td class="summary">Load kills</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadRegionWeather">BaseWorld:LoadRegionWeather (regionName, pid, forEveryone, forceState)</a></td>
+	<td class="summary">Loading region weather</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadWeather">BaseWorld:LoadWeather (pid, forEveryone, forceState)</a></td>
+	<td class="summary">Load weather</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:LoadTime">BaseWorld:LoadTime (pid, forEveryone)</a></td>
+	<td class="summary">Load time</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveJournal">BaseWorld:SaveJournal (pid)</a></td>
+	<td class="summary">Save journal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveFactionRanks">BaseWorld:SaveFactionRanks (pid)</a></td>
+	<td class="summary">Save faction ranks</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveFactionExpulsion">BaseWorld:SaveFactionExpulsion (pid)</a></td>
+	<td class="summary">Save faction expulsions</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveFactionReputation">BaseWorld:SaveFactionReputation (pid)</a></td>
+	<td class="summary">Save faction reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveTopics">BaseWorld:SaveTopics (pid)</a></td>
+	<td class="summary">Save topics</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveBounty">BaseWorld:SaveBounty (pid)</a></td>
+	<td class="summary">Save bounty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveReputation">BaseWorld:SaveReputation (pid)</a></td>
+	<td class="summary">Save reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveKills">BaseWorld:SaveKills (pid)</a></td>
+	<td class="summary">Save kills</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveRegionWeather">BaseWorld:SaveRegionWeather (regionName)</a></td>
+	<td class="summary">Save region weather</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveMapExploration">BaseWorld:SaveMapExploration (pid)</a></td>
+	<td class="summary">Save map exploration</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld:SaveMapTiles">BaseWorld:SaveMapTiles (pid)</a></td>
+	<td class="summary">Save map tiles</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld.storedRegions">BaseWorld.storedRegions</a></td>
+	<td class="summary">stored regions</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseWorld.defaultTimeScale">BaseWorld.defaultTimeScale</a></td>
+	<td class="summary">Keep this here because it's required in mathematical operations</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "BaseWorld:__init"></a>
+    <strong>BaseWorld:__init ()</strong>
+    </dt>
+    <dd>
+    Init function
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:HasEntry"></a>
+    <strong>BaseWorld:HasEntry ()</strong>
+    </dt>
+    <dd>
+    Check if world has entry
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:EnsureTimeDataExists"></a>
+    <strong>BaseWorld:EnsureTimeDataExists ()</strong>
+    </dt>
+    <dd>
+    Ensure time data exists
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:GetRegionVisitorCount"></a>
+    <strong>BaseWorld:GetRegionVisitorCount (regionName)</strong>
+    </dt>
+    <dd>
+    Get region visitor count
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int visitor count
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:AddRegionVisitor"></a>
+    <strong>BaseWorld:AddRegionVisitor (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Add region visitor
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:RemoveRegionVisitor"></a>
+    <strong>BaseWorld:RemoveRegionVisitor (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Remove region visitor
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:AddForcedWeatherUpdatePid"></a>
+    <strong>BaseWorld:AddForcedWeatherUpdatePid (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Add forced weather update pid
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:RemoveForcedWeatherUpdatePid"></a>
+    <strong>BaseWorld:RemoveForcedWeatherUpdatePid (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Remove forced weather update pid
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:IsForcedWeatherUpdatePid"></a>
+    <strong>BaseWorld:IsForcedWeatherUpdatePid (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Is forced wather update pid
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:GetRegionAuthority"></a>
+    <strong>BaseWorld:GetRegionAuthority (regionName)</strong>
+    </dt>
+    <dd>
+    Get region Authority
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        playerName or nil
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SetRegionAuthority"></a>
+    <strong>BaseWorld:SetRegionAuthority (pid, regionName)</strong>
+    </dt>
+    <dd>
+    Get region Authority
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:IncrementDay"></a>
+    <strong>BaseWorld:IncrementDay ()</strong>
+    </dt>
+    <dd>
+    Increment day
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:GetCurrentTimeScale"></a>
+    <strong>BaseWorld:GetCurrentTimeScale ()</strong>
+    </dt>
+    <dd>
+    Get current time scale
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        timeScale
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:UpdateFrametimeMultiplier"></a>
+    <strong>BaseWorld:UpdateFrametimeMultiplier ()</strong>
+    </dt>
+    <dd>
+    Update frametiem multiplier
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:GetCurrentMpNum"></a>
+    <strong>BaseWorld:GetCurrentMpNum ()</strong>
+    </dt>
+    <dd>
+    Get current MpNum
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string currentMpNum
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SetCurrentMpNum"></a>
+    <strong>BaseWorld:SetCurrentMpNum (currentMpNum)</strong>
+    </dt>
+    <dd>
+    Get current MpNum
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">currentMpNum</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadJournal"></a>
+    <strong>BaseWorld:LoadJournal (pid)</strong>
+    </dt>
+    <dd>
+    Load journal
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadFactionRanks"></a>
+    <strong>BaseWorld:LoadFactionRanks (pid)</strong>
+    </dt>
+    <dd>
+    Load faction ranks
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadFactionExpulsion"></a>
+    <strong>BaseWorld:LoadFactionExpulsion (pid)</strong>
+    </dt>
+    <dd>
+    Load faction expulsions
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadFactionReputation"></a>
+    <strong>BaseWorld:LoadFactionReputation (pid)</strong>
+    </dt>
+    <dd>
+    Load faction reputation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadTopics"></a>
+    <strong>BaseWorld:LoadTopics (pid)</strong>
+    </dt>
+    <dd>
+    Load topics
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadBounty"></a>
+    <strong>BaseWorld:LoadBounty (pid)</strong>
+    </dt>
+    <dd>
+    Load bounty
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadReputation"></a>
+    <strong>BaseWorld:LoadReputation (pid)</strong>
+    </dt>
+    <dd>
+    Load reputation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadMap"></a>
+    <strong>BaseWorld:LoadMap (pid)</strong>
+    </dt>
+    <dd>
+    Load map
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadKills"></a>
+    <strong>BaseWorld:LoadKills (pid, forEveryone)</strong>
+    </dt>
+    <dd>
+    Load kills
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadRegionWeather"></a>
+    <strong>BaseWorld:LoadRegionWeather (regionName, pid, forEveryone, forceState)</strong>
+    </dt>
+    <dd>
+    Loading region weather
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forceState</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadWeather"></a>
+    <strong>BaseWorld:LoadWeather (pid, forEveryone, forceState)</strong>
+    </dt>
+    <dd>
+    Load weather
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forceState</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:LoadTime"></a>
+    <strong>BaseWorld:LoadTime (pid, forEveryone)</strong>
+    </dt>
+    <dd>
+    Load time
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveJournal"></a>
+    <strong>BaseWorld:SaveJournal (pid)</strong>
+    </dt>
+    <dd>
+    Save journal
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveFactionRanks"></a>
+    <strong>BaseWorld:SaveFactionRanks (pid)</strong>
+    </dt>
+    <dd>
+    Save faction ranks
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveFactionExpulsion"></a>
+    <strong>BaseWorld:SaveFactionExpulsion (pid)</strong>
+    </dt>
+    <dd>
+    Save faction expulsions
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveFactionReputation"></a>
+    <strong>BaseWorld:SaveFactionReputation (pid)</strong>
+    </dt>
+    <dd>
+    Save faction reputation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveTopics"></a>
+    <strong>BaseWorld:SaveTopics (pid)</strong>
+    </dt>
+    <dd>
+    Save topics
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveBounty"></a>
+    <strong>BaseWorld:SaveBounty (pid)</strong>
+    </dt>
+    <dd>
+    Save bounty
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveReputation"></a>
+    <strong>BaseWorld:SaveReputation (pid)</strong>
+    </dt>
+    <dd>
+    Save reputation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveKills"></a>
+    <strong>BaseWorld:SaveKills (pid)</strong>
+    </dt>
+    <dd>
+    Save kills
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveRegionWeather"></a>
+    <strong>BaseWorld:SaveRegionWeather (regionName)</strong>
+    </dt>
+    <dd>
+    Save region weather
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">regionName</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveMapExploration"></a>
+    <strong>BaseWorld:SaveMapExploration (pid)</strong>
+    </dt>
+    <dd>
+    Save map exploration
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseWorld:SaveMapTiles"></a>
+    <strong>BaseWorld:SaveMapTiles (pid)</strong>
+    </dt>
+    <dd>
+    Save map tiles
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "BaseWorld.storedRegions"></a>
+    <strong>BaseWorld.storedRegions</strong>
+    </dt>
+    <dd>
+    stored regions
+
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "BaseWorld.defaultTimeScale"></a>
+    <strong>BaseWorld.defaultTimeScale</strong>
+    </dt>
+    <dd>
+    Keep this here because it's required in mathematical operations
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

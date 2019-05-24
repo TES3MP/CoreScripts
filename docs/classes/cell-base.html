@@ -1,0 +1,1720 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><strong>cell-base</strong></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>cell-base</code></h1>
+<p>Base cell class</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:__init">BaseCell:__init (cellDescription)</a></td>
+	<td class="summary">Init function create base structure for cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:ContainsPosition">BaseCell:ContainsPosition (posX, posY)</a></td>
+	<td class="summary">Check if the cell contains certain XY coordinate</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:HasEntry">BaseCell:HasEntry ()</a></td>
+	<td class="summary">Check if cell has entry</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:EnsurePacketTables">BaseCell:EnsurePacketTables ()</a></td>
+	<td class="summary">Iterate through the packets table and ensure all packet types are included in it</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:EnsurePacketValidity">BaseCell:EnsurePacketValidity ()</a></td>
+	<td class="summary">Iterate through saved packets and ensure the object uniqueIndexes they refer to
+ actually exist</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:AddLinkToRecord">BaseCell:AddLinkToRecord (storeType, recordId, uniqueIndex)</a></td>
+	<td class="summary">Adding record links to cells is special because we'll keep track of the uniqueIndex
+ of every object that uses a particular generated record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:RemoveLinkToRecord">BaseCell:RemoveLinkToRecord (storeType, recordId, uniqueIndex)</a></td>
+	<td class="summary">Removing record link from cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:GetVisitorCount">BaseCell:GetVisitorCount ()</a></td>
+	<td class="summary">Get the amount of visitors in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:AddVisitor">BaseCell:AddVisitor (pid)</a></td>
+	<td class="summary">Add visitor to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:RemoveVisitor">BaseCell:RemoveVisitor (pid)</a></td>
+	<td class="summary">Remove visitor from cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:GetAuthority">BaseCell:GetAuthority ()</a></td>
+	<td class="summary">Get the current authority of cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SetAuthority">BaseCell:SetAuthority (pid)</a></td>
+	<td class="summary">Set the current authority of cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:ContainsObject">BaseCell:ContainsObject (uniqueIndex)</a></td>
+	<td class="summary">Check whether an object is in this cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:HasContainerData">BaseCell:HasContainerData ()</a></td>
+	<td class="summary">Check if cell has container data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:HasActorData">BaseCell:HasActorData ()</a></td>
+	<td class="summary">Check if cell has actor data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:InitializeObjectData">BaseCell:InitializeObjectData (uniqueIndex, refId)</a></td>
+	<td class="summary">Initialize object data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:DeleteObjectData">BaseCell:DeleteObjectData (uniqueIndex)</a></td>
+	<td class="summary">Delete object data in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:MoveObjectData">BaseCell:MoveObjectData (uniqueIndex, newCell)</a></td>
+	<td class="summary">Move object data to new cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveLastVisit">BaseCell:SaveLastVisit (playerName)</a></td>
+	<td class="summary">Saves the last visitor's player name to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectsDeleted">BaseCell:SaveObjectsDeleted (pid)</a></td>
+	<td class="summary">Save deleted objects to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectsPlaced">BaseCell:SaveObjectsPlaced (pid)</a></td>
+	<td class="summary">Save the placed objects to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectsSpawned">BaseCell:SaveObjectsSpawned (pid)</a></td>
+	<td class="summary">Save spawned objects to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectsLocked">BaseCell:SaveObjectsLocked (pid)</a></td>
+	<td class="summary">Save locked objects to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectTrapsTriggered">BaseCell:SaveObjectTrapsTriggered (pid)</a></td>
+	<td class="summary">Save objects with triggered traps to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectsScaled">BaseCell:SaveObjectsScaled (pid)</a></td>
+	<td class="summary">Save scaled objects to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveObjectStates">BaseCell:SaveObjectStates (pid)</a></td>
+	<td class="summary">Save object states to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveDoorStates">BaseCell:SaveDoorStates (pid)</a></td>
+	<td class="summary">Save door states to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveContainers">BaseCell:SaveContainers (pid)</a></td>
+	<td class="summary">Save containers to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorList">BaseCell:SaveActorList (pid)</a></td>
+	<td class="summary">Save acterlist to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorPositions">BaseCell:SaveActorPositions (pid)</a></td>
+	<td class="summary">Save actor positions to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorStatsDynamic">BaseCell:SaveActorStatsDynamic ()</a></td>
+	<td class="summary">Save actors stats dynamic to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorEquipment">BaseCell:SaveActorEquipment (pid)</a></td>
+	<td class="summary">Save actor equipment to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorDeath">BaseCell:SaveActorDeath (pid)</a></td>
+	<td class="summary">Save actor death to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:SaveActorCellChanges">BaseCell:SaveActorCellChanges (pid)</a></td>
+	<td class="summary">Save acter cell changes to cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorPackets">BaseCell:LoadActorPackets (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load actor packets</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectsDeleted">BaseCell:LoadObjectsDeleted (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load objects deleted</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectsPlaced">BaseCell:LoadObjectsPlaced (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load objects placed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectsSpawned">BaseCell:LoadObjectsSpawned (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">load objects spawned in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectsLocked">BaseCell:LoadObjectsLocked (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load locked objects in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectTrapsTriggered">BaseCell:LoadObjectTrapsTriggered (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load triggered trap objects in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectsScaled">BaseCell:LoadObjectsScaled (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load scaled objects in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadObjectStates">BaseCell:LoadObjectStates (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load object states in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadDoorStates">BaseCell:LoadDoorStates (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load door states in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadContainers">BaseCell:LoadContainers (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load containers in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorList">BaseCell:LoadActorList (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load actor list in cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorAuthority">BaseCell:LoadActorAuthority (pid)</a></td>
+	<td class="summary">Load cell's actor authority</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorPositions">BaseCell:LoadActorPositions (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load cell's actor positions</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorStatsDynamic">BaseCell:LoadActorStatsDynamic (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load cell's actor stats dynamic</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorEquipment">BaseCell:LoadActorEquipment (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load cell's actor equipment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorAI">BaseCell:LoadActorAI (pid, objectData, uniqueIndexArray)</a></td>
+	<td class="summary">Load cell's actor AI</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadActorCellChanges">BaseCell:LoadActorCellChanges (pid, objectData)</a></td>
+	<td class="summary">Load actor cell changes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:RequestContainers">BaseCell:RequestContainers (pid, requestUniqueIndexes)</a></td>
+	<td class="summary">Request containers</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:RequestActorList">BaseCell:RequestActorList (pid)</a></td>
+	<td class="summary">Request actor list</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadInitialCellData">BaseCell:LoadInitialCellData (pid)</a></td>
+	<td class="summary">Load cell's initial data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadMomentaryCellData">BaseCell:LoadMomentaryCellData (pid)</a></td>
+	<td class="summary">Load momentary cell data</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseCell:LoadGeneratedRecords">BaseCell:LoadGeneratedRecords (pid)</a></td>
+	<td class="summary">Load generated records</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "BaseCell:__init"></a>
+    <strong>BaseCell:__init (cellDescription)</strong>
+    </dt>
+    <dd>
+    Init function create base structure for cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:ContainsPosition"></a>
+    <strong>BaseCell:ContainsPosition (posX, posY)</strong>
+    </dt>
+    <dd>
+    Check if the cell contains certain XY coordinate
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">posX</span>
+            <span class="types"><span class="type">int</span></span>
+         X coordinate
+        </li>
+        <li><span class="parameter">posY</span>
+            <span class="types"><span class="type">int</span></span>
+         Y coordinate
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:HasEntry"></a>
+    <strong>BaseCell:HasEntry ()</strong>
+    </dt>
+    <dd>
+    Check if cell has entry
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:EnsurePacketTables"></a>
+    <strong>BaseCell:EnsurePacketTables ()</strong>
+    </dt>
+    <dd>
+    Iterate through the packets table and ensure all packet types are included in it
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:EnsurePacketValidity"></a>
+    <strong>BaseCell:EnsurePacketValidity ()</strong>
+    </dt>
+    <dd>
+    Iterate through saved packets and ensure the object uniqueIndexes they refer to
+ actually exist
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:AddLinkToRecord"></a>
+    <strong>BaseCell:AddLinkToRecord (storeType, recordId, uniqueIndex)</strong>
+    </dt>
+    <dd>
+    Adding record links to cells is special because we'll keep track of the uniqueIndex
+ of every object that uses a particular generated record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:RemoveLinkToRecord"></a>
+    <strong>BaseCell:RemoveLinkToRecord (storeType, recordId, uniqueIndex)</strong>
+    </dt>
+    <dd>
+    Removing record link from cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:GetVisitorCount"></a>
+    <strong>BaseCell:GetVisitorCount ()</strong>
+    </dt>
+    <dd>
+    Get the amount of visitors in cell
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int visitor count
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:AddVisitor"></a>
+    <strong>BaseCell:AddVisitor (pid)</strong>
+    </dt>
+    <dd>
+    Add visitor to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:RemoveVisitor"></a>
+    <strong>BaseCell:RemoveVisitor (pid)</strong>
+    </dt>
+    <dd>
+    Remove visitor from cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:GetAuthority"></a>
+    <strong>BaseCell:GetAuthority ()</strong>
+    </dt>
+    <dd>
+    Get the current authority of cell
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        pid player ID
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SetAuthority"></a>
+    <strong>BaseCell:SetAuthority (pid)</strong>
+    </dt>
+    <dd>
+    Set the current authority of cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:ContainsObject"></a>
+    <strong>BaseCell:ContainsObject (uniqueIndex)</strong>
+    </dt>
+    <dd>
+    Check whether an object is in this cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:HasContainerData"></a>
+    <strong>BaseCell:HasContainerData ()</strong>
+    </dt>
+    <dd>
+    Check if cell has container data
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:HasActorData"></a>
+    <strong>BaseCell:HasActorData ()</strong>
+    </dt>
+    <dd>
+    Check if cell has actor data
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:InitializeObjectData"></a>
+    <strong>BaseCell:InitializeObjectData (uniqueIndex, refId)</strong>
+    </dt>
+    <dd>
+    Initialize object data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+
+
+
+        </li>
+        <li><span class="parameter">refId</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:DeleteObjectData"></a>
+    <strong>BaseCell:DeleteObjectData (uniqueIndex)</strong>
+    </dt>
+    <dd>
+    Delete object data in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:MoveObjectData"></a>
+    <strong>BaseCell:MoveObjectData (uniqueIndex, newCell)</strong>
+    </dt>
+    <dd>
+    Move object data to new cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uniqueIndex</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">newCell</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         name of the new cell
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveLastVisit"></a>
+    <strong>BaseCell:SaveLastVisit (playerName)</strong>
+    </dt>
+    <dd>
+    Saves the last visitor's player name to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">playerName</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectsDeleted"></a>
+    <strong>BaseCell:SaveObjectsDeleted (pid)</strong>
+    </dt>
+    <dd>
+    Save deleted objects to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectsPlaced"></a>
+    <strong>BaseCell:SaveObjectsPlaced (pid)</strong>
+    </dt>
+    <dd>
+    Save the placed objects to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectsSpawned"></a>
+    <strong>BaseCell:SaveObjectsSpawned (pid)</strong>
+    </dt>
+    <dd>
+    Save spawned objects to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectsLocked"></a>
+    <strong>BaseCell:SaveObjectsLocked (pid)</strong>
+    </dt>
+    <dd>
+    Save locked objects to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectTrapsTriggered"></a>
+    <strong>BaseCell:SaveObjectTrapsTriggered (pid)</strong>
+    </dt>
+    <dd>
+    Save objects with triggered traps to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectsScaled"></a>
+    <strong>BaseCell:SaveObjectsScaled (pid)</strong>
+    </dt>
+    <dd>
+    Save scaled objects to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveObjectStates"></a>
+    <strong>BaseCell:SaveObjectStates (pid)</strong>
+    </dt>
+    <dd>
+    Save object states to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveDoorStates"></a>
+    <strong>BaseCell:SaveDoorStates (pid)</strong>
+    </dt>
+    <dd>
+    Save door states to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveContainers"></a>
+    <strong>BaseCell:SaveContainers (pid)</strong>
+    </dt>
+    <dd>
+    Save containers to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorList"></a>
+    <strong>BaseCell:SaveActorList (pid)</strong>
+    </dt>
+    <dd>
+    Save acterlist to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorPositions"></a>
+    <strong>BaseCell:SaveActorPositions (pid)</strong>
+    </dt>
+    <dd>
+    Save actor positions to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorStatsDynamic"></a>
+    <strong>BaseCell:SaveActorStatsDynamic ()</strong>
+    </dt>
+    <dd>
+    Save actors stats dynamic to cell
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorEquipment"></a>
+    <strong>BaseCell:SaveActorEquipment (pid)</strong>
+    </dt>
+    <dd>
+    Save actor equipment to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorDeath"></a>
+    <strong>BaseCell:SaveActorDeath (pid)</strong>
+    </dt>
+    <dd>
+    Save actor death to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:SaveActorCellChanges"></a>
+    <strong>BaseCell:SaveActorCellChanges (pid)</strong>
+    </dt>
+    <dd>
+    Save acter cell changes to cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorPackets"></a>
+    <strong>BaseCell:LoadActorPackets (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load actor packets
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectsDeleted"></a>
+    <strong>BaseCell:LoadObjectsDeleted (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load objects deleted
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectsPlaced"></a>
+    <strong>BaseCell:LoadObjectsPlaced (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load objects placed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectsSpawned"></a>
+    <strong>BaseCell:LoadObjectsSpawned (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    load objects spawned in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectsLocked"></a>
+    <strong>BaseCell:LoadObjectsLocked (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load locked objects in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectTrapsTriggered"></a>
+    <strong>BaseCell:LoadObjectTrapsTriggered (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load triggered trap objects in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectsScaled"></a>
+    <strong>BaseCell:LoadObjectsScaled (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load scaled objects in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadObjectStates"></a>
+    <strong>BaseCell:LoadObjectStates (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load object states in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadDoorStates"></a>
+    <strong>BaseCell:LoadDoorStates (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load door states in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadContainers"></a>
+    <strong>BaseCell:LoadContainers (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load containers in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorList"></a>
+    <strong>BaseCell:LoadActorList (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load actor list in cell
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorAuthority"></a>
+    <strong>BaseCell:LoadActorAuthority (pid)</strong>
+    </dt>
+    <dd>
+    Load cell's actor authority
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorPositions"></a>
+    <strong>BaseCell:LoadActorPositions (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load cell's actor positions
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorStatsDynamic"></a>
+    <strong>BaseCell:LoadActorStatsDynamic (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load cell's actor stats dynamic
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorEquipment"></a>
+    <strong>BaseCell:LoadActorEquipment (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load cell's actor equipment
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorAI"></a>
+    <strong>BaseCell:LoadActorAI (pid, objectData, uniqueIndexArray)</strong>
+    </dt>
+    <dd>
+    Load cell's actor AI
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+        <li><span class="parameter">uniqueIndexArray</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadActorCellChanges"></a>
+    <strong>BaseCell:LoadActorCellChanges (pid, objectData)</strong>
+    </dt>
+    <dd>
+    Load actor cell changes
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">objectData</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:RequestContainers"></a>
+    <strong>BaseCell:RequestContainers (pid, requestUniqueIndexes)</strong>
+    </dt>
+    <dd>
+    Request containers
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         playerID
+        </li>
+        <li><span class="parameter">requestUniqueIndexes</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:RequestActorList"></a>
+    <strong>BaseCell:RequestActorList (pid)</strong>
+    </dt>
+    <dd>
+    Request actor list
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadInitialCellData"></a>
+    <strong>BaseCell:LoadInitialCellData (pid)</strong>
+    </dt>
+    <dd>
+    Load cell's initial data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadMomentaryCellData"></a>
+    <strong>BaseCell:LoadMomentaryCellData (pid)</strong>
+    </dt>
+    <dd>
+    Load momentary cell data
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseCell:LoadGeneratedRecords"></a>
+    <strong>BaseCell:LoadGeneratedRecords (pid)</strong>
+    </dt>
+    <dd>
+    Load generated records
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+         player ID
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

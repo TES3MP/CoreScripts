@@ -385,7 +385,7 @@ logicHandler.AuthCheck = function(pid)
 end
 
 --- does packet origin require loaded cell
--- @parm packetOrigin table
+-- @param packetOrigin table
 -- @return bool
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 
@@ -397,7 +397,7 @@ logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 end
 
 --- Is packet from console?
--- @parm packetOrigin table
+-- @param packetOrigin table
 -- @return bool
 logicHandler.IsPacketFromConsole = function(packetOrigin)
 
@@ -621,7 +621,7 @@ end
 -- @int pid
 -- @string consoleCommand
 -- @string cellDescription
--- @string objectUniqueIndexes
+-- @string objectUniqueIndex
 -- @bool forEveryone
 logicHandler.RunConsoleCommandOnObject = function(pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
     logicHandler.RunConsoleCommandOnObjects(pid, consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
@@ -714,7 +714,7 @@ end
 -- @param action
 -- @int targetPid
 -- @param targetUniqueIndex
--- @param posY
+-- @param posX
 -- @param posY
 -- @param posZ
 -- @param distance

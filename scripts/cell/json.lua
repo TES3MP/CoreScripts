@@ -1,5 +1,5 @@
 --- JSON cell class - if opted for json storage instead of SQL
--- @classmod cell-base
+-- @classmod cell-json
 
 require("config")
 fileHelper = require("fileHelper")

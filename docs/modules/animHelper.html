@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><strong>animHelper</strong></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>animHelper</code></h1>
+<p>Animation helper</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#GetAnimation">GetAnimation (pid, animAlias)</a></td>
+	<td class="summary">Get animation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GetValidList">GetValidList (pid)</a></td>
+	<td class="summary">Get valid list</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#PlayAnimation">PlayAnimation (pid, animAlias)</a></td>
+	<td class="summary">Play animation</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#defaultAnimNames">defaultAnimNames</a></td>
+	<td class="summary">Default animation names</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#generalAnimAliases">generalAnimAliases</a></td>
+	<td class="summary">General animation aliases</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#femaleAnimAliases">femaleAnimAliases</a></td>
+	<td class="summary">Female animation aliases</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#beastAnimAliases">beastAnimAliases</a></td>
+	<td class="summary">Beast animation aliases</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "GetAnimation"></a>
+    <strong>GetAnimation (pid, animAlias)</strong>
+    </dt>
+    <dd>
+    Get animation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">animAlias</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        animAlias or "invalid"
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GetValidList"></a>
+    <strong>GetValidList (pid)</strong>
+    </dt>
+    <dd>
+    Get valid list
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string validList
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "PlayAnimation"></a>
+    <strong>PlayAnimation (pid, animAlias)</strong>
+    </dt>
+    <dd>
+    Play animation
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">animAlias</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of sucess status
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "defaultAnimNames"></a>
+    <strong>defaultAnimNames</strong>
+    </dt>
+    <dd>
+    Default animation names
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">hit1</span>
+
+
+
+        </li>
+        <li><span class="parameter">hit2</span>
+
+
+
+        </li>
+        <li><span class="parameter">hit3</span>
+
+
+
+        </li>
+        <li><span class="parameter">hit4</span>
+
+
+
+        </li>
+        <li><span class="parameter">hit5</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle2</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle3</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle4</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle5</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle6</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle7</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle8</span>
+
+
+
+        </li>
+        <li><span class="parameter">idle9</span>
+
+
+
+        </li>
+        <li><span class="parameter">pickprobe</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "generalAnimAliases"></a>
+    <strong>generalAnimAliases</strong>
+    </dt>
+    <dd>
+    General animation aliases
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">act_impatient</span>
+
+
+
+        </li>
+        <li><span class="parameter">check_missing_item</span>
+
+
+
+        </li>
+        <li><span class="parameter">examine_hand</span>
+
+
+
+        </li>
+        <li><span class="parameter">look_behind</span>
+
+
+
+        </li>
+        <li><span class="parameter">shift_feet</span>
+
+
+
+        </li>
+        <li><span class="parameter">scratch_neck</span>
+
+
+
+        </li>
+        <li><span class="parameter">touch_chin</span>
+
+
+
+        </li>
+        <li><span class="parameter">touch_shoulder</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "femaleAnimAliases"></a>
+    <strong>femaleAnimAliases</strong>
+    </dt>
+    <dd>
+    Female animation aliases
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">adjust_hair</span>
+
+
+
+        </li>
+        <li><span class="parameter">touch_hip</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "beastAnimAliases"></a>
+    <strong>beastAnimAliases</strong>
+    </dt>
+    <dd>
+    Beast animation aliases
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">act_confused</span>
+
+
+
+        </li>
+        <li><span class="parameter">look_around</span>
+
+
+
+        </li>
+        <li><span class="parameter">touch_hands</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

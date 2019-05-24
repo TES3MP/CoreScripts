@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><strong>time</strong></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>time</code></h1>
+<p>Calculate time to/from millisecond</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#seconds">seconds (sec)</a></td>
+	<td class="summary">Calculate milliseconds from seconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#minutes">minutes (min)</a></td>
+	<td class="summary">Calculate milliseconds from minutes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#hours">hours (hours)</a></td>
+	<td class="summary">Calculate milliseconds from hours</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#days">days (day)</a></td>
+	<td class="summary">Calculate milliseconds from days</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#toSeconds">toSeconds (msec)</a></td>
+	<td class="summary">Calculate seconds from milliseconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#toMinutes">toMinutes (msec)</a></td>
+	<td class="summary">Calculate minutes from milliseconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#toHours">toHours (msec)</a></td>
+	<td class="summary">Calculate hours from milliseconds</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#toDays">toDays (msec)</a></td>
+	<td class="summary">Calculate days from milliseconds</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "seconds"></a>
+    <strong>seconds (sec)</strong>
+    </dt>
+    <dd>
+    Calculate milliseconds from seconds
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sec</span>
+            <span class="types"><span class="type">int</span></span>
+         seconds
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        milliseconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "minutes"></a>
+    <strong>minutes (min)</strong>
+    </dt>
+    <dd>
+    Calculate milliseconds from minutes
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">min</span>
+            <span class="types"><span class="type">int</span></span>
+         minutes
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        milliseconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "hours"></a>
+    <strong>hours (hours)</strong>
+    </dt>
+    <dd>
+    Calculate milliseconds from hours
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">hours</span>
+            <span class="types"><span class="type">int</span></span>
+         hours
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        milliseconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "days"></a>
+    <strong>days (day)</strong>
+    </dt>
+    <dd>
+    Calculate milliseconds from days
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">day</span>
+            <span class="types"><span class="type">int</span></span>
+         days
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        miliseconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "toSeconds"></a>
+    <strong>toSeconds (msec)</strong>
+    </dt>
+    <dd>
+    Calculate seconds from milliseconds
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msec</span>
+            <span class="types"><span class="type">int</span></span>
+         milliseconds
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        seconds
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "toMinutes"></a>
+    <strong>toMinutes (msec)</strong>
+    </dt>
+    <dd>
+    Calculate minutes from milliseconds
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msec</span>
+            <span class="types"><span class="type">int</span></span>
+         milliseconds
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        minutes
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "toHours"></a>
+    <strong>toHours (msec)</strong>
+    </dt>
+    <dd>
+    Calculate hours from milliseconds
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msec</span>
+            <span class="types"><span class="type">int</span></span>
+         milliseconds
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        hours
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "toDays"></a>
+    <strong>toDays (msec)</strong>
+    </dt>
+    <dd>
+    Calculate days from milliseconds
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">msec</span>
+            <span class="types"><span class="type">int</span></span>
+         milliseconds
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        days
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

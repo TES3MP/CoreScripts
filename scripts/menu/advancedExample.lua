@@ -1,3 +1,5 @@
+--- advanced Example
+-- @module examples
 Menus["advanced example origin"] = {
     text = {
         color.Orange .. "Welcome, " .. color.Yellow,

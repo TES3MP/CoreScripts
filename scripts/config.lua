@@ -1,4 +1,4 @@
---- Configure server
+--- Configure server, not all values can be shown in LDOC I implore you to open the file instead
 -- @module config
 config = {}
 
@@ -72,19 +72,19 @@ config.shareVideos = true
 --- The cell that newly created players are teleported to
 config.defaultSpawnCell = "-3, -2"
 
---- The X, Y and Z position that newly created players are teleported to
-config.defaultSpawnPos = {-23894.0, -15079.0, 505}
+-- The X, Y and Z position that newly created players are teleported to
+config.defaultSpawnPos = { -23894.0, -15079.0, 505}
 
---- The X and Z rotation that newly created players are assigned
+-- The X and Z rotation that newly created players are assigned
 config.defaultSpawnRot = {0, 1.2}
 
 --- The cell that players respawn in, unless overridden below by other respawn options
 config.defaultRespawnCell = "Balmora, Temple"
 
---- The X, Y and Z position that players respawn in
+-- The X, Y and Z position that players respawn in
 config.defaultRespawnPos = {4700.5673828125, 3874.7416992188, 14758.990234375}
 
---- The X and Z rotation that respawned players are assigned
+-- The X and Z rotation that respawned players are assigned
 config.defaultRespawnRot = {0.25314688682556, 1.570611000061}
 
 --- Whether the default respawn location should be ignored in favor of respawning the
@@ -270,8 +270,8 @@ config.requiredRecordSettings = {
 config.numericalRecordSettings = { "subtype", "weight", "value", "cost", "charge", "health", "armorRating",
     "speed", "reach", "level", "magicka", "fatigue", "aiFight", "autoCalc", "gender", "flags", "enchantmentCharge" }
 
---- The record type settings whose input should be converted to booleans when using /storerecord
-config.booleanRecordSettings = { "scrollState", "keyState" }
+--- The record type settings whose input should be converted to bools when using /storerecord
+config.boolRecordSettings = { "scrollState", "keyState" }
 
 --- The record type settings whose input should be converted to tables with a min and a max numerical value
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }

@@ -1,0 +1,2108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><strong>player-base</strong></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>player-base</code></h1>
+<p>player-base</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:Destroy">BasePlayer:Destroy ()</a></td>
+	<td class="summary">Destroy player instance</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:Kick">BasePlayer:Kick ()</a></td>
+	<td class="summary">Kick player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:Register">BasePlayer:Register (password)</a></td>
+	<td class="summary">Register player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:FinishLogin">BasePlayer:FinishLogin ()</a></td>
+	<td class="summary">Finish login for player</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:EndCharGen">BasePlayer:EndCharGen ()</a></td>
+	<td class="summary">Player end chargen</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:IsLoggedIn">BasePlayer:IsLoggedIn ()</a></td>
+	<td class="summary">check if player is logged in</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:IsServerStaff">BasePlayer:IsServerStaff ()</a></td>
+	<td class="summary">check if player is staff</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:IsServerOwner">BasePlayer:IsServerOwner ()</a></td>
+	<td class="summary">check if player is server owner</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:IsAdmin">BasePlayer:IsAdmin ()</a></td>
+	<td class="summary">check if player is admin</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:IsModerator">BasePlayer:IsModerator ()</a></td>
+	<td class="summary">check if player is moderator</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:AddLinkToRecord">BasePlayer:AddLinkToRecord (storeType, recordId)</a></td>
+	<td class="summary">Add link to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:RemoveLinkToRecord">BasePlayer:RemoveLinkToRecord (storeType, recordId)</a></td>
+	<td class="summary">Remove link to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetHealthCurrent">BasePlayer:GetHealthCurrent ()</a></td>
+	<td class="summary">Get current health</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetHealthCurrent">BasePlayer:SetHealthCurrent (health)</a></td>
+	<td class="summary">Get current health</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetHealthBase">BasePlayer:GetHealthBase ()</a></td>
+	<td class="summary">Get health base</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetHealthBase">BasePlayer:SetHealthBase (health)</a></td>
+	<td class="summary">Set health base</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:HasAccount">BasePlayer:HasAccount ()</a></td>
+	<td class="summary">Check if player has account</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:Message">BasePlayer:Message (message)</a></td>
+	<td class="summary">Send message</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:CreateAccount">BasePlayer:CreateAccount ()</a></td>
+	<td class="summary">Create account</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveToDrive">BasePlayer:SaveToDrive ()</a></td>
+	<td class="summary">Save player to drive</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadFromDrive">BasePlayer:LoadFromDrive ()</a></td>
+	<td class="summary">Load player from drive</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveLogin">BasePlayer:SaveLogin ()</a></td>
+	<td class="summary">Save login</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveIpAddress">BasePlayer:SaveIpAddress ()</a></td>
+	<td class="summary">Save ip address</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:ProcessDeath">BasePlayer:ProcessDeath ()</a></td>
+	<td class="summary">Process Death</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:Resurrect">BasePlayer:Resurrect ()</a></td>
+	<td class="summary">Resurrect</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:DeleteSummons">BasePlayer:DeleteSummons ()</a></td>
+	<td class="summary">Delete summons</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadCharacter">BasePlayer:LoadCharacter ()</a></td>
+	<td class="summary">Load character</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveCharacter">BasePlayer:SaveCharacter ()</a></td>
+	<td class="summary">Save character</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadClass">BasePlayer:LoadClass ()</a></td>
+	<td class="summary">Load class</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveClass">BasePlayer:SaveClass ()</a></td>
+	<td class="summary">Save class</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadStatsDynamic">BasePlayer:LoadStatsDynamic ()</a></td>
+	<td class="summary">Load stats dynamic</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveStatsDynamic">BasePlayer:SaveStatsDynamic ()</a></td>
+	<td class="summary">Save stats dynamic</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadAttributes">BasePlayer:LoadAttributes ()</a></td>
+	<td class="summary">Load attributes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveAttributes">BasePlayer:SaveAttributes ()</a></td>
+	<td class="summary">Save attributes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadSkills">BasePlayer:LoadSkills ()</a></td>
+	<td class="summary">Load skills</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveSkills">BasePlayer:SaveSkills ()</a></td>
+	<td class="summary">Save skills</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadLevel">BasePlayer:LoadLevel ()</a></td>
+	<td class="summary">Load level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveLevel">BasePlayer:SaveLevel ()</a></td>
+	<td class="summary">Save level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadShapeshift">BasePlayer:LoadShapeshift ()</a></td>
+	<td class="summary">Load shapeshift</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveShapeshift">BasePlayer:SaveShapeshift ()</a></td>
+	<td class="summary">Save shapeshift</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadCell">BasePlayer:LoadCell ()</a></td>
+	<td class="summary">Load cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveCell">BasePlayer:SaveCell ()</a></td>
+	<td class="summary">Save cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadEquipment">BasePlayer:LoadEquipment ()</a></td>
+	<td class="summary">Load equipment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveEquipment">BasePlayer:SaveEquipment ()</a></td>
+	<td class="summary">Save equipment</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:CleanInventory">BasePlayer:CleanInventory ()</a></td>
+	<td class="summary">Iterate through inventory items and remove nil values as well as items whose
+ records no longer exist
+ Note: The check for existing records can only handle generated records for now</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadItemChanges">BasePlayer:LoadItemChanges (itemArray, inventoryAction)</a></td>
+	<td class="summary">Send a packet with some specific item changes to the player, to avoid having
+ to resend the entire inventory</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadInventory">BasePlayer:LoadInventory ()</a></td>
+	<td class="summary">Load inventory</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveInventory">BasePlayer:SaveInventory ()</a></td>
+	<td class="summary">Save inventory</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:CleanSpellbook">BasePlayer:CleanSpellbook ()</a></td>
+	<td class="summary">Iterate through spells and remove nil values as well as spells whose records
+ no longer exist
+ Note: The check for existing records can only handle generated records for now</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadSpellbook">BasePlayer:LoadSpellbook ()</a></td>
+	<td class="summary">Load spellbook</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveSpellbook">BasePlayer:SaveSpellbook ()</a></td>
+	<td class="summary">Save spellbook</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadQuickKeys">BasePlayer:LoadQuickKeys ()</a></td>
+	<td class="summary">Load quick keys</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveQuickKeys">BasePlayer:SaveQuickKeys ()</a></td>
+	<td class="summary">Save quick keys</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadJournal">BasePlayer:LoadJournal ()</a></td>
+	<td class="summary">Load journal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveJournal">BasePlayer:SaveJournal ()</a></td>
+	<td class="summary">Save journal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadFactionRanks">BasePlayer:LoadFactionRanks ()</a></td>
+	<td class="summary">Load faction ranks</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveFactionRanks">BasePlayer:SaveFactionRanks ()</a></td>
+	<td class="summary">Save faction ranks</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadFactionExpulsion">BasePlayer:LoadFactionExpulsion ()</a></td>
+	<td class="summary">Load faction expulsion</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveFactionExpulsion">BasePlayer:SaveFactionExpulsion ()</a></td>
+	<td class="summary">Save faction expulsion</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadFactionReputation">BasePlayer:LoadFactionReputation ()</a></td>
+	<td class="summary">Load faction reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveFactionReputation">BasePlayer:SaveFactionReputation ()</a></td>
+	<td class="summary">Save faction reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadTopics">BasePlayer:LoadTopics ()</a></td>
+	<td class="summary">Load topics</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveTopics">BasePlayer:SaveTopics ()</a></td>
+	<td class="summary">Save topics</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadBounty">BasePlayer:LoadBounty ()</a></td>
+	<td class="summary">Load bounty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveBounty">BasePlayer:SaveBounty ()</a></td>
+	<td class="summary">Save bounty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadReputation">BasePlayer:LoadReputation ()</a></td>
+	<td class="summary">Load reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveReputation">BasePlayer:SaveReputation ()</a></td>
+	<td class="summary">Save reputation</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadMap">BasePlayer:LoadMap ()</a></td>
+	<td class="summary">Load map</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadBooks">BasePlayer:LoadBooks ()</a></td>
+	<td class="summary">Load books</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:AddBooks">BasePlayer:AddBooks ()</a></td>
+	<td class="summary">Add books</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadMarkLocation">BasePlayer:LoadMarkLocation ()</a></td>
+	<td class="summary">Load mark location</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveMarkLocation">BasePlayer:SaveMarkLocation ()</a></td>
+	<td class="summary">Save mark location</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadSelectedSpell">BasePlayer:LoadSelectedSpell ()</a></td>
+	<td class="summary">Load selected spell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SaveSelectedSpell">BasePlayer:SaveSelectedSpell ()</a></td>
+	<td class="summary">Save selected spell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetDifficulty">BasePlayer:GetDifficulty ()</a></td>
+	<td class="summary">Get Difficulty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetConsoleAllowed">BasePlayer:GetConsoleAllowed ()</a></td>
+	<td class="summary">Get console allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetBedRestAllowed">BasePlayer:GetBedRestAllowed ()</a></td>
+	<td class="summary">Get bed rest allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetWildernessRestAllowed">BasePlayer:GetWildernessRestAllowed ()</a></td>
+	<td class="summary">Get wilderness rest allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetWaitAllowed">BasePlayer:GetWaitAllowed ()</a></td>
+	<td class="summary">Get wait allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetEnforcedLogLevel">BasePlayer:GetEnforcedLogLevel ()</a></td>
+	<td class="summary">Get enforced log level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:GetPhysicsFramerate">BasePlayer:GetPhysicsFramerate ()</a></td>
+	<td class="summary">Get physics framerate</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetDifficulty">BasePlayer:SetDifficulty (difficulty)</a></td>
+	<td class="summary">Set difficulty</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetEnforcedLogLevel">BasePlayer:SetEnforcedLogLevel (enforcedLogLevel)</a></td>
+	<td class="summary">Set enforced log level</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetPhysicsFramerate">BasePlayer:SetPhysicsFramerate (physicsFramerate)</a></td>
+	<td class="summary">Set physics framerate</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetConsoleAllowed">BasePlayer:SetConsoleAllowed (state)</a></td>
+	<td class="summary">Set console allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetBedRestAllowed">BasePlayer:SetBedRestAllowed (state)</a></td>
+	<td class="summary">Set bed rest allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetWildernessRestAllowed">BasePlayer:SetWildernessRestAllowed (state)</a></td>
+	<td class="summary">Set wilderness rest allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetWaitAllowed">BasePlayer:SetWaitAllowed (state)</a></td>
+	<td class="summary">Set wait allowed</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetWerewolfState">BasePlayer:SetWerewolfState (state)</a></td>
+	<td class="summary">Set werewolf state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetScale">BasePlayer:SetScale (scale)</a></td>
+	<td class="summary">Set scale</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:SetConfiscationState">BasePlayer:SetConfiscationState (state)</a></td>
+	<td class="summary">Set confiscation state</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadSettings">BasePlayer:LoadSettings ()</a></td>
+	<td class="summary">Load settings</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:LoadSpecialStates">BasePlayer:LoadSpecialStates ()</a></td>
+	<td class="summary">Load special states</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:AddCellLoaded">BasePlayer:AddCellLoaded (cellDescription)</a></td>
+	<td class="summary">Add cell loaded</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BasePlayer:RemoveCellLoaded">BasePlayer:RemoveCellLoaded (cellDescription)</a></td>
+	<td class="summary">Remove cell loaded</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "BasePlayer:Destroy"></a>
+    <strong>BasePlayer:Destroy ()</strong>
+    </dt>
+    <dd>
+    Destroy player instance
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:Kick"></a>
+    <strong>BasePlayer:Kick ()</strong>
+    </dt>
+    <dd>
+    Kick player
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:Register"></a>
+    <strong>BasePlayer:Register (password)</strong>
+    </dt>
+    <dd>
+    Register player
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">password</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:FinishLogin"></a>
+    <strong>BasePlayer:FinishLogin ()</strong>
+    </dt>
+    <dd>
+    Finish login for player
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:EndCharGen"></a>
+    <strong>BasePlayer:EndCharGen ()</strong>
+    </dt>
+    <dd>
+    Player end chargen
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:IsLoggedIn"></a>
+    <strong>BasePlayer:IsLoggedIn ()</strong>
+    </dt>
+    <dd>
+    check if player is logged in
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:IsServerStaff"></a>
+    <strong>BasePlayer:IsServerStaff ()</strong>
+    </dt>
+    <dd>
+    check if player is staff
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:IsServerOwner"></a>
+    <strong>BasePlayer:IsServerOwner ()</strong>
+    </dt>
+    <dd>
+    check if player is server owner
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:IsAdmin"></a>
+    <strong>BasePlayer:IsAdmin ()</strong>
+    </dt>
+    <dd>
+    check if player is admin
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:IsModerator"></a>
+    <strong>BasePlayer:IsModerator ()</strong>
+    </dt>
+    <dd>
+    check if player is moderator
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:AddLinkToRecord"></a>
+    <strong>BasePlayer:AddLinkToRecord (storeType, recordId)</strong>
+    </dt>
+    <dd>
+    Add link to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:RemoveLinkToRecord"></a>
+    <strong>BasePlayer:RemoveLinkToRecord (storeType, recordId)</strong>
+    </dt>
+    <dd>
+    Remove link to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetHealthCurrent"></a>
+    <strong>BasePlayer:GetHealthCurrent ()</strong>
+    </dt>
+    <dd>
+    Get current health
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int healthCurrent
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetHealthCurrent"></a>
+    <strong>BasePlayer:SetHealthCurrent (health)</strong>
+    </dt>
+    <dd>
+    Get current health
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">health</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetHealthBase"></a>
+    <strong>BasePlayer:GetHealthBase ()</strong>
+    </dt>
+    <dd>
+    Get health base
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int healthBase
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetHealthBase"></a>
+    <strong>BasePlayer:SetHealthBase (health)</strong>
+    </dt>
+    <dd>
+    Set health base
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">health</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:HasAccount"></a>
+    <strong>BasePlayer:HasAccount ()</strong>
+    </dt>
+    <dd>
+    Check if player has account
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:Message"></a>
+    <strong>BasePlayer:Message (message)</strong>
+    </dt>
+    <dd>
+    Send message
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">message</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:CreateAccount"></a>
+    <strong>BasePlayer:CreateAccount ()</strong>
+    </dt>
+    <dd>
+    Create account
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveToDrive"></a>
+    <strong>BasePlayer:SaveToDrive ()</strong>
+    </dt>
+    <dd>
+    Save player to drive
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadFromDrive"></a>
+    <strong>BasePlayer:LoadFromDrive ()</strong>
+    </dt>
+    <dd>
+    Load player from drive
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveLogin"></a>
+    <strong>BasePlayer:SaveLogin ()</strong>
+    </dt>
+    <dd>
+    Save login
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveIpAddress"></a>
+    <strong>BasePlayer:SaveIpAddress ()</strong>
+    </dt>
+    <dd>
+    Save ip address
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:ProcessDeath"></a>
+    <strong>BasePlayer:ProcessDeath ()</strong>
+    </dt>
+    <dd>
+    Process Death
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:Resurrect"></a>
+    <strong>BasePlayer:Resurrect ()</strong>
+    </dt>
+    <dd>
+    Resurrect
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:DeleteSummons"></a>
+    <strong>BasePlayer:DeleteSummons ()</strong>
+    </dt>
+    <dd>
+    Delete summons
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadCharacter"></a>
+    <strong>BasePlayer:LoadCharacter ()</strong>
+    </dt>
+    <dd>
+    Load character
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveCharacter"></a>
+    <strong>BasePlayer:SaveCharacter ()</strong>
+    </dt>
+    <dd>
+    Save character
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadClass"></a>
+    <strong>BasePlayer:LoadClass ()</strong>
+    </dt>
+    <dd>
+    Load class
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveClass"></a>
+    <strong>BasePlayer:SaveClass ()</strong>
+    </dt>
+    <dd>
+    Save class
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadStatsDynamic"></a>
+    <strong>BasePlayer:LoadStatsDynamic ()</strong>
+    </dt>
+    <dd>
+    Load stats dynamic
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveStatsDynamic"></a>
+    <strong>BasePlayer:SaveStatsDynamic ()</strong>
+    </dt>
+    <dd>
+    Save stats dynamic
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadAttributes"></a>
+    <strong>BasePlayer:LoadAttributes ()</strong>
+    </dt>
+    <dd>
+    Load attributes
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveAttributes"></a>
+    <strong>BasePlayer:SaveAttributes ()</strong>
+    </dt>
+    <dd>
+    Save attributes
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadSkills"></a>
+    <strong>BasePlayer:LoadSkills ()</strong>
+    </dt>
+    <dd>
+    Load skills
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveSkills"></a>
+    <strong>BasePlayer:SaveSkills ()</strong>
+    </dt>
+    <dd>
+    Save skills
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadLevel"></a>
+    <strong>BasePlayer:LoadLevel ()</strong>
+    </dt>
+    <dd>
+    Load level
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveLevel"></a>
+    <strong>BasePlayer:SaveLevel ()</strong>
+    </dt>
+    <dd>
+    Save level
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadShapeshift"></a>
+    <strong>BasePlayer:LoadShapeshift ()</strong>
+    </dt>
+    <dd>
+    Load shapeshift
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveShapeshift"></a>
+    <strong>BasePlayer:SaveShapeshift ()</strong>
+    </dt>
+    <dd>
+    Save shapeshift
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadCell"></a>
+    <strong>BasePlayer:LoadCell ()</strong>
+    </dt>
+    <dd>
+    Load cell
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveCell"></a>
+    <strong>BasePlayer:SaveCell ()</strong>
+    </dt>
+    <dd>
+    Save cell
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadEquipment"></a>
+    <strong>BasePlayer:LoadEquipment ()</strong>
+    </dt>
+    <dd>
+    Load equipment
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveEquipment"></a>
+    <strong>BasePlayer:SaveEquipment ()</strong>
+    </dt>
+    <dd>
+    Save equipment
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:CleanInventory"></a>
+    <strong>BasePlayer:CleanInventory ()</strong>
+    </dt>
+    <dd>
+    Iterate through inventory items and remove nil values as well as items whose
+ records no longer exist
+ Note: The check for existing records can only handle generated records for now
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadItemChanges"></a>
+    <strong>BasePlayer:LoadItemChanges (itemArray, inventoryAction)</strong>
+    </dt>
+    <dd>
+
+<p>Send a packet with some specific item changes to the player, to avoid having
+ to resend the entire inventory  Note: This just sends a packet, so the same item changes should be applied to</p>
+<pre><code>   self.data.inventory separately
+</code></pre>
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">itemArray</span>
+
+
+
+        </li>
+        <li><span class="parameter">inventoryAction</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadInventory"></a>
+    <strong>BasePlayer:LoadInventory ()</strong>
+    </dt>
+    <dd>
+    Load inventory
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveInventory"></a>
+    <strong>BasePlayer:SaveInventory ()</strong>
+    </dt>
+    <dd>
+    Save inventory
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:CleanSpellbook"></a>
+    <strong>BasePlayer:CleanSpellbook ()</strong>
+    </dt>
+    <dd>
+    Iterate through spells and remove nil values as well as spells whose records
+ no longer exist
+ Note: The check for existing records can only handle generated records for now
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadSpellbook"></a>
+    <strong>BasePlayer:LoadSpellbook ()</strong>
+    </dt>
+    <dd>
+    Load spellbook
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveSpellbook"></a>
+    <strong>BasePlayer:SaveSpellbook ()</strong>
+    </dt>
+    <dd>
+    Save spellbook
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadQuickKeys"></a>
+    <strong>BasePlayer:LoadQuickKeys ()</strong>
+    </dt>
+    <dd>
+    Load quick keys
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveQuickKeys"></a>
+    <strong>BasePlayer:SaveQuickKeys ()</strong>
+    </dt>
+    <dd>
+    Save quick keys
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadJournal"></a>
+    <strong>BasePlayer:LoadJournal ()</strong>
+    </dt>
+    <dd>
+    Load journal
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveJournal"></a>
+    <strong>BasePlayer:SaveJournal ()</strong>
+    </dt>
+    <dd>
+    Save journal
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadFactionRanks"></a>
+    <strong>BasePlayer:LoadFactionRanks ()</strong>
+    </dt>
+    <dd>
+    Load faction ranks
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveFactionRanks"></a>
+    <strong>BasePlayer:SaveFactionRanks ()</strong>
+    </dt>
+    <dd>
+    Save faction ranks
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadFactionExpulsion"></a>
+    <strong>BasePlayer:LoadFactionExpulsion ()</strong>
+    </dt>
+    <dd>
+    Load faction expulsion
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveFactionExpulsion"></a>
+    <strong>BasePlayer:SaveFactionExpulsion ()</strong>
+    </dt>
+    <dd>
+    Save faction expulsion
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadFactionReputation"></a>
+    <strong>BasePlayer:LoadFactionReputation ()</strong>
+    </dt>
+    <dd>
+    Load faction reputation
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveFactionReputation"></a>
+    <strong>BasePlayer:SaveFactionReputation ()</strong>
+    </dt>
+    <dd>
+    Save faction reputation
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadTopics"></a>
+    <strong>BasePlayer:LoadTopics ()</strong>
+    </dt>
+    <dd>
+    Load topics
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveTopics"></a>
+    <strong>BasePlayer:SaveTopics ()</strong>
+    </dt>
+    <dd>
+    Save topics
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadBounty"></a>
+    <strong>BasePlayer:LoadBounty ()</strong>
+    </dt>
+    <dd>
+    Load bounty
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveBounty"></a>
+    <strong>BasePlayer:SaveBounty ()</strong>
+    </dt>
+    <dd>
+    Save bounty
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadReputation"></a>
+    <strong>BasePlayer:LoadReputation ()</strong>
+    </dt>
+    <dd>
+    Load reputation
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveReputation"></a>
+    <strong>BasePlayer:SaveReputation ()</strong>
+    </dt>
+    <dd>
+    Save reputation
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadMap"></a>
+    <strong>BasePlayer:LoadMap ()</strong>
+    </dt>
+    <dd>
+    Load map
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadBooks"></a>
+    <strong>BasePlayer:LoadBooks ()</strong>
+    </dt>
+    <dd>
+    Load books
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:AddBooks"></a>
+    <strong>BasePlayer:AddBooks ()</strong>
+    </dt>
+    <dd>
+    Add books
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadMarkLocation"></a>
+    <strong>BasePlayer:LoadMarkLocation ()</strong>
+    </dt>
+    <dd>
+    Load mark location
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveMarkLocation"></a>
+    <strong>BasePlayer:SaveMarkLocation ()</strong>
+    </dt>
+    <dd>
+    Save mark location
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadSelectedSpell"></a>
+    <strong>BasePlayer:LoadSelectedSpell ()</strong>
+    </dt>
+    <dd>
+    Load selected spell
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SaveSelectedSpell"></a>
+    <strong>BasePlayer:SaveSelectedSpell ()</strong>
+    </dt>
+    <dd>
+    Save selected spell
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetDifficulty"></a>
+    <strong>BasePlayer:GetDifficulty ()</strong>
+    </dt>
+    <dd>
+    Get Difficulty
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string difficulty
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetConsoleAllowed"></a>
+    <strong>BasePlayer:GetConsoleAllowed ()</strong>
+    </dt>
+    <dd>
+    Get console allowed
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string consoleAllowed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetBedRestAllowed"></a>
+    <strong>BasePlayer:GetBedRestAllowed ()</strong>
+    </dt>
+    <dd>
+    Get bed rest allowed
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string bedRestAllowed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetWildernessRestAllowed"></a>
+    <strong>BasePlayer:GetWildernessRestAllowed ()</strong>
+    </dt>
+    <dd>
+    Get wilderness rest allowed
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string wildernessRestAllowed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetWaitAllowed"></a>
+    <strong>BasePlayer:GetWaitAllowed ()</strong>
+    </dt>
+    <dd>
+    Get wait allowed
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string waitAllowed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetEnforcedLogLevel"></a>
+    <strong>BasePlayer:GetEnforcedLogLevel ()</strong>
+    </dt>
+    <dd>
+    Get enforced log level
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        enforcedLogLevel
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:GetPhysicsFramerate"></a>
+    <strong>BasePlayer:GetPhysicsFramerate ()</strong>
+    </dt>
+    <dd>
+    Get physics framerate
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string physicsFramerate
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetDifficulty"></a>
+    <strong>BasePlayer:SetDifficulty (difficulty)</strong>
+    </dt>
+    <dd>
+    Set difficulty
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">difficulty</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetEnforcedLogLevel"></a>
+    <strong>BasePlayer:SetEnforcedLogLevel (enforcedLogLevel)</strong>
+    </dt>
+    <dd>
+    Set enforced log level
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">enforcedLogLevel</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetPhysicsFramerate"></a>
+    <strong>BasePlayer:SetPhysicsFramerate (physicsFramerate)</strong>
+    </dt>
+    <dd>
+    Set physics framerate
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">physicsFramerate</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetConsoleAllowed"></a>
+    <strong>BasePlayer:SetConsoleAllowed (state)</strong>
+    </dt>
+    <dd>
+    Set console allowed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetBedRestAllowed"></a>
+    <strong>BasePlayer:SetBedRestAllowed (state)</strong>
+    </dt>
+    <dd>
+    Set bed rest allowed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetWildernessRestAllowed"></a>
+    <strong>BasePlayer:SetWildernessRestAllowed (state)</strong>
+    </dt>
+    <dd>
+    Set wilderness rest allowed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetWaitAllowed"></a>
+    <strong>BasePlayer:SetWaitAllowed (state)</strong>
+    </dt>
+    <dd>
+    Set wait allowed
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetWerewolfState"></a>
+    <strong>BasePlayer:SetWerewolfState (state)</strong>
+    </dt>
+    <dd>
+    Set werewolf state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetScale"></a>
+    <strong>BasePlayer:SetScale (scale)</strong>
+    </dt>
+    <dd>
+    Set scale
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">scale</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:SetConfiscationState"></a>
+    <strong>BasePlayer:SetConfiscationState (state)</strong>
+    </dt>
+    <dd>
+    Set confiscation state
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">state</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadSettings"></a>
+    <strong>BasePlayer:LoadSettings ()</strong>
+    </dt>
+    <dd>
+    Load settings
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:LoadSpecialStates"></a>
+    <strong>BasePlayer:LoadSpecialStates ()</strong>
+    </dt>
+    <dd>
+    Load special states
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:AddCellLoaded"></a>
+    <strong>BasePlayer:AddCellLoaded (cellDescription)</strong>
+    </dt>
+    <dd>
+    Add cell loaded
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BasePlayer:RemoveCellLoaded"></a>
+    <strong>BasePlayer:RemoveCellLoaded (cellDescription)</strong>
+    </dt>
+    <dd>
+    Remove cell loaded
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cellDescription</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -327,7 +327,7 @@ function Database:CreatePlayerTables()
         {race = "TEXT"},
         {head = "TEXT"},
         {hair = "TEXT"},
-        {gender = "BOOLEAN NOT NULL CHECK (gender IN (0, 1))"},
+        {gender = "bool NOT NULL CHECK (gender IN (0, 1))"},
         {class = "TEXT"},
         {birthsign = "TEXT"},
         constraintRow

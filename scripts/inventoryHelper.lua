@@ -1,5 +1,5 @@
 --- Inventory helper
--- @module inventory Helper
+-- @module inventoryHelper
 local inventoryHelper = {}
 
 --- If inventory contains item
@@ -39,8 +39,8 @@ end
 --- Get item index
 -- @param inventory
 -- @int refId
--- @double charge
--- @double enchantmentCharge
+-- @int charge
+-- @int enchantmentCharge
 -- @param soul
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
 
@@ -89,8 +89,8 @@ end
 -- @param inventory
 -- @int refId
 -- @int count
--- @double charge
--- @double enchantmentCharge
+-- @int charge
+-- @int enchantmentCharge
 -- @param soul
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -196,8 +196,8 @@ end
 -- @param inventory
 -- @int refId
 -- @int count
--- @double charge
--- @double enchantmentCharge
+-- @int charge
+-- @int enchantmentCharge
 -- @param soul
 function inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -255,8 +255,8 @@ end
 -- @param inventory
 -- @int refId
 -- @int count
--- @double charge
--- @double enchantmentCharge
+-- @int charge
+-- @int enchantmentCharge
 -- @param soul
 function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -275,8 +275,8 @@ end
 -- @param inventory
 -- @int refId
 -- @int count
--- @double charge
--- @double enchantmentCharge
+-- @int charge
+-- @int enchantmentCharge
 -- @param soul
 function inventoryHelper.removeItem(inventory, refId, count, charge, enchantmentCharge, soul)
     return inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)

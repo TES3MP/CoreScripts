@@ -302,9 +302,9 @@ function menuHelper.variables.concatenation(inputDelimiter, ...)
 end
 
 --- Check condition
--- @string inputDelimiter
+-- @int pid
 -- @string condition
--- @return boolean of succes status
+-- @return bool of succes status
 function menuHelper.CheckCondition(pid, condition)
 
     local targetPlayer = Players[pid]

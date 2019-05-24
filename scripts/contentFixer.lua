@@ -5,19 +5,18 @@ require("utils")
 
 local contentFixer = {}
 
---- refNumDeltionsByCell
--- @table refNumDeletionsByCell
+-- refNumDeltionsByCell
 local refNumDeletionsByCell = {}
---- Delete Socucius Ergalla
+-- Delete Socucius Ergalla
 refNumDeletionsByCell["Seyda Neen, Census and Excise Office"] = { 119636 }
---- Delete the chargen boat and associated guards and objects
+-- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-1, -9"] = { 268178, 297457, 297459, 297460, 299125 }
---- Delete the chargen boat and associated guards and objects
+-- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-2, -9"] = { 172848, 172850, 172852, 289104, 297461, 397559 }
---- Delete the chargen boat and associated guards and objects
+-- Delete the chargen boat and associated guards and objects
 refNumDeletionsByCell["-2, -10"] = { 297463, 297464, 297465, 297466 }
 
---- deadlyItems
+-- deadlyItems
 local deadlyItems = { "keening", "sunder" }
 
 --- Fix cell
@@ -44,7 +43,7 @@ end
 
 --- Validate cell change
 -- @int pid
--- @return boolean of success state
+-- @return bool of success state
 function contentFixer.ValidateCellChange(pid)
 
     local cell = tes3mp.GetCell(pid)

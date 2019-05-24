@@ -1,3 +1,5 @@
+--- Menus
+-- @module Menus
 Menus["help player"] = {
     text = color.Orange .. "Player command list:\n" ..
         color.Yellow .. "/message <pid> <text>\n" ..

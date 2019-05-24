@@ -1,0 +1,1233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><strong>tableHelper</strong></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><a href="../classes/recordstore-base.html">recordstore-base</a></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>tableHelper</code></h1>
+<p>Table helper</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#getCount">getCount (inputTable)</a></td>
+	<td class="summary">get table length (useful for sparse tables)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getArrayFromIndexes">getArrayFromIndexes (inputTable)</a></td>
+	<td class="summary">Iterate through a table's indexes and put them into an array table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getValueOverlap">getValueOverlap (firstTable, secondTable)</a></td>
+	<td class="summary">Return an array with the values that two input tables have in common</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getTableFromCommaSplit">getTableFromCommaSplit (inputString)</a></td>
+	<td class="summary">Iterate through comma-separated values in a string and turn them into table values</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#concatenateTableIndexes">concatenateTableIndexes (inputTable, delimiter)</a></td>
+	<td class="summary">Concatenate the indexes in a table, useful for printing out all the valid indexes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#concatenateArrayValues">concatenateArrayValues (inputTable, startIndex, delimiter)</a></td>
+	<td class="summary">Concatenate the values in an array, useful for printing out the array's
+ contents, with an optional delimiter between values
+ <br> Optionally can take startIndex to start from</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#concatenateFromIndex">concatenateFromIndex (inputTable, startIndex, delimiter)</a></td>
+	<td class="summary">Concatenate the values in an array, useful for printing out the array's
+ contents, with an optional delimiter between values</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#containsKeyValue">containsKeyValue (inputTable, keyToFind, valueToFind, checkNestedTables)</a></td>
+	<td class="summary">Check whether a table contains a key/value pair, optionally checking inside
+ nested tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#containsKeyValuePairs">containsKeyValuePairs (inputTable, keyValuePairsTable, checkNestedTables)</a></td>
+	<td class="summary">Check whether a table contains a set of key/value pairs, optionally checking inside
+ tables nested in the original one</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#containsValue">containsValue (inputTable, valueToFind, checkNestedTables)</a></td>
+	<td class="summary">Check whether a table contains a certain value, optionally checking inside
+ nested tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#containsCaseInsensitiveString">containsCaseInsensitiveString (inputTable, stringToFind, checkNestedTables)</a></td>
+	<td class="summary">Check whether a table contains a certain case insensitive string, optionally
+ checking inside nested tables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#insertValueIfMissing">insertValueIfMissing (inputTable, value)</a></td>
+	<td class="summary">Check if table contains a certain value, if not inserts it</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getAnyValue">getAnyValue (inputTable)</a></td>
+	<td class="summary">Attempts to get any value from an table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getUnusedNumericalIndex">getUnusedNumericalIndex (inputTable)</a></td>
+	<td class="summary">Attempts to get the first unused numerical index (not counting 0)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getIndexByPattern">getIndexByPattern (inputTable, patternToFind)</a></td>
+	<td class="summary">pattern matches values of an table (regexp)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getIndexByNestedKeyValue">getIndexByNestedKeyValue (inputTable, keyToFind, valueToFind)</a></td>
+	<td class="summary">Searches table and nested tables for key value pair</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getIndexByValue">getIndexByValue (inputTable, valueToFind)</a></td>
+	<td class="summary">Gets index by the value</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cleanNils">cleanNils (inputTable)</a></td>
+	<td class="summary">Iterate through a table and return a new table based on it that has no nil values
+ (useful for numerical arrays because they retain nil values)
+ Based on <a href="http://stackoverflow.com/a/28302975">this</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#removeValue">removeValue (inputTable, valueToFind)</a></td>
+	<td class="summary">Set values to nil here instead of using table.remove(), so this method can be used on
+ a table while iterating through it</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#replaceValue">replaceValue (inputTable, valueToFind, newValue)</a></td>
+	<td class="summary">Replace value in table or nested table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#merge">merge (mainTable, addedTable)</a></td>
+	<td class="summary">Add a 2nd table's key/value pairs to the 1st table
+ Note: If the two tables share keys, the values of the 2nd table
+ will be used in the final table
+ Based on <a href="http://stackoverflow.com/a/1283608">this</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#insertValues">insertValues (mainTable, addedTable)</a></td>
+	<td class="summary">Insert all the values from the 2nd table into the 1st table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fixNumericalKeys">fixNumericalKeys (inputTable, fixZeroStart)</a></td>
+	<td class="summary">Convert string keys containing numbers into numerical keys,
+ useful for JSON tables<br/>
+ Because Lua arrays start from index 1, the fixZeroStart argument
+ can be set to true to increment all of the keys by 1 in tables that
+ start from 0</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#usesNumericalKeys">usesNumericalKeys (inputTable)</a></td>
+	<td class="summary">Check whether the table contains only numerical keys, though they
+ don't have to be consecutive</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#usesNumericalValues">usesNumericalValues (inputTable)</a></td>
+	<td class="summary">Check whether the table contains only numerical values</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isEmpty">isEmpty (inputTable)</a></td>
+	<td class="summary">Check whether there are any items in the table</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isEqualTo">isEqualTo (firstTable, secondTable, ignoredKeys)</a></td>
+	<td class="summary">Check whether the table has the same keys and values as another table, optionally
+ ignoring certain keys</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shallowCopy">shallowCopy (inputValue)</a></td>
+	<td class="summary">Copy a table's top level values and direct children to another table
+ Based on <a href="http://lua-users.org/wiki/CopyTable">this</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSimplePrintableTable">getSimplePrintableTable (inputTable)</a></td>
+	<td class="summary">Get a compact string with a table's contents</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getPrintableTable">getPrintableTable (inputTable, maxDepth, indentStr, indentLevel)</a></td>
+	<td class="summary">Get a string with a table's contents where every value is on its own row
+ Based on <a href="http://stackoverflow.com/a/13398936">this</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#print">print (inputTable, maxDepth, indentStr, indentLevel)</a></td>
+	<td class="summary">print an table to console</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "getCount"></a>
+    <strong>getCount (inputTable)</strong>
+    </dt>
+    <dd>
+    get table length (useful for sparse tables)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        length of inputTable
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getArrayFromIndexes"></a>
+    <strong>getArrayFromIndexes (inputTable)</strong>
+    </dt>
+    <dd>
+    Iterate through a table's indexes and put them into an array table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getValueOverlap"></a>
+    <strong>getValueOverlap (firstTable, secondTable)</strong>
+    </dt>
+    <dd>
+    Return an array with the values that two input tables have in common
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">firstTable</span>
+         table
+        </li>
+        <li><span class="parameter">secondTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table with the matching values
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getTableFromCommaSplit"></a>
+    <strong>getTableFromCommaSplit (inputString)</strong>
+    </dt>
+    <dd>
+    Iterate through comma-separated values in a string and turn them into table values
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputString</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        table with values from splitting inputString on comma delimiter
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "concatenateTableIndexes"></a>
+    <strong>concatenateTableIndexes (inputTable, delimiter)</strong>
+    </dt>
+    <dd>
+    Concatenate the indexes in a table, useful for printing out all the valid indexes
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">delimiter</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+         delimiter
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string of concated table indexes from inputTable delimted by delimiter
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "concatenateArrayValues"></a>
+    <strong>concatenateArrayValues (inputTable, startIndex, delimiter)</strong>
+    </dt>
+    <dd>
+    Concatenate the values in an array, useful for printing out the array's
+ contents, with an optional delimiter between values
+ <br> Optionally can take startIndex to start from
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">startIndex</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">delimiter</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string of concated table values from inputTable delimted by delimiter
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "concatenateFromIndex"></a>
+    <strong>concatenateFromIndex (inputTable, startIndex, delimiter)</strong>
+    </dt>
+    <dd>
+    Concatenate the values in an array, useful for printing out the array's
+ contents, with an optional delimiter between values
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">startIndex</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">delimiter</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string of concated table values from inputTable delimted by delimiter
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "containsKeyValue"></a>
+    <strong>containsKeyValue (inputTable, keyToFind, valueToFind, checkNestedTables)</strong>
+    </dt>
+    <dd>
+    Check whether a table contains a key/value pair, optionally checking inside
+ nested tables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">keyToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">checkNestedTables</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if found, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "containsKeyValuePairs"></a>
+    <strong>containsKeyValuePairs (inputTable, keyValuePairsTable, checkNestedTables)</strong>
+    </dt>
+    <dd>
+    Check whether a table contains a set of key/value pairs, optionally checking inside
+ tables nested in the original one
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">keyValuePairsTable</span>
+         table
+        </li>
+        <li><span class="parameter">checkNestedTables</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if found, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "containsValue"></a>
+    <strong>containsValue (inputTable, valueToFind, checkNestedTables)</strong>
+    </dt>
+    <dd>
+    Check whether a table contains a certain value, optionally checking inside
+ nested tables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">checkNestedTables</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if found, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "containsCaseInsensitiveString"></a>
+    <strong>containsCaseInsensitiveString (inputTable, stringToFind, checkNestedTables)</strong>
+    </dt>
+    <dd>
+    Check whether a table contains a certain case insensitive string, optionally
+ checking inside nested tables
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">stringToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">checkNestedTables</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        returns true if found, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "insertValueIfMissing"></a>
+    <strong>insertValueIfMissing (inputTable, value)</strong>
+    </dt>
+    <dd>
+    Check if table contains a certain value, if not inserts it
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">value</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getAnyValue"></a>
+    <strong>getAnyValue (inputTable)</strong>
+    </dt>
+    <dd>
+    Attempts to get any value from an table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        The value if found
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getUnusedNumericalIndex"></a>
+    <strong>getUnusedNumericalIndex (inputTable)</strong>
+    </dt>
+    <dd>
+    Attempts to get the first unused numerical index (not counting 0)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int first unused numerical index
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getIndexByPattern"></a>
+    <strong>getIndexByPattern (inputTable, patternToFind)</strong>
+    </dt>
+    <dd>
+    pattern matches values of an table (regexp)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">patternToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        index of value if found, if not returns nil
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getIndexByNestedKeyValue"></a>
+    <strong>getIndexByNestedKeyValue (inputTable, keyToFind, valueToFind)</strong>
+    </dt>
+    <dd>
+    Searches table and nested tables for key value pair
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">keyToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        key if found, nil if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getIndexByValue"></a>
+    <strong>getIndexByValue (inputTable, valueToFind)</strong>
+    </dt>
+    <dd>
+    Gets index by the value
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        key if found, nil if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cleanNils"></a>
+    <strong>cleanNils (inputTable)</strong>
+    </dt>
+    <dd>
+    Iterate through a table and return a new table based on it that has no nil values
+ (useful for numerical arrays because they retain nil values)
+ Based on <a href="http://stackoverflow.com/a/28302975">this</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        inputTable with nil values removed
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "removeValue"></a>
+    <strong>removeValue (inputTable, valueToFind)</strong>
+    </dt>
+    <dd>
+    Set values to nil here instead of using table.remove(), so this method can be used on
+ a table while iterating through it
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "replaceValue"></a>
+    <strong>replaceValue (inputTable, valueToFind, newValue)</strong>
+    </dt>
+    <dd>
+    Replace value in table or nested table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">valueToFind</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">newValue</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "merge"></a>
+    <strong>merge (mainTable, addedTable)</strong>
+    </dt>
+    <dd>
+    Add a 2nd table's key/value pairs to the 1st table
+ Note: If the two tables share keys, the values of the 2nd table
+ will be used in the final table
+ Based on <a href="http://stackoverflow.com/a/1283608">this</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mainTable</span>
+         table
+        </li>
+        <li><span class="parameter">addedTable</span>
+         table
+ table with merged data from input tables
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "insertValues"></a>
+    <strong>insertValues (mainTable, addedTable)</strong>
+    </dt>
+    <dd>
+    Insert all the values from the 2nd table into the 1st table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">mainTable</span>
+         table
+        </li>
+        <li><span class="parameter">addedTable</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        mainTable with values from addedTable added to the end
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fixNumericalKeys"></a>
+    <strong>fixNumericalKeys (inputTable, fixZeroStart)</strong>
+    </dt>
+    <dd>
+    Convert string keys containing numbers into numerical keys,
+ useful for JSON tables<br/>
+ Because Lua arrays start from index 1, the fixZeroStart argument
+ can be set to true to increment all of the keys by 1 in tables that
+ start from 0
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">fixZeroStart</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "usesNumericalKeys"></a>
+    <strong>usesNumericalKeys (inputTable)</strong>
+    </dt>
+    <dd>
+    Check whether the table contains only numerical keys, though they
+ don't have to be consecutive
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if all indexes are numerical, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "usesNumericalValues"></a>
+    <strong>usesNumericalValues (inputTable)</strong>
+    </dt>
+    <dd>
+    Check whether the table contains only numerical values
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if all values are numerical, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "isEmpty"></a>
+    <strong>isEmpty (inputTable)</strong>
+    </dt>
+    <dd>
+    Check whether there are any items in the table
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if table is empty, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "isEqualTo"></a>
+    <strong>isEqualTo (firstTable, secondTable, ignoredKeys)</strong>
+    </dt>
+    <dd>
+    Check whether the table has the same keys and values as another table, optionally
+ ignoring certain keys
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">firstTable</span>
+         table
+        </li>
+        <li><span class="parameter">secondTable</span>
+         table
+        </li>
+        <li><span class="parameter">ignoredKeys</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        true if tables are equal, false if not
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "shallowCopy"></a>
+    <strong>shallowCopy (inputValue)</strong>
+    </dt>
+    <dd>
+    Copy a table's top level values and direct children to another table
+ Based on <a href="http://lua-users.org/wiki/CopyTable">this</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputValue</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        shallow copy of inputValue
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSimplePrintableTable"></a>
+    <strong>getSimplePrintableTable (inputTable)</strong>
+    </dt>
+    <dd>
+    Get a compact string with a table's contents
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getPrintableTable"></a>
+    <strong>getPrintableTable (inputTable, maxDepth, indentStr, indentLevel)</strong>
+    </dt>
+    <dd>
+    Get a string with a table's contents where every value is on its own row
+ Based on <a href="http://stackoverflow.com/a/13398936">this</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+         table
+        </li>
+        <li><span class="parameter">maxDepth</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">indentStr</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">indentLevel</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "print"></a>
+    <strong>print (inputTable, maxDepth, indentStr, indentLevel)</strong>
+    </dt>
+    <dd>
+    print an table to console
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">inputTable</span>
+
+
+
+        </li>
+        <li><span class="parameter">maxDepth</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">indentStr</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">indentLevel</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

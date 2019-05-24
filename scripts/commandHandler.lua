@@ -1348,13 +1348,13 @@ function commandHandler.StoreRecord(pid, cmd)
                         inputSetting .. "\n")
                     return
                 end
-            elseif tableHelper.containsValue(config.booleanRecordSettings, inputSetting) then
+            elseif tableHelper.containsValue(config.boolRecordSettings, inputSetting) then
                 if inputValue == "true" or inputValue == "on" or tonumber(inputValue) == 1 then
                     storedTable[inputSetting] = true
                 elseif inputValue == "false" or inputValue == "off" or tonumber(inputValue) == 0 then
                     storedTable[inputSetting] = false
                 else
-                    Players[pid]:Message("Please use a valid boolean as the input for " .. inputSetting .. "\n")
+                    Players[pid]:Message("Please use a valid bool as the input for " .. inputSetting .. "\n")
                     return
                 end
             else

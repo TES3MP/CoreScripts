@@ -53,7 +53,7 @@ end
 --- Check if the cell contains certain XY coordinate
 -- @int posX X coordinate
 -- @int posY Y coordinate
--- @return boolean of success status
+-- @return bool of success status
 function BaseCell:ContainsPosition(posX, posY)
 
     local cellSize = 8192
@@ -71,7 +71,7 @@ function BaseCell:ContainsPosition(posX, posY)
 end
 
 --- Check if cell has entry
--- @return boolean
+-- @return bool
 function BaseCell:HasEntry()
     return self.hasEntry
 end
@@ -250,7 +250,7 @@ end
 
 --- Check whether an object is in this cell
 -- @string uniqueIndex
--- @return boolean of success status
+-- @return bool of success status
 function BaseCell:ContainsObject(uniqueIndex)
     if self.data.objectData[uniqueIndex] ~= nil and self.data.objectData[uniqueIndex].refId ~= nil then
         return true
@@ -260,7 +260,7 @@ function BaseCell:ContainsObject(uniqueIndex)
 end
 
 --- Check if cell has container data
--- @return boolean of success status
+-- @return bool of success status
 function BaseCell:HasContainerData()
 
     if tableHelper.isEmpty(self.data.packets.container) == true then
@@ -271,7 +271,7 @@ function BaseCell:HasContainerData()
 end
 
 --- Check if cell has actor data
--- @return boolean of success status
+-- @return bool of success status
 function BaseCell:HasActorData()
 
     if tableHelper.isEmpty(self.data.packets.actorList) == true then

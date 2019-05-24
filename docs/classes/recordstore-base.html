@@ -1,0 +1,897 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>TES3MP lua CoreScripts API docs</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Classes</h2>
+<ul class="nowrap">
+  <li><a href="../classes/classy.html">classy</a></li>
+  <li><a href="../classes/cell-base.html">cell-base</a></li>
+  <li><a href="../classes/cell-json.html">cell-json</a></li>
+  <li><a href="../classes/cell-sql.html">cell-sql</a></li>
+  <li><a href="../classes/database.html">database</a></li>
+  <li><a href="../classes/player-base.html">player-base</a></li>
+  <li><a href="../classes/player-json.html">player-json</a></li>
+  <li><a href="../classes/player-sql.html">player-sql</a></li>
+  <li><strong>recordstore-base</strong></li>
+  <li><a href="../classes/recordstore-json.html">recordstore-json</a></li>
+  <li><a href="../classes/recordstore-sql.html">recordstore-sql</a></li>
+  <li><a href="../classes/StateHelper.html">StateHelper</a></li>
+  <li><a href="../classes/world-base.html">world-base</a></li>
+  <li><a href="../classes/world-json.html">world-json</a></li>
+  <li><a href="../classes/world-sql.html">world-sql</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../modules/dkjson.html">dkjson</a></li>
+  <li><a href="../modules/fileHelper.html">fileHelper</a></li>
+  <li><a href="../modules/jsonInterface.html">jsonInterface</a></li>
+  <li><a href="../modules/patterns.html">patterns</a></li>
+  <li><a href="../modules/tableHelper.html">tableHelper</a></li>
+  <li><a href="../modules/time.html">time</a></li>
+  <li><a href="../modules/animHelper.html">animHelper</a></li>
+  <li><a href="../modules/commandHandler.html">commandHandler</a></li>
+  <li><a href="../modules/config.html">config</a></li>
+  <li><a href="../modules/contentFixer.html">contentFixer</a></li>
+  <li><a href="../modules/customCommandHooks.html">customCommandHooks</a></li>
+  <li><a href="../modules/customEventHooks.html">customEventHooks</a></li>
+  <li><a href="../modules/dataTableBuilder.html">dataTableBuilder</a></li>
+  <li><a href="../modules/eventHandler.html">eventHandler</a></li>
+  <li><a href="../modules/guiHelper.html">guiHelper</a></li>
+  <li><a href="../modules/inventoryHelper.html">inventoryHelper</a></li>
+  <li><a href="../modules/logicHandler.html">logicHandler</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/examples.html">examples</a></li>
+  <li><a href="../modules/Menus.html">Menus</a></li>
+  <li><a href="../modules/menuHelper.html">menuHelper</a></li>
+  <li><a href="../modules/packetBuilder.html">packetBuilder</a></li>
+  <li><a href="../modules/packetReader.html">packetReader</a></li>
+  <li><a href="../modules/serverCore.html">serverCore</a></li>
+  <li><a href="../modules/speechCollections.html">speechCollections</a></li>
+  <li><a href="../modules/speechHelper.html">speechHelper</a></li>
+</ul>
+<h2>Scripts</h2>
+<ul class="nowrap">
+  <li><a href="../scripts/utils.html">utils</a></li>
+  <li><a href="../scripts/color.html">color</a></li>
+  <li><a href="../scripts/customScripts.html">customScripts</a></li>
+  <li><a href="../scripts/enumerations.html">enumerations</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Class <code>recordstore-base</code></h1>
+<p>RecordStore Base</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:__init">BaseRecordStore:__init (storeType)</a></td>
+	<td class="summary">Init function</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:HasEntry">BaseRecordStore:HasEntry ()</a></td>
+	<td class="summary">Has entry</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:EnsureDataStructure">BaseRecordStore:EnsureDataStructure ()</a></td>
+	<td class="summary">Ensure data structure</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:GetCurrentGeneratedNum">BaseRecordStore:GetCurrentGeneratedNum ()</a></td>
+	<td class="summary">Get current Generated num</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:SetCurrentGeneratedNum">BaseRecordStore:SetCurrentGeneratedNum (currentGeneratedNum)</a></td>
+	<td class="summary">Set current Generated num</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:IncrementGeneratedNum">BaseRecordStore:IncrementGeneratedNum ()</a></td>
+	<td class="summary">Increment generated num</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:GenerateRecordId">BaseRecordStore:GenerateRecordId ()</a></td>
+	<td class="summary">Generate record id</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:DeleteUnlinkedRecords">BaseRecordStore:DeleteUnlinkedRecords ()</a></td>
+	<td class="summary">Go through all the generated records that were at some point tracked as having no links remaining
+ and delete them if they still have no links</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:DeleteGeneratedRecord">BaseRecordStore:DeleteGeneratedRecord (recordId)</a></td>
+	<td class="summary">Delete generated record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:HasLinks">BaseRecordStore:HasLinks (recordId)</a></td>
+	<td class="summary">Check whether there are any links remaining to a certain generated record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:AddLinkToRecord">BaseRecordStore:AddLinkToRecord (recordId, otherRecordId, otherStoreType)</a></td>
+	<td class="summary">Add a link between a record and another record from a different record store,
+ i.e.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:RemoveLinkToRecord">BaseRecordStore:RemoveLinkToRecord (recordId, otherRecordId, otherStoreType)</a></td>
+	<td class="summary">Remove link to record</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:AddLinkToCell">BaseRecordStore:AddLinkToCell (recordId, cell)</a></td>
+	<td class="summary">Add a link between a record and a cell it is found in</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:RemoveLinkToCell">BaseRecordStore:RemoveLinkToCell (recordId, cell)</a></td>
+	<td class="summary">Remove a link between a record and a cell it is found in</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:AddLinkToPlayer">BaseRecordStore:AddLinkToPlayer (recordId, player)</a></td>
+	<td class="summary">Add a link between a record and a player in whose inventory or spellbook it is found</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:RemoveLinkToPlayer">BaseRecordStore:RemoveLinkToPlayer (recordId, player)</a></td>
+	<td class="summary">Remove a link between a record and a player in whose inventory or spellbook it is found</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:LoadGeneratedRecords">BaseRecordStore:LoadGeneratedRecords (pid, recordList, idArray, forEveryone)</a></td>
+	<td class="summary">Load generated records</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:LoadRecords">BaseRecordStore:LoadRecords (pid, recordList, idArray, forEveryone)</a></td>
+	<td class="summary">Load records</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:GetMatchingRecordId">BaseRecordStore:GetMatchingRecordId (comparedRecord, recordList, idArray, ignoredKeys)</a></td>
+	<td class="summary">Check if a record is a perfect match for any of the records whose IDs
+ are contained in an ID array
+ @ return nil or match</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:SaveGeneratedEnchantedItems">BaseRecordStore:SaveGeneratedEnchantedItems (pid)</a></td>
+	<td class="summary">Save generated enchanted items</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:SaveGeneratedEnchantments">BaseRecordStore:SaveGeneratedEnchantments (pid)</a></td>
+	<td class="summary">Save generated enchantments</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:SaveGeneratedPotions">BaseRecordStore:SaveGeneratedPotions (pid)</a></td>
+	<td class="summary">Save generated potions</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore:SaveGeneratedSpells">BaseRecordStore:SaveGeneratedSpells (pid)</a></td>
+	<td class="summary">Save generated spells</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore.defaultData">BaseRecordStore.defaultData</a></td>
+	<td class="summary">default Data</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#BaseRecordStore.defaultData.general.currentGeneratedNum">BaseRecordStore.defaultData.general.currentGeneratedNum</a></td>
+	<td class="summary">current generated num</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+    Methods
+    <dl class="function">
+    <dt>
+    <a name = "BaseRecordStore:__init"></a>
+    <strong>BaseRecordStore:__init (storeType)</strong>
+    </dt>
+    <dd>
+    Init function
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">storeType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:HasEntry"></a>
+    <strong>BaseRecordStore:HasEntry ()</strong>
+    </dt>
+    <dd>
+    Has entry
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:EnsureDataStructure"></a>
+    <strong>BaseRecordStore:EnsureDataStructure ()</strong>
+    </dt>
+    <dd>
+    Ensure data structure
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:GetCurrentGeneratedNum"></a>
+    <strong>BaseRecordStore:GetCurrentGeneratedNum ()</strong>
+    </dt>
+    <dd>
+    Get current Generated num
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        int currentGeneratedNum
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:SetCurrentGeneratedNum"></a>
+    <strong>BaseRecordStore:SetCurrentGeneratedNum (currentGeneratedNum)</strong>
+    </dt>
+    <dd>
+    Set current Generated num
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">currentGeneratedNum</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:IncrementGeneratedNum"></a>
+    <strong>BaseRecordStore:IncrementGeneratedNum ()</strong>
+    </dt>
+    <dd>
+    Increment generated num
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        currentGeneratedNum
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:GenerateRecordId"></a>
+    <strong>BaseRecordStore:GenerateRecordId ()</strong>
+    </dt>
+    <dd>
+    Generate record id
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string generated record id
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:DeleteUnlinkedRecords"></a>
+    <strong>BaseRecordStore:DeleteUnlinkedRecords ()</strong>
+    </dt>
+    <dd>
+    Go through all the generated records that were at some point tracked as having no links remaining
+ and delete them if they still have no links
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:DeleteGeneratedRecord"></a>
+    <strong>BaseRecordStore:DeleteGeneratedRecord (recordId)</strong>
+    </dt>
+    <dd>
+    Delete generated record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:HasLinks"></a>
+    <strong>BaseRecordStore:HasLinks (recordId)</strong>
+    </dt>
+    <dd>
+    Check whether there are any links remaining to a certain generated record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        bool of success status
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:AddLinkToRecord"></a>
+    <strong>BaseRecordStore:AddLinkToRecord (recordId, otherRecordId, otherStoreType)</strong>
+    </dt>
+    <dd>
+    Add a link between a record and another record from a different record store,
+ i.e.  for enchantments being used by other items
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">otherRecordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">otherStoreType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:RemoveLinkToRecord"></a>
+    <strong>BaseRecordStore:RemoveLinkToRecord (recordId, otherRecordId, otherStoreType)</strong>
+    </dt>
+    <dd>
+    Remove link to record
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">otherRecordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">otherStoreType</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:AddLinkToCell"></a>
+    <strong>BaseRecordStore:AddLinkToCell (recordId, cell)</strong>
+    </dt>
+    <dd>
+    Add a link between a record and a cell it is found in
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">cell</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:RemoveLinkToCell"></a>
+    <strong>BaseRecordStore:RemoveLinkToCell (recordId, cell)</strong>
+    </dt>
+    <dd>
+    Remove a link between a record and a cell it is found in
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">cell</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:AddLinkToPlayer"></a>
+    <strong>BaseRecordStore:AddLinkToPlayer (recordId, player)</strong>
+    </dt>
+    <dd>
+    Add a link between a record and a player in whose inventory or spellbook it is found
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">player</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:RemoveLinkToPlayer"></a>
+    <strong>BaseRecordStore:RemoveLinkToPlayer (recordId, player)</strong>
+    </dt>
+    <dd>
+    Remove a link between a record and a player in whose inventory or spellbook it is found
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">recordId</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.3/manual.html#6.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">player</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:LoadGeneratedRecords"></a>
+    <strong>BaseRecordStore:LoadGeneratedRecords (pid, recordList, idArray, forEveryone)</strong>
+    </dt>
+    <dd>
+    Load generated records
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordList</span>
+
+
+
+        </li>
+        <li><span class="parameter">idArray</span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:LoadRecords"></a>
+    <strong>BaseRecordStore:LoadRecords (pid, recordList, idArray, forEveryone)</strong>
+    </dt>
+    <dd>
+    Load records
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">recordList</span>
+
+
+
+        </li>
+        <li><span class="parameter">idArray</span>
+
+
+
+        </li>
+        <li><span class="parameter">forEveryone</span>
+            <span class="types"><span class="type">bool</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:GetMatchingRecordId"></a>
+    <strong>BaseRecordStore:GetMatchingRecordId (comparedRecord, recordList, idArray, ignoredKeys)</strong>
+    </dt>
+    <dd>
+    Check if a record is a perfect match for any of the records whose IDs
+ are contained in an ID array
+ @ return nil or match
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">comparedRecord</span>
+
+
+
+        </li>
+        <li><span class="parameter">recordList</span>
+
+
+
+        </li>
+        <li><span class="parameter">idArray</span>
+
+
+
+        </li>
+        <li><span class="parameter">ignoredKeys</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:SaveGeneratedEnchantedItems"></a>
+    <strong>BaseRecordStore:SaveGeneratedEnchantedItems (pid)</strong>
+    </dt>
+    <dd>
+    Save generated enchanted items
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        recordAdditions
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:SaveGeneratedEnchantments"></a>
+    <strong>BaseRecordStore:SaveGeneratedEnchantments (pid)</strong>
+    </dt>
+    <dd>
+    Save generated enchantments
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        recordAdditions
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:SaveGeneratedPotions"></a>
+    <strong>BaseRecordStore:SaveGeneratedPotions (pid)</strong>
+    </dt>
+    <dd>
+    Save generated potions
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        recordAdditions
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "BaseRecordStore:SaveGeneratedSpells"></a>
+    <strong>BaseRecordStore:SaveGeneratedSpells (pid)</strong>
+    </dt>
+    <dd>
+    Save generated spells
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pid</span>
+            <span class="types"><span class="type">int</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        recordAdditions
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "BaseRecordStore.defaultData"></a>
+    <strong>BaseRecordStore.defaultData</strong>
+    </dt>
+    <dd>
+    default Data
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">general</span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "BaseRecordStore.defaultData.general.currentGeneratedNum"></a>
+    <strong>BaseRecordStore.defaultData.general.currentGeneratedNum</strong>
+    </dt>
+    <dd>
+    current generated num
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2019-05-25 00:37:54 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
