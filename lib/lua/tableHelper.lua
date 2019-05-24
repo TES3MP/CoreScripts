@@ -1,6 +1,10 @@
+--- Table helper
+-- @module tableHelper
 local tableHelper = {}
 
 -- Swap keys with their values in a table, allowing for the easy creation of tables similar to enums
+-- @param inputTable table
+-- @return table with keys and values switched
 function tableHelper.enum(inputTable)
     local newTable = {}
     for key, value in ipairs(inputTable) do
@@ -9,13 +13,18 @@ function tableHelper.enum(inputTable)
     return newTable
 end
 
+--- get table length (useful for sparse tables)
+-- @param inputTable table
+-- @return length of inputTable
 function tableHelper.getCount(inputTable)
     local count = 0
     for key in pairs(inputTable) do count = count + 1 end
     return count
 end
 
--- Iterate through a table's indexes and put them into an array table
+--- Iterate through a table's indexes and put them into an array table
+-- @param inputTable table
+-- @return table
 function tableHelper.getArrayFromIndexes(inputTable)
 
     local newTable = {}
@@ -27,7 +36,10 @@ function tableHelper.getArrayFromIndexes(inputTable)
     return newTable
 end
 
--- Return an array with the values that two input tables have in common
+--- Return an array with the values that two input tables have in common
+-- @param firstTable table
+-- @param secondTable table
+-- @return table with the matching values
 function tableHelper.getValueOverlap(firstTable, secondTable)
 
     local newTable = {}
@@ -41,7 +53,9 @@ function tableHelper.getValueOverlap(firstTable, secondTable)
     return newTable
 end
 
--- Iterate through comma-separated values in a string and turn them into table values
+--- Iterate through comma-separated values in a string and turn them into table values
+-- @string inputString
+-- @return table with values from splitting inputString on comma delimiter
 function tableHelper.getTableFromCommaSplit(inputString)
 
     local newTable = {}
@@ -53,8 +67,10 @@ function tableHelper.getTableFromCommaSplit(inputString)
     return newTable
 end
 
--- Concatenate the indexes in a table, useful for printing out all the valid
--- indexes
+--- Concatenate the indexes in a table, useful for printing out all the valid indexes
+-- @param inputTable table
+-- @string delimiter delimiter
+-- @return string of concated table indexes from inputTable delimted by delimiter 
 function tableHelper.concatenateTableIndexes(inputTable, delimiter)
 
     local resultString = ""
@@ -79,8 +95,13 @@ function tableHelper.concatenateTableIndexes(inputTable, delimiter)
     return resultString
 end
 
--- Concatenate the values in an array, useful for printing out the array's
+--- Concatenate the values in an array, useful for printing out the array's
 -- contents, with an optional delimiter between values
+-- <br> Optionally can take startIndex to start from
+-- @param inputTable table
+-- @int startIndex
+-- @string delimiter
+-- @return string of concated table values from inputTable delimted by delimiter
 function tableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
 
     local resultString = ""
@@ -104,13 +125,25 @@ function tableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
     return resultString
 end
 
+--- Concatenate the values in an array, useful for printing out the array's
+-- contents, with an optional delimiter between values
+-- @param inputTable table
+-- @int startIndex
+-- @string delimiter
+-- @return string of concated table values from inputTable delimted by delimiter
+-- @see tableHelper.concatenateArrayValues()
 function tableHelper.concatenateFromIndex(inputTable, startIndex, delimiter)
 
     return tableHelper.concatenateArrayValues(inputTable, startIndex, delimiter)
 end
 
--- Check whether a table contains a key/value pair, optionally checking inside
+--- Check whether a table contains a key/value pair, optionally checking inside
 -- nested tables
+-- @param inputTable table
+-- @string keyToFind
+-- @string valueToFind
+-- @bool checkNestedTables
+-- @return true if found, false if not
 function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkNestedTables)
 
     if inputTable[keyToFind] ~= nil then
@@ -130,8 +163,12 @@ function tableHelper.containsKeyValue(inputTable, keyToFind, valueToFind, checkN
     return false
 end
 
--- Check whether a table contains a set of key/value pairs, optionally checking inside
+--- Check whether a table contains a set of key/value pairs, optionally checking inside
 -- tables nested in the original one
+-- @param inputTable table
+-- @param keyValuePairsTable table
+-- @bool checkNestedTables
+-- @return true if found, false if not
 function tableHelper.containsKeyValuePairs(inputTable, keyValuePairsTable, checkNestedTables)
 
     local foundMatches = true
@@ -156,8 +193,12 @@ function tableHelper.containsKeyValuePairs(inputTable, keyValuePairsTable, check
     return false
 end
 
--- Check whether a table contains a certain value, optionally checking inside
+--- Check whether a table contains a certain value, optionally checking inside
 -- nested tables
+-- @param inputTable table
+-- @string valueToFind
+-- @bool checkNestedTables
+-- @return true if found, false if not
 function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
     for key, value in pairs(inputTable) do
         if checkNestedTables and type(value) == "table" then
@@ -171,8 +212,12 @@ function tableHelper.containsValue(inputTable, valueToFind, checkNestedTables)
     return false
 end
 
--- Check whether a table contains a certain case insensitive string, optionally
+--- Check whether a table contains a certain case insensitive string, optionally
 -- checking inside nested tables
+-- @param inputTable table
+-- @string stringToFind
+-- @bool checkNestedTables
+-- @return returns true if found, false if not
 function tableHelper.containsCaseInsensitiveString(inputTable, stringToFind, checkNestedTables)
 
     if type(stringToFind) ~= "string"  then return false end
@@ -189,18 +234,27 @@ function tableHelper.containsCaseInsensitiveString(inputTable, stringToFind, che
     return false
 end
 
+--- Check if table contains a certain value, if not inserts it
+-- @param inputTable table
+-- @string value
 function tableHelper.insertValueIfMissing(inputTable, value)
     if tableHelper.containsValue(inputTable, value, false) == false then
         table.insert(inputTable, value)
     end
 end
 
+--- Attempts to get any value from an table
+-- @param inputTable table
+-- @return The value if found
 function tableHelper.getAnyValue(inputTable)
     for key, value in pairs(inputTable) do
         return value
     end
 end
 
+--- Attempts to get the first unused numerical index (not counting 0)
+-- @param inputTable table
+-- @return int first unused numerical index
 function tableHelper.getUnusedNumericalIndex(inputTable)
     local i = 1
     
@@ -211,6 +265,10 @@ function tableHelper.getUnusedNumericalIndex(inputTable)
     return i
 end
 
+--- pattern matches values of an table (regexp)
+-- @param inputTable table
+-- @string patternToFind
+-- @return index of value if found, if not returns nil
 function tableHelper.getIndexByPattern(inputTable, patternToFind)
     for key, value in pairs(inputTable) do
         if string.match(value, patternToFind) ~= nil then
@@ -220,6 +278,11 @@ function tableHelper.getIndexByPattern(inputTable, patternToFind)
     return nil
 end
 
+--- Searches table and nested tables for key value pair
+-- @param inputTable table
+-- @string keyToFind
+-- @string valueToFind
+-- @return key if found, nil if not
 function tableHelper.getIndexByNestedKeyValue(inputTable, keyToFind, valueToFind)
     for key, value in pairs(inputTable) do
         if type(value) == "table" then
@@ -231,6 +294,10 @@ function tableHelper.getIndexByNestedKeyValue(inputTable, keyToFind, valueToFind
     return nil
 end
 
+--- Gets index by the value
+-- @param inputTable table
+-- @string valueToFind
+-- @return key if found, nil if not
 function tableHelper.getIndexByValue(inputTable, valueToFind)
     for key, value in pairs(inputTable) do
         if value == valueToFind then
@@ -241,10 +308,11 @@ function tableHelper.getIndexByValue(inputTable, valueToFind)
     return nil
 end
 
--- Iterate through a table and return a new table based on it that has no nil values
+--- Iterate through a table and return a new table based on it that has no nil values
 -- (useful for numerical arrays because they retain nil values)
---
--- Based on http://stackoverflow.com/a/28302975
+-- Based on <a href="http://stackoverflow.com/a/28302975">this</a>
+-- @param inputTable table
+-- @return inputTable with nil values removed
 function tableHelper.cleanNils(inputTable)
 
     local newTable = {}
@@ -263,13 +331,19 @@ function tableHelper.cleanNils(inputTable)
     tableHelper.merge(inputTable, newTable)
 end
 
--- Set values to nil here instead of using table.remove(), so this method can be used on
+--- Set values to nil here instead of using table.remove(), so this method can be used on
 -- a table while iterating through it
+-- @param inputTable table
+-- @string valueToFind
 function tableHelper.removeValue(inputTable, valueToFind)
 
     tableHelper.replaceValue(inputTable, valueToFind, nil)
 end
 
+--- Replace value in table or nested table
+-- @param inputTable table
+-- @string valueToFind
+-- @string newValue
 function tableHelper.replaceValue(inputTable, valueToFind, newValue)
     for key, value in pairs(inputTable) do
         if type(value) == "table" then
@@ -280,12 +354,13 @@ function tableHelper.replaceValue(inputTable, valueToFind, newValue)
     end
 end
 
--- Add a 2nd table's key/value pairs to the 1st table
---
+--- Add a 2nd table's key/value pairs to the 1st table
 -- Note: If the two tables share keys, the values of the 2nd table
 -- will be used in the final table
---
--- Based on http://stackoverflow.com/a/1283608
+-- Based on <a href="http://stackoverflow.com/a/1283608">this</a>
+-- @param mainTable table
+-- @param addedTable table
+-- table with merged data from input tables
 function tableHelper.merge(mainTable, addedTable)
     for key, value in pairs(addedTable) do
         if type(value) == "table" then
@@ -300,7 +375,10 @@ function tableHelper.merge(mainTable, addedTable)
     end
 end
 
--- Insert all the values from the 2nd table into the 1st table
+--- Insert all the values from the 2nd table into the 1st table
+-- @param mainTable table
+-- @param addedTable
+-- @return mainTable with values from addedTable added to the end
 function tableHelper.insertValues(mainTable, addedTable)
 
     for _, value in pairs(addedTable) do
@@ -308,12 +386,13 @@ function tableHelper.insertValues(mainTable, addedTable)
     end
 end
 
--- Convert string keys containing numbers into numerical keys,
--- useful for JSON tables
---
+--- Convert string keys containing numbers into numerical keys,
+-- useful for JSON tables<br/>
 -- Because Lua arrays start from index 1, the fixZeroStart argument
 -- can be set to true to increment all of the keys by 1 in tables that
 -- start from 0
+-- @param inputTable table
+-- @bool fixZeroStart
 function tableHelper.fixNumericalKeys(inputTable, fixZeroStart)
 
     local newTable = {}
@@ -345,8 +424,10 @@ function tableHelper.fixNumericalKeys(inputTable, fixZeroStart)
     tableHelper.merge(inputTable, newTable)
 end
 
--- Check whether the table contains only numerical keys, though they
+--- Check whether the table contains only numerical keys, though they
 -- don't have to be consecutive
+-- @param inputTable table
+-- @return true if all indexes are numerical, false if not
 function tableHelper.usesNumericalKeys(inputTable)
 
     if tableHelper.getCount(inputTable) == 0 then
@@ -362,7 +443,9 @@ function tableHelper.usesNumericalKeys(inputTable)
     return true
 end
 
--- Check whether the table contains only numerical values
+--- Check whether the table contains only numerical values
+-- @param inputTable table
+-- @return true if all values are numerical, false if not
 function tableHelper.usesNumericalValues(inputTable)
 
     if tableHelper.getCount(inputTable) == 0 then
@@ -378,7 +461,9 @@ function tableHelper.usesNumericalValues(inputTable)
     return true
 end
 
--- Check whether there are any items in the table
+--- Check whether there are any items in the table
+-- @param inputTable table
+-- @return true if table is empty, false if not
 function tableHelper.isEmpty(inputTable)
     if next(inputTable) == nil then
         return true
@@ -389,7 +474,9 @@ end
 
 -- Check whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
--- Based on http://stackoverflow.com/a/6080274
+-- Based on <a href="http://stackoverflow.com/a/6080274">this</a>
+-- @param inputTable table
+-- @return true if table is isn't sparse and has numerical keys, false if not
 function tableHelper.isArray(inputTable)
 
     local index = 0
@@ -402,8 +489,12 @@ function tableHelper.isArray(inputTable)
     return true
 end
 
--- Check whether the table has the same keys and values as another table, optionally
+--- Check whether the table has the same keys and values as another table, optionally
 -- ignoring certain keys
+-- @param firstTable table
+-- @param secondTable table
+-- @string ignoredKeys
+-- @return true if tables are equal, false if not
 function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
 
     local hasIgnoredKeys = ignoredKeys ~= nil and not tableHelper.isEmpty(ignoredKeys)
@@ -436,10 +527,10 @@ function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
     return true
 end
 
--- Copy the value of a variable, useful for copying a table's top level values and direct
--- children to another table
---
--- Based on http://lua-users.org/wiki/CopyTable
+--- Copy a table's top level values and direct children to another table
+-- Based on <a href="http://lua-users.org/wiki/CopyTable">this</a>
+-- @param inputTable table
+-- @return shallow copy of inputTable
 function tableHelper.shallowCopy(inputValue)
 
     local inputType = type(inputValue)
@@ -458,7 +549,9 @@ function tableHelper.shallowCopy(inputValue)
     return newValue
 end
 
--- Get a compact string with a table's contents
+--- Get a compact string with a table's contents
+-- @param inputTable table
+-- @return string
 function tableHelper.getSimplePrintableTable(inputTable)
 
     local text = ""
@@ -481,9 +574,13 @@ function tableHelper.getSimplePrintableTable(inputTable)
     return text
 end
 
--- Get a string with a table's contents where every value is on its own row
---
--- Based on http://stackoverflow.com/a/13398936
+--- Get a string with a table's contents where every value is on its own row
+-- Based on <a href="http://stackoverflow.com/a/13398936">this</a>
+-- @param inputTable table
+-- @int maxDepth
+-- @string indentStr
+-- @int indentLevel
+-- @return string
 function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
 
     if type(inputTable) ~= "table" then
@@ -519,6 +616,11 @@ function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLe
     return str
 end
 
+--- print an table to console
+-- @param inputTable
+-- @int maxDepth
+-- @string indentStr
+-- @int indentLevel
 function tableHelper.print(inputTable, maxDepth, indentStr, indentLevel)
     local text = tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
     tes3mp.LogMessage(2, text)
