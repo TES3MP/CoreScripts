@@ -1,3 +1,5 @@
+--- Server core module
+-- @module serverCore
 require("utils")
 require("enumerations")
 
@@ -68,6 +70,7 @@ else
     World = require("world.json")
 end
 
+--- Load ban list
 function LoadBanList()
     tes3mp.LogMessage(enumerations.log.INFO, "Reading banlist.json")
     banList = jsonInterface.load("banlist.json")
@@ -118,6 +121,7 @@ function LoadBanList()
     end
 end
 
+--- Save banlist
 function SaveBanList()
     jsonInterface.save("banlist.json", banList)
 end
@@ -180,6 +184,7 @@ do
     end
 end
 
+--- On server Init
 function OnServerInit()
 
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerInit\"")
@@ -220,6 +225,7 @@ function OnServerInit()
     customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
 end
 
+--- On server post init
 function OnServerPostInit()
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
     local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
@@ -290,17 +296,23 @@ function OnServerPostInit()
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
+--- On server exit
+-- @int errorState
 function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
     customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
 end
 
+--- On server script crash
+-- @string errorMessage
 function OnServerScriptCrash(errorMessage)
     tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
     customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
 end
 
+--- Load data file list
+-- @string filename filename
 function LoadDataFileList(filename)
     local dataFileList = {}
     tes3mp.LogMessage(enumerations.log.INFO, "Reading " .. filename)
@@ -334,6 +346,7 @@ function LoadDataFileList(filename)
     return dataFileList
 end
 
+On request data file list
 function OnRequestDataFileList()
 
     local dataFileList = LoadDataFileList("requiredDataFiles.json")
@@ -352,12 +365,14 @@ function OnRequestDataFileList()
     end
 end
 
--- Older server builds will call an "OnRequestPluginList" event instead of
+--- Older server builds will call an "OnRequestPluginList" event instead of
 -- "OnRequestDataFileList", so keep this around for backwards compatibility
 function OnRequestPluginList()
     OnRequestDataFileList()
 end
 
+--- On player connect
+-- @int pid player ID
 function OnPlayerConnect(pid)
 
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerConnect\" for pid " .. pid)
@@ -382,6 +397,8 @@ function OnPlayerConnect(pid)
     end
 end
 
+--- On login time expiration
+-- @int pid player ID
 function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
     local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
     if eventStatus.validDefaultHandler then
@@ -394,6 +411,8 @@ function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPla
     customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
 end
 
+--- On player disconnect
+-- @int pid player ID
 function OnPlayerDisconnect(pid)
 
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerDisconnect\" for " .. logicHandler.GetChatName(pid))
@@ -405,253 +424,374 @@ function OnPlayerDisconnect(pid)
     DecrementAdminCounter()
 end
 
+--- On player resurrect
+-- @int pid player ID
 function OnPlayerResurrect(pid)
     customEventHooks.triggerHandlers("OnPlayerResurrect", customEventHooks.makeEventStatus(true, true), {pid})
 end
 
+--- On player send message
+-- @int pid player ID
+-- @string message
 function OnPlayerSendMessage(pid, message)
     eventHandler.OnPlayerSendMessage(pid, message)
 end
 
+--- On object loop time expiration
+-- @int loopIndex
 function OnObjectLoopTimeExpiration(loopIndex)
     eventHandler.OnObjectLoopTimeExpiration(loopIndex)
 end
 
+--- On death time expiration
+-- @int pid player ID
 function OnDeathTimeExpiration(pid)
     eventHandler.OnDeathTimeExpiration(pid)
 end
 
+--- On player death
+-- @int pid player ID
 function OnPlayerDeath(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerDeath\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerDeath(pid)
 end
 
+--- On player Attribute
+-- @int pid player ID
 function OnPlayerAttribute(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerAttribute\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerAttribute(pid)
 end
 
+--- On player skill
+-- @int pid player ID
 function OnPlayerSkill(pid)
     eventHandler.OnPlayerSkill(pid)
 end
 
+--- On player level
 function OnPlayerLevel(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerLevel\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerLevel(pid)
 end
 
+--- On player shapeshift
+-- @int pid player ID
 function OnPlayerShapeshift(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerShapeshift\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerShapeshift(pid)
 end
 
+--- On player cell change
+-- @int pid player ID
 function OnPlayerCellChange(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerCellChange\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerCellChange(pid)
 end
 
+--- On player equipment
+-- @int pid player ID
 function OnPlayerEquipment(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerEquipment\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerEquipment(pid)
 end
 
+--- On player inventory
+-- @int pid player ID
 function OnPlayerInventory(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerInventory\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerInventory(pid)
 end
 
+--- On player spellbook
+-- @int pid player ID
 function OnPlayerSpellbook(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerSpellbook\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerSpellbook(pid)
 end
 
+--- On player quick keys
+-- @int pid player ID
 function OnPlayerQuickKeys(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerQuickKeys\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerQuickKeys(pid)
 end
 
+--- On player journal
+-- @int pid player ID
 function OnPlayerJournal(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerJournal\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerJournal(pid)
 end
 
+--- On player faction
+-- @int pid player ID
 function OnPlayerFaction(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerFaction\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerFaction(pid)
 end
 
+--- On player topic
+-- @int pid player ID
 function OnPlayerTopic(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerTopic\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerTopic(pid)
 end
 
+--- On player bounty
+-- @int pid player ID
 function OnPlayerBounty(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerBounty\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerBounty(pid)
 end
 
+--- On player reputation
+-- @int pid player ID
 function OnPlayerReputation(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerReputation\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerReputation(pid)
 end
 
+--- On player book
+-- @int pid player ID
 function OnPlayerBook(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerBook\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerBook(pid)
 end
 
+--- On player item use
+-- @int pid player ID
 function OnPlayerItemUse(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerItemUse\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerItemUse(pid)
 end
 
+--- On player miscellaneous
+-- @int pid player ID
 function OnPlayerMiscellaneous(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerMiscellaneous\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerMiscellaneous(pid)
 end
 
+--- On player end chargen
+-- @int pid player ID
 function OnPlayerEndCharGen(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerEndCharGen\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerEndCharGen(pid)
 end
 
+--- On cell load
+-- @int pid player ID
+-- @string cellDescription
 function OnCellLoad(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnCellLoad\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnCellLoad(pid, cellDescription)
 end
 
+--- On cell unload
+-- @int pid player ID
+-- @string cellDescription
 function OnCellUnload(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnCellUnload\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnCellUnload(pid, cellDescription)
 end
 
+--- On cell deletion
+-- @int pid player ID
+-- @string cellDescription
 function OnCellDeletion(cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnCellDeletion\" for cell " .. cellDescription)
     eventHandler.OnCellDeletion(cellDescription)
 end
 
+--- On actor list
+-- @int pid player ID
+-- @string cellDescription
 function OnActorList(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorList\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnActorList(pid, cellDescription)
 end
 
+--- On actor equipment
+-- @int pid player ID
+-- @string cellDescription
 function OnActorEquipment(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorEquipment\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnActorEquipment(pid, cellDescription)
 end
 
+--- On actor AI
+-- @int pid player ID
+-- @string cellDescription
 function OnActorAI(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorAI\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnActorAI(pid, cellDescription)
 end
 
+--- On actor death
+-- @int pid player ID
+-- @string cellDescription
 function OnActorDeath(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorDeath\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnActorDeath(pid, cellDescription)
 end
 
+--- On actor cell change
+-- @int pid player ID
+-- @string cellDescription
 function OnActorCellChange(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorCellChange\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnActorCellChange(pid, cellDescription)
 end
 
+--- On object activate
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectActivate(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectActivate\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectActivate(pid, cellDescription)
 end
 
+--- On object place
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectPlace(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectPlace\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectPlace(pid, cellDescription)
 end
 
+--- On object spawn
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectSpawn(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectSpawn\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectSpawn(pid, cellDescription)
 end
 
+--- On object delete
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectDelete(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectDelete\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectDelete(pid, cellDescription)
 end
 
+--- On object lock
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectLock(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectLock\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectLock(pid, cellDescription)
 end
 
+--- On object trap
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectTrap(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectTrap\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectTrap(pid, cellDescription)
 end
 
+--- On object scale
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectScale(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectScale\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectScale(pid, cellDescription)
 end
 
+--- On object state
+-- @int pid player ID
+-- @string cellDescription
 function OnObjectState(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectState\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnObjectState(pid, cellDescription)
 end
 
+--- On door state
+-- @int pid player ID
+-- @string cellDescription
 function OnDoorState(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnDoorState\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnDoorState(pid, cellDescription)
 end
 
+--- On container
+-- @int pid player ID
+-- @string cellDescription
 function OnContainer(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnContainer\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
     eventHandler.OnContainer(pid, cellDescription)
 end
 
+--- On video play
+-- @int pid player ID
+-- @string cellDescription
 function OnVideoPlay(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnVideoPlay\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnVideoPlay(pid)
 end
 
+--- On record dynamic
+-- @int pid player ID
+-- @string cellDescription
 function OnRecordDynamic(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnRecordDynamic\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnRecordDynamic(pid)
 end
 
+--- Onworld killcount
+-- @int pid player ID
+-- @string cellDescription
 function OnWorldKillCount(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldKillCount\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldKillCount(pid)
 end
 
+--- On world map
+-- @int pid player ID
+-- @string cellDescription
 function OnWorldMap(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldMap\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldMap(pid)
 end
 
+--- On world weather
+-- @int pid player ID
+-- @string cellDescription
 function OnWorldWeather(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnWorldWeather\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnWorldWeather(pid)
 end
 
+--- On GUI action
+-- @int pid player ID
+-- @string cellDescription
 function OnGUIAction(pid, idGui, data)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnGUIAction\" for " .. logicHandler.GetChatName(pid))
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called
 end
 
+--- On MpNum increment
+-- @int pid player ID
+-- @string cellDescription
 function OnMpNumIncrement(currentMpNum)
     eventHandler.OnMpNumIncrement(currentMpNum)
 end

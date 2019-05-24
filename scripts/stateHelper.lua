@@ -1,5 +1,10 @@
+--- State helper
+-- @classmod StateHelper
 StateHelper = class("StateHelper")
 
+--- Loads journal
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -30,6 +35,9 @@ function StateHelper:LoadJournal(pid, stateObject)
     tes3mp.SendJournalChanges(pid)
 end
 
+--- Loads faction ranks
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadFactionRanks(pid, stateObject)
 
     if stateObject.data.factionRanks == nil then
@@ -49,6 +57,9 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
     tes3mp.SendFactionChanges(pid)
 end
 
+--- Loads faction expulsions
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadFactionExpulsion(pid, stateObject)
 
     if stateObject.data.factionExpulsion == nil then
@@ -68,6 +79,9 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
     tes3mp.SendFactionChanges(pid)
 end
 
+--- Loads faction repuation
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadFactionReputation(pid, stateObject)
 
     if stateObject.data.factionReputation == nil then
@@ -87,6 +101,9 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
     tes3mp.SendFactionChanges(pid)
 end
 
+--- loads topics
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadTopics(pid, stateObject)
 
     if stateObject.data.topics == nil then
@@ -103,6 +120,9 @@ function StateHelper:LoadTopics(pid, stateObject)
     tes3mp.SendTopicChanges(pid)
 end
 
+--- loads bounties
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadBounty(pid, stateObject)
 
     if stateObject.data.fame == nil then
@@ -121,6 +141,9 @@ function StateHelper:LoadBounty(pid, stateObject)
     tes3mp.SendBounty(pid)
 end
 
+--- Loads reputations
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadReputation(pid, stateObject)
 
     if stateObject.data.fame == nil then
@@ -133,6 +156,9 @@ function StateHelper:LoadReputation(pid, stateObject)
     tes3mp.SendReputation(pid)
 end
 
+--- Loads map
+-- @int pid
+-- @param stateObject object
 function StateHelper:LoadMap(pid, stateObject)
 
     if stateObject.data.mapExplored == nil then
@@ -165,6 +191,9 @@ function StateHelper:LoadMap(pid, stateObject)
     end
 end
 
+--- Saves journal
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveJournal(pid, stateObject)
 
     if stateObject.data.journal == nil then
@@ -202,6 +231,9 @@ function StateHelper:SaveJournal(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Saves faction ranks
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveFactionRanks(pid, stateObject)
 
     if stateObject.data.factionRanks == nil then
@@ -217,6 +249,9 @@ function StateHelper:SaveFactionRanks(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save Faction expulsions
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveFactionExpulsion(pid, stateObject)
 
     if stateObject.data.factionExpulsion == nil then
@@ -232,6 +267,9 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save faction reputations
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveFactionReputation(pid, stateObject)
 
     if stateObject.data.factionReputation == nil then
@@ -247,6 +285,9 @@ function StateHelper:SaveFactionReputation(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save topics
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveTopics(pid, stateObject)
 
     if stateObject.data.topics == nil then
@@ -265,6 +306,9 @@ function StateHelper:SaveTopics(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save bounties
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveBounty(pid, stateObject)
 
     if stateObject.data.fame == nil then
@@ -276,6 +320,9 @@ function StateHelper:SaveBounty(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save reputation
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveReputation(pid, stateObject)
 
     if stateObject.data.fame == nil then
@@ -287,6 +334,9 @@ function StateHelper:SaveReputation(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
+--- Save map eploration
+-- @int pid
+-- @param stateObject object
 function StateHelper:SaveMapExploration(pid, stateObject)
 
     local cell = tes3mp.GetCell(pid)

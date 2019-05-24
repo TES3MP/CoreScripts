@@ -1,5 +1,10 @@
+--- packet reader
+-- @module packetReader
 packetReader = {}
 
+--- Get record effect
+-- @int recordIndex record index
+-- @return table with effects
 packetReader.GetRecordEffects = function(recordIndex)
 
     local effectTable = {}

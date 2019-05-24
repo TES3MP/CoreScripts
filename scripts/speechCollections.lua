@@ -1,3 +1,5 @@
+--- speechCollections
+-- @module speechCollections
 local speechCollections = {}
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") then

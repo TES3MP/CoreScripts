@@ -1,11 +1,31 @@
+--- speech helper
+-- @module speechHelper
 tableHelper = require("tableHelper")
 require("utils")
 
 local speechHelper = {}
 
+--- file prefixes for speech type
+-- @table speechTypesToFilePrefixes
+-- @field attack "Atk"
+-- @field flee "Fle"
+-- @field follower "Flw"
+-- @field hello "Hlo"
+-- @field hit "Hit"
+-- @field idle "Idl"
+-- @field intruder "int"
+-- @field oppose "OP"
+-- @field service "Srv"
+-- @field thief "Thf"
+-- @field uniform "uni"
 local speechTypesToFilePrefixes = { attack = "Atk", flee = "Fle", follower = "Flw", hello = "Hlo", hit = "Hit",
     idle = "Idl", intruder = "int", oppose = "OP", service = "Srv", thief = "Thf", uniform = "uni" }
 
+--- Get speech path from collection
+-- @param speechCollectionTable table
+-- @string speechType
+-- @int speechIndex
+-- @int gender
 function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechType, speechIndex, gender)
 
     if speechCollectionTable == nil or speechTypesToFilePrefixes[speechType] == nil then

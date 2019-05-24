@@ -1,5 +1,14 @@
+--- Inventory helper
+-- @module inventory Helper
 local inventoryHelper = {}
 
+--- If inventory contains item
+-- @param inventory
+-- @int refId
+-- @param charge
+-- @param enchantmentCharge
+-- @param soul
+-- @return bool
 function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul)
 
     if charge ~= nil then charge = math.floor(charge) end
@@ -27,6 +36,12 @@ function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharg
     return false
 end
 
+--- Get item index
+-- @param inventory
+-- @int refId
+-- @double charge
+-- @double enchantmentCharge
+-- @param soul
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
 
     if charge ~= nil then charge = math.floor(charge) end
@@ -54,6 +69,9 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
     return nil
 end
 
+--- Get item indexes
+-- @param inventory
+-- @int refId
 function inventoryHelper.getItemIndexes(inventory, refId)
 
     local indexes = {}
@@ -67,6 +85,13 @@ function inventoryHelper.getItemIndexes(inventory, refId)
     return indexes
 end
 
+--- add item to inventory
+-- @param inventory
+-- @int refId
+-- @int count
+-- @double charge
+-- @double enchantmentCharge
+-- @param soul
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
@@ -85,8 +110,12 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
     end
 end
 
--- Return true if an item (comparedItem) is closer to a desired item (idealItem) than
+--- Return true if an item (comparedItem) is closer to a desired item (idealItem) than
 -- another item is (otherItem)
+-- @param idealItem
+-- @param comparedItem
+-- @param otherItem
+-- @return true
 function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherItem)
 
     if comparedItem == otherItem then
@@ -163,6 +192,13 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
     return false
 end
 
+--- remove closest item
+-- @param inventory
+-- @int refId
+-- @int count
+-- @double charge
+-- @double enchantmentCharge
+-- @param soul
 function inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId) then
@@ -215,6 +251,13 @@ function inventoryHelper.removeClosestItem(inventory, refId, count, charge, ench
     end
 end
 
+--- remove exact item
+-- @param inventory
+-- @int refId
+-- @int count
+-- @double charge
+-- @double enchantmentCharge
+-- @param soul
 function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
@@ -228,7 +271,13 @@ function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchan
     end
 end
 
--- Deprecated
+--- Deprecated
+-- @param inventory
+-- @int refId
+-- @int count
+-- @double charge
+-- @double enchantmentCharge
+-- @param soul
 function inventoryHelper.removeItem(inventory, refId, count, charge, enchantmentCharge, soul)
     return inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 end

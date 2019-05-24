@@ -1,12 +1,26 @@
+--- menu helper
+-- @module menuHelper
 require("config")
 inventoryHelper = require("inventoryHelper")
 
 local menuHelper = {}
+--- Conditions
+-- @table menuHelper.conditions
 menuHelper.conditions = {}
+--- Effects
+-- @table menuHelper.effects
 menuHelper.effects = {}
+--- Destinations
+-- @table menuHelper.destinations
 menuHelper.destinations = {}
+--- Variables
+-- @table menuHelper.variables
 menuHelper.variables = {}
 
+--- require item
+-- @int inputRefIds
+-- @int inputCount
+-- @return condition table
 function menuHelper.conditions.requireItem(inputRefIds, inputCount)
 
     if type(inputRefIds) ~= "table" then
@@ -22,6 +36,10 @@ function menuHelper.conditions.requireItem(inputRefIds, inputCount)
     return condition
 end
 
+--- require Attribute
+-- @string inputName
+-- @string inputValue
+-- @return condition table
 function menuHelper.conditions.requireAttribute(inputName, inputValue)
     local condition = {
         conditionType = "attribute",
@@ -32,6 +50,10 @@ function menuHelper.conditions.requireAttribute(inputName, inputValue)
     return condition
 end
 
+--- require skill
+-- @string inputName
+-- @string inputValue
+-- @return condition table
 function menuHelper.conditions.requireSkill(inputName, inputValue)
     local condition = {
         conditionType = "skill",
@@ -42,6 +64,9 @@ function menuHelper.conditions.requireSkill(inputName, inputValue)
     return condition
 end
 
+--- require staff rank
+-- @string inputValue
+-- return condition table
 function menuHelper.conditions.requireStaffRank(inputValue)
     local condition = {
         conditionType = "staffRank",
@@ -51,6 +76,10 @@ function menuHelper.conditions.requireStaffRank(inputValue)
     return condition
 end
 
+--- require player function
+-- @string inputFunctionName
+-- @string inputArguments
+-- @return condition table
 function menuHelper.conditions.requirePlayerFunction(inputFunctionName, inputArguments)
     local condition = {
         conditionType = "playerFunction",
@@ -61,11 +90,16 @@ function menuHelper.conditions.requirePlayerFunction(inputFunctionName, inputArg
     return condition
 end
 
--- Deprecated
+--- Deprecated
+-- @string inputValue
 function menuHelper.conditions.requireAdminRank(inputValue)
     return menuHelper.conditions.requireStaffRank(inputValue)
 end
 
+--- give item
+-- @int inputRefId
+-- @int inputCount
+-- @return effect table
 function menuHelper.effects.giveItem(inputRefId, inputCount)
     local effect = {
         effectType = "item",
@@ -77,6 +111,10 @@ function menuHelper.effects.giveItem(inputRefId, inputCount)
     return effect
 end
 
+--- remove item
+-- @int inputRefIds
+-- @int inputCount
+-- @return effect table
 function menuHelper.effects.removeItem(inputRefIds, inputCount)
 
     if type(inputRefIds) ~= "table" then
@@ -93,6 +131,10 @@ function menuHelper.effects.removeItem(inputRefIds, inputCount)
     return effect
 end
 
+--- set player data variable
+-- @string inputVariable
+-- @string inputValue
+-- @return effect table
 function menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
     local effect = {
         effectType = "playerVariable",
@@ -104,6 +146,10 @@ function menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
     return effect
 end
 
+--- run player function
+-- @string inputFunctionName
+-- @int inputArguments
+-- @return effect table
 function menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
     local effect = {
         effectType = "playerFunction",
@@ -114,6 +160,11 @@ function menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
     return effect
 end
 
+--- run global function
+-- @string inputObjectName
+-- @string inputFunctionName
+-- @string inputArguments
+-- @return effect table
 function menuHelper.effects.runGlobalFunction(inputObjectName, inputFunctionName, inputArguments)
     local effect = {
         effectType = "globalFunction",
@@ -125,16 +176,26 @@ function menuHelper.effects.runGlobalFunction(inputObjectName, inputFunctionName
     return effect
 end
 
--- Deprecated
+--- Deprecated
+-- @string inputVariable
+-- @string inputValue
+-- @return effect
 function menuHelper.effects.setDataVariable(inputVariable, inputValue)
     return menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
 end
 
--- Deprecated
+--- Deprecated
+-- @string inputFunctionName
+-- @string inputArguments
+-- @return effect
 function menuHelper.effects.runFunction(inputFunctionName, inputArguments)
     return menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
 end
 
+--- set default
+-- @int inputMenu
+-- @param inputEffects table
+-- @return destination table
 function menuHelper.destinations.setDefault(inputMenu, inputEffects)
     local destination = {
         targetMenu = inputMenu,
@@ -144,6 +205,9 @@ function menuHelper.destinations.setDefault(inputMenu, inputEffects)
     return destination
 end
 
+--- set from custom variable
+-- @param inputVariable
+-- @return destination string
 function menuHelper.destinations.setFromCustomVariable(inputVariable)
     local destination = {
         customVariable = inputVariable
@@ -152,6 +216,10 @@ function menuHelper.destinations.setFromCustomVariable(inputVariable)
     return destination
 end
 
+--- set conditional
+-- @int inputMenu
+-- @param inputConditions
+-- @param inputEffects
 function menuHelper.destinations.setConditional(inputMenu, inputConditions, inputEffects)
     local destination = {
         targetMenu = inputMenu,
@@ -162,6 +230,8 @@ function menuHelper.destinations.setConditional(inputMenu, inputConditions, inpu
     return destination
 end
 
+--- current player ID
+-- @return variable table
 function menuHelper.variables.currentPid()
     local variable = {
         variableType = "pid",
@@ -171,6 +241,8 @@ function menuHelper.variables.currentPid()
     return variable
 end
 
+--- current chat name
+-- @return variable table
 function menuHelper.variables.currentChatName()
     local variable = {
         variableType = "chatName",
@@ -180,6 +252,9 @@ function menuHelper.variables.currentChatName()
     return variable
 end
 
+--- current player variable
+-- @string inputVariableName
+-- @return variable table
 function menuHelper.variables.currentPlayerVariable(inputVariableName)
     local variable = {
         variableType = "playerVariable",
@@ -190,11 +265,17 @@ function menuHelper.variables.currentPlayerVariable(inputVariableName)
     return variable
 end
 
--- Deprecated
+--- Deprecated
+-- @string inputVariableName
+-- @return variable
 function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
     return menuHelper.variables.currentPlayerVariable("data." .. inputVariableName)
 end
 
+--- global variables
+-- @string inputObjectName
+-- @string inputVariableName
+-- @return variable table
 function menuHelper.variables.globalVariable(inputObjectName, inputVariableName)
     local variable = {
         variableType = "globalVariable",
@@ -205,6 +286,10 @@ function menuHelper.variables.globalVariable(inputObjectName, inputVariableName)
     return variable
 end
 
+--- concatenation
+-- @string inputDelimiter
+-- @string ...
+-- @return contatenated table of strings
 function menuHelper.variables.concatenation(inputDelimiter, ...)
     local variable = {
         variableType = "argumentArray",
@@ -216,6 +301,10 @@ function menuHelper.variables.concatenation(inputDelimiter, ...)
     return variable
 end
 
+--- Check condition
+-- @string inputDelimiter
+-- @string condition
+-- @return boolean of succes status
 function menuHelper.CheckCondition(pid, condition)
 
     local targetPlayer = Players[pid]
@@ -272,6 +361,10 @@ function menuHelper.CheckCondition(pid, condition)
     return false
 end
 
+--- check condition table
+-- @int pid player ID
+-- @param conditions table
+-- @return bool
 function menuHelper.CheckConditionTable(pid, conditions)
 
     local conditionCount = table.maxn(conditions)
@@ -291,6 +384,10 @@ function menuHelper.CheckConditionTable(pid, conditions)
     return false
 end
 
+--- Process variables
+-- @int pid player ID
+-- @param inputTable table
+-- @return table
 function menuHelper.ProcessVariables(pid, inputTable)
 
     local resultTable = {}
@@ -361,6 +458,9 @@ function menuHelper.ProcessVariables(pid, inputTable)
     return resultTable
 end
 
+--- Process effects
+-- @int pid player ID
+-- @param effects table
 function menuHelper.ProcessEffects(pid, effects)
 
     if effects == nil then return end
@@ -460,6 +560,10 @@ function menuHelper.ProcessEffects(pid, effects)
     end
 end
 
+--- Get button destination
+-- @int pid player ID
+-- @param buttonPressed table
+-- @return destination table
 function menuHelper.GetButtonDestination(pid, buttonPressed)
 
     if buttonPressed ~= nil then
@@ -493,6 +597,10 @@ function menuHelper.GetButtonDestination(pid, buttonPressed)
     return {}
 end
 
+--- Get displayed buttons
+-- @int pid player ID
+-- @int menuIndex
+-- @return table of displayed buttons
 function menuHelper.GetDisplayedButtons(pid, menuIndex)
 
     if menuIndex == nil or Menus[menuIndex] == nil then return end
@@ -516,6 +624,9 @@ function menuHelper.GetDisplayedButtons(pid, menuIndex)
     return displayedButtons
 end
 
+--- display menu
+-- @int pid player ID
+-- @int menuIndex
 function menuHelper.DisplayMenu(pid, menuIndex)
 
     if menuIndex == nil or Menus[menuIndex] == nil then return end
