@@ -1,26 +1,34 @@
+--- RecordStore Base
+-- @classmod recordstore-base
 local BaseRecordStore = class("BaseRecordStore")
 
-BaseRecordStore.defaultData = 
-    {
-        general = {
-            currentGeneratedNum = 0
-        },
-        permanentRecords = {},
-        generatedRecords = {},
-        recordLinks = {},
-        unlinkedRecordsToCheck = {}
+--- default Data
+-- @table BaseRecordStore.defaultData
+BaseRecordStore.defaultData = {
+        general = {}, -- general
+        permanentRecords = {}, -- permanent records
+        generatedRecords = {}, -- generated records
+        recordLinks = {}, -- record links
+        unlinkedRecordsToCheck = {} -- unlinked records to check
     }
+--- current generated num
+BaseRecordStore.defaultData.general.currentGeneratedNum = 0
 
+--- Init function
+-- @string storeType
 function BaseRecordStore:__init(storeType)
 
     self.data = tableHelper.shallowCopy(self.defaultData)
     self.storeType = storeType
 end
 
+--- Has entry
+-- @return boolean of success status
 function BaseRecordStore:HasEntry()
     return self.hasEntry
 end
 
+--- Ensure data structure
 function BaseRecordStore:EnsureDataStructure()
 
     for key, value in pairs(self.defaultData) do
@@ -30,25 +38,33 @@ function BaseRecordStore:EnsureDataStructure()
     end
 end
 
+--- Get current Generated num
+-- @return int currentGeneratedNum
 function BaseRecordStore:GetCurrentGeneratedNum()
     return self.data.general.currentGeneratedNum
 end
 
+--- Set current Generated num
+-- @int currentGeneratedNum
 function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
     self.data.general.currentGeneratedNum = currentGeneratedNum
     self:QuicksaveToDrive()
 end
 
+--- Increment generated num
+-- @return currentGeneratedNum
 function BaseRecordStore:IncrementGeneratedNum()
     self:SetCurrentGeneratedNum(self:GetCurrentGeneratedNum() + 1)
     return self:GetCurrentGeneratedNum()
 end
 
+--- Generate record id
+-- @return string generated record id
 function BaseRecordStore:GenerateRecordId()
     return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementGeneratedNum()
 end
 
--- Go through all the generated records that were at some point tracked as having no links remaining
+--- Go through all the generated records that were at some point tracked as having no links remaining
 -- and delete them if they still have no links
 function BaseRecordStore:DeleteUnlinkedRecords()
 
@@ -63,6 +79,8 @@ function BaseRecordStore:DeleteUnlinkedRecords()
     end
 end
 
+--- Delete generated record
+-- @string recordId
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
     if self.data.generatedRecords[recordId] == nil then
@@ -94,7 +112,9 @@ function BaseRecordStore:DeleteGeneratedRecord(recordId)
     self:QuicksaveToDrive()
 end
 
--- Check whether there are any links remaining to a certain generated record
+--- Check whether there are any links remaining to a certain generated record
+-- @string recordId
+-- @return boolean of success status
 function BaseRecordStore:HasLinks(recordId)
 
     local recordLinks = self.data.recordLinks
@@ -117,8 +137,11 @@ function BaseRecordStore:HasLinks(recordId)
     return false
 end
 
--- Add a link between a record and another record from a different record store,
+--- Add a link between a record and another record from a different record store,
 -- i.e. for enchantments being used by other items
+-- @string recordId
+-- @string otherRecordId
+-- @string otherStoreType
 function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType)
 
     local recordLinks = self.data.recordLinks
@@ -132,6 +155,10 @@ function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType
     end
 end
 
+--- Remove link to record
+-- @string recordId
+-- @string otherRecordId
+-- @string otherStoreType
 function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
 
     local recordLinks = self.data.recordLinks
@@ -151,7 +178,9 @@ function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreT
     end
 end
 
--- Add a link between a record and a cell it is found in
+--- Add a link between a record and a cell it is found in
+-- @string recordId
+-- @param cell
 function BaseRecordStore:AddLinkToCell(recordId, cell)
 
     local cellDescription = cell.description
@@ -165,6 +194,9 @@ function BaseRecordStore:AddLinkToCell(recordId, cell)
     end
 end
 
+--- Remove a link between a record and a cell it is found in
+-- @string recordId
+-- @param cell
 function BaseRecordStore:RemoveLinkToCell(recordId, cell)
 
     local cellDescription = cell.description
@@ -184,7 +216,9 @@ function BaseRecordStore:RemoveLinkToCell(recordId, cell)
     end
 end
 
--- Add a link between a record and a player in whose inventory or spellbook it is found
+--- Add a link between a record and a player in whose inventory or spellbook it is found
+-- @string recordId
+-- @param player
 function BaseRecordStore:AddLinkToPlayer(recordId, player)
 
     local accountName = player.accountName
@@ -198,6 +232,9 @@ function BaseRecordStore:AddLinkToPlayer(recordId, player)
     end
 end
 
+--- Remove a link between a record and a player in whose inventory or spellbook it is found
+-- @string recordId
+-- @param player
 function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
 
     local accountName = player.accountName
@@ -217,6 +254,11 @@ function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
     end
 end
 
+--- Load generated records
+-- @int pid
+-- @param recordList
+-- @param idArray
+-- @boolean forEveryone
 function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
@@ -263,6 +305,11 @@ function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEvery
     self:LoadRecords(pid, recordList, validIdArray, forEveryone)
 end
 
+--- Load records
+-- @int pid
+-- @param recordList
+-- @param idArray
+-- @boolean forEveryone
 function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
@@ -286,8 +333,9 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
     end
 end
 
--- Check if a record is a perfect match for any of the records whose IDs
+--- Check if a record is a perfect match for any of the records whose IDs
 -- are contained in an ID array
+-- @ return nil or match
 function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys)
 
     if idArray == nil then
@@ -305,6 +353,9 @@ function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray
     return nil
 end
 
+--- Save generated enchanted items
+-- @int pid
+-- @return recordAdditions
 function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
 
     if self.storeType ~= "armor" and self.storeType ~= "book" and
@@ -349,6 +400,9 @@ function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
     return recordAdditions
 end
 
+--- Save generated enchantments
+-- @int pid
+-- @return recordAdditions
 function BaseRecordStore:SaveGeneratedEnchantments(pid)
 
     if self.storeType ~= "enchantment" then return end
@@ -380,6 +434,9 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
     return recordAdditions
 end
 
+--- Save generated potions
+-- @int pid
+-- @return recordAdditions
 function BaseRecordStore:SaveGeneratedPotions(pid)
 
     if self.storeType ~= "potion" then return end
@@ -420,6 +477,9 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
     return recordAdditions
 end
 
+--- Save generated spells
+-- @int pid
+-- @return recordAdditions
 function BaseRecordStore:SaveGeneratedSpells(pid)
 
     if self.storeType ~= "spell" then return end
