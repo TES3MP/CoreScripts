@@ -26,68 +26,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         moderator = true
     end
 
-    if cmd[1] == "message" or cmd[1] == "msg" then
-        if pid == tonumber(cmd[2]) then
-            tes3mp.SendMessage(pid, "You can't message yourself.\n")
-        elseif cmd[3] == nil then
-            tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
-        elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
-            local targetPid = tonumber(cmd[2])
-            local targetName = Players[targetPid].name
-            message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
-            message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
-            tes3mp.SendMessage(pid, message, false)
-            tes3mp.SendMessage(targetPid, message, false)
-        end
-
-    elseif cmd[1] == "me" and cmd[2] ~= nil then
-        local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-        tes3mp.SendMessage(pid, message, true)
-
-    elseif (cmd[1] == "local" or cmd[1] == "l") and cmd[2] ~= nil then
-        local cellDescription = Players[pid].data.location.cell
-
-        if logicHandler.IsCellLoaded(cellDescription) == true then
-            for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
-
-                local message = logicHandler.GetChatName(pid) .. " to local area: "
-                message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-                tes3mp.SendMessage(visitorPid, message, false)
-            end
-        end
-
-    elseif (cmd[1] == "greentext" or cmd[1] == "gt") and cmd[2] ~= nil then
-        local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
-            ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-        tes3mp.SendMessage(pid, message, true)
-
-    elseif cmd[1] == "ban" and moderator then
-
-        if cmd[2] == "ip" and cmd[3] ~= nil then
-            local ipAddress = cmd[3]
-
-            if not tableHelper.containsValue(banList.ipAddresses, ipAddress) then
-                table.insert(banList.ipAddresses, ipAddress)
-                SaveBanList()
-
-                tes3mp.SendMessage(pid, ipAddress .. " is now banned.\n", false)
-                tes3mp.BanAddress(ipAddress)
-            else
-                tes3mp.SendMessage(pid, ipAddress .. " was already banned.\n", false)
-            end
-        elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
-            local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-            logicHandler.BanPlayer(pid, targetName)
-
-        elseif type(tonumber(cmd[2])) == "number" and logicHandler.CheckPlayerValidity(pid, cmd[2]) then
-            local targetPid = tonumber(cmd[2])
-            local targetName = Players[targetPid].name
-            logicHandler.BanPlayer(pid, targetName)
-        else
-            tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
-        end
-
-    elseif cmd[1] == "unban" and moderator and cmd[3] ~= nil then
+    if cmd[1] == "unban" and moderator and cmd[3] ~= nil then
 
         if cmd[2] == "ip" then
             local ipAddress = cmd[3]
