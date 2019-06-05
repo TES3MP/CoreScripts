@@ -23,9 +23,10 @@ local invalidCommand = function(pid)
     tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
 end
 
+defaultCommands = {}
 
 --Commands
-local msg = function(pid, cmd)
+defaultCommands.msg = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't message yourself.\n")
     elseif cmd[3] == nil then
@@ -39,18 +40,18 @@ local msg = function(pid, cmd)
         tes3mp.SendMessage(targetPid, message, false)
     end
 end
-customCommandHooks.registerCommand("msg", msg)
-customCommandHooks.registerCommand("message", msg)
+customCommandHooks.registerCommand("msg", defaultCommands.msg)
+customCommandHooks.registerCommand("message", defaultCommands.msg)
 
 
-local me = function(pid, cmd)
+defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-customCommandHooks.registerCommand("me", me)
+customCommandHooks.registerCommand("me", defaultCommands.me)
 
 --damn can't name it local
-local loc = function(pid, cmd)
+defaultCommands.loc = function(pid, cmd)
     local cellDescription = Players[pid].data.location.cell
 
     if logicHandler.IsCellLoaded(cellDescription) == true then
@@ -62,18 +63,18 @@ local loc = function(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("local", loc)
-customCommandHooks.registerCommand("l", loc)
+customCommandHooks.registerCommand("local", defaultCommands.loc)
+customCommandHooks.registerCommand("l", defaultCommands.loc)
 
-local greentext = function(pid, cmd)
+defaultCommands.greentext = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
             ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-customCommandHooks.registerCommand("greentext", greentext)
-customCommandHooks.registerCommand("gt", greentext)
+customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
+customCommandHooks.registerCommand("gt", defaultCommands.greentext)
 
-local ban = function(pid, cmd)
+defaultCommands.ban = function(pid, cmd)
 
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -106,9 +107,9 @@ local ban = function(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
     end
 end
-customCommandHooks.registerCommand("ban", ban)
+customCommandHooks.registerCommand("ban", defaultCommands.ban)
 
-local unban = function(pid, cmd)
+defaultCommands.unban = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
     if moderator == false or cmd[3] == nil then
@@ -135,9 +136,9 @@ local unban = function(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
     end
 end
-customCommandHooks.registerCommand("unban", unban)
+customCommandHooks.registerCommand("unban", defaultCommands.unban)
 
-local banlist = function(pid, cmd)
+defaultCommands.banlist = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
     if not moderator then
@@ -187,9 +188,9 @@ local banlist = function(pid, cmd)
 
     tes3mp.SendMessage(pid, message, false)
 end
-customCommandHooks.registerCommand("banlist", banlist)
+customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
 
-local ipaddresses = function(pid, cmd)
+defaultCommands.ipaddresses = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
     if moderator == false or cmd[2] == nil then
@@ -218,16 +219,16 @@ local ipaddresses = function(pid, cmd)
     end
 
 end
-customCommandHooks.registerCommand("ipaddresses", ipaddresses)
-customCommandHooks.registerCommand("ips", ipaddresses)
+customCommandHooks.registerCommand("ipaddresses", defaultCommands.ipaddresses)
+customCommandHooks.registerCommand("ips", defaultCommands.ipaddresses)
 
-local players = function(pid, cmd)
+defaultCommands.players = function(pid, cmd)
     guiHelper.ShowPlayerList(pid)
 end
-customCommandHooks.registerCommand("players", players)
-customCommandHooks.registerCommand("list", players)
+customCommandHooks.registerCommand("players", defaultCommands.players)
+customCommandHooks.registerCommand("list", defaultCommands.players)
 
-local cells = function(pid, cmd)
+defaultCommands.cells = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
     if moderator == false then
@@ -237,9 +238,9 @@ local cells = function(pid, cmd)
 
     guiHelper.ShowCellList(pid)
 end
-customCommandHooks.registerCommand("cells", cells)
+customCommandHooks.registerCommand("cells", defaultCommands.cells)
 
-local regions = function(pid, cmd)
+defaultCommands.regions = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
     if moderator == false then
@@ -249,6 +250,6 @@ local regions = function(pid, cmd)
 
     guiHelper.ShowRegionList(pid)
 end
-customCommandHooks.registerCommand("regions", regions)
+customCommandHooks.registerCommand("regions", defaultCommands.regions)
 
 
