@@ -25,6 +25,7 @@ guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
+require("defaultCommands")
 require("customScripts")
 
 Database = nil
