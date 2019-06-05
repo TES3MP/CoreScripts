@@ -315,18 +315,24 @@ logicHandler.PushPlayerList = function(pls)
 end
 
 logicHandler.AuthCheck = function(pid)
-    if Players[pid]:IsLoggedIn() then
-        return true
-    end
+	if Players[pid] ~= nil then
+		if Players[pid]:IsLoggedIn() then
+			return true
+		end
 
-    local playerName = logicHandler.GetChatName(pid)
+		local playerName = logicHandler.GetChatName(pid)
 
-    local message = playerName .. " failed to log in.\n"
-    tes3mp.SendMessage(pid, message, true)
-    Players[pid]:Kick()
+		local message = playerName .. " failed to log in.\n"
+		tes3mp.SendMessage(pid, message, true)
+		Players[pid]:Kick()
 
-    Players[pid] = nil
-    return false
+		Players[pid] = nil
+		return false
+	else
+		tes3mp.LogMessage(enumerations.log.INFO, "Player with PID " .. pid .. " does not exist but auth check was called with" ..
+            " PID.")
+        return false
+	end
 end
 
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
