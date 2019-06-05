@@ -137,4 +137,118 @@ local unban = function(pid, cmd)
 end
 customCommandHooks.registerCommand("unban", unban)
 
+local banlist = function(pid, cmd)
+	local moderator, admin, serverOwner = getRanks(pid)
+
+	if not moderator then
+		invalidCommand(pid)
+		return
+	end
+
+	local message
+
+	if cmd[2] == "names" or cmd[2] == "name" or cmd[2] == "players" then
+		if #banList.playerNames == 0 then
+            message = "No player names have been banned.\n"
+        else
+            message = "The following player names are banned:\n"
+
+            for index, targetName in pairs(banList.playerNames) do
+                message = message .. targetName
+
+                if index < #banList.playerNames then
+                    message = message .. ", "
+                end
+            end
+
+            message = message .. "\n"
+        end
+    elseif cmd[2] ~= nil and (string.lower(cmd[2]) == "ips" or string.lower(cmd[2]) == "ip") then
+        if #banList.ipAddresses == 0 then
+            message = "No IP addresses have been banned.\n"
+        else
+            message = "The following IP addresses unattached to players are banned:\n"
+
+            for index, ipAddress in pairs(banList.ipAddresses) do
+                message = message .. ipAddress
+
+                if index < #banList.ipAddresses then
+                    message = message .. ", "
+                end
+            end
+
+            message = message .. "\n"
+        end
+    end
+
+    if message == nil then
+        message = "Please specify whether you want the banlist for IPs or for names.\n"
+    end
+
+    tes3mp.SendMessage(pid, message, false)
+end
+customCommandHooks.registerCommand("banlist", banlist)
+
+local ipaddresses = function(pid, cmd)
+	local moderator, admin, serverOwner = getRanks(pid)
+
+	if moderator == false or cmd[2] == nil then
+		invalidCommand(pid)
+		return
+	end
+
+	local targetName = tableHelper.concatenateFromIndex(cmd, 2)
+    local targetPlayer = logicHandler.GetPlayerByName(targetName)
+
+    if targetPlayer == nil then
+        tes3mp.SendMessage(pid, "Player " .. targetName .. " does not exist.\n", false)
+    elseif targetPlayer.data.ipAddresses ~= nil then
+        local message = "Player " .. targetPlayer.accountName .. " has used the following IP addresses:\n"
+
+        for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
+            message = message .. ipAddress
+
+            if index < #targetPlayer.data.ipAddresses then
+                message = message .. ", "
+            end
+        end
+
+        message = message .. "\n"
+        tes3mp.SendMessage(pid, message, false)
+    end
+
+end
+customCommandHooks.registerCommand("ipaddresses", ipaddresses)
+customCommandHooks.registerCommand("ips", ipaddresses)
+
+local players = function(pid, cmd)
+	guiHelper.ShowPlayerList(pid)
+end
+customCommandHooks.registerCommand("players", players)
+customCommandHooks.registerCommand("list", players)
+
+local cells = function(pid, cmd)
+	local moderator, admin, serverOwner = getRanks(pid)
+
+	if moderator == false then
+		invalidCommand(pid)
+		return
+	end
+
+	guiHelper.ShowCellList(pid)
+end
+customCommandHooks.registerCommand("cells", cells)
+
+local regions = function(pid, cmd)
+	local moderator, admin, serverOwner = getRanks(pid)
+
+	if moderator == false then
+		invalidCommand(pid)
+		return
+	end
+
+	guiHelper.ShowRegionList(pid)
+end
+customCommandHooks.registerCommand("regions", regions)
+
 
