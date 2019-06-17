@@ -3,9 +3,13 @@ local customCommandHooks = {}
 local specialCharacter = "/"
 
 customCommandHooks.commands = {}
+customCommandHooks.helpCommands = {}
 
-function customCommandHooks.registerCommand(cmd, callback)
+function customCommandHooks.registerCommand(cmd, callback, label)
     customCommandHooks.commands[cmd] = callback 
+    if label ~= nil then
+        customCommandHooks.helpCommands[cmd] = label
+    end
 end
 
 function customCommandHooks.removeCommand(cmd)
@@ -28,5 +32,11 @@ function customCommandHooks.validator(eventStatus, pid, message)
 end
 
 customEventHooks.registerValidator("OnPlayerSendMessage", customCommandHooks.validator)
-
+customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
+    -- Add commmands with label
+    for cmd, label in pairs(customCommandHooks.helpCommands) do
+        Menus["help player"].text = Menus["help player"].text .. "\n" .. color.Yellow .."/".. cmd .."\n"..
+         color.White .. label
+    end
+end)
 return customCommandHooks
