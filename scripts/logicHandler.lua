@@ -364,62 +364,119 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
-logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId, packetType)
+-- Create objects with newly assigned uniqueIndexes in a particular cell,
+-- where the objectsToCreate parameter is an array of tables with refId
+-- and location keys and packetType is either "spawn" or "place"
+logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetType)
 
-    local mpNum = WorldInstance:GetCurrentMpNum() + 1
-    local uniqueIndex =  0 .. "-" .. mpNum
+    local uniqueIndexes = {}
+    local generatedRecordIdsPerType = {}
+    local unloadCellAtEnd = false
+    local shouldSendPacket = false
 
-    -- Is this a generated record? If so, add a link to it in the cell it
-    -- has been placed in
-    if logicHandler.IsGeneratedRecord(refId) then
-        local recordStore = logicHandler.GetRecordStoreByRecordId(refId)
+    -- If the desired cell is not loaded, load it temporarily
+    if LoadedCells[cellDescription] == nil then
+        logicHandler.LoadCell(cellDescription)
+        unloadCellAtEnd = true
+    end
 
-        if recordStore ~= nil then
-            LoadedCells[cellDescription]:AddLinkToRecord(recordStore.storeType, refId, uniqueIndex)
+    local cell = LoadedCells[cellDescription]
 
-            -- Do any of the visitors to this cell lack the generated record?
-            -- If so, send it to them
-            for _, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
-                recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
+    -- Only send a packet if there are players on the server to send it to
+    if tableHelper.getCount(Players) > 0 then
+        shouldSendPacket = true
+        tes3mp.ClearObjectList()
+    end
+
+    for _, object in pairs(objectsToCreate) do
+
+        local refId = object.refId
+        local location = object.location
+
+        local mpNum = WorldInstance:GetCurrentMpNum() + 1
+        local uniqueIndex =  0 .. "-" .. mpNum
+        local isValid = true
+
+        -- Is this object based on a a generated record? If so, it needs special
+        -- handling here and further below
+        if logicHandler.IsGeneratedRecord(refId) then
+            
+            local recordType = logicHandler.GetRecordTypeByRecordId(refId)
+
+            if RecordStores[recordType] ~= nil then
+
+                -- Add a link to this generated record in the cell it is being placed in
+                cell:AddLinkToRecord(recordType, refId, uniqueIndex)
+
+                if generatedRecordIdsPerType[recordType] == nil then
+                    generatedRecordIdsPerType[recordType] = {}
+                end
+
+                if shouldSendPacket and not tableHelper.containsValue(generatedRecordIdsPerType[recordType], refId) then
+                    table.insert(generatedRecordIdsPerType[recordType], refId)
+                end
+            else
+                isValid = false
+                tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at creating object " .. refId ..
+                    " based on non-existent generated record")
             end
-        else
-            tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at creating object based on non-existent generated record")
-            return
+        end
+
+        if isValid then
+
+            table.insert(uniqueIndexes, uniqueIndex)
+            WorldInstance:SetCurrentMpNum(mpNum)
+            tes3mp.SetCurrentMpNum(mpNum)
+
+            cell:InitializeObjectData(uniqueIndex, refId)
+            cell.data.objectData[uniqueIndex].location = location
+
+            if packetType == "place" then
+                table.insert(cell.data.packets.place, uniqueIndex)
+            elseif packetType == "spawn" then
+                table.insert(cell.data.packets.spawn, uniqueIndex)
+                table.insert(cell.data.packets.actorList, uniqueIndex)
+            end
+
+            -- Are there any players on the server? If so, initialize the object
+            -- list for the first one we find and just send the corresponding packet
+            -- to everyone
+            if shouldSendPacket then
+
+                local pid = tableHelper.getAnyValue(Players).pid
+                tes3mp.SetObjectListPid(pid)
+                tes3mp.SetObjectListCell(cellDescription)
+                tes3mp.SetObjectRefId(refId)
+                tes3mp.SetObjectRefNum(0)
+                tes3mp.SetObjectMpNum(mpNum)
+                tes3mp.SetObjectCharge(-1)
+                tes3mp.SetObjectEnchantmentCharge(-1)
+                tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
+                tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+                tes3mp.AddObject()
+            end
         end
     end
 
-    WorldInstance:SetCurrentMpNum(mpNum)
-    tes3mp.SetCurrentMpNum(mpNum)
+    if shouldSendPacket then
 
-    LoadedCells[cellDescription]:InitializeObjectData(uniqueIndex, refId)
-    LoadedCells[cellDescription].data.objectData[uniqueIndex].location = location
+        -- Ensure the visitors to this cell have the records they need for the
+        -- objects we've created
+        for _, recordType in pairs(config.recordStoreLoadOrder) do
+            if generatedRecordIdsPerType[recordType] ~= nil then
 
-    if packetType == "place" then
-        table.insert(LoadedCells[cellDescription].data.packets.place, uniqueIndex)
-    elseif packetType == "spawn" then
-        table.insert(LoadedCells[cellDescription].data.packets.spawn, uniqueIndex)
-        table.insert(LoadedCells[cellDescription].data.packets.actorList, uniqueIndex)
-    end
+                local recordStore = RecordStores[recordType]
 
-    LoadedCells[cellDescription]:QuicksaveToDrive()
+                if recordStore ~= nil then
 
-    -- Are there any players on the server? If so, initialize the object
-    -- list for the first one we find and just send the corresponding packet
-    -- to everyone
-    if tableHelper.getCount(Players) > 0 then
+                    local idArray = generatedRecordIdsPerType[recordType]
 
-        local pid = tableHelper.getAnyValue(Players).pid
-        tes3mp.ClearObjectList()
-        tes3mp.SetObjectListPid(pid)
-        tes3mp.SetObjectListCell(cellDescription)
-        tes3mp.SetObjectRefId(refId)
-        tes3mp.SetObjectRefNum(0)
-        tes3mp.SetObjectMpNum(mpNum)
-        tes3mp.SetObjectCharge(-1)
-        tes3mp.SetObjectEnchantmentCharge(-1)
-        tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-        tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-        tes3mp.AddObject()
+                    for _, visitorPid in pairs(cell.visitors) do
+                        recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, idArray)
+                    end
+                end
+            end
+        end
 
         if packetType == "place" then
             tes3mp.SendObjectPlace(true)
@@ -428,7 +485,22 @@ logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId,
         end
     end
 
-    return uniqueIndex
+    cell:Save()
+
+    if unloadCellAtEnd then
+        logicHandler.UnloadCell(cellDescription)
+    end
+
+    return uniqueIndexes
+end
+
+logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId, packetType)
+
+    local objects = {}
+    table.insert(objects, { location = location, refId = refId, packetType = packetType })
+
+    local objectUniqueIndex = logicHandler.CreateObjects(cellDescription, objects, packetType)[1]
+    return objectUniqueIndex
 end
 
 logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
@@ -439,7 +511,8 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    return logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
+    local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)[1]
+    return objectUniqueIndex
 end
 
 logicHandler.DeleteObject = function(pid, objectCellDescription, objectUniqueIndex, forEveryone)
