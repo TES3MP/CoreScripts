@@ -535,7 +535,7 @@ logicHandler.IsGeneratedRecord = function(recordId)
     return false
 end
 
-logicHandler.GetRecordStoreByRecordId = function(recordId)
+logicHandler.GetRecordTypeByRecordId = function(recordId)
 
     local isGenerated = logicHandler.IsGeneratedRecord(recordId)
 
@@ -543,20 +543,26 @@ logicHandler.GetRecordStoreByRecordId = function(recordId)
         local recordType = string.match(recordId, "_(%a+)_")
 
         if RecordStores[recordType] ~= nil then
-            return RecordStores[recordType]
+            return recordType
         end
     end
 
     for _, storeType in pairs(config.recordStoreLoadOrder) do
 
         if isGenerated and RecordStores[storeType].data.generatedRecords[recordId] ~= nil then
-            return RecordStores[storeType]
+            return storeType
         elseif RecordStores[storeType].data.permanentRecords[recordId] ~= nil then
-            return RecordStores[storeType]
+            return storeType
         end
     end
 
     return nil
+end
+
+logicHandler.GetRecordStoreByRecordId = function(recordId)
+
+    local recordType = logicHandler.GetRecordTypeByRecordId(recordId)
+    return RecordStores[recordType]
 end
 
 logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
