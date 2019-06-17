@@ -109,6 +109,9 @@ config.maxSkillValue = 200
 -- Note: Acrobatics is given special treatment because of the Scroll of Icarian Flight
 config.maxAcrobaticsValue = 1200
 
+-- Allow modifier values to bypass allowed skill values
+config.ignoreModifierWithMaxSkill = false
+
 -- The refIds of items that players are not allowed to equip for balancing reasons
 config.bannedEquipmentItems = { "helseth's ring" }
 
