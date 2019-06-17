@@ -287,14 +287,37 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
 end
 
 -- Check if a record is a perfect match for any of the records whose IDs
--- are contained in an ID array
-function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys)
+-- are contained in an ID array, with optional parameters that allow starting
+-- from the end of the idArray and performing a limited number of checks
+function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys, useReverseOrder, maximumChecks)
 
     if idArray == nil then
         return nil
     end
 
-    for _, recordId in pairs(idArray) do
+    local initialValue, finalValue, increment
+
+    if useReverseOrder then
+        initialValue = #idArray
+        increment = -1
+        finalValue = 1
+
+        if maximumChecks ~= nil then
+            finalValue = math.max(finalValue, initialValue - maximumChecks + 1)
+        end
+    else
+        initialValue = 1
+        increment = 1
+        finalValue = #idArray
+
+        if maximumChecks ~= nil then
+            finalValue = math.min(finalValue, maximumChecks)
+        end
+    end
+
+    for arrayIndex = initialValue, finalValue, increment do
+
+        local recordId = idArray[arrayIndex]
         local record = recordList[recordId]
 
         if record ~= nil and tableHelper.isEqualTo(comparedRecord, record, ignoredKeys) then
@@ -406,7 +429,7 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
         -- Is there already a record exactly like this one, icon and model aside?
         -- If so, we'll just reuse it the way OpenMW would
         local recordId = self:GetMatchingRecordId(record, self.data.generatedRecords,
-            Players[pid].data.recordLinks.potion, {"icon", "model"})
+            Players[pid].data.recordLinks.potion, {"icon", "model"}, true, 25)
 
         if recordId == nil then
             recordId = self:GenerateRecordId()
