@@ -1120,7 +1120,7 @@ function commandHandler.StoreRecord(pid, cmd)
                 else
                     Players[pid]:Message("Please use a numerical value for the part type.\n")
                 end
-            elseif inputAdditionType == "item" and (inputType == "creature" or inputType == "npc") then
+            elseif inputAdditionType == "item" and tableHelper.containsValue({"creature", "npc", "container"}, inputType) then
 
                 if storedTable.items == nil then
                     storedTable.items = {}
@@ -1347,7 +1347,9 @@ function commandHandler.CreateRecord(pid, cmd)
     if inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
     elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
     elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
+    elseif inputType == "container" then packetBuilder.AddContainerRecord(id, savedTable)
     elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
+    elseif inputType == "door" then packetBuilder.AddDoorRecord(id, savedTable)
     elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
     elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
     elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)

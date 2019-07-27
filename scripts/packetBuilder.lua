@@ -185,8 +185,12 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddBookRecord(id, record)
     elseif storeType == "clothing" then
         packetBuilder.AddClothingRecord(id, record)
+    elseif storeType == "container" then
+        packetBuilder.AddContainerRecord(id, record)
     elseif storeType == "creature" then
         packetBuilder.AddCreatureRecord(id, record)
+    elseif storeType == "door" then
+        packetBuilder.AddDoorRecord(id, record)
     elseif storeType == "enchantment" then
         packetBuilder.AddEnchantmentRecord(id, record)
     elseif storeType == "miscellaneous" then
@@ -269,6 +273,25 @@ packetBuilder.AddClothingRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+packetBuilder.AddContainerRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    if type(record.items) == "table" then
+        for _, item in pairs(record.items) do
+            packetBuilder.AddInventoryItemToRecord(item)
+        end
+    end
+
+    tes3mp.AddRecord()
+end
+
 packetBuilder.AddCreatureRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -289,6 +312,19 @@ packetBuilder.AddCreatureRecord = function(id, record)
             packetBuilder.AddInventoryItemToRecord(item)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddDoorRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.openSound ~= nil then tes3mp.SetRecordOpenSound(record.openSound) end
+    if record.closeSound ~= nil then tes3mp.SetRecordCloseSound(record.closeSound) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
     tes3mp.AddRecord()
 end

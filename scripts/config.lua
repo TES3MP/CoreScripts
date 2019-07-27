@@ -222,7 +222,7 @@ config.generatedRecordIdPrefix = "$custom"
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
 config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
-    "miscellaneous", "creature", "npc" }
+    "miscellaneous", "creature", "npc", "container", "door" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -239,8 +239,10 @@ config.validRecordSettings = {
         "text", "weight", "value", "scrollState", "skillId" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
+    container = { "baseId", "id", "name", "model", "script", "weight" },
     creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "health", "magicka",
         "fatigue", "aiFight", "flags" },
+    door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
     miscellaneous = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "keyState" },
     npc = { "baseId", "inventoryBaseId", "id", "name", "script", "flags", "gender", "race", "model", "hair",
@@ -258,7 +260,9 @@ config.requiredRecordSettings = {
     armor = { "name", "model" },
     book = { "name", "model" },
     clothing = { "name", "model" },
+    container = { "name", "model" },
     creature = { "name", "model" },
+    door = { "name", "model" },
     enchantment = {},
     miscellaneous = { "name", "model" },
     npc = { "name", "race", "class" },
