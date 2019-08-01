@@ -179,7 +179,9 @@ end
 
 packetBuilder.AddRecordByType = function(id, record, storeType)
 
-    if storeType == "armor" then
+    if storeType == "activator" then
+        packetBuilder.AddActivatorRecord(id, record)
+    elseif storeType == "armor" then
         packetBuilder.AddArmorRecord(id, record)
     elseif storeType == "book" then
         packetBuilder.AddBookRecord(id, record)
@@ -201,9 +203,22 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddPotionRecord(id, record)
     elseif storeType == "spell" then
         packetBuilder.AddSpellRecord(id, record)
+    elseif storeType == "static" then
+        packetBuilder.AddStaticRecord(id, record)
     elseif storeType == "weapon" then
         packetBuilder.AddWeaponRecord(id, record)
     end
+end
+
+packetBuilder.AddActivatorRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
 end
 
 packetBuilder.AddArmorRecord = function(id, record)
@@ -426,6 +441,15 @@ packetBuilder.AddSpellRecord = function(id, record)
             packetBuilder.AddEffectToRecord(effect)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddStaticRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
 
     tes3mp.AddRecord()
 end

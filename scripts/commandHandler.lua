@@ -1344,7 +1344,8 @@ function commandHandler.CreateRecord(pid, cmd)
     tes3mp.ClearRecords()
     tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
 
-    if inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
+    if inputType == "activator" then packetBuilder.AddActivatorRecord(id, savedTable)
+    elseif inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
     elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
     elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
     elseif inputType == "container" then packetBuilder.AddContainerRecord(id, savedTable)
@@ -1355,6 +1356,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
     elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
     elseif inputType == "spell" then packetBuilder.AddSpellRecord(id, savedTable)
+    elseif inputType == "static" then packetBuilder.AddStaticRecord(id, savedTable)
     elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
 
     tes3mp.SendRecordDynamic(pid, true, false)

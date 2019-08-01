@@ -222,7 +222,7 @@ config.generatedRecordIdPrefix = "$custom"
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
 config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
-    "miscellaneous", "creature", "npc", "container", "door" }
+    "miscellaneous", "creature", "npc", "container", "door", "activator", "static" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -233,6 +233,7 @@ config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", 
 
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
+    activator = { "baseId", "id", "name", "model", "script" },
     armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value", "health", "armorRating" },
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -249,6 +250,7 @@ config.validRecordSettings = {
         "head", "class", "faction", "level", "health", "magicka", "fatigue", "aiFight", "autoCalc" },
     potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
     spell = { "baseId", "id", "name", "subtype", "cost", "flags", "effects" },
+    static = { "baseId", "id", "model" },
     weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value", "health", "speed", "reach", "damageChop", "damageSlash", "damageThrust",
         "flags" }
