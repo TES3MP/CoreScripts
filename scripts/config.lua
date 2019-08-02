@@ -259,6 +259,7 @@ config.validRecordSettings = {
 -- The settings which need to be provided when creating a new record that isn't based at all
 -- on an existing one, i.e. a new record that is missing a baseId
 config.requiredRecordSettings = {
+    activator = { "name", "model" },
     armor = { "name", "model" },
     book = { "name", "model" },
     clothing = { "name", "model" },
@@ -270,6 +271,7 @@ config.requiredRecordSettings = {
     npc = { "name", "race", "class" },
     potion = { "name", "model" },
     spell = { "name" },
+    static = { "model" },
     weapon = { "name", "model" }
 }
 
