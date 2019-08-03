@@ -195,6 +195,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddDoorRecord(id, record)
     elseif storeType == "enchantment" then
         packetBuilder.AddEnchantmentRecord(id, record)
+    elseif storeType == "ingredient" then
+        packetBuilder.AddIngredientRecord(id, record)
     elseif storeType == "miscellaneous" then
         packetBuilder.AddMiscellaneousRecord(id, record)
     elseif storeType == "npc" then
@@ -355,6 +357,32 @@ packetBuilder.AddEnchantmentRecord = function(id, record)
 
     if type(record.effects) == "table" then
         for _, effect in pairs(record.effects) do
+            packetBuilder.AddEffectToRecord(effect)
+        end
+    end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddIngredientRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    if type(record.effects) == "table" then
+        for effectIndex = 1, 4 do
+            local effect = record.effects[effectIndex]
+
+            if effect == nil then
+                effect = { id = -1 }
+            end
+            
             packetBuilder.AddEffectToRecord(effect)
         end
     end

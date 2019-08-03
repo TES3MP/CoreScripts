@@ -1083,25 +1083,30 @@ function commandHandler.StoreRecord(pid, cmd)
                 inputValues = tableHelper.getTableFromCommaSplit(inputConcatenation)
             end
 
-            if inputAdditionType == "effect" and (inputType == "spell" or
-                inputType == "potion" or inputType == "enchantment") then
+            if inputAdditionType == "effect" and (inputType == "spell" or inputType == "potion"
+                or inputType == "enchantment" or inputType == "ingredient") then
 
-                if storedTable.effects == nil then
-                    storedTable.effects = {}
-                end
-
-                local inputEffectId = inputValues[1]
-
-                if type(tonumber(inputEffectId)) == "number" then
-
-                    local effect = { id = tonumber(inputEffectId), rangeType = tonumber(inputValues[2]),
-                        duration = tonumber(inputValues[3]), area = tonumber(inputValues[4]),
-                        magnitudeMin = tonumber(inputValues[5]), magnitudeMax = tonumber(inputValues[6]),
-                        attribute = tonumber(inputValues[7]), skill = tonumber(inputValues[8]) }
-                    table.insert(storedTable.effects, effect)
-                    Players[pid]:Message("Added effect " .. inputConcatenation .. "\n")
+                if inputType == "ingredient" and type(storedTable.effects) == "table"
+                    and tableHelper.getCount(storedTable.effects) == 4 then
+                    Players[pid]:Message("You have already reached the cap of 4 effects on an ingredient record.\n")
                 else
-                    Players[pid]:Message("Please use a numerical value for the effect ID.\n")
+                    if storedTable.effects == nil then
+                        storedTable.effects = {}
+                    end
+
+                    local inputEffectId = inputValues[1]
+
+                    if type(tonumber(inputEffectId)) == "number" then
+
+                        local effect = { id = tonumber(inputEffectId), rangeType = tonumber(inputValues[2]),
+                            duration = tonumber(inputValues[3]), area = tonumber(inputValues[4]),
+                            magnitudeMin = tonumber(inputValues[5]), magnitudeMax = tonumber(inputValues[6]),
+                            attribute = tonumber(inputValues[7]), skill = tonumber(inputValues[8]) }
+                        table.insert(storedTable.effects, effect)
+                        Players[pid]:Message("Added effect " .. inputConcatenation .. "\n")
+                    else
+                        Players[pid]:Message("Please use a numerical value for the effect ID.\n")
+                    end
                 end
             elseif inputAdditionType == "part" and (inputType == "armor" or inputType == "clothing") then
 
@@ -1352,6 +1357,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
     elseif inputType == "door" then packetBuilder.AddDoorRecord(id, savedTable)
     elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
+    elseif inputType == "ingredient" then packetBuilder.AddIngredientRecord(id, savedTable)
     elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
     elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
     elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
