@@ -229,7 +229,8 @@ config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
 
 -- The types of records that can be stored by players and therefore have links to players,
 -- listed in the order in which they should be loaded
-config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", "weapon", "miscellaneous" }
+config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", "weapon", "ingredient",
+    "miscellaneous" }
 
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
