@@ -222,7 +222,8 @@ config.generatedRecordIdPrefix = "$custom"
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
 config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
-    "ingredient", "miscellaneous", "creature", "npc", "container", "door", "activator", "static" }
+    "ingredient", "apparatus", "lockpick", "probe", "repair", "miscellaneous", "creature", "npc",
+    "container", "door", "activator", "static" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -230,11 +231,13 @@ config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
 -- The types of records that can be stored by players and therefore have links to players,
 -- listed in the order in which they should be loaded
 config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", "weapon", "ingredient",
-    "miscellaneous" }
+    "apparatus", "lockpick", "probe", "repair", "miscellaneous" }
 
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
     activator = { "baseId", "id", "name", "model", "script" },
+    apparatus = { "baseId", "id", "name", "model", "icon", "script", "subtype", "weight", "value",
+        "quality" },
     armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value", "health", "armorRating" },
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -247,10 +250,13 @@ config.validRecordSettings = {
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
     ingredient = { "baseId", "id", "name", "model", "icon", "script", "weight", "value" },
+    lockpick = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
     miscellaneous = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "keyState" },
     npc = { "baseId", "inventoryBaseId", "id", "name", "script", "flags", "gender", "race", "model", "hair",
         "head", "class", "faction", "level", "health", "magicka", "fatigue", "aiFight", "autoCalc" },
     potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
+    probe = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
+    repair = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
     spell = { "baseId", "id", "name", "subtype", "cost", "flags", "effects" },
     static = { "baseId", "id", "model" },
     weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -262,6 +268,7 @@ config.validRecordSettings = {
 -- on an existing one, i.e. a new record that is missing a baseId
 config.requiredRecordSettings = {
     activator = { "name", "model" },
+    apparatus = { "name", "model" },
     armor = { "name", "model" },
     book = { "name", "model" },
     clothing = { "name", "model" },
@@ -270,17 +277,21 @@ config.requiredRecordSettings = {
     door = { "name", "model" },
     enchantment = {},
     ingredient = { "name", "model" },
+    lockpick = { "name", "model" },
     miscellaneous = { "name", "model" },
     npc = { "name", "race", "class" },
     potion = { "name", "model" },
+    probe = { "name", "model" },
+    repair = { "name", "model" },
     spell = { "name" },
     static = { "model" },
     weapon = { "name", "model" }
 }
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
-config.numericalRecordSettings = { "subtype", "weight", "value", "cost", "charge", "health", "armorRating",
-    "speed", "reach", "level", "magicka", "fatigue", "aiFight", "autoCalc", "gender", "flags", "enchantmentCharge" }
+config.numericalRecordSettings = { "subtype", "weight", "value", "quality", "uses", "cost", "charge",
+    "health", "armorRating", "speed", "reach", "level", "magicka", "fatigue", "aiFight", "autoCalc",
+    "gender", "flags", "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState" }

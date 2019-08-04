@@ -181,6 +181,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
 
     if storeType == "activator" then
         packetBuilder.AddActivatorRecord(id, record)
+    elseif storeType == "apparatus" then
+        packetBuilder.AddApparatusRecord(id, record)
     elseif storeType == "armor" then
         packetBuilder.AddArmorRecord(id, record)
     elseif storeType == "book" then
@@ -197,12 +199,18 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddEnchantmentRecord(id, record)
     elseif storeType == "ingredient" then
         packetBuilder.AddIngredientRecord(id, record)
+    elseif storeType == "lockpick" then
+        packetBuilder.AddLockpickRecord(id, record)
     elseif storeType == "miscellaneous" then
         packetBuilder.AddMiscellaneousRecord(id, record)
     elseif storeType == "npc" then
         packetBuilder.AddNpcRecord(id, record)
     elseif storeType == "potion" then
         packetBuilder.AddPotionRecord(id, record)
+    elseif storeType == "probe" then
+        packetBuilder.AddProbeRecord(id, record)
+    elseif storeType == "repair" then
+        packetBuilder.AddRepairRecord(id, record)
     elseif storeType == "spell" then
         packetBuilder.AddSpellRecord(id, record)
     elseif storeType == "static" then
@@ -218,6 +226,22 @@ packetBuilder.AddActivatorRecord = function(id, record)
     if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
     if record.name ~= nil then tes3mp.SetRecordName(record.name) end
     if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddApparatusRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
     tes3mp.AddRecord()
@@ -390,6 +414,22 @@ packetBuilder.AddIngredientRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+packetBuilder.AddLockpickRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
 packetBuilder.AddMiscellaneousRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -451,6 +491,38 @@ packetBuilder.AddPotionRecord = function(id, record)
             packetBuilder.AddEffectToRecord(effect)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddProbeRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddRepairRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
     tes3mp.AddRecord()
 end
