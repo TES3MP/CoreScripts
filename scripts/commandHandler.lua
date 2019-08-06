@@ -1026,18 +1026,16 @@ function commandHandler.StoreRecord(pid, cmd)
         Players[pid].data.customVariables.storedRecords = {}
     end
 
-    for recordKey, _ in pairs(config.validRecordSettings) do
-        if Players[pid].data.customVariables.storedRecords[recordKey] == nil then
-            Players[pid].data.customVariables.storedRecords[recordKey] = {}
-        end
-    end
-
     local inputType = string.lower(cmd[2])
 
     if config.validRecordSettings[inputType] == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
             "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
+    else
+        if Players[pid].data.customVariables.storedRecords[inputType] == nil then
+            Players[pid].data.customVariables.storedRecords[inputType] = {}
+        end
     end
 
     local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
@@ -1228,13 +1226,18 @@ function commandHandler.CreateRecord(pid, cmd)
     end
 
     local inputType = string.lower(cmd[2])
-    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
 
-    if storedTable == nil then
+    if config.validRecordSettings[inputType] == nil then
         Players[pid]:Message("Record type " .. inputType .. " is invalid. Please use one of the following " ..
             "valid types instead: " .. tableHelper.concatenateTableIndexes(config.validRecordSettings, ", ") .. "\n")
         return
+    else
+        if Players[pid].data.customVariables.storedRecords[inputType] == nil then
+            Players[pid].data.customVariables.storedRecords[inputType] = {}
+        end
     end
+
+    local storedTable = Players[pid].data.customVariables.storedRecords[inputType]
 
     if storedTable.baseId == nil then
         if inputType == "creature" then
@@ -1253,9 +1256,9 @@ function commandHandler.CreateRecord(pid, cmd)
         end
 
         if not tableHelper.isEmpty(missingSettings) then
-            isValid = false
             Players[pid]:Message("You cannot create a record of type " .. inputType .. " because it is missing the " ..
                 "following required settings: " .. tableHelper.concatenateArrayValues(missingSettings, 1, ", ") .. "\n")
+            return
         end
     end
 
