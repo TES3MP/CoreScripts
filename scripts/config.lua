@@ -246,14 +246,15 @@ config.validRecordSettings = {
         "subtype", "weight", "value" },
     container = { "baseId", "id", "name", "model", "script", "weight" },
     creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "health", "magicka",
-        "fatigue", "aiFight", "flags" },
+        "fatigue", "aiFight", "aiServices", "flags" },
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
     ingredient = { "baseId", "id", "name", "model", "icon", "script", "weight", "value" },
     lockpick = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
     miscellaneous = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "keyState" },
     npc = { "baseId", "inventoryBaseId", "id", "name", "script", "flags", "gender", "race", "model", "hair",
-        "head", "class", "faction", "level", "health", "magicka", "fatigue", "aiFight", "autoCalc" },
+        "head", "class", "faction", "level", "health", "magicka", "fatigue", "aiFight", "aiServices",
+        "autoCalc" },
     potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
     probe = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
     repair = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
@@ -290,8 +291,8 @@ config.requiredRecordSettings = {
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "weight", "value", "quality", "uses", "cost", "charge",
-    "health", "armorRating", "speed", "reach", "level", "magicka", "fatigue", "aiFight", "autoCalc",
-    "gender", "flags", "enchantmentCharge" }
+    "health", "armorRating", "speed", "reach", "level", "magicka", "fatigue", "aiFight", "aiServices",
+    "autoCalc", "gender", "flags", "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState" }

@@ -345,6 +345,7 @@ packetBuilder.AddCreatureRecord = function(id, record)
     if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
     if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
     if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
+    if record.aiServices ~= nil then tes3mp.SetRecordAIServices(record.aiServices) end
     if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
@@ -461,6 +462,7 @@ packetBuilder.AddNpcRecord = function(id, record)
     if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
     if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
     if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
+    if record.aiServices ~= nil then tes3mp.SetRecordAIServices(record.aiServices) end
     if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
     if record.faction ~= nil then tes3mp.SetRecordFaction(record.faction) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
