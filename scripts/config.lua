@@ -244,7 +244,7 @@ config.validRecordSettings = {
         "text", "weight", "value", "scrollState", "skillId" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
-    container = { "baseId", "id", "name", "model", "script", "weight" },
+    container = { "baseId", "id", "name", "model", "script", "weight", "flags" },
     creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "health", "magicka",
         "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "flags" },
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
