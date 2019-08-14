@@ -199,6 +199,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddEnchantmentRecord(id, record)
     elseif storeType == "ingredient" then
         packetBuilder.AddIngredientRecord(id, record)
+    elseif storeType == "light" then
+        packetBuilder.AddLightRecord(id, record)
     elseif storeType == "lockpick" then
         packetBuilder.AddLockpickRecord(id, record)
     elseif storeType == "miscellaneous" then
@@ -413,6 +415,25 @@ packetBuilder.AddIngredientRecord = function(id, record)
             packetBuilder.AddEffectToRecord(effect)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddLightRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
+    if record.sound ~= nil then tes3mp.SetRecordSound(record.sound) end
+    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
+    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
+    if record.time ~= nil then tes3mp.SetRecordTime(record.time) end
+    if record.radius ~= nil then tes3mp.SetRecordRadius(record.radius) end
+    if record.color ~= nil then tes3mp.SetRecordColor(record.color.red, record.color.green, record.color.blue) end
+    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
+    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
 
     tes3mp.AddRecord()
 end

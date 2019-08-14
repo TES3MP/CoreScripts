@@ -1186,6 +1186,20 @@ function commandHandler.StoreRecord(pid, cmd)
                         inputSetting .. "\n")
                     return
                 end
+            elseif tableHelper.containsValue(config.rgbRecordSettings, inputSetting) then
+                local redValue = tonumber(cmd[4])
+                local greenValue = tonumber(cmd[5])
+                local blueValue = tonumber(cmd[6])
+
+                if type(redValue) == "number" and type(greenValue) == "number" and type(blueValue) == "number" and
+                    redValue > -1 and redValue < 256 and greenValue > -1 and greenValue < 256 and
+                    blueValue > -1 and blueValue < 256 then
+                    storedTable[inputSetting] = { red = redValue, green = greenValue, blue = blueValue }
+                else
+                    Players[pid]:Message("Please use three valid numerical values between 0 and 255 as the input for " ..
+                        inputSetting .. "\n")
+                    return
+                end
             elseif tableHelper.containsValue(config.booleanRecordSettings, inputSetting) then
                 if inputValue == "true" or inputValue == "on" or tonumber(inputValue) == 1 then
                     storedTable[inputSetting] = true
@@ -1362,6 +1376,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "door" then packetBuilder.AddDoorRecord(id, savedTable)
     elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
     elseif inputType == "ingredient" then packetBuilder.AddIngredientRecord(id, savedTable)
+    elseif inputType == "light" then packetBuilder.AddLightRecord(id, savedTable)
     elseif inputType == "lockpick" then packetBuilder.AddLockpickRecord(id, savedTable)
     elseif inputType == "miscellaneous" then packetBuilder.AddMiscellaneousRecord(id, savedTable)
     elseif inputType == "npc" then packetBuilder.AddNpcRecord(id, savedTable)
