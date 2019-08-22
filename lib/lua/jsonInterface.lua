@@ -44,7 +44,7 @@ function jsonInterface.load(fileName)
         return nil
     end
 
-    local home = tes3mp.GetDataPath() .. "/"
+    local home = config.dataPath .. "/"
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'r')
 
     if file ~= nil then
@@ -84,7 +84,7 @@ function jsonInterface.writeToFile(fileName, content)
         return false
     end
 
-    local home = tes3mp.GetDataPath() .. "/"
+    local home = config.dataPath .. "/"
     local file = jsonInterface.ioLibrary.open(home .. fileName, 'w+b')
 
     if file ~= nil then
