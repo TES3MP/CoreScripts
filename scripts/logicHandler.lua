@@ -353,6 +353,17 @@ logicHandler.IsPacketFromConsole = function(packetOrigin)
     return false
 end
 
+logicHandler.SendClientScriptSettings = function(pid, forEveryone)
+
+    tes3mp.ClearSynchronizedClientScriptIds()
+
+    for _, scriptId in pairs(config.synchronizedClientScriptIds) do
+        tes3mp.AddSynchronizedClientScriptId(scriptId)
+    end
+
+    tes3mp.SendClientScriptSettings(pid, forEveryone)
+end
+
 logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 
     tes3mp.ClearEnforcedCollisionRefIds()

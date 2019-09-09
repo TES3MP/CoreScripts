@@ -15,6 +15,8 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
     tes3mp.SendSettings(pid)
 
+    logicHandler.SendClientScriptSettings(pid, false)
+
     tes3mp.SetPlayerCollisionState(config.enablePlayerCollision)
     tes3mp.SetActorCollisionState(config.enableActorCollision)
     tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)

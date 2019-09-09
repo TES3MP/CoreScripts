@@ -67,6 +67,16 @@ config.shareMapExploration = false
 -- Whether ingame videos should be played for other players when triggered by one player
 config.shareVideos = true
 
+-- Which clientside scripts should have all of their variables synchronized across players
+-- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
+--          through variable changes that clients cannot agree on
+config.synchronizedClientScriptIds = {
+    "GG_OpenGate1", "GG_OpenGate2", "Arkn_doors", "nchuleftingthWrong1", "nchuleftingthWrong2",
+    "nchulfetingthRight", "Akula_innerdoors", "Dagoth_doors", "SothaLever1", "SothaLever2",
+    "SothaLever3", "SothaLever4", "SothaLever5", "SothaLever6", "SothaLever7", "SothaLever8",
+    "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState"
+}
+
 -- The cell that newly created players are teleported to
 config.defaultSpawnCell = "-3, -2"
 
