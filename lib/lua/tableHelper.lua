@@ -301,10 +301,12 @@ function tableHelper.merge(mainTable, addedTable)
 end
 
 -- Insert all the values from the 2nd table into the 1st table
-function tableHelper.insertValues(mainTable, addedTable)
+function tableHelper.insertValues(mainTable, addedTable, skipDuplicates)
 
     for _, value in pairs(addedTable) do
-        table.insert(mainTable, value)
+        if not skipDuplicates or not tableHelper.containsValue(mainTable, value) then
+            table.insert(mainTable, value)
+        end
     end
 end
 
