@@ -650,6 +650,11 @@ function OnWorldWeather(pid)
     eventHandler.OnWorldWeather(pid)
 end
 
+function OnScriptGlobalShort(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnScriptGlobalShort\" for " .. logicHandler.GetChatName(pid))
+    eventHandler.OnScriptGlobalShort(pid)
+end
+
 function OnGUIAction(pid, idGui, data)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnGUIAction\" for " .. logicHandler.GetChatName(pid))
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called

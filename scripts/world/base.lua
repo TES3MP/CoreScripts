@@ -195,6 +195,10 @@ function BaseWorld:LoadReputation(pid)
     stateHelper:LoadReputation(pid, self)
 end
 
+function BaseWorld:LoadClientScriptVariables(pid)
+    stateHelper:LoadClientScriptVariables(pid, self)
+end
+
 function BaseWorld:LoadMap(pid)
     stateHelper:LoadMap(pid, self)
 end
@@ -285,6 +289,10 @@ end
 
 function BaseWorld:SaveReputation(pid)
     stateHelper:SaveReputation(pid, self)
+end
+
+function BaseWorld:SaveClientScriptGlobalShort(pid)
+    stateHelper:SaveClientScriptGlobalShort(pid, self)
 end
 
 function BaseWorld:SaveKills(pid)

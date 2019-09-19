@@ -361,6 +361,15 @@ logicHandler.SendClientScriptSettings = function(pid, forEveryone)
         tes3mp.AddSynchronizedClientScriptId(scriptId)
     end
 
+    tes3mp.ClearSynchronizedClientGlobalIds()
+
+    for _, variableCategory in pairs({"personal", "quest", "kills", "faction", "worldwide"}) do
+
+        for _, globalId in pairs(clientVariableScopes.globals[variableCategory]) do
+            tes3mp.AddSynchronizedClientGlobalId(globalId)
+        end
+    end
+
     tes3mp.SendClientScriptSettings(pid, forEveryone)
 end
 

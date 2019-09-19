@@ -1676,6 +1676,96 @@ eventHandler.OnWorldWeather = function(pid)
     end
 end
 
+eventHandler.OnScriptGlobalShort = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
+        -- Iterate through the global IDs in the ScriptGlobalShort packet and only sync and save them
+        -- if all their ids are valid
+        local isAllowed = true
+        local rejectedIds = {}
+        local globalIds = {}
+
+        for index = 0, tes3mp.GetObjectListSize() - 1 do
+            local globalId = tes3mp.GetScriptVariableName(index)
+            local value = tes3mp.GetScriptVariableShortValue(index)
+
+            tes3mp.LogAppend(enumerations.log.INFO, "- global " .. globalId .. " is being set to value " .. value)
+
+            if tableHelper.containsValue(clientVariableScopes.globals.ignored, globalId) then
+                table.insert(rejectedIds, globalId)
+                isAllowed = false
+            else
+                table.insert(globalIds, globalId)
+            end
+        end
+        
+        if isAllowed then
+            local eventStatus = customEventHooks.triggerValidators("OnScriptGlobalShort", {pid, globalIds})
+            
+            if eventStatus.validDefaultHandler then
+
+                local shouldSync = false
+
+                for _, globalId in pairs(globalIds) do
+
+                    local isKillSync, isQuestSync, isFactionSync, isWorldwideSync = false, false, false, false
+
+                    isKillSync = tableHelper.containsValue(clientVariableScopes.globals.kills, globalId)
+
+                    if not isKillSync then
+                        isQuestSync = config.shareJournal == true and
+                            tableHelper.containsValue(clientVariableScopes.globals.quest, globalId)
+                    end
+
+                    if not isQuestSync then
+                        isFactionSync = config.shareFactionRanks == true and
+                            tableHelper.containsValue(clientVariableScopes.globals.faction, globalId)
+                    end
+
+                    if not isFactionSync then
+                        isWorldwideSync = tableHelper.containsValue(clientVariableScopes.globals.worldwide, globalId)
+                    end
+
+                    if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
+                        WorldInstance:SaveClientScriptGlobalShort(pid)
+                        shouldSync = true
+                    else
+                        Players[pid]:SaveClientScriptGlobalShort()
+                    end
+                end
+
+                if shouldSync then
+                    tes3mp.CopyReceivedObjectListToStore()
+                    -- The client already has this global value on their client, so we
+                    -- only send it to other players
+                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
+                    tes3mp.SendScriptGlobalShort(true, true)
+                    tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ScriptGlobalShort from " ..
+                        logicHandler.GetChatName(pid) .. " about " .. tableHelper.concatenateArrayValues(globalIds, 1, ", "))
+                end
+            end
+            
+            customEventHooks.triggerHandlers("OnScriptGlobalShort", eventStatus, {pid, globalIds})
+        else
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ScriptGlobalShort from " .. logicHandler.GetChatName(pid) ..
+                " about " .. tableHelper.concatenateArrayValues(rejectedIds, 1, ", "))
+        end
+    else
+        tes3mp.Kick(pid)
+    end
+end
+
 eventHandler.OnMpNumIncrement = function(currentMpNum)
     WorldInstance:SetCurrentMpNum(currentMpNum)
 end

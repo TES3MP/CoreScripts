@@ -248,6 +248,9 @@ function BasePlayer:FinishLogin()
             self:LoadMap()
         end
 
+        self:LoadClientScriptVariables()        
+        WorldInstance:LoadClientScriptVariables(self.pid)
+
         self:LoadCell()
 
         self.loggedIn = true
@@ -1280,6 +1283,14 @@ end
 
 function BasePlayer:SaveReputation()
     stateHelper:SaveReputation(self.pid, self)
+end
+
+function BasePlayer:LoadClientScriptVariables()
+    stateHelper:LoadClientScriptVariables(self.pid, self)
+end
+
+function BasePlayer:SaveClientScriptGlobalShort()
+    stateHelper:SaveClientScriptGlobalShort(self.pid, self)
 end
 
 function BasePlayer:LoadMap()

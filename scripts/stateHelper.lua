@@ -133,6 +133,35 @@ function StateHelper:LoadReputation(pid, stateObject)
     tes3mp.SendReputation(pid)
 end
 
+function StateHelper:LoadClientScriptVariables(pid, stateObject)
+
+    if stateObject.data.clientVariables == nil then
+        stateObject.data.clientVariables = {}
+    end
+
+    if stateObject.data.clientVariables.globals == nil then
+        stateObject.data.clientVariables.globals = {}
+    end
+
+    local objectCount = 0
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+
+    for varName, value in pairs(stateObject.data.clientVariables.globals) do
+
+        tes3mp.SetScriptVariableName(varName)
+        tes3mp.SetScriptVariableShortValue(value)
+        tes3mp.AddObject()
+
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendScriptGlobalShort()
+    end
+end
+
 function StateHelper:LoadMap(pid, stateObject)
 
     if stateObject.data.mapExplored == nil then
@@ -283,6 +312,25 @@ function StateHelper:SaveReputation(pid, stateObject)
     end
 
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
+
+    stateObject:QuicksaveToDrive()
+end
+
+function StateHelper:SaveClientScriptGlobalShort(pid, stateObject)
+
+    if stateObject.data.clientVariables == nil then
+        stateObject.data.clientVariables = {}
+    end
+
+    if stateObject.data.clientVariables.globals == nil then
+        stateObject.data.clientVariables.globals = {}
+    end
+
+    for index = 0, tes3mp.GetObjectListSize() - 1 do
+        local variableName = tes3mp.GetScriptVariableName(index)
+        local variableValue = tes3mp.GetScriptVariableShortValue(index)
+        stateObject.data.clientVariables.globals[variableName] = variableValue
+    end
 
     stateObject:QuicksaveToDrive()
 end
