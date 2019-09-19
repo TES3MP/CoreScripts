@@ -35,6 +35,7 @@ RecordStore = nil
 World = nil
 
 clientDataFiles = {}
+clientVariableScopes = {}
 speechCollections = {}
 
 hourCounter = nil
@@ -226,6 +227,7 @@ function OnServerPostInit()
     local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
     if eventStatus.validDefaultHandler then
 
+        clientVariableScopes = require("clientVariableScopes")
         speechCollections = require("speechCollections")
 
         tes3mp.SetGameMode(config.gameMode)
