@@ -1,5 +1,8 @@
 config = {}
 
+-- The path used by the server for its data folder
+config.dataPath = tes3mp.GetDataPath()
+
 -- The game mode displayed for this server in the server browser
 config.gameMode = "Default"
 
@@ -301,7 +304,7 @@ config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
-config.databasePath = tes3mp.GetDataPath() .. "/database.db" -- Path where database is stored
+config.databasePath = config.dataPath .. "/database.db" -- Path where database is stored
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

@@ -11,7 +11,7 @@ function Cell:__init(cellDescription)
     -- Ensure filename is valid
     self.entryName = fileHelper.fixFilename(cellDescription)
 
-    self.entryFile = tes3mp.GetCaseInsensitiveFilename(tes3mp.GetDataPath() .. "/cell/", self.entryName .. ".json")
+    self.entryFile = tes3mp.GetCaseInsensitiveFilename(config.dataPath .. "/cell/", self.entryName .. ".json")
 
     if self.entryFile == "invalid" then
         self.hasEntry = false

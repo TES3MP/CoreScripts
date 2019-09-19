@@ -10,7 +10,7 @@ function World:__init()
     self.worldFile = "world.json"
 
     if self.hasEntry == nil then
-        local home = tes3mp.GetDataPath() .. "/world/"
+        local home = config.dataPath .. "/world/"
         local file = io.open(home .. self.worldFile, "r")
         if file ~= nil then
             io.close()
