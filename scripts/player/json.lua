@@ -52,6 +52,10 @@ function Player:LoadFromDrive()
     -- JSON doesn't allow numerical keys, but we use them, so convert
     -- all string number keys into numerical keys
     tableHelper.fixNumericalKeys(self.data)
+
+    if self.data.login.password ~= nil and self.data.login.passwordHash == nil then
+        self:ConvertPlaintextPassword()
+    end
 end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility

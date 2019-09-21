@@ -348,11 +348,11 @@ config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cu
     "faggot", "fellatio", "fuck", "gas the ", "Hitler", "jizz", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = { "login", "settings", "character", "customClass", "location", "stats",
-    "fame", "shapeshift", "attributes", "attributeSkillIncreases", "skills", "skillProgress",
-    "recordLinks", "equipment", "inventory", "spellbook", "books", "factionRanks", "factionReputation",
-    "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin", "difficulty",
-    "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
+config.playerKeyOrder = { "login", "name", "passwordHash", "passwordSalt", "settings", "character",
+    "customClass", "location", "stats", "fame", "shapeshift", "attributes", "attributeSkillIncreases",
+    "skills", "skillProgress", "recordLinks", "equipment", "inventory", "spellbook", "books", "factionRanks",
+    "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin",
+    "difficulty", "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
     "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
     "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
     "magickaCurrent", "fatigueBase", "fatigueCurrent" }

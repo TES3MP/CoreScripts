@@ -122,7 +122,6 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         
             if Players[pid]:IsLoggedIn() then
                 
-                
                 if idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
                     local targetName = Players[pid].confiscationTargetName
@@ -186,9 +185,9 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     end
 
                     Players[pid]:LoadFromDrive()
+                    local passwordSalt = Players[pid].data.login.passwordSalt
 
-                    -- Just in case the password from the data file is a number, make sure to turn it into a string
-                    if tostring(Players[pid].data.login.password) ~= data then
+                    if Players[pid].data.login.passwordHash ~= tes3mp.GetSHA256Hash(data .. passwordSalt) then
                         Players[pid]:Message("Incorrect password!\n")
                         guiHelper.ShowLogin(pid)
                         return true
