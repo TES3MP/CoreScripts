@@ -1215,6 +1215,16 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray)
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
             end
+
+            -- If we're about to exceed the maximum number of objects in a single packet,
+            -- start a new packet
+            if objectCount >= 3000 then
+                tes3mp.SendObjectPlace()    
+                tes3mp.ClearObjectList()
+                tes3mp.SetObjectListPid(pid)
+                tes3mp.SetObjectListCell(self.description)
+                objectCount = 0
+            end
         end
     end
 
