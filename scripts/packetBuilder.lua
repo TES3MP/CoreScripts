@@ -187,6 +187,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddArmorRecord(id, record)
     elseif storeType == "book" then
         packetBuilder.AddBookRecord(id, record)
+    elseif storeType == "cell" then
+        packetBuilder.AddCellRecord(id, record)
     elseif storeType == "clothing" then
         packetBuilder.AddClothingRecord(id, record)
     elseif storeType == "container" then
@@ -289,6 +291,14 @@ packetBuilder.AddBookRecord = function(id, record)
     if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
     if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddCellRecord = function(id, record)
+
+    tes3mp.SetRecordName(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
 
     tes3mp.AddRecord()
 end

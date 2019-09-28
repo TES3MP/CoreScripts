@@ -233,7 +233,7 @@ config.generatedRecordIdPrefix = "$custom"
 -- inventories
 config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
     "ingredient", "apparatus", "lockpick", "probe", "repair", "light", "miscellaneous", "creature", "npc",
-    "container", "door", "activator", "static" }
+    "container", "door", "activator", "static", "cell" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -252,6 +252,7 @@ config.validRecordSettings = {
         "subtype", "weight", "value", "health", "armorRating" },
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "text", "weight", "value", "scrollState", "skillId" },
+    cell = { "baseId", "id" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
     container = { "baseId", "id", "name", "model", "script", "weight", "flags" },
@@ -284,6 +285,7 @@ config.requiredRecordSettings = {
     apparatus = { "name", "model" },
     armor = { "name", "model" },
     book = { "name", "model" },
+    cell = { "id" },
     clothing = { "name", "model" },
     container = { "name", "model" },
     creature = { "name", "model" },

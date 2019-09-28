@@ -1370,6 +1370,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "apparatus" then packetBuilder.AddApparatusRecord(id, savedTable)
     elseif inputType == "armor" then packetBuilder.AddArmorRecord(id, savedTable)
     elseif inputType == "book" then packetBuilder.AddBookRecord(id, savedTable)
+    elseif inputType == "cell" then packetBuilder.AddCellRecord(id, savedTable)
     elseif inputType == "clothing" then packetBuilder.AddClothingRecord(id, savedTable)
     elseif inputType == "container" then packetBuilder.AddContainerRecord(id, savedTable)
     elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
@@ -1389,17 +1390,19 @@ function commandHandler.CreateRecord(pid, cmd)
 
     tes3mp.SendRecordDynamic(pid, true, false)
 
-    if inputType ~= "enchantment" then
-        if inputType == "creature" or inputType == "npc" then
-            message = message .. "You can spawn an instance of it using /spawnat "
-        else
-            message = message .. "You can place an instance of it using /placeat "
-        end
+    if inputType ~= "cell" then
+        if inputType ~= "enchantment" then
+            if inputType == "creature" or inputType == "npc" then
+                message = message .. "You can spawn an instance of it using /spawnat "
+            else
+                message = message .. "You can place an instance of it using /placeat "
+            end
 
-        message = message .. "<pid> " .. id .. "\n"
-    else
-        message = message .. "To use it, create an armor, book, clothing or weapon record with an " ..
-            "enchantmentId of " .. id .. "\n"
+            message = message .. "<pid> " .. id .. "\n"
+        else
+            message = message .. "To use it, create an armor, book, clothing or weapon record with an " ..
+                "enchantmentId of " .. id .. "\n"
+        end
     end
 
     Players[pid]:Message(message)
