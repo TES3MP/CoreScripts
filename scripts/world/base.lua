@@ -205,14 +205,14 @@ end
 
 function BaseWorld:LoadKills(pid, forEveryone)
 
-    tes3mp.ClearKillChanges(pid)
+    tes3mp.ClearKillChanges()
 
     for refId, killCount in pairs(self.data.kills) do
 
-        tes3mp.AddKill(pid, refId, killCount)
+        tes3mp.AddKill(refId, killCount)
     end
 
-    tes3mp.SendKillChanges(pid, forEveryone)
+    tes3mp.SendWorldKillCount(pid, forEveryone)
 end
 
 function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
@@ -297,10 +297,12 @@ end
 
 function BaseWorld:SaveKills(pid)
 
-    for index = 0, tes3mp.GetKillChangesSize(pid) - 1 do
+    tes3mp.ReadReceivedWorldstate()
 
-        local refId = tes3mp.GetKillRefId(pid, index)
-        local number = tes3mp.GetKillNumber(pid, index)
+    for index = 0, tes3mp.GetKillChangesSize() - 1 do
+
+        local refId = tes3mp.GetKillRefId(index)
+        local number = tes3mp.GetKillNumber(index)
         self.data.kills[refId] = number
     end
 
