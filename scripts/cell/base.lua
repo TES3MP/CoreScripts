@@ -426,7 +426,7 @@ function BaseCell:SaveObjectsPlaced(pid)
             end
 
             -- Only save goldValue if it isn't the default value of 1
-            if goldValue ~=1 then
+            if goldValue ~= 1 then
                 self.data.objectData[uniqueIndex].goldValue = goldValue
             end
 

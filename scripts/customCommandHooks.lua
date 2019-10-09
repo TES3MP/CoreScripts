@@ -75,7 +75,7 @@ function customCommandHooks.validator(eventStatus, pid, message)
     if message:sub(1,1) == specialCharacter then
         local cmd = (message:sub(2, #message)):split(" ")
         local callback = customCommandHooks.getCallback(cmd[1])
-        if callback~=nil then
+        if callback ~= nil then
             if customCommandHooks.nameRequirement[cmd[1]] ~= nil then
                 if tableHelper.containsValue(customCommandHooks.nameRequirement[cmd[1]], Players[pid].accountName) then
                     callback(pid, cmd)

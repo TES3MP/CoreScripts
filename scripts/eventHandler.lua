@@ -797,7 +797,7 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
             local players = {}
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
-                local object={}
+                local object = {}
                 local debugMessage = "- "
                 local isObjectPlayer = tes3mp.IsObjectPlayer(index)
 
