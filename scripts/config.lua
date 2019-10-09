@@ -9,6 +9,9 @@ config.gameMode = "Default"
 -- Time to login, in seconds
 config.loginTime = 60
 
+-- How many clients are allowed to connect from the same IP address
+config.maxClientsPerIP = 3
+
 -- The difficulty level used by default
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
 --       though you can use any integer value here
@@ -26,8 +29,8 @@ config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false
 
--- The hours at which night is regarded as starting and ending, used to pass time differently
--- when it's night
+-- The hours at which night is regarded as starting and ending, used to pass time using a
+-- different timescale when it's night
 config.nightStartHour = 20
 config.nightEndHour = 6
 

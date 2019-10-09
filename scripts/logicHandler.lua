@@ -329,9 +329,9 @@ logicHandler.AuthCheck = function(pid)
         Players[pid] = nil
         return false
     else
-        tes3mp.LogMessage(enumerations.log.INFO, "Player with PID " .. pid .. " does not exist but auth check was called with" ..
-            " PID.")
-    return false
+        tes3mp.LogMessage(enumerations.log.INFO, "Player with pid " .. pid .. " does not exist but auth check was called with" ..
+            " pid.")
+        return false
     end
 end
 

@@ -30,8 +30,37 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     local eventStatus = customEventHooks.triggerValidators("OnPlayerConnect", {pid})
     
     if eventStatus.validDefaultHandler then 
-        local message = logicHandler.GetChatName(pid) .. " joined the server.\n"
+
+        local message = logicHandler.GetChatName(pid) .. " has joined the server"
+
+        local ipAddress = tes3mp.GetIP(pid)
+        Players[pid].ipAddress = ipAddress
+
+        if pidsByIpAddress[ipAddress] == nil then pidsByIpAddress[ipAddress] = {} end
+
+        if not tableHelper.isEmpty(pidsByIpAddress[ipAddress]) then
+            local otherPlayerNames = {}
+
+            for _, otherPid in pairs(pidsByIpAddress[ipAddress]) do
+                table.insert(otherPlayerNames, logicHandler.GetChatName(otherPid))
+            end
+
+            message = message .. ", from the same IP address as " .. tableHelper.concatenateArrayValues(otherPlayerNames, 1, ", ")
+        end
+
+        message = message .. ".\n"
         tes3mp.SendMessage(pid, message, true)
+
+        if tableHelper.getCount(pidsByIpAddress[ipAddress]) + 1 > config.maxClientsPerIP then
+            message = logicHandler.GetChatName(pid) .. " has been kicked because this server allows a maximum of " ..
+                config.maxClientsPerIP .. " clients from the same IP address.\n"
+            tes3mp.SendMessage(pid, message, true)            
+            tes3mp.Kick(pid)
+            Players[pid] = nil
+            return
+        else
+            table.insert(pidsByIpAddress[ipAddress], pid)
+        end
 
         message = "Welcome " .. playerName .. "\nYou have " .. tostring(config.loginTime) ..
             " seconds to"
@@ -56,11 +85,21 @@ end
 
 eventHandler.OnPlayerDisconnect = function(pid)
 
+    local message = logicHandler.GetChatName(pid) .. " has left the server.\n"
+    tes3mp.SendMessage(pid, message, true)
+
     if Players[pid] ~= nil then
         if Players[pid]:IsLoggedIn() then
             local eventStatus = customEventHooks.triggerValidators("OnPlayerDisconnect", {pid})
             
             if eventStatus.validDefaultHandler then
+
+                local ipAddress = Players[pid].ipAddress
+
+                if tableHelper.containsValue(pidsByIpAddress[ipAddress], pid) then
+                    tableHelper.removeValue(pidsByIpAddress[ipAddress], pid)
+                end
+
                 Players[pid]:DeleteSummons()
 
                 -- Was this player confiscating from someone? If so, clear that
@@ -119,8 +158,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
         if eventStatus.validDefaultHandler then
         
             if Players[pid]:IsLoggedIn() then
-                
-                
+
                 if idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
 
                     local targetName = Players[pid].confiscationTargetName
@@ -913,7 +951,6 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
             local isAllowed = true
             local rejectedObjects = {}
             local objects = {}
-            
 
             for index = 0, tes3mp.GetObjectListSize() - 1 do
                 local object = {}
@@ -1483,7 +1520,6 @@ eventHandler.OnRecordDynamic = function(pid)
                     isAllowed = false
 
                     Players[pid]:Message("You are not allowed to create a record called " .. recordName .. "\n")
-                else
                 end
             end
         end
