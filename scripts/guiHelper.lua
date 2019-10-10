@@ -10,7 +10,8 @@ end
 
 guiHelper.ShowRegister = function(pid)
     tes3mp.PasswordDialog(pid, guiHelper.ID.REGISTER, "Create new password:",
-        "Warning: the server owner will be able to read your password, so you should use a unique one for each server.")
+        "Warning: there is no guarantee that your password will be stored securely on any game server, so you should use " ..
+        "a unique one for each server.")
 end
 
 local GetConnectedPlayerList = function()
