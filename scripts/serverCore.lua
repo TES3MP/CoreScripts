@@ -125,22 +125,6 @@ function SaveBanList()
 end
 
 do
-    local adminsCounter = 0
-    function IncrementAdminCounter()
-        adminsCounter = adminsCounter + 1
-        tes3mp.SetRuleValue("adminsOnline", adminsCounter)
-    end
-    function DecrementAdminCounter()
-        adminsCounter = adminsCounter - 1
-        tes3mp.SetRuleValue("adminsOnline", adminsCounter)
-    end
-    function ResetAdminCounter()
-        adminsCounter = 0
-        tes3mp.SetRuleValue("adminsOnline", adminsCounter)
-    end
-end
-
-do
     local previousHourFloor = nil
 
     function UpdateTime()
@@ -288,7 +272,6 @@ function OnServerPostInit()
         end
 
         tes3mp.SetRuleString("respawnCell", respawnCell)
-        ResetAdminCounter()
     end
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
@@ -388,11 +371,7 @@ end
 function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
     local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
     if eventStatus.validDefaultHandler then
-        if logicHandler.AuthCheck(pid) then
-            if Players[pid]:IsModerator() then
-                IncrementAdminCounter()
-            end
-        end
+        logicHandler.AuthCheck(pid)
     end
     customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
 end
@@ -405,7 +384,6 @@ function OnPlayerDisconnect(pid)
     tes3mp.SendMessage(pid, message, true)
 
     eventHandler.OnPlayerDisconnect(pid)
-    DecrementAdminCounter()
 end
 
 function OnPlayerResurrect(pid)
