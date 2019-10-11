@@ -368,14 +368,6 @@ function OnPlayerConnect(pid)
     end
 end
 
-function OnLoginTimeExpiration(pid) -- timer-based event, see eventHandler.OnPlayerConnect
-    local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
-    if eventStatus.validDefaultHandler then
-        logicHandler.AuthCheck(pid)
-    end
-    customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
-end
-
 function OnPlayerDisconnect(pid)
 
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerDisconnect\" for " .. logicHandler.GetChatName(pid))
@@ -392,14 +384,6 @@ end
 
 function OnPlayerSendMessage(pid, message)
     eventHandler.OnPlayerSendMessage(pid, message)
-end
-
-function OnObjectLoopTimeExpiration(loopIndex)
-    eventHandler.OnObjectLoopTimeExpiration(loopIndex)
-end
-
-function OnDeathTimeExpiration(pid)
-    eventHandler.OnDeathTimeExpiration(pid)
 end
 
 function OnPlayerDeath(pid)
@@ -640,4 +624,17 @@ end
 
 function OnMpNumIncrement(currentMpNum)
     eventHandler.OnMpNumIncrement(currentMpNum)
+end
+
+-- Timer-based events
+function OnLoginTimeExpiration(pid, accountName)
+    eventHandler.OnLoginTimeExpiration(pid, accountName)
+end
+
+function OnDeathTimeExpiration(pid, accountName)
+    eventHandler.OnDeathTimeExpiration(pid, accountName)
+end
+
+function OnObjectLoopTimeExpiration(loopIndex)
+    eventHandler.OnObjectLoopTimeExpiration(loopIndex)
 end

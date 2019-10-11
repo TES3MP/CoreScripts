@@ -487,7 +487,7 @@ function BasePlayer:ProcessDeath()
 
     if config.playersRespawn then
         self.resurrectTimerId = tes3mp.CreateTimerEx("OnDeathTimeExpiration",
-            time.seconds(config.deathTime), "i", self.pid)
+            time.seconds(config.deathTime), "is", self.pid, self.accountName)
         tes3mp.StartTimer(self.resurrectTimerId)
     else
         tes3mp.SendMessage(self.pid, "You have died permanently.", false)

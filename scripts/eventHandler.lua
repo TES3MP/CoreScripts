@@ -49,7 +49,7 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
         tes3mp.SendMessage(pid, message, false)
 
         Players[pid].loginTimerId = tes3mp.CreateTimerEx("OnLoginTimeExpiration",
-            time.seconds(config.loginTime), "i", pid)
+            time.seconds(config.loginTime), "is", pid, Players[pid].accountName)
         tes3mp.StartTimer(Players[pid].loginTimerId)
     end
     
@@ -264,16 +264,6 @@ eventHandler.OnPlayerDeath = function(pid)
             Players[pid]:ProcessDeath()
         end
         customEventHooks.triggerHandlers("OnPlayerDeath", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnDeathTimeExpiration = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnDeathTimeExpiration", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:Resurrect()
-        end
-        customEventHooks.triggerHandlers("OnDeathTimeExpiration", eventStatus, {pid})
     end
 end
 
@@ -1769,6 +1759,26 @@ end
 
 eventHandler.OnMpNumIncrement = function(currentMpNum)
     WorldInstance:SetCurrentMpNum(currentMpNum)
+end
+
+eventHandler.OnLoginTimeExpiration = function(pid, accountName)
+    if Players[pid] ~= nil and Players[pid].accountName == accountName then
+        local eventStatus = customEventHooks.triggerValidators("OnLoginTimeExpiration", {pid})
+        if eventStatus.validDefaultHandler then
+            logicHandler.AuthCheck(pid)
+        end
+        customEventHooks.triggerHandlers("OnLoginTimeExpiration", eventStatus, {pid})
+    end
+end
+
+eventHandler.OnDeathTimeExpiration = function(pid, accountName)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() and Players[pid].accountName == accountName then
+        local eventStatus = customEventHooks.triggerValidators("OnDeathTimeExpiration", {pid})
+        if eventStatus.validDefaultHandler then
+            Players[pid]:Resurrect()
+        end
+        customEventHooks.triggerHandlers("OnDeathTimeExpiration", eventStatus, {pid})
+    end
 end
 
 eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
