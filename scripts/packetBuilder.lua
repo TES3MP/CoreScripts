@@ -215,6 +215,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddProbeRecord(id, record)
     elseif storeType == "repair" then
         packetBuilder.AddRepairRecord(id, record)
+    elseif storeType == "script" then
+        packetBuilder.AddScriptRecord(id, record)
     elseif storeType == "spell" then
         packetBuilder.AddSpellRecord(id, record)
     elseif storeType == "static" then
@@ -560,6 +562,15 @@ packetBuilder.AddRepairRecord = function(id, record)
     if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
     if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddScriptRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.scriptText ~= nil then tes3mp.SetRecordScriptText(record.scriptText) end
 
     tes3mp.AddRecord()
 end

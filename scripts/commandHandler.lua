@@ -1384,13 +1384,14 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "potion" then packetBuilder.AddPotionRecord(id, savedTable)
     elseif inputType == "probe" then packetBuilder.AddProbeRecord(id, savedTable)
     elseif inputType == "repair" then packetBuilder.AddRepairRecord(id, savedTable)
+    elseif inputType == "script" then packetBuilder.AddScriptRecord(id, savedTable)
     elseif inputType == "spell" then packetBuilder.AddSpellRecord(id, savedTable)
     elseif inputType == "static" then packetBuilder.AddStaticRecord(id, savedTable)
     elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
 
     tes3mp.SendRecordDynamic(pid, true, false)
 
-    if inputType ~= "cell" then
+    if not tableHelper.containsValue({"spell", "cell", "script"}, inputType) then
         if inputType ~= "enchantment" then
             if inputType == "creature" or inputType == "npc" then
                 message = message .. "You can spawn an instance of it using /spawnat "

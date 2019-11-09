@@ -231,9 +231,9 @@ config.generatedRecordIdPrefix = "$custom"
 -- players, with the correct order ensuring that enchantments are loaded before items that might be
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
-config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
-    "ingredient", "apparatus", "lockpick", "probe", "repair", "light", "miscellaneous", "creature", "npc",
-    "container", "door", "activator", "static", "cell" }
+config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "armor", "book", "clothing",
+    "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light", "miscellaneous",
+    "creature", "npc", "container", "door", "activator", "static", "cell" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -271,6 +271,7 @@ config.validRecordSettings = {
     potion = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "autoCalc" },
     probe = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
     repair = { "baseId", "id", "name", "model", "icon", "script", "weight", "value", "quality", "uses" },
+    script = { "baseId", "id", "scriptText" },
     spell = { "baseId", "id", "name", "subtype", "cost", "flags", "effects" },
     static = { "baseId", "id", "model" },
     weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
@@ -299,6 +300,7 @@ config.requiredRecordSettings = {
     potion = { "name", "model" },
     probe = { "name", "model" },
     repair = { "name", "model" },
+    script = { "id" },
     spell = { "name" },
     static = { "model" },
     weapon = { "name", "model" }
