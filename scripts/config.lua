@@ -256,8 +256,8 @@ config.validRecordSettings = {
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
     container = { "baseId", "id", "name", "model", "script", "weight", "flags" },
-    creature = { "baseId", "id", "name", "model", "script", "subtype", "level", "health", "magicka",
-        "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "flags" },
+    creature = { "baseId", "id", "name", "model", "script", "scale", "bloodType", "subtype", "level",
+        "health", "magicka", "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "flags" },
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
     ingredient = { "baseId", "id", "name", "model", "icon", "script", "weight", "value" },
@@ -308,8 +308,9 @@ config.requiredRecordSettings = {
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "charge", "cost", "value", "weight", "quality", "uses",
-    "time", "radius", "health", "armorRating", "speed", "reach", "level", "magicka", "fatigue", "aiFight",
-    "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender", "flags", "enchantmentCharge" }
+    "time", "radius", "health", "armorRating", "speed", "reach", "scale", "bloodType", "level", "magicka",
+    "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender", "flags",
+    "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState" }
