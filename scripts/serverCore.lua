@@ -336,21 +336,26 @@ function LoadDataFileList(filename)
 end
 
 function OnRequestDataFileList()
+    local eventStatus = customEventHooks.triggerValidators("OnRequestDataFileList", {})
 
-    local dataFileList = LoadDataFileList("requiredDataFiles.json")
+    if eventStatus.validDefaultHandler then
+        local dataFileList = LoadDataFileList("requiredDataFiles.json")
 
-    for _, entry in ipairs(dataFileList) do
-        local name = entry.name
-        table.insert(clientDataFiles, name)
-
-        if tableHelper.isEmpty(entry.checksums) then
-            tes3mp.AddDataFileRequirement(name, "")
-        else
-            for _, checksum in ipairs(entry.checksums) do
-                tes3mp.AddDataFileRequirement(name, checksum)
+        for _, entry in ipairs(dataFileList) do
+            local name = entry.name
+            table.insert(clientDataFiles, name)
+    
+            if tableHelper.isEmpty(entry.checksums) then
+                tes3mp.AddDataFileRequirement(name, "")
+            else
+                for _, checksum in ipairs(entry.checksums) do
+                    tes3mp.AddDataFileRequirement(name, checksum)
+                end
             end
         end
     end
+
+    customEventHooks.triggerHandlers("OnRequestDataFileList", eventStatus, {})
 end
 
 -- Older server builds will call an "OnRequestPluginList" event instead of
