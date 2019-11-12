@@ -177,11 +177,16 @@ logicHandler.GetPlayerByName = function(targetName)
 end
 
 logicHandler.BanPlayer = function(pid, targetName)
-    if not tableHelper.containsValue(banList.playerNames, string.lower(targetName)) then
+
+    -- Ban players based on their account names, i.e. based on the filenames used for their JSON files that
+    -- have had invalid characters replaced
+    local accountName = fileHelper.fixFilename(targetName)
+
+    if not tableHelper.containsValue(banList.playerNames, string.lower(accountName)) then
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
-            table.insert(banList.playerNames, string.lower(targetName))
+            table.insert(banList.playerNames, string.lower(accountName))
             SaveBanList()
 
             tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
@@ -329,9 +334,9 @@ logicHandler.AuthCheck = function(pid)
         Players[pid] = nil
         return false
     else
-        tes3mp.LogMessage(enumerations.log.INFO, "Player with PID " .. pid .. " does not exist but auth check was called with" ..
-            " PID.")
-    return false
+        tes3mp.LogMessage(enumerations.log.INFO, "Player with pid " .. pid .. " does not exist but auth check was called with" ..
+            " pid.")
+        return false
     end
 end
 

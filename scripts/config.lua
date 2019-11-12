@@ -1,10 +1,16 @@
 config = {}
 
+-- The path used by the server for its data folder
+config.dataPath = tes3mp.GetDataPath()
+
 -- The game mode displayed for this server in the server browser
 config.gameMode = "Default"
 
 -- Time to login, in seconds
 config.loginTime = 60
+
+-- How many clients are allowed to connect from the same IP address
+config.maxClientsPerIP = 3
 
 -- The difficulty level used by default
 -- Note: In OpenMW, the difficulty slider goes between -100 and 100, with 0 as the default,
@@ -23,8 +29,8 @@ config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false
 
--- The hours at which night is regarded as starting and ending, used to pass time differently
--- when it's night
+-- The hours at which night is regarded as starting and ending, used to pass time using a
+-- different timescale when it's night
 config.nightStartHour = 20
 config.nightEndHour = 6
 
@@ -356,7 +362,7 @@ config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
-config.databasePath = tes3mp.GetDataPath() .. "/database.db" -- Path where database is stored
+config.databasePath = config.dataPath .. "/database.db" -- Path where database is stored
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

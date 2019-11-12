@@ -1,4 +1,4 @@
---Helper Functions
+-- Helper functions
 local getRanks = function(pid)
     local serverOwner = false
     local admin = false
@@ -25,7 +25,7 @@ end
 
 defaultCommands = {}
 
---Commands
+-- Commands
 defaultCommands.msg = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't message yourself.\n")
@@ -40,14 +40,15 @@ defaultCommands.msg = function(pid, cmd)
         tes3mp.SendMessage(targetPid, message, false)
     end
 end
+
 customCommandHooks.registerCommand("msg", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
-
 
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
+
 customCommandHooks.registerCommand("me", defaultCommands.me)
 
 --damn can't name it local
@@ -63,6 +64,7 @@ defaultCommands.loc = function(pid, cmd)
         end
     end
 end
+
 customCommandHooks.registerCommand("local", defaultCommands.loc)
 customCommandHooks.registerCommand("l", defaultCommands.loc)
 
@@ -71,6 +73,7 @@ defaultCommands.greentext = function(pid, cmd)
             ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
+
 customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
 customCommandHooks.registerCommand("gt", defaultCommands.greentext)
 
@@ -107,6 +110,7 @@ defaultCommands.ban = function(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
     end
 end
+
 customCommandHooks.registerCommand("ban", defaultCommands.ban)
 
 defaultCommands.unban = function(pid, cmd)
@@ -136,6 +140,7 @@ defaultCommands.unban = function(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
     end
 end
+
 customCommandHooks.registerCommand("unban", defaultCommands.unban)
 
 defaultCommands.banlist = function(pid, cmd)
@@ -188,6 +193,7 @@ defaultCommands.banlist = function(pid, cmd)
 
     tes3mp.SendMessage(pid, message, false)
 end
+
 customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
 
 defaultCommands.ipaddresses = function(pid, cmd)
@@ -217,14 +223,15 @@ defaultCommands.ipaddresses = function(pid, cmd)
         message = message .. "\n"
         tes3mp.SendMessage(pid, message, false)
     end
-
 end
+
 customCommandHooks.registerCommand("ipaddresses", defaultCommands.ipaddresses)
 customCommandHooks.registerCommand("ips", defaultCommands.ipaddresses)
 
 defaultCommands.players = function(pid, cmd)
     guiHelper.ShowPlayerList(pid)
 end
+
 customCommandHooks.registerCommand("players", defaultCommands.players)
 customCommandHooks.registerCommand("list", defaultCommands.players)
 
@@ -238,6 +245,7 @@ defaultCommands.cells = function(pid, cmd)
 
     guiHelper.ShowCellList(pid)
 end
+
 customCommandHooks.registerCommand("cells", defaultCommands.cells)
 
 defaultCommands.regions = function(pid, cmd)
@@ -250,6 +258,5 @@ defaultCommands.regions = function(pid, cmd)
 
     guiHelper.ShowRegionList(pid)
 end
+
 customCommandHooks.registerCommand("regions", defaultCommands.regions)
-
-
