@@ -3,46 +3,42 @@ require("utils")
 
 local contentFixer = {}
 
-local refNumDeletionsByCell = {}
--- Delete Socucius Ergalla
-refNumDeletionsByCell["Seyda Neen, Census and Excise Office"] = { 119636 }
--- Delete the chargen boat and associated guards and objects
-refNumDeletionsByCell["-1, -9"] = { 268178, 297457, 297459, 297460, 299125 }
-refNumDeletionsByCell["-2, -9"] = { 172848, 172850, 172852, 289104, 297461, 397559 }
-refNumDeletionsByCell["-2, -10"] = { 297463, 297464, 297465, 297466 }
-
 local deadlyItems = { "keening", "sunder" }
+local fixesByCell = {}
+
+-- Delete the chargen boat and associated guards and objects
+fixesByCell["-1, -9"] = { delete =  { 268178, 297457, 297459, 297460, 299125 }}
+fixesByCell["-2, -9"] = { delete = { 172848, 172850, 172852, 289104, 297461, 397559 }}
+fixesByCell["-2, -10"] = { delete = { 297463, 297464, 297465, 297466 }}
+
+-- Delete the census papers and unlock the doors
+fixesByCell["Seyda Neen, Census and Excise Office"] = { delete = { 172859 }, unlock = { 119513, 172860 }}
 
 function contentFixer.FixCell(pid, cellDescription)
 
-    if refNumDeletionsByCell[cellDescription] ~= nil then
+    if fixesByCell[cellDescription] ~= nil then
 
-        tes3mp.ClearObjectList()
-        tes3mp.SetObjectListPid(pid)
-        tes3mp.SetObjectListCell(cellDescription)
+        for packetType, refNumArray in pairs(fixesByCell[cellDescription]) do
 
-        for arrayIndex, refNum in pairs(refNumDeletionsByCell[cellDescription]) do
-            tes3mp.SetObjectRefNum(refNum)
-            tes3mp.SetObjectMpNum(0)
-            tes3mp.SetObjectRefId("")
-            tes3mp.AddObject()
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(cellDescription)
+
+            for arrayIndex, refNum in ipairs(refNumArray) do
+                tes3mp.SetObjectRefNum(refNum)
+                tes3mp.SetObjectMpNum(0)
+                tes3mp.SetObjectRefId("")
+                if packetType == "unlock" then tes3mp.SetObjectLockLevel(0) end
+                tes3mp.AddObject()
+            end
+
+            if packetType == "delete" then
+                tes3mp.SendObjectDelete()
+            elseif packetType == "unlock" then
+                tes3mp.SendObjectLock()
+            end
         end
-
-        tes3mp.SendObjectDelete()
     end
-end
-
-function contentFixer.ValidateCellChange(pid)
-
-    local cell = tes3mp.GetCell(pid)
-
-    if cell == "Seyda Neen, Census and Excise Office" then
-        tes3mp.MessageBox(pid, -1, "Everything from the default character generation is currently " ..
-            "broken in multiplayer. You'll have to avoid that area for now.")
-        return false
-    end
-
-    return true
 end
 
 -- Unequip items that damage the player when worn
