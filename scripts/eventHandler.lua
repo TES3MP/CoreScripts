@@ -312,9 +312,10 @@ end
 eventHandler.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        if contentFixer.ValidateCellChange(pid) then
+        local currentCellDescription = tes3mp.GetCell(pid)
+
+        if not tableHelper.containsValue(config.forbiddenCells, currentCellDescription) then
             local previousCellDescription = Players[pid].data.location.cell
-            local currentCellDescription = tes3mp.GetCell(pid)
             
             local eventStatus = customEventHooks.triggerValidators("OnPlayerCellChange", {pid, previousCellDescription, currentCellDescription})
             
@@ -380,6 +381,7 @@ eventHandler.OnPlayerCellChange = function(pid)
             Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
             Players[pid].data.location.posZ = tes3mp.GetPreviousCellPosZ(pid)
             Players[pid]:LoadCell()
+            tes3mp.MessageBox(pid, -1, "You are forbidden from entering that area.")
         end
     end
 end

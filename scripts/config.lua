@@ -112,6 +112,10 @@ config.respawnAtImperialShrine = true
 --       chance of the player being respawned at either
 config.respawnAtTribunalTemple = true
 
+-- The cells that players are forbidden from entering, with any attempt to enter them
+-- transporting them to the last location in their previous cell
+config.forbiddenCells = { "ToddTest" }
+
 -- The maximum value that any attribute except Speed is allowed to have
 config.maxAttributeValue = 200
 
