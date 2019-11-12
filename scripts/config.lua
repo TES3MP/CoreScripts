@@ -67,6 +67,13 @@ config.shareMapExploration = false
 -- Whether ingame videos should be played for other players when triggered by one player
 config.shareVideos = true
 
+-- Which clientside script records should be blanked out so they are not run
+-- Note: By default, the original character generation scripts are included
+--       because they're not suitable for multiplayer
+config.disabledClientScriptIds = { "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet",
+    "CharGenDoorGuardTalker", "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel",
+    "CharGenDialogueMessage", "CharGenDoorExitCaptain", "CharGenJournalMessage" }
+
 -- Which clientside scripts should have all of their variables synchronized across players
 -- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
 --          through variable changes that clients cannot agree on

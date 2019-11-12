@@ -353,6 +353,22 @@ logicHandler.IsPacketFromConsole = function(packetOrigin)
     return false
 end
 
+logicHandler.SendClientScriptDisables = function(pid, forEveryone)
+
+    tes3mp.ClearRecords()
+    tes3mp.SetRecordType(enumerations.recordType["SCRIPT"])
+    local recordCount = 0
+
+    for _, scriptId in pairs(config.disabledClientScriptIds) do
+        packetBuilder.AddScriptRecord(scriptId, { scriptText = "begin " .. scriptId .. "\n" .. "end " .. scriptId .. "\n" })
+        recordCount = recordCount + 1
+    end
+
+    if recordCount > 0 then
+        tes3mp.SendRecordDynamic(pid, forEveryone, false)
+    end
+end
+
 logicHandler.SendClientScriptSettings = function(pid, forEveryone)
 
     tes3mp.ClearSynchronizedClientScriptIds()
