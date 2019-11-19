@@ -1,8 +1,105 @@
 packetReader = {}
 
+packetReader.GetObjectPacketTables = function(packetType)
+
+    local packetTables, objects, players = {}, {}, {}
+
+    for packetIndex = 0, tes3mp.GetObjectListSize() - 1 do
+        local object, uniqueIndex, player, pid = nil, nil, nil, nil
+        
+        if packetType == "activate" then
+
+            local isObjectPlayer = tes3mp.IsObjectPlayer(packetIndex)
+            local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(packetIndex)
+
+            if isObjectPlayer then
+                pid = tes3mp.GetObjectPid(packetIndex)
+                player = Players[pid]
+            else
+                object = {}
+                uniqueIndex = tes3mp.GetObjectRefNum(packetIndex) .. "-" .. tes3mp.GetObjectMpNum(packetIndex)
+                object.refId = tes3mp.GetObjectRefId(packetIndex)
+                object.uniqueIndex = uniqueIndex
+            end
+
+            if doesObjectHaveActivatingPlayer then
+                local activatingPid = tes3mp.GetObjectActivatingPid(packetIndex)
+
+                if isObjectPlayer then
+                    player.activatingPid = activatingPid
+                    player.drawState = tes3mp.GetDrawState(object.activatingPid) -- for backwards compatibility
+                else
+                    object.activatingPid = activatingPid
+                end
+            else
+                object.activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
+                object.activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
+                    "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
+            end
+        else
+            object = {}
+            uniqueIndex = tes3mp.GetObjectRefNum(packetIndex) .. "-" .. tes3mp.GetObjectMpNum(packetIndex)
+            object.refId = tes3mp.GetObjectRefId(packetIndex)
+            object.uniqueIndex = uniqueIndex
+
+            if tableHelper.containsValue({"place", "spawn"}, packetType) then
+                
+                object.location = {
+                    posX = tes3mp.GetObjectPosX(packetIndex), posY = tes3mp.GetObjectPosY(packetIndex),
+                    posZ = tes3mp.GetObjectPosZ(packetIndex), rotX = tes3mp.GetObjectRotX(packetIndex),
+                    rotY = tes3mp.GetObjectRotY(packetIndex), rotZ = tes3mp.GetObjectRotZ(packetIndex)
+                }
+
+                if packetType == "place" then
+                    object.count = tes3mp.GetObjectCount(packetIndex)
+                    object.charge = tes3mp.GetObjectCharge(packetIndex)
+                    object.enchantmentCharge = tes3mp.GetObjectEnchantmentCharge(packetIndex)
+                    object.soul = tes3mp.GetObjectSoul(packetIndex)
+                    object.goldValue = tes3mp.GetObjectGoldValue(packetIndex)
+                    object.hasContainer = tes3mp.DoesObjectHaveContainer(packetIndex)
+                elseif packetType == "spawn" then
+                    object.summonState = tes3mp.GetObjectSummonState(packetIndex)
+
+                    if object.summonState == true then
+                        object.summonDuration = tes3mp.GetObjectSummonDuration(packetIndex)
+                        object.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
+
+                        if object.hasPlayerSummoner == true then
+                            object.summonerPid = tes3mp.GetObjectSummonerPid(packetIndex)
+                        else
+                            object.summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
+                                "-" .. tes3mp.GetObjectSummonerMpNum(packetIndex)
+                            object.summonerRefId = tes3mp.GetObjectSummonerRefId(packetIndex)
+                        end
+                    end
+                end
+
+            elseif packetType == "lock" then
+                object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+            elseif packetType == "scale" then
+                object.scale = tes3mp.GetObjectScale(packetIndex)
+            elseif packetType == "state" then
+                object.state = tes3mp.GetObjectState(packetIndex)
+            elseif packetType == "doorState" then
+                object.doorState = tes3mp.GetObjectDoorState(packetIndex)
+            end
+        end
+
+        if object ~= nil then
+            objects[uniqueIndex] = object
+        elseif player ~= nil then
+            players[pid] = player
+        end
+    end
+
+    packetTables.objects = objects
+    packetTables.players = players
+    return packetTables
+end
+
 packetReader.GetRecordEffects = function(recordIndex)
 
-    local effectTable = {}
+    local effectArray = {}
     local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
 
     for effectIndex = 0, effectCount - 1 do
@@ -18,10 +115,10 @@ packetReader.GetRecordEffects = function(recordIndex)
             magnitudeMax = tes3mp.GetRecordEffectMagnitudeMax(recordIndex, effectIndex)
         }
 
-        table.insert(effectTable, effect)
+        table.insert(effectArray, effect)
     end
 
-    return effectTable
+    return effectArray
 end
 
 return packetReader

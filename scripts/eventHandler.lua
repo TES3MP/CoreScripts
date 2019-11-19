@@ -784,76 +784,74 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
 
             tes3mp.ReadReceivedObjectList()
 
-            -- Add your own logic here to prevent objects from being activated in certain places,
-            -- or to make specific things happen in certain situations, such as when players
-            -- are activated by other players
-            
-            local objects = {}
-            local players = {}
+            local packetTables = packetReader.GetObjectPacketTables("activate")
+            local objects = packetTables.objects
+            local targetPlayers = packetTables.players
+            local acceptedObjects, rejectedObjects = {}, {}
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
-                local object = {}
-                local debugMessage = "- "
-                local isObjectPlayer = tes3mp.IsObjectPlayer(index)
+            for uniqueIndex, object in pairs(objects) do
 
-                if isObjectPlayer then
-                    object.pid = tes3mp.GetObjectPid(index)
-                    debugMessage = debugMessage .. logicHandler.GetChatName(object.pid)
+                if tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
+                    rejectedObjects[uniqueIndex] = object
                 else
-                    object.refId = tes3mp.GetObjectRefId(index)
-                    object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-                    debugMessage = debugMessage .. object.refId .. " " .. object.uniqueIndex
+                    acceptedObjects[uniqueIndex] = object
                 end
+            end
 
-                debugMessage = debugMessage .. " has been activated by "
+            if not tableHelper.isEmpty(rejectedObjects) then
+                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectActivate from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+            end
 
-                local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(index)
+            if not tableHelper.isEmpty(acceptedObjects) then
+                local eventStatus = customEventHooks.triggerValidators("OnObjectActivate", {pid, cellDescription,
+                    acceptedObjects, players})
 
-                if doesObjectHaveActivatingPlayer then
-                    object.activatingPid = tes3mp.GetObjectActivatingPid(index)
-                    debugMessage = debugMessage .. logicHandler.GetChatName(object.activatingPid)
+                if eventStatus.validDefaultHandler then
 
-                    if tes3mp.GetSneakState(object.activatingPid) then
-                        debugMessage = debugMessage .. " while sneaking"
+                    tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectActivate from " .. logicHandler.GetChatName(pid) ..
+                        " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+
+                    local debugMessage = nil
+
+                    for uniqueIndex, object in pairs(objects) do
+                        debugMessage = "- "
+                        debugMessage = debugMessage .. uniqueIndex .. " has been activated by "
+
+                        if object.activatingPid == nil then
+                            debugMessage = debugMessage .. object.activatingRefId .. " " .. object.activatingUniqueIndex
+                        else
+                            debugMessage = debugMessage .. logicHandler.GetChatName(object.activatingPid)
+                        end
+
+                        tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
                     end
 
-                    object.drawState = tes3mp.GetDrawState(object.activatingPid)
+                    for pid, targetPlayer in pairs(targetPlayers) do
+                        debugMessage = "- "
+                        debugMessage = debugMessage .. logicHandler.GetChatName(pid) .. " has been activated by "
 
-                    if object.drawState == 1 then
-                        debugMessage = debugMessage .. " with their weapon drawn"
-                    elseif object.drawState == 2 then
-                        debugMessage = debugMessage .. " with their casting hands out"
+                        if targetPlayer.activatingPid == nil then
+                            debugMessage = debugMessage .. targetPlayer.activatingRefId .. " " .. targetPlayer.activatingUniqueIndex
+                        else
+                            debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.activatingPid)
+                        end
+
+                        tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
                     end
-                else
-                    object.activatingRefId = tes3mp.GetObjectActivatingRefId(index)
-                    object.activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(index) ..
-                        "-" .. tes3mp.GetObjectActivatingMpNum(index)
-                    debugMessage = debugMessage .. object.activatingRefId .. " " .. object.activatingUniqueIndex
-                end
-                
-                if isObjectPlayer then
-                    table.insert(players, object)
-                else
-                    table.insert(objects, object)
-                end
 
-                tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+                    -- TODO: Change this so only the accepted objects are activated
+                    tes3mp.CopyReceivedObjectListToStore()
+                    -- Objects can't be activated clientside without the server's approval, so we send
+                    -- the packet back to the player who sent it, but we avoid sending it to other
+                    -- players because OpenMW barely has any code for handling activations not from
+                    -- the local player
+                    -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+                    tes3mp.SendObjectActivate(false, false)
+                end
+                customEventHooks.triggerHandlers("OnObjectActivate", eventStatus, {pid, cellDescription,
+                    acceptedObjects, targetPlayers})
             end
-            
-            local eventStatus = customEventHooks.triggerValidators("OnObjectActivate", {pid, cellDescription, objects, players})
-            
-            if eventStatus.validDefaultHandler then
-                tes3mp.CopyReceivedObjectListToStore()
-                -- Objects can't be activated clientside without the server's approval, so we send
-                -- the packet back to the player who sent it, but we avoid sending it to other
-                -- players because OpenMW barely has any code for handling activations not from
-                -- the local player
-                -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-                tes3mp.SendObjectActivate(false, false)
-            end
-            
-            customEventHooks.triggerHandlers("OnObjectActivate", eventStatus, {pid, cellDescription, objects, players})
-
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectActivate for unloaded " .. cellDescription)
@@ -877,48 +875,68 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
             return
         end
 
-        if LoadedCells[cellDescription] ~= nil then
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            -- Iterate through the objects in the ObjectPlace packet and only sync and save them
-            -- if all their refIds are valid
-            local isAllowed = true
-            local rejectedObjects = {}
-            local objects = {}
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectPlace: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
-                local object = {}
-                object.refId = tes3mp.GetObjectRefId(index)
-                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        -- Iterate through the objects in the ObjectPlace packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("place").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-                if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
-                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                    isAllowed = false
-                else
-                    table.insert(objects, object)
-                end
-            end
-            
-            if isAllowed then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectPlace", {pid, cellDescription, objects})
-                
-                if eventStatus.validDefaultHandler then
-                    LoadedCells[cellDescription]:SaveObjectsPlaced(pid)
+        for uniqueIndex, object in pairs(objects) do
 
-                    tes3mp.CopyReceivedObjectListToStore()
-                    -- Objects can't be placed clientside without the server's approval, so we send
-                    -- the packet to other players and also back to the player who sent it,
-                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                    tes3mp.SendObjectPlace(true, false)
-                end
-                
-                customEventHooks.triggerHandlers("OnObjectPlace", eventStatus, {pid, cellDescription, objects})
+            if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
+                rejectedObjects[uniqueIndex] = object
             else
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                acceptedObjects[uniqueIndex] = object
             end
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectPlace for unloaded " .. cellDescription)
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
+            end
+
+            local eventStatus = customEventHooks.triggerValidators("OnObjectPlace", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectPlace from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsPlaced(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsPlaced(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+
+                local containerUniqueIndexesRequested = {}
+
+                for uniqueIndex, acceptedObject in pairs(acceptedObjects) do
+                    -- Track objects which have containers so we can request their contents
+                    if acceptedObject.hasContainer == true then
+                        table.insert(containerUniqueIndexesRequested, uniqueIndex)
+                    end
+                end
+
+                if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
+                    LoadedCells[cellDescription]:RequestContainers(pid, containerUniqueIndexesRequested)
+                end
+            end
+
+            customEventHooks.triggerHandlers("OnObjectPlace", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -939,48 +957,57 @@ eventHandler.OnObjectSpawn = function(pid, cellDescription)
             return
         end
 
-        if LoadedCells[cellDescription] ~= nil then
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            -- Iterate through the objects in the ObjectSpawn packet and only sync and save them
-            -- if all their refIds are valid
-            local isAllowed = true
-            local rejectedObjects = {}
-            local objects = {}
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectSpawn: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
-                local object = {}
-                object.refId = tes3mp.GetObjectRefId(index)
-                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        -- Iterate through the objects in the ObjectSpawn packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("spawn").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-                if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
-                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                    isAllowed = false
-                else
-                    table.insert(objects, object)
-                end
-            end
+        for uniqueIndex, object in pairs(objects) do
 
-            if isAllowed then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectSpawn", {pid, cellDescription, objects})
-                
-                if eventStatus.validDefaultHandler then
-                    LoadedCells[cellDescription]:SaveObjectsSpawned(pid)
-
-                    tes3mp.CopyReceivedObjectListToStore()
-                    -- Objects can't be spawned clientside without the server's approval, so we send
-                    -- the packet to other players and also back to the player who sent it,
-                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                    tes3mp.SendObjectSpawn(true, false)
-                end
-                
-                customEventHooks.triggerHandlers("OnObjectSpawn", eventStatus, {pid, cellDescription, objects})
+            if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
+                rejectedObjects[uniqueIndex] = object
             else
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                acceptedObjects[uniqueIndex] = object
             end
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectSpawn for unloaded " .. cellDescription)
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
+            end
+
+            local eventStatus = customEventHooks.triggerValidators("OnObjectSpawn", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsSpawned(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsSpawned(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+
+                LoadedCells[cellDescription]:RequestContainers(pid, tableHelper.getArrayFromIndexes(acceptedObjects))
+            end
+
+            customEventHooks.triggerHandlers("OnObjectSpawned", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1001,50 +1028,60 @@ eventHandler.OnObjectDelete = function(pid, cellDescription)
             return
         end
 
-        if LoadedCells[cellDescription] ~= nil then
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            -- Iterate through the objects in the ObjectDelete packet and only sync and save them
-            -- if all their refIds are valid
-            local isAllowed = true
-            local rejectedObjects = {}
-            local unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
-            local objects = {}
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectDelete: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
-                local object = {}
-                object.refId = tes3mp.GetObjectRefId(index)
-                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        -- Iterate through the objects in the ObjectDelete packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("delete").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-                if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) or
-                    tableHelper.containsValue(unusableContainerUniqueIndexes, object.uniqueIndex) then
-                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                    isAllowed = false
-                else
-                    table.insert(objects, object)
-                end
-            end
+        -- Don't allow the deletion of currently dying actors via attempts at disposing of
+        -- their containers
+        local unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
 
-            if isAllowed then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectDelete", {pid, cellDescription, objects})
-                if eventStatus.validDefaultHandler then
-                    LoadedCells[cellDescription]:SaveObjectsDeleted(pid)
+        for uniqueIndex, object in pairs(objects) do
 
-                    tes3mp.CopyReceivedObjectListToStore()
-                    -- Objects can sometimes be deleted clientside without the server's approval and
-                    -- sometimes not, but we should always send ObjectDelete packets back to the sender
-                    -- for the sake of the latter situations
-                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                    tes3mp.SendObjectDelete(true, false)
-                end
-                customEventHooks.triggerHandlers("OnObjectDelete", eventStatus, {pid, cellDescription, objects})
+            if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) or
+                tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
+                rejectedObjects[uniqueIndex] = object
             else
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                acceptedObjects[uniqueIndex] = object
+            end
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
             end
 
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectDelete for unloaded " .. cellDescription)
+            local eventStatus = customEventHooks.triggerValidators("OnObjectDelete", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectDelete from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsDeleted(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsDeleted(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObjectDelete", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1073,51 +1110,47 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
             return
         end
 
-        -- Iterate through the objects in the ObjectLock packet and only sync and save them
-        -- if all their refIds are valid
-        local isAllowed = true
-        local rejectedObjects = {}
-        local objects = {}
+        -- Iterate through the objects in the ObjectLock packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("lock").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-        for index = 0, tes3mp.GetObjectListSize() - 1 do
-            local object = {}
-            object.refId = tes3mp.GetObjectRefId(index)
-            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedLockRefIds, object.refId) then
-                table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                isAllowed = false
+                rejectedObjects[uniqueIndex] = object
             else
-                table.insert(objects, object)
+                acceptedObjects[uniqueIndex] = object
             end
         end
 
-        if isAllowed then
-            local eventStatus = customEventHooks.triggerValidators("OnObjectLock", {pid, cellDescription, objects})
-            if eventStatus.validDefaultHandler then
-                local useTemporaryLoad = false
-
-                if not isCellLoaded then
-                    logicHandler.LoadCell(cellDescription)
-                    useTemporaryLoad = true
-                end
-
-                LoadedCells[cellDescription]:SaveObjectsLocked(pid)
-
-                if useTemporaryLoad then
-                    logicHandler.UnloadCell(cellDescription)
-                end
-
-                tes3mp.CopyReceivedObjectListToStore()
-                -- Objects can't be locked/unlocked clientside without the server's approval,
-                -- so we send the packet to other players and also back to the player who sent it,
-                -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                tes3mp.SendObjectLock(true, false)
-            end
-            customEventHooks.triggerHandlers("OnObjectLock", eventStatus, {pid, cellDescription, objects})
-        else
+        if not tableHelper.isEmpty(rejectedObjects) then
             tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
-                " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
+            end
+
+            local eventStatus = customEventHooks.triggerValidators("OnObjectLock", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectLock from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsLocked(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsLocked(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObjectLock", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1138,50 +1171,55 @@ eventHandler.OnObjectTrap = function(pid, cellDescription)
             return
         end
 
-        if LoadedCells[cellDescription] ~= nil then
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            -- Iterate through the objects in the ObjectTrap packet and only sync and save them
-            -- if all their refIds are valid
-            local isAllowed = true
-            local rejectedObjects = {}
-            local objects = {}
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectTrap: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
+        -- Iterate through the objects in the ObjectTrap packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("trap").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-                local object = {}
-                object.refId = tes3mp.GetObjectRefId(index)
-                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        for uniqueIndex, object in pairs(objects) do
 
-                if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
-                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                    isAllowed = false
-                else
-                    table.insert(objects, object)
-                end
-            end
-
-            if isAllowed then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectTrap", {pid, cellDescription, objects})
-                
-                if eventStatus.validDefaultHandler then
-                    LoadedCells[cellDescription]:SaveObjectTrapsTriggered(pid)
-
-                    tes3mp.CopyReceivedObjectListToStore()
-                    -- Objects can't be untrapped clientside without the server's approval, so we send
-                    -- the packet to other players and also back to the player who sent it,
-                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                    tes3mp.SendObjectTrap(true, false)
-                end
-                
-                customEventHooks.triggerHandlers("OnObjectTrap", eventStatus, {pid, cellDescription, objects})
+            if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
+                rejectedObjects[uniqueIndex] = object
             else
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                acceptedObjects[uniqueIndex] = object
+            end
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
             end
 
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectTrap for unloaded " .. cellDescription)
+            local eventStatus = customEventHooks.triggerValidators("OnObjectTrap", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectTrap from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectTrapsTriggered(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectTrapsTriggered(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObjectTrap", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1202,51 +1240,55 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
             return
         end
 
-        if LoadedCells[cellDescription] ~= nil then
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
-            -- Iterate through the objects in the ObjectScaled packet and only sync and save them
-            -- if all their refIds are valid
-            local isAllowed = true
-            local rejectedObjects = {}
-            local objects = {}
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectScale: " .. logicHandler.GetChatName(pid) ..
+                " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
 
-            for index = 0, tes3mp.GetObjectListSize() - 1 do
+        -- Iterate through the objects in the ObjectScaled packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("scale").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-                local object = {}
-                object.refId = tes3mp.GetObjectRefId(index)
-                object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-                object.scale = tes3mp.GetObjectScale(index)
+        for uniqueIndex, object in pairs(objects) do
 
-                if object.scale >= config.maximumObjectScale then
-                    table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                    isAllowed = false
-                else
-                    table.insert(objects, object)
-                end
-            end
-
-            if isAllowed then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectScale", {pid, cellDescription, objects})
-                
-                if eventStatus.validDefaultHandler then
-                LoadedCells[cellDescription]:SaveObjectsScaled(pid)
-
-                tes3mp.CopyReceivedObjectListToStore()
-                -- Objects can't be scaled clientside without the server's approval, so we send
-                -- the packet to other players and also back to the player who sent it,
-                -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                tes3mp.SendObjectScale(true, false)
-                end
-                
-                customEventHooks.triggerHandlers("OnObjectScale", eventStatus, {pid, cellDescription, objects})
+            if object.scale >= config.maximumObjectScale then
+                rejectedObjects[uniqueIndex] = object
             else
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+                acceptedObjects[uniqueIndex] = object
+            end
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
             end
 
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectScale for unloaded " .. cellDescription)
+            local eventStatus = customEventHooks.triggerValidators("OnObjectScale", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectScale from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsScaled(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsScaled(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObjectScale", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1275,54 +1317,42 @@ eventHandler.OnObjectState = function(pid, cellDescription)
             return
         end
 
-        -- Iterate through the objects in the ObjectState packet and only sync and save them
-        -- if all their refIds are valid
-        local isAllowed = true
-        local rejectedObjects = {}
-        local objects = {}
+        -- Iterate through the objects in the ObjectState packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables("state").objects
+        local acceptedObjects, rejectedObjects = {}, {}
 
-        for index = 0, tes3mp.GetObjectListSize() - 1 do
-
-            local object = {}
-            object.refId = tes3mp.GetObjectRefId(index)
-            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
+        for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedStateRefIds, object.refId) then
-                table.insert(rejectedObjects, object.refId .. " " .. object.uniqueIndex)
-                isAllowed = false
+                rejectedObjects[uniqueIndex] = object
             else
-                table.insert(objects, object)
+                acceptedObjects[uniqueIndex] = object
             end
         end
 
-        if isAllowed then
-            local eventStatus = customEventHooks.triggerValidators("OnObjectState", {pid, cellDescription, objects})
-            
-            if eventStatus.validDefaultHandler then
-                local useTemporaryLoad = false
+        if not tableHelper.isEmpty(acceptedObjects) then
 
-                if not isCellLoaded then
-                    logicHandler.LoadCell(cellDescription)
-                    useTemporaryLoad = true
-                end
-
-                LoadedCells[cellDescription]:SaveObjectStates(pid)
-
-                if useTemporaryLoad then
-                    logicHandler.UnloadCell(cellDescription)
-                end
-
-                tes3mp.CopyReceivedObjectListToStore()
-                -- Objects can't be enabled or disabled clientside without the server's approval,
-                -- so we send the packet to other players and also back to the player who sent it,
-                -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
-                tes3mp.SendObjectState(true, false)
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
             end
-            
-            customEventHooks.triggerHandlers("OnObjectState", eventStatus, {pid, cellDescription, objects})
-        else
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectState from " .. logicHandler.GetChatName(pid) ..
-                " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
+
+            local eventStatus = customEventHooks.triggerValidators("OnObjectState", {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectState from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                LoadedCells[cellDescription]:SaveObjectsScaled(acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsScaled(pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObjectState", eventStatus, {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
         end
     else
         tes3mp.Kick(pid)
@@ -1331,33 +1361,43 @@ end
 
 eventHandler.OnDoorState = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+
         if LoadedCells[cellDescription] ~= nil then
-            tes3mp.ReadReceivedObjectList()
-                
-            local objects = {}
 
-            for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
-                local object = {}
-                object.uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
-                object.refId = tes3mp.GetObjectRefId(objectIndex)
-                object.doorState = tes3mp.GetObjectDoorState(objectIndex)
-                table.insert(objects, object)
-            end
-            
-            local eventStatus = customEventHooks.triggerValidators("OnDoorState", {pid, cellDescription, objects})
-            
-            if eventStatus.validDefaultHandler then
-                local cell = LoadedCells[cellDescription]
-                -- LoadedCells[cellDescription]:SaveDoorStates(pid)
-                for _, object in pairs(objects) do
-                    cell:InitializeObjectData(object.uniqueIndex, object.refId )
-                    cell.data.objectData[object.uniqueIndex].doorState = object.doorState
+            local objects = packetReader.GetObjectPacketTables("doorState").objects
+            local acceptedObjects, rejectedObjects = {}, {}
 
-                    tableHelper.insertValueIfMissing(cell.data.packets.doorState, object.uniqueIndex)
+            for uniqueIndex, object in pairs(objects) do
+
+                if tableHelper.containsValue(config.disallowedDoorStateRefIds, object.refId) then
+                    rejectedObjects[uniqueIndex] = object
+                else
+                    acceptedObjects[uniqueIndex] = object
                 end
             end
-            
-            customEventHooks.triggerHandlers("OnDoorState", eventStatus, {pid, cellDescription, objects})
+
+            if not tableHelper.isEmpty(rejectedObjects) then
+                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDoorState from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
+            end
+
+            if not tableHelper.isEmpty(acceptedObjects) then
+
+                local eventStatus = customEventHooks.triggerValidators("OnObjectDoorState", {pid, cellDescription, acceptedObjects})
+
+                if eventStatus.validDefaultHandler then
+
+                    tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectDoorState from " .. logicHandler.GetChatName(pid) ..
+                        " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                    LoadedCells[cellDescription]:SaveDoorStates(acceptedObjects)
+                    LoadedCells[cellDescription]:LoadDoorStates(pid, acceptedObjects,
+                        tableHelper.getArrayFromIndexes(acceptedObjects), true)
+                end
+
+                customEventHooks.triggerHandlers("OnObjectDoorState", eventStatus, {pid, cellDescription, acceptedObjects})
+            end
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent DoorState for unloaded " .. cellDescription)
@@ -1389,10 +1429,14 @@ eventHandler.OnContainer = function(pid, cellDescription)
             return
         end
 
-        -- Iterate through the objects in the Container packet and only sync and save them
-        -- if all their refIds are valid
+        -- Iterate through the objects in the Container packet and only sync and save the
+        -- ones whose refIds are valid
+        --local objects = packetReader.GetObjectPacketTables("container").objects
+        --local acceptedObjects, rejectedObjects = {}, {}
         local isAllowed = true
         local rejectedObjects = {}
+
+        -- Don't allow container changes in currently dying actors
         local unusableContainerUniqueIndexes = {}
 
         if isCellLoaded then
@@ -1406,8 +1450,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
         for index = 0, tes3mp.GetObjectListSize() - 1 do
             local object = {}
             object.refId = tes3mp.GetObjectRefId(index)
-            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)
-            
+            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)            
 
             if tableHelper.containsValue(unusableContainerUniqueIndexes, object.uniqueIndex) then
 

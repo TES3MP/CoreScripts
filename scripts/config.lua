@@ -218,6 +218,9 @@ config.enforcedCollisionRefIds = { "misc_uni_pillow_01", "misc_uni_pillow_02" }
 -- prevents players from standing on top of the placed objects without slipping
 config.useActorCollisionForPlacedObjects = false
 
+-- Prevent certain object refIds from being activated as a result of player-sent packets
+config.disallowedActivateRefIds = {}
+
 -- Prevent certain object refIds from being deleted as a result of player-sent packets
 config.disallowedDeleteRefIds = { "m'aiq" }
 
@@ -233,7 +236,10 @@ config.disallowedTrapRefIds = {}
 -- Prevent certain object refIds from being enabled or disabled as a result of player-sent packets
 config.disallowedStateRefIds = {}
 
--- Prevent object scales from being set this high
+-- Prevent certain door refIds from being opened or closed as a result of player-sent packets
+config.disallowedDoorStateRefIds = {}
+
+-- Prevent object scales from being set this high or higher
 config.maximumObjectScale = 20
 
 -- The prefix used for automatically generated record IDs
