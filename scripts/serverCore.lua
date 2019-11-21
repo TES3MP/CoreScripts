@@ -215,6 +215,9 @@ function OnServerPostInit()
         clientVariableScopes = require("clientVariableScopes")
         speechCollections = require("speechCollections")
 
+        eventHandler.InitializeDefaultValidators()
+        eventHandler.InitializeDefaultHandlers()
+
         tes3mp.SetGameMode(config.gameMode)
 
         local consoleRuleString = "allowed"

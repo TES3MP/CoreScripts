@@ -4,6 +4,69 @@ commandHandler = require("commandHandler")
 
 local consoleKickMessage = " has been kicked for using the console despite not having the permission to do so.\n"
 
+eventHandler.InitializeDefaultValidators = function()
+
+    -- Don't validate object deletions for currently unusable containers (such as
+    -- dying actors whose corpses players try to dispose of too early)
+    customEventHooks.registerValidator("OnObjectDelete", function(eventStatus, pid, cellDescription, objects)
+
+        local cell = LoadedCells[cellDescription]
+        local unusableContainerUniqueIndexes = cell.unusableContainerUniqueIndexes
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+    -- Don't validate scales larger than the maximum set in the config
+    customEventHooks.registerValidator("OnObjectScale", function(eventStatus, pid, cellDescription, objects)
+
+        local cell = LoadedCells[cellDescription]
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if object.scale >= config.maximumObjectScale then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at setting scale of " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " to " .. object.scale .. " because it exceeds the server's " ..
+                    "maximum of " .. config.maximumObjectScale)
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+end
+
+eventHandler.InitializeDefaultHandlers = function()
+
+    -- Upon accepting an object placement, request its container if it has one
+    customEventHooks.registerHandler("OnObjectPlace", function(eventStatus, pid, cellDescription, objects)
+
+        local containerUniqueIndexesRequested = {}
+        local cell = LoadedCells[cellDescription]
+
+        for uniqueIndex, object in pairs(objects) do
+            if object.hasContainer == true then
+                table.insert(containerUniqueIndexesRequested, uniqueIndex)
+            end
+        end
+
+        if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
+            cell:RequestContainers(pid, containerUniqueIndexesRequested)
+        end
+    end)
+
+    -- Upon accepting an object spawn, request its container
+    customEventHooks.registerHandler("OnObjectSpawn", function(eventStatus, pid, cellDescription, objects)
+
+        local cell = LoadedCells[cellDescription]
+        cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(objects))
+    end)
+
+end
+
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
     tes3mp.SetDifficulty(pid, config.difficulty)
@@ -777,6 +840,113 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
     end
 end
 
+eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType, disallowedIds)
+
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+        local packetOrigin = tes3mp.GetObjectListOrigin()
+        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
+            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
+
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
+            tes3mp.Kick(pid)
+            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            return
+        end
+
+        local isCellLoaded = LoadedCells[cellDescription] ~= nil
+
+        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid Object" .. packetType:capitalizeFirstLetter() ..
+                logicHandler.GetChatName(pid) .. " used impossible packetOrigin for unloaded " .. cellDescription)
+            return
+        end
+
+        -- Iterate through the objects in the Object packet and only sync and save the
+        -- ones whose refIds are valid
+        local objects = packetReader.GetObjectPacketTables(packetType).objects
+        local acceptedObjects, rejectedObjects = {}, {}
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if disallowedIds ~= nil and tableHelper.containsValue(disallowedIds, object.refId) then
+                rejectedObjects[uniqueIndex] = object
+            else
+                acceptedObjects[uniqueIndex] = object
+            end
+        end
+
+        if not tableHelper.isEmpty(rejectedObjects) then
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected Object" .. packetType:capitalizeFirstLetter() ..
+                " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for objects:\n" ..
+                tableHelper.getPrintableTable(rejectedObjects))
+        end
+
+        if not tableHelper.isEmpty(acceptedObjects) then
+
+            if not isCellLoaded then
+                logicHandler.LoadCell(cellDescription)
+            end
+
+            local eventStatus = customEventHooks.triggerValidators("OnObject" .. packetType:capitalizeFirstLetter(),
+                {pid, cellDescription, acceptedObjects})
+
+            if eventStatus.validDefaultHandler then
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Accepted Object" .. packetType:capitalizeFirstLetter() ..
+                    " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for objects:\n" ..
+                    tableHelper.getPrintableTable(acceptedObjects))
+                
+                LoadedCells[cellDescription]:SaveObjectsByPacketType(packetType, acceptedObjects)
+                LoadedCells[cellDescription]:LoadObjectsByPacketType(packetType, pid, acceptedObjects,
+                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+            end
+
+            customEventHooks.triggerHandlers("OnObject" .. packetType:capitalizeFirstLetter(), eventStatus,
+                {pid, cellDescription, acceptedObjects})
+
+            if not isCellLoaded then
+                logicHandler.UnloadCell(cellDescription)
+            end
+        end
+    else
+        tes3mp.Kick(pid)
+    end
+end
+
+eventHandler.OnObjectPlace = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "place", config.disallowedCreateRefIds)
+end
+
+eventHandler.OnObjectSpawn = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "spawn", config.disallowedCreateRefIds)
+end
+
+eventHandler.OnObjectDelete = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "delete", config.disallowedDeleteRefIds)
+end
+
+eventHandler.OnObjectLock = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock", config.disallowedLockRefIds)
+end
+
+eventHandler.OnObjectTrap = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "trap", config.disallowedTrapRefIds)
+end
+
+eventHandler.OnObjectScale = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "scale")
+end
+
+eventHandler.OnObjectState = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "state", config.disallowedStateRefIds)
+end
+
+eventHandler.OnDoorState = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "doorState", config.disallowedDoorStateRefIds)
+end
+
 eventHandler.OnObjectActivate = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -855,552 +1025,6 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ObjectActivate for unloaded " .. cellDescription)
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectPlace = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectPlace: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectPlace packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("place").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectPlace from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectPlace", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectPlace from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsPlaced(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsPlaced(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-
-                local containerUniqueIndexesRequested = {}
-
-                for uniqueIndex, acceptedObject in pairs(acceptedObjects) do
-                    -- Track objects which have containers so we can request their contents
-                    if acceptedObject.hasContainer == true then
-                        table.insert(containerUniqueIndexesRequested, uniqueIndex)
-                    end
-                end
-
-                if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
-                    LoadedCells[cellDescription]:RequestContainers(pid, containerUniqueIndexesRequested)
-                end
-            end
-
-            customEventHooks.triggerHandlers("OnObjectPlace", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectSpawn = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectSpawn: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectSpawn packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("spawn").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectSpawn", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectSpawn from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsSpawned(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsSpawned(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-
-                LoadedCells[cellDescription]:RequestContainers(pid, tableHelper.getArrayFromIndexes(acceptedObjects))
-            end
-
-            customEventHooks.triggerHandlers("OnObjectSpawned", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectDelete = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectDelete: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectDelete packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("delete").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        -- Don't allow the deletion of currently dying actors via attempts at disposing of
-        -- their containers
-        local unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) or
-                tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDelete from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectDelete", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectDelete from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsDeleted(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsDeleted(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-            end
-
-            customEventHooks.triggerHandlers("OnObjectDelete", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectLock = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectLock: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectLock packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("lock").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedLockRefIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectLock from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectLock", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectLock from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsLocked(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsLocked(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-            end
-
-            customEventHooks.triggerHandlers("OnObjectLock", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectTrap = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectTrap: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectTrap packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("trap").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectTrap from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectTrap", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectTrap from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectTrapsTriggered(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectTrapsTriggered(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-            end
-
-            customEventHooks.triggerHandlers("OnObjectTrap", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectScale = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectScale: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectScaled packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("scale").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if object.scale >= config.maximumObjectScale then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectScale from " .. logicHandler.GetChatName(pid) ..
-                " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectScale", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectScale from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsScaled(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsScaled(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-            end
-
-            customEventHooks.triggerHandlers("OnObjectScale", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnObjectState = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
-
-        local isCellLoaded = LoadedCells[cellDescription] ~= nil
-
-        if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid ObjectState: " .. logicHandler.GetChatName(pid) ..
-                " used impossible packetOrigin for unloaded " .. cellDescription)
-            return
-        end
-
-        -- Iterate through the objects in the ObjectState packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables("state").objects
-        local acceptedObjects, rejectedObjects = {}, {}
-
-        for uniqueIndex, object in pairs(objects) do
-
-            if tableHelper.containsValue(config.disallowedStateRefIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
-
-            if not isCellLoaded then
-                logicHandler.LoadCell(cellDescription)
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnObjectState", {pid, cellDescription, acceptedObjects})
-
-            if eventStatus.validDefaultHandler then
-
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectState from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                LoadedCells[cellDescription]:SaveObjectsScaled(acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsScaled(pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
-            end
-
-            customEventHooks.triggerHandlers("OnObjectState", eventStatus, {pid, cellDescription, acceptedObjects})
-
-            if not isCellLoaded then
-                logicHandler.UnloadCell(cellDescription)
-            end
-        end
-    else
-        tes3mp.Kick(pid)
-    end
-end
-
-eventHandler.OnDoorState = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-
-        tes3mp.ReadReceivedObjectList()
-
-        if LoadedCells[cellDescription] ~= nil then
-
-            local objects = packetReader.GetObjectPacketTables("doorState").objects
-            local acceptedObjects, rejectedObjects = {}, {}
-
-            for uniqueIndex, object in pairs(objects) do
-
-                if tableHelper.containsValue(config.disallowedDoorStateRefIds, object.refId) then
-                    rejectedObjects[uniqueIndex] = object
-                else
-                    acceptedObjects[uniqueIndex] = object
-                end
-            end
-
-            if not tableHelper.isEmpty(rejectedObjects) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectDoorState from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-            end
-
-            if not tableHelper.isEmpty(acceptedObjects) then
-
-                local eventStatus = customEventHooks.triggerValidators("OnObjectDoorState", {pid, cellDescription, acceptedObjects})
-
-                if eventStatus.validDefaultHandler then
-
-                    tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectDoorState from " .. logicHandler.GetChatName(pid) ..
-                        " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
-                    LoadedCells[cellDescription]:SaveDoorStates(acceptedObjects)
-                    LoadedCells[cellDescription]:LoadDoorStates(pid, acceptedObjects,
-                        tableHelper.getArrayFromIndexes(acceptedObjects), true)
-                end
-
-                customEventHooks.triggerHandlers("OnObjectDoorState", eventStatus, {pid, cellDescription, acceptedObjects})
-            end
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent DoorState for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)

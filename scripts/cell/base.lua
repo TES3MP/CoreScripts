@@ -727,6 +727,27 @@ function BaseCell:SaveContainers(pid)
     end
 end
 
+function BaseCell:SaveObjectsByPacketType(packetType, objectData)
+
+    if packetType == "place" then
+        self:SaveObjectsPlaced(objectData)
+    elseif packetType == "spawn" then
+        self:SaveObjectsSpawned(objectData)
+    elseif packetType == "delete" then
+        self:SaveObjectsDeleted(objectData)
+    elseif packetType == "lock" then
+        self:SaveObjectsLocked(objectData)
+    elseif packetType == "trap" then
+        self:SaveObjectTrapsTriggered(objectData)
+    elseif packetType == "scale" then
+        self:SaveObjectsScaled(objectData)
+    elseif packetType == "state" then
+        self:SaveObjectStates(objectData)
+    elseif packetType == "doorState" then
+        self:SaveDoorStates(objectData)
+    end
+end
+
 function BaseCell:SaveActorList(pid)
 
     tes3mp.ReadReceivedActorList()
@@ -1367,6 +1388,27 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
         tes3mp.SetObjectListAction(0)
 
         tes3mp.SendContainer()
+    end
+end
+
+function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueIndexArray, forEveryone)
+
+    if packetType == "place" then
+        self:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "spawn" then
+        self:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "delete" then
+        self:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "lock" then
+        self:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "trap" then
+        self:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "scale" then
+        self:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "state" then
+        self:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "doorState" then
+        self:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
