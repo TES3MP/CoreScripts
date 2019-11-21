@@ -5,6 +5,10 @@ function string:split(sep)
     return fields
 end
 
+function string:capitalizeFirstLetter()
+    return (self:gsub("^%l", string.upper))
+end
+
 -- Check for case-insensitive equality
 function string:ciEqual(otherString)
 
