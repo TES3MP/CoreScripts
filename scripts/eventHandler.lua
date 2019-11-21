@@ -65,6 +65,40 @@ eventHandler.InitializeDefaultHandlers = function()
         cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(objects))
     end)
 
+    -- Don't allow state spam from clients
+    customEventHooks.registerHandler("OnObjectState", function(eventStatus, pid, cellDescription, objects)
+
+        local cell = LoadedCells[cellDescription]
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if object.state == false then
+                local player = Players[pid]
+
+                if player.stateSpam == nil then player.stateSpam = {} end
+
+                -- Track the number of ObjectState packets received from this player that have attempted
+                -- to disable this object
+                if player.stateSpam[uniqueIndex] == nil then
+                    player.stateSpam[uniqueIndex] = 0
+                else
+                    player.stateSpam[uniqueIndex] = player.stateSpam[uniqueIndex] + 1
+                    
+                    -- Kick a player that continues the spam
+                    if player.stateSpam[uniqueIndex] >= 25 then
+                        player:Kick()
+                        tes3mp.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
+                            " for continuing state spam")
+                    -- If the player has sent 5 false object states for the same uniqueIndex, delete the object
+                    elseif player.stateSpam[uniqueIndex] >= 5 then
+                        logicHandler.DeleteObjectForPlayer(pid, cellDescription, uniqueIndex)
+                        tes3mp.LogAppend(enumerations.log.INFO, "- Deleting state spam object")
+                    end
+                end
+            end
+        end
+    end)
+
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
