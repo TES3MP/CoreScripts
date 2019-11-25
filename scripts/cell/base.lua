@@ -305,11 +305,11 @@ function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
-function BaseCell:SaveObjectsDeleted(objectData)
+function BaseCell:SaveObjectsDeleted(objects)
 
     local temporaryLoadedCells = {}
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
 
@@ -365,9 +365,9 @@ function BaseCell:SaveObjectsDeleted(objectData)
     end
 end
 
-function BaseCell:SaveObjectsPlaced(objectData)
+function BaseCell:SaveObjectsPlaced(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local location = object.location
 
@@ -429,9 +429,9 @@ function BaseCell:SaveObjectsPlaced(objectData)
     self:QuicksaveToDrive()
 end
 
-function BaseCell:SaveObjectsSpawned(objectData)
+function BaseCell:SaveObjectsSpawned(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local location = object.location
 
@@ -490,9 +490,9 @@ function BaseCell:SaveObjectsSpawned(objectData)
     end
 end
 
-function BaseCell:SaveObjectsLocked(objectData)
+function BaseCell:SaveObjectsLocked(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
         local lockLevel = object.lockLevel
@@ -507,9 +507,9 @@ function BaseCell:SaveObjectsLocked(objectData)
     end
 end
 
-function BaseCell:SaveObjectTrapsTriggered(objectData)
+function BaseCell:SaveObjectTrapsTriggered(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
 
@@ -521,9 +521,9 @@ function BaseCell:SaveObjectTrapsTriggered(objectData)
     end
 end
 
-function BaseCell:SaveObjectsScaled(objectData)
+function BaseCell:SaveObjectsScaled(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
         local scale = object.scale
@@ -538,9 +538,9 @@ function BaseCell:SaveObjectsScaled(objectData)
     end
 end
 
-function BaseCell:SaveObjectStates(objectData)
+function BaseCell:SaveObjectStates(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
         local state = object.state
@@ -555,9 +555,9 @@ function BaseCell:SaveObjectStates(objectData)
     end
 end
 
-function BaseCell:SaveDoorStates(objectData)
+function BaseCell:SaveDoorStates(objects)
 
-    for uniqueIndex, object in pairs(objectData) do
+    for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
         local doorState = object.doorState
