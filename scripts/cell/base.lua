@@ -702,24 +702,24 @@ function BaseCell:SaveContainers(pid)
     end
 end
 
-function BaseCell:SaveObjectsByPacketType(packetType, objectData)
+function BaseCell:SaveObjectsByPacketType(packetType, objects)
 
     if packetType == "place" then
-        self:SaveObjectsPlaced(objectData)
+        self:SaveObjectsPlaced(objects)
     elseif packetType == "spawn" then
-        self:SaveObjectsSpawned(objectData)
+        self:SaveObjectsSpawned(objects)
     elseif packetType == "delete" then
-        self:SaveObjectsDeleted(objectData)
+        self:SaveObjectsDeleted(objects)
     elseif packetType == "lock" then
-        self:SaveObjectsLocked(objectData)
+        self:SaveObjectsLocked(objects)
     elseif packetType == "trap" then
-        self:SaveObjectTrapsTriggered(objectData)
+        self:SaveObjectTrapsTriggered(objects)
     elseif packetType == "scale" then
-        self:SaveObjectsScaled(objectData)
+        self:SaveObjectsScaled(objects)
     elseif packetType == "state" then
-        self:SaveObjectStates(objectData)
+        self:SaveObjectStates(objects)
     elseif packetType == "doorState" then
-        self:SaveDoorStates(objectData)
+        self:SaveDoorStates(objects)
     end
 end
 
