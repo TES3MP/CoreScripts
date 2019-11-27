@@ -41,15 +41,30 @@ end
 
 eventHandler.InitializeDefaultHandlers = function()
 
-    -- Upon receiving an actor death, add it to the cell's currently unusable containers
-    -- and request its container
+    -- Upon receiving an actor death:
+    -- 1) Add 1 to the kill count for its ID and send it to players
+    -- 2) Add it to the cell's currently unusable containers
+    -- 3) Request its container
+    -- Note: points 2 and 3 are temporary and will be handled better when
+    --       servers load up .esm data by default.
     customEventHooks.registerHandler("OnActorDeath", function(eventStatus, pid, cellDescription, actors)
 
         local cell = LoadedCells[cellDescription]
 
+        tes3mp.ClearKillChanges()
+
         for uniqueIndex, actor in pairs(actors) do
+            if WorldInstance.data.kills[actor.refId] == nil then
+                WorldInstance.data.kills[actor.refId] = 0
+            end
+
+            WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
+            tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
+
             table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
         end
+
+        tes3mp.SendWorldKillCount(pid, true)
 
         cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(actors))
     end)
