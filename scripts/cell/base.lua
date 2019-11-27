@@ -702,6 +702,13 @@ function BaseCell:SaveContainers(pid)
     end
 end
 
+function BaseCell:SaveActorsByPacketType(packetType, actors)
+
+    if packetType == "death" then
+        self:SaveActorDeath(actors)
+    end    
+end
+
 function BaseCell:SaveObjectsByPacketType(packetType, objects)
 
     if packetType == "place" then
@@ -848,70 +855,29 @@ function BaseCell:SaveActorEquipment(pid)
     self:QuicksaveToDrive()
 end
 
-function BaseCell:SaveActorDeath(pid)
+function BaseCell:SaveActorDeath(actors)
 
     if self.data.packets.death == nil then
         self.data.packets.death = {}
     end
 
-    local containerUniqueIndexesRequested = {}
-
-    tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
-        " about " .. self.description)
-
-    local actorListSize = tes3mp.GetActorListSize()
-
-    if actorListSize == 0 then
-        return
-    end
-
-    for actorIndex = 0, actorListSize - 1 do
-
-        local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
+    for uniqueIndex, actor in pairs(actors) do
 
         if self:ContainsObject(uniqueIndex) then
 
-            local deathReason = "committed suicide"
-
-            if tes3mp.DoesActorHavePlayerKiller(actorIndex) then
-                local killerPid = tes3mp.GetActorKillerPid(actorIndex)
-                deathReason = "was killed by player " .. logicHandler.GetChatName(killerPid)
-
+            if actor.killerPid == nil then
                 self.data.objectData[uniqueIndex].killer = {
-                    player = Players[killerPid].accountName
+                    player = Players[actor.killerPid].accountName
                 }
-            else
-                local killerName = tes3mp.GetActorKillerName(actorIndex)
-                local killerUniqueIndex = tes3mp.GetActorKillerRefNum(actorIndex) ..
-                    "-" .. tes3mp.GetActorKillerMpNum(actorIndex)
-
-                if killerName ~= "" and uniqueIndex ~= killerUniqueIndex then
-                    deathReason = "was killed by " .. killerName
-
-                    self.data.objectData[uniqueIndex].killer = {
-                        refId = tes3mp.GetActorKillerRefId(actorIndex),
-                        uniqueIndex = killerUniqueIndex
-                    }
-                end
+            elseif actor.killerName ~= "" then
+                self.data.objectData[uniqueIndex].killer = {
+                    refId = actor.killerRefId,
+                    uniqueIndex = actor.killerUniqueIndex
+                }
             end
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", deathReason: " .. deathReason)
-
             tableHelper.insertValueIfMissing(self.data.packets.death, uniqueIndex)
-
-            -- Prevent this actor's container from being used until we update
-            -- its contents based on a request to a player
-            --
-            -- This is an unfortunate workaround that needs to be used until
-            -- some changes are made on the C++ side
-            table.insert(self.unusableContainerUniqueIndexes, uniqueIndex)
-            table.insert(containerUniqueIndexesRequested, uniqueIndex)
         end
-    end
-
-    if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
-        self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
 
     self:QuicksaveToDrive()

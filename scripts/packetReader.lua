@@ -1,10 +1,44 @@
 packetReader = {}
 
+packetReader.GetActorPacketTables = function(packetType)
+    
+    local packetTables, actors = {}, {}
+    local actorListSize = tes3mp.GetActorListSize()
+
+    if actorListSize == 0 then return packetTables end
+
+    for packetIndex = 0, actorListSize - 1 do
+        local actor = {}
+        local uniqueIndex = tes3mp.GetActorRefNum(packetIndex) .. "-" .. tes3mp.GetActorMpNum(packetIndex)
+
+        if packetType == "death" then
+            local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
+
+            if doesActorHavePlayerKiller then
+                actor.killerPid = tes3mp.GetActorKillerPid(packetIndex)
+            else
+                actor.killerRefId = tes3mp.GetActorKillerRefId(packetIndex)
+                actor.killerName = tes3mp.GetActorKillerName(packetIndex)
+                actor.killerUniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
+                    "-" .. tes3mp.GetActorKillerMpNum(packetIndex)
+            end
+        end
+
+        actors[uniqueIndex] = actor
+    end
+
+    packetTables.actors = actors
+    return packetTables
+end
+
 packetReader.GetObjectPacketTables = function(packetType)
 
     local packetTables, objects, players = {}, {}, {}
+    local objectListSize = tes3mp.GetObjectListSize()
 
-    for packetIndex = 0, tes3mp.GetObjectListSize() - 1 do
+    if objectListSize == 0 then return packetTables end
+
+    for packetIndex = 0, objectListSize - 1 do
         local object, uniqueIndex, player, pid = nil, nil, nil, nil
         
         if packetType == "activate" then

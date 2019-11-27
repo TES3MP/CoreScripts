@@ -41,6 +41,19 @@ end
 
 eventHandler.InitializeDefaultHandlers = function()
 
+    -- Upon receiving an actor death, add it to the cell's currently unusable containers
+    -- and request its container
+    customEventHooks.registerHandler("OnActorDeath", function(eventStatus, pid, cellDescription, actors)
+
+        local cell = LoadedCells[cellDescription]
+
+        for uniqueIndex, actor in pairs(actors) do
+            table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
+        end
+
+        cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(actors))
+    end)
+
     -- Upon accepting an object placement, request its container if it has one
     customEventHooks.registerHandler("OnObjectPlace", function(eventStatus, pid, cellDescription, objects)
 
@@ -843,13 +856,35 @@ eventHandler.OnActorAI = function(pid, cellDescription)
 end
 
 eventHandler.OnActorDeath = function(pid, cellDescription)
+
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription})
+
+            tes3mp.ReadReceivedActorList()
+            local actors = packetReader.GetActorPacketTables("death").actors
+
+            local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription, actors})
             if eventStatus.validDefaultHandler then
-                LoadedCells[cellDescription]:SaveActorDeath(pid)
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription)
+
+                for uniqueIndex, actor in pairs(actors) do
+                    local deathReason = "committed suicide"
+                    local debugMessage = "- " .. uniqueIndex .. ", deathReason: "
+
+                    if actor.killerPid ~= nil then
+                        deathReason = "killed by player " .. logicHandler.GetChatName(actor.killerPid)
+                    elseif actor.killerName ~= "" then
+                        deathReason = "killed by actor " .. actor.killerRefId .. " " .. actor.killerUniqueIndex
+                    end
+
+                    tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)
+                end
+
+                LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
             end
-            customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription})
+            customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription, actors})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorDeath for unloaded " .. cellDescription)
