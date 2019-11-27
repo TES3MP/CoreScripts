@@ -2,7 +2,7 @@ packetReader = {}
 
 packetReader.GetActorPacketTables = function(packetType)
     
-    local packetTables, actors = {}, {}
+    local packetTables = { actors = {} }
     local actorListSize = tes3mp.GetActorListSize()
 
     if actorListSize == 0 then return packetTables end
@@ -28,16 +28,15 @@ packetReader.GetActorPacketTables = function(packetType)
             end
         end
 
-        actors[uniqueIndex] = actor
+        packetTables.actors[uniqueIndex] = actor
     end
 
-    packetTables.actors = actors
     return packetTables
 end
 
 packetReader.GetObjectPacketTables = function(packetType)
 
-    local packetTables, objects, players = {}, {}, {}
+    local packetTables = { objects = {}, players = {} }
     local objectListSize = tes3mp.GetObjectListSize()
 
     if objectListSize == 0 then return packetTables end
@@ -124,14 +123,12 @@ packetReader.GetObjectPacketTables = function(packetType)
         end
 
         if object ~= nil then
-            objects[uniqueIndex] = object
+            packetTables.objects[uniqueIndex] = object
         elseif player ~= nil then
-            players[pid] = player
+            packetTables.players[pid] = player
         end
     end
 
-    packetTables.objects = objects
-    packetTables.players = players
     return packetTables
 end
 
