@@ -704,7 +704,9 @@ end
 
 function BaseCell:SaveActorsByPacketType(packetType, actors)
 
-    if packetType == "death" then
+    if packetType == "list" then
+        self:SaveActorList(actors)
+    elseif packetType == "death" then
         self:SaveActorDeath(actors)
     end    
 end
@@ -730,19 +732,12 @@ function BaseCell:SaveObjectsByPacketType(packetType, objects)
     end
 end
 
-function BaseCell:SaveActorList(pid)
+function BaseCell:SaveActorList(actors)
 
-    tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorList from " .. logicHandler.GetChatName(pid) ..
-        " about " .. self.description)
+    for uniqueIndex, actor in pairs(actors) do
 
-    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
-
-        local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        local refId = tes3mp.GetActorRefId(actorIndex)
-
-        self:InitializeObjectData(uniqueIndex, refId)
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
+        self:InitializeObjectData(uniqueIndex, actor.refId)
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. actor.refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end

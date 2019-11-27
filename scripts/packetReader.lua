@@ -12,9 +12,12 @@ packetReader.GetActorPacketTables = function(packetType)
         local uniqueIndex = tes3mp.GetActorRefNum(packetIndex) .. "-" .. tes3mp.GetActorMpNum(packetIndex)
         actor.uniqueIndex = uniqueIndex
 
-        if packetType == "death" then
-            -- Only non-repetitive actor packets contain refId information
+        -- Only non-repetitive actor packets contain refId information
+        if tableHelper.containsValue({"list", "death"}, packetType) then
             actor.refId = tes3mp.GetActorRefId(packetIndex)
+        end
+
+        if packetType == "death" then
 
             local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
 

@@ -811,21 +811,37 @@ eventHandler.OnCellDeletion = function(cellDescription)
     customEventHooks.triggerHandlers("OnCellDeletion", eventStatus, {cellDescription})
 end
 
-eventHandler.OnActorList = function(pid, cellDescription)
+eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
+
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local eventStatus = customEventHooks.triggerValidators("OnActorList", {pid, cellDescription})
+
+            tes3mp.ReadReceivedActorList()
+            local actors = packetReader.GetActorPacketTables(packetType).actors
+
+            local eventStatus = customEventHooks.triggerValidators("OnActor" .. packetType:capitalizeFirstLetter(),
+                {pid, cellDescription, actors})
+
             if eventStatus.validDefaultHandler then
-                LoadedCells[cellDescription]:SaveActorList(pid)
+
+                tes3mp.LogMessage(enumerations.log.INFO, "Saving Actor" .. packetType:capitalizeFirstLetter() ..
+                    " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription)
+
+                LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
             end
-            customEventHooks.triggerHandlers("OnActorList", eventStatus, {pid, cellDescription})
+            customEventHooks.triggerHandlers("OnActor" .. packetType:capitalizeFirstLetter(), eventStatus,
+                {pid, cellDescription, actors})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ActorList for unloaded " .. cellDescription)
+                " sent Actor" .. packetType:capitalizeFirstLetter() .. " for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
     end
+end
+
+eventHandler.OnActorList = function(pid, cellDescription)
+    eventHandler.OnGenericActorEvent(pid, cellDescription, "list")
 end
 
 eventHandler.OnActorEquipment = function(pid, cellDescription)
@@ -879,6 +895,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
             local actors = packetReader.GetActorPacketTables("death").actors
 
             local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription, actors})
+
             if eventStatus.validDefaultHandler then
 
                 tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
