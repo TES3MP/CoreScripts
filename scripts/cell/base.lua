@@ -706,6 +706,8 @@ function BaseCell:SaveActorsByPacketType(packetType, actors)
 
     if packetType == "list" then
         self:SaveActorList(actors)
+    elseif packetType == "equipment" then
+        self:SaveActorEquipment(actors)
     elseif packetType == "death" then
         self:SaveActorDeath(actors)
     end    
@@ -808,39 +810,17 @@ function BaseCell:SaveActorStatsDynamic()
     end
 end
 
-function BaseCell:SaveActorEquipment(pid)
+function BaseCell:SaveActorEquipment(actors)
 
-    tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorEquipment from " .. logicHandler.GetChatName(pid) ..
-        " about " .. self.description)
+    for uniqueIndex, actor in pairs(actors) do
 
-    local actorListSize = tes3mp.GetActorListSize()
-
-    if actorListSize == 0 then
-        return
-    end
-
-    for actorIndex = 0, actorListSize - 1 do
-
-        local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
         tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
 
         if self:ContainsObject(uniqueIndex) then
             self.data.objectData[uniqueIndex].equipment = {}
 
-            for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
-
-                local itemRefId = tes3mp.GetActorEquipmentItemRefId(actorIndex, itemIndex)
-
-                if itemRefId ~= "" then
-
-                    self.data.objectData[uniqueIndex].equipment[itemIndex] = {
-                        refId = itemRefId,
-                        count = tes3mp.GetActorEquipmentItemCount(actorIndex, itemIndex),
-                        charge = tes3mp.GetActorEquipmentItemCharge(actorIndex, itemIndex),
-                        enchantmentCharge = tes3mp.GetActorEquipmentItemEnchantmentCharge(actorIndex, itemIndex)
-                    }
-                end
+            for equipmentIndex, item in pairs(actor.equipment) do
+                self.data.objectData[uniqueIndex].equipment[equipmentIndex] = item
             end
 
             tableHelper.insertValueIfMissing(self.data.packets.equipment, uniqueIndex)

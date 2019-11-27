@@ -17,7 +17,24 @@ packetReader.GetActorPacketTables = function(packetType)
             actor.refId = tes3mp.GetActorRefId(packetIndex)
         end
 
-        if packetType == "death" then
+        if packetType == "equipment" then
+
+            actor.equipment = {}
+            local equipmentSize = tes3mp.GetEquipmentSize()
+
+            for itemIndex = 0, equipmentSize - 1 do
+                local itemRefId = tes3mp.GetActorEquipmentItemRefId(packetIndex, itemIndex)
+
+                if itemRefId ~= "" then
+                    actor.equipment[itemIndex] = {
+                        refId = itemRefId,
+                        count = tes3mp.GetActorEquipmentItemCount(packetIndex, itemIndex),
+                        charge = tes3mp.GetActorEquipmentItemCharge(packetIndex, itemIndex),
+                        enchantmentCharge = tes3mp.GetActorEquipmentItemEnchantmentCharge(packetIndex, itemIndex)
+                    }
+                end
+            end
+        elseif packetType == "death" then
 
             local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
 
