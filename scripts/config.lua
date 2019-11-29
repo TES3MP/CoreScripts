@@ -254,9 +254,9 @@ config.generatedRecordIdPrefix = "$custom"
 -- players, with the correct order ensuring that enchantments are loaded before items that might be
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
-config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "armor", "book", "clothing",
-    "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light", "miscellaneous",
-    "creature", "npc", "container", "door", "activator", "static", "cell" }
+config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "bodypart", "armor",
+    "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
+    "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -273,6 +273,7 @@ config.validRecordSettings = {
         "quality" },
     armor = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value", "health", "armorRating" },
+    bodypart = { "baseId", "id", "subtype", "part", "model", "race", "vampireState", "flags" },
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "text", "weight", "value", "scrollState", "skillId" },
     cell = { "baseId", "id" },
@@ -308,6 +309,7 @@ config.requiredRecordSettings = {
     activator = { "name", "model" },
     apparatus = { "name", "model" },
     armor = { "name", "model" },
+    bodypart = { "subtype", "part", "model" },
     book = { "name", "model" },
     cell = { "id" },
     clothing = { "name", "model" },
@@ -331,12 +333,12 @@ config.requiredRecordSettings = {
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "charge", "cost", "value", "weight", "quality", "uses",
-    "time", "radius", "health", "armorRating", "speed", "reach", "scale", "bloodType", "level", "magicka",
-    "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender", "flags",
+    "time", "radius", "health", "armorRating", "speed", "reach", "scale", "part", "bloodType", "level",
+    "magicka", "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender", "flags",
     "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
-config.booleanRecordSettings = { "scrollState", "keyState" }
+config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" }
 
 -- The record type settings whose input should be converted to tables with a min and a max numerical value
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }

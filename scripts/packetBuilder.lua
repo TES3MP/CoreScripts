@@ -185,6 +185,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddApparatusRecord(id, record)
     elseif storeType == "armor" then
         packetBuilder.AddArmorRecord(id, record)
+    elseif storeType == "bodypart" then
+        packetBuilder.AddBodyPartRecord(id, record)
     elseif storeType == "book" then
         packetBuilder.AddBookRecord(id, record)
     elseif storeType == "cell" then
@@ -274,6 +276,20 @@ packetBuilder.AddArmorRecord = function(id, record)
             packetBuilder.AddBodyPartToRecord(part)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddBodyPartRecord = function(id, record)
+    
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
+    if record.part ~= nil then tes3mp.SetRecordBodyPartType(record.part) end
+    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    if record.race ~= nil then tes3mp.SetRecordRace(record.race) end
+    if record.vampireState ~= nil then tes3mp.SetRecordVampireState(record.vampireState) end
+    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
 
     tes3mp.AddRecord()
 end
