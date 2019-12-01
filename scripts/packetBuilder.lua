@@ -60,6 +60,23 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
 
     tes3mp.SetObjectRefId(objectData.refId)
 
+    if objectData.summon ~= nil then
+        tes3mp.SetObjectSummonState(true)
+
+        local currentTime = os.time()
+        local finishTime = objectData.summon.startTime + objectData.summon.duration
+        tes3mp.SetObjectSummonDuration(finishTime - currentTime)
+
+        if objectData.summon.summonerPlayer then
+            local player = logicHandler.GetPlayerByName(objectData.summon.summonerPlayer)
+            tes3mp.SetObjectSummonerPid(player.pid)
+        else
+            local summonerSplitIndex = objectData.summon.summonerUniqueIndex:split("-")
+            tes3mp.SetObjectSummonerRefNum(summonerSplitIndex[1])
+            tes3mp.SetObjectSummonerMpNum(summonerSplitIndex[2])
+        end
+    end
+
     local location = objectData.location
     tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
     tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
