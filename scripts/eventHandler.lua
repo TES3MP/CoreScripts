@@ -335,11 +335,13 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
 
                     local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
 
-                    menuHelper.ProcessEffects(pid, destination.effects)
-                    menuHelper.DisplayMenu(pid, destination.targetMenu)
-
                     Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
-                    Players[pid].currentCustomMenu = destination.targetMenu
+                    menuHelper.ProcessEffects(pid, destination.effects)
+
+                    if destination.targetMenu ~= nil then
+                        menuHelper.DisplayMenu(pid, destination.targetMenu)
+                        Players[pid].currentCustomMenu = destination.targetMenu
+                    end
                 end
             else
                 if idGui == guiHelper.ID.LOGIN then
