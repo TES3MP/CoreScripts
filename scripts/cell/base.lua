@@ -452,6 +452,8 @@ function BaseCell:SaveObjectsSpawned(objects)
                 if summonDuration > 0 then
                     local summon = {}
                     summon.duration = object.summon.duration
+                    summon.effectId = object.summon.effectId
+                    summon.spellId = object.summon.spellId
                     summon.startTime = object.summon.startTime
 
                     local hasPlayerSummoner = object.hasPlayerSummoner

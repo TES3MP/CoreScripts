@@ -62,6 +62,8 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
 
     if objectData.summon ~= nil then
         tes3mp.SetObjectSummonState(true)
+        tes3mp.SetObjectSummonEffectId(objectData.summon.effectId)
+        tes3mp.SetObjectSummonSpellId(objectData.summon.spellId)
 
         local currentTime = os.time()
         local finishTime = objectData.summon.startTime + objectData.summon.duration

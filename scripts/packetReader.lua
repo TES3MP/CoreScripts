@@ -119,6 +119,8 @@ packetReader.GetObjectPacketTables = function(packetType)
 
                     if summonState == true then
                         object.summon = {}
+                        object.summon.effectId = tes3mp.GetObjectSummonEffectId(packetIndex)
+                        object.summon.spellId = tes3mp.GetObjectSummonSpellId(packetIndex)
                         object.summon.duration = tes3mp.GetObjectSummonDuration(packetIndex)
                         object.summon.startTime = os.time()
                         object.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
