@@ -115,18 +115,25 @@ packetReader.GetObjectPacketTables = function(packetType)
                     object.goldValue = tes3mp.GetObjectGoldValue(packetIndex)
                     object.hasContainer = tes3mp.DoesObjectHaveContainer(packetIndex)
                 elseif packetType == "spawn" then
-                    object.summonState = tes3mp.GetObjectSummonState(packetIndex)
+                    local summonState = tes3mp.GetObjectSummonState(packetIndex)
 
-                    if object.summonState == true then
-                        object.summonDuration = tes3mp.GetObjectSummonDuration(packetIndex)
+                    if summonState == true then
+                        object.summon = {}
+                        object.summon.duration = tes3mp.GetObjectSummonDuration(packetIndex)
+                        object.summon.startTime = os.time()
                         object.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
 
                         if object.hasPlayerSummoner == true then
-                            object.summonerPid = tes3mp.GetObjectSummonerPid(packetIndex)
+                            local summonerPid = tes3mp.GetObjectSummonerPid(packetIndex)
+                            object.summon.summonerPid = summonerPid
+
+                            if Players[summonerPid] ~= nil then
+                                object.summon.summonerPlayer = Players[summonerPid].accountName
+                            end
                         else
-                            object.summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
+                            object.summon.summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
                                 "-" .. tes3mp.GetObjectSummonerMpNum(packetIndex)
-                            object.summonerRefId = tes3mp.GetObjectSummonerRefId(packetIndex)
+                            object.summon.summonerRefId = tes3mp.GetObjectSummonerRefId(packetIndex)
                         end
                     end
                 end

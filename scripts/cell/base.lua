@@ -446,30 +446,30 @@ function BaseCell:SaveObjectsSpawned(objects)
 
             self.data.objectData[uniqueIndex].location = location
 
-            if object.summonState == true then
-                local summonDuration = object.summonDuration
+            if object.summon ~= nil then
+                local summonDuration = object.summon.duration
 
                 if summonDuration > 0 then
                     local summon = {}
-                    summon.duration = summonDuration
-                    summon.startTime = os.time()
+                    summon.duration = object.summon.duration
+                    summon.startTime = object.summon.startTime
 
                     local hasPlayerSummoner = object.hasPlayerSummoner
 
                     if hasPlayerSummoner then
-                        local summonerPid = object.summonerPid
+                        local summonerPid = object.summon.summonerPid
                         tes3mp.LogAppend(enumerations.log.INFO, "- summoned by player " ..
                             logicHandler.GetChatName(summonerPid))
 
                         -- Track the player and the summon for each other
-                        summon.summonerPlayer = Players[summonerPid].accountName
+                        summon.summonerPlayer = object.summon.summonerPlayer
 
                         Players[summonerPid].summons[uniqueIndex] = refId
                     else
-                        local summonerUniqueIndex = object.summonerUniqueIndex
-                        local summonerRefId = object.summonerRefId
-                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summonerUniqueIndex ..
-                            ", refId: " .. summonerRefId)
+                        summon.summonerUniqueIndex = object.summon.summonerUniqueIndex
+                        summon.summonerRefId = object.summon.summonerRefId
+                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summon.summonerUniqueIndex ..
+                            ", refId: " .. summon.summonerRefId)
                     end
 
                     self.data.objectData[uniqueIndex].summon = summon
@@ -1117,12 +1117,18 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
                     local currentTime = os.time()
                     local finishTime = summon.startTime + summon.duration
 
+                    -- Don't spawn this summoned creature if its summoning duration is over..
                     if currentTime >= finishTime then
                         self:DeleteObjectData(uniqueIndex)
                         shouldSkip = true
-                    else
-                        local remainingTime = finishTime - currentTime
-                        tes3mp.SetObjectSummonDuration(remainingTime)
+                    -- ...or if its player is offline
+                    elseif summon.summonerPlayer ~= nil then
+                        if not logicHandler.IsPlayerNameLoggedIn(summon.summonerPlayer) then
+                            shouldSkip = true
+                        end
+                    -- ...or if it doesn't have an actor stored as its summoner
+                    elseif summon.summonerUniqueIndex == nil then
+                        shouldSkip = true
                     end
                 end
 
