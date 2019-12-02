@@ -89,7 +89,7 @@ defaultCommands.joinTeam = function(pid, cmd)
         elseif tableHelper.containsValue(Players[pid].teamInvitesReceived, Players[targetPid].accountName) then
             senderMessage = "You are now on the team of " .. logicHandler.GetChatName(targetPid) .. ". Write " ..
                 color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave it.\n"
-            local receiverMessage = logicHandler.GetChatName(targetPid) .. " has joined your team.\n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has joined your team.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
 
             table.insert(Players[pid].data.teamMembers, Players[targetPid].accountName)
