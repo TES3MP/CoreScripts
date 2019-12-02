@@ -33,7 +33,6 @@ defaultCommands.msg = function(pid, cmd)
         tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local targetPid = tonumber(cmd[2])
-        local targetName = Players[targetPid].name
         message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
         message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
         tes3mp.SendMessage(pid, message, false)
@@ -43,6 +42,100 @@ end
 
 customCommandHooks.registerCommand("msg", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
+
+defaultCommands.inviteToTeam = function(pid, cmd)
+    if pid == tonumber(cmd[2]) then
+        tes3mp.SendMessage(pid, "You can't invite yourself to a team.\n")
+    elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local senderMessage
+        
+        if Players[pid].teamInvitesSent == nil then Players[pid].teamInvitesSent = {} end
+        if Players[targetPid].teamInvitesReceived == nil then Players[targetPid].teamInvitesReceived = {} end
+
+        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
+            senderMessage = "You are already on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+        elseif tableHelper.containsValue(Players[pid].teamInvitesSent, Players[targetPid].accountName) then
+            senderMessage = "You have already invited " .. logicHandler.GetChatName(targetPid) .. " to your team.\n"
+        else
+            table.insert(Players[pid].teamInvitesSent, Players[targetPid].accountName)
+            table.insert(Players[targetPid].teamInvitesReceived, Players[pid].accountName)
+
+            senderMessage = "You have invited " .. logicHandler.GetChatName(targetPid) .. " to your team.\n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has invited you to join their team. Write " ..
+                color.Yellow .. "/join " .. pid .. color.White .. " to accept.\n"
+            tes3mp.SendMessage(targetPid, receiverMessage, false)
+        end
+
+        tes3mp.SendMessage(pid, senderMessage, false)
+    end
+end
+
+customCommandHooks.registerCommand("invite", defaultCommands.inviteToTeam)
+
+defaultCommands.joinTeam = function(pid, cmd)
+    if pid == tonumber(cmd[2]) then
+        tes3mp.SendMessage(pid, "You can't join your own team.\n")
+    elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local senderMessage
+
+        if Players[pid].teamInvitesReceived == nil then Players[pid].teamInvitesReceived = {} end
+
+        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
+            senderMessage = "You are already on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+        elseif tableHelper.containsValue(Players[pid].teamInvitesReceived, Players[targetPid].accountName) then
+            senderMessage = "You are now on the team of " .. logicHandler.GetChatName(targetPid) .. ". Write " ..
+                color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave it.\n"
+            local receiverMessage = logicHandler.GetChatName(targetPid) .. " has joined your team.\n"
+            tes3mp.SendMessage(targetPid, receiverMessage, false)
+
+            table.insert(Players[pid].data.teamMembers, Players[targetPid].accountName)
+            table.insert(Players[targetPid].data.teamMembers, Players[pid].accountName)
+            Players[pid]:Save()
+            Players[pid]:LoadTeam()
+            Players[targetPid]:Save()
+            Players[targetPid]:LoadTeam()
+        else
+            senderMessage = "You have not yet been invited to the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+        end
+
+        tes3mp.SendMessage(pid, senderMessage, false)
+    end
+end
+
+customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
+
+defaultCommands.leaveTeam = function(pid, cmd)
+    if pid == tonumber(cmd[2]) then
+        tes3mp.SendMessage(pid, "You can't leave your own team.\n")
+    elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local senderMessage
+
+        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
+            senderMessage = "You have now left the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+            local receiverMessage = logicHandler.GetChatName(targetPid) .. " has left your team.\n"
+            tes3mp.SendMessage(targetPid, receiverMessage, false)
+
+            tableHelper.removeValue(Players[pid].data.teamMembers, Players[targetPid].accountName)
+            tableHelper.removeValue(Players[targetPid].data.teamMembers, Players[pid].accountName)
+            Players[pid]:Save()
+            Players[pid]:LoadTeam()
+            Players[targetPid]:Save()
+            Players[targetPid]:LoadTeam()
+        else
+            senderMessage = "You are not on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+        end
+
+        tes3mp.SendMessage(pid, senderMessage, false)
+    end
+end
+
+customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"

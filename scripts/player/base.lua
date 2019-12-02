@@ -83,6 +83,7 @@ function BasePlayer:__init(pid, playerName)
         mapExplored = {},
         ipAddresses = {},
         recordLinks = {},
+        teamMembers = {},
         customVariables = {}
     }
 
@@ -266,9 +267,19 @@ function BasePlayer:FinishLogin()
         self:LoadClientScriptVariables()        
         WorldInstance:LoadClientScriptVariables(self.pid)
 
+        self:LoadTeam()
         self:LoadCell()
 
         self.loggedIn = true
+
+        if self.data.teamMembers == nil then self.data.teamMembers = {} end
+
+        for _, otherAccountName in ipairs(self.data.teamMembers) do
+            if logicHandler.IsPlayerNameLoggedIn(otherAccountName) then
+                local otherPlayer = logicHandler.GetPlayerByName(otherAccountName)
+                otherPlayer:LoadTeam()
+            end
+        end
         
         customEventHooks.triggerHandlers("OnPlayerFinishLogin", customEventHooks.makeEventStatus(true, true), {self.pid})
         customEventHooks.triggerHandlers("OnPlayerAuthentified", customEventHooks.makeEventStatus(true, true), {self.pid})
@@ -1310,6 +1321,22 @@ end
 
 function BasePlayer:LoadMap()
     stateHelper:LoadMap(self.pid, self)
+end
+
+function BasePlayer:LoadTeam()
+    
+    if self.data.teamMembers == nil then self.data.teamMembers = {} end
+
+    tes3mp.ClearTeamMembersForPlayer(self.pid)
+
+    for _, otherAccountName in ipairs(self.data.teamMembers) do
+        if logicHandler.IsPlayerNameLoggedIn(otherAccountName) then
+            local otherPlayer = logicHandler.GetPlayerByName(otherAccountName)
+            tes3mp.AddTeamMemberForPlayer(self.pid, otherPlayer.pid)
+        end
+    end
+
+    tes3mp.SendTeam(self.pid)
 end
 
 function BasePlayer:LoadBooks()

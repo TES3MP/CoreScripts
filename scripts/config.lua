@@ -24,7 +24,9 @@ config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
 -- The chat window instructions that show up when players join the server
 config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
     " from your client config. Type in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
-    " available to you. Use " .. color.Yellow .. "F2" .. color.White .. " by default to hide the chat window.\n"
+    " available to you. Type in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to your " ..
+    "team and make your AI followers more forgiving towards them. Use " .. color.Yellow .. "F2" .. color.White .. " by default " ..
+    " to hide the chat window.\n"
 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false
