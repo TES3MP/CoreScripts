@@ -84,7 +84,7 @@ packetReader.GetObjectPacketTables = function(packetType)
 
                 if isObjectPlayer then
                     player.activatingPid = activatingPid
-                    player.drawState = tes3mp.GetDrawState(object.activatingPid) -- for backwards compatibility
+                    player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
                 else
                     object.activatingPid = activatingPid
                 end
