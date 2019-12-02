@@ -51,8 +51,7 @@ end
 
 customCommandHooks.registerCommand("me", defaultCommands.me)
 
---damn can't name it local
-defaultCommands.loc = function(pid, cmd)
+defaultCommands.localMessage = function(pid, cmd)
     local cellDescription = Players[pid].data.location.cell
 
     if logicHandler.IsCellLoaded(cellDescription) == true then
@@ -65,8 +64,8 @@ defaultCommands.loc = function(pid, cmd)
     end
 end
 
-customCommandHooks.registerCommand("local", defaultCommands.loc)
-customCommandHooks.registerCommand("l", defaultCommands.loc)
+customCommandHooks.registerCommand("local", defaultCommands.localMessage)
+customCommandHooks.registerCommand("l", defaultCommands.localMessage)
 
 defaultCommands.greentext = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
