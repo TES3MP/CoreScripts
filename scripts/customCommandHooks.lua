@@ -7,15 +7,15 @@
 
 
     customCommandHooks.registerCommand("ranktest", function(pid, cmd)
-        tes3mp.SendMessage(pid, "You can execute a rank checked command!\n", false)
+        tes3mp.SendMessage(pid, "You can execute a rank-checked command!\n", false)
     end)
-    customCommandHooks.setRankRequirment("ranktest", 2) --most be atleast rank 2
+    customCommandHooks.setRankRequirement("ranktest", 2) -- must be at least rank 2
 
 
     customCommandHooks.registerCommand("nametest", function(pid, cmd)
-        tes3mp.SendMessage(pid, "You can execute a name checked command!\n", false)
+        tes3mp.SendMessage(pid, "You can execute a name-checked command!\n", false)
     end)
-    customCommandHooks.setNameRequirment("nametest", {"Admin", "Kneg", "Jiub"}) --most be one of these names
+    customCommandHooks.setNameRequirement("nametest", {"Admin", "Kneg", "Jiub"}) -- must be one of these names
 
 ]]
 
@@ -42,23 +42,23 @@ function customCommandHooks.getCallback(cmd)
     return customCommandHooks.commands[cmd]
 end
 
-function customCommandHooks.setRankRequirment(cmd, rank)
+function customCommandHooks.setRankRequirement(cmd, rank)
     if customCommandHooks.commands[cmd] ~= nil then
         customCommandHooks.rankRequirement[cmd] = rank
     end
 end
 
-function customCommandHooks.removeRankRequirment(cmd)
+function customCommandHooks.removeRankRequirement(cmd)
     customCommandHooks.rankRequirement[cmd] = nil
 end
 
-function customCommandHooks.setNameRequirment(cmd, names)
+function customCommandHooks.setNameRequirement(cmd, names)
     if customCommandHooks.commands[cmd] ~= nil then
         customCommandHooks.nameRequirement[cmd] = names
     end
 end
 
-function customCommandHooks.addNameRequirment(cmd, name)
+function customCommandHooks.addNameRequirement(cmd, name)
     if customCommandHooks.commands[cmd] ~= nil then
         if customCommandHooks.nameRequirement[cmd] == nil then
             customCommandHooks.nameRequirement[cmd] = {}
@@ -67,7 +67,7 @@ function customCommandHooks.addNameRequirment(cmd, name)
     end
 end
 
-function customCommandHooks.removeNameRequirment(cmd)
+function customCommandHooks.removeNameRequirement(cmd)
     customCommandHooks.nameRequirement[cmd] = nil
 end
 
