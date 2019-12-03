@@ -1336,7 +1336,7 @@ function BasePlayer:LoadTeam()
         end
     end
 
-    tes3mp.SendTeam(self.pid)
+    tes3mp.SendTeam(self.pid, true)
 end
 
 function BasePlayer:LoadBooks()
