@@ -118,7 +118,7 @@ defaultCommands.leaveTeam = function(pid, cmd)
 
         if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
             senderMessage = "You have now left the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
-            local receiverMessage = logicHandler.GetChatName(targetPid) .. " has left your team.\n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has left your team.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
 
             tableHelper.removeValue(Players[pid].data.teamMembers, Players[targetPid].accountName)
