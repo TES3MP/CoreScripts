@@ -41,16 +41,21 @@ function tableHelper.getValueOverlap(firstTable, secondTable)
     return newTable
 end
 
--- Iterate through comma-separated values in a string and turn them into table values
-function tableHelper.getTableFromCommaSplit(inputString)
+-- Iterate through values matching a pattern in a string and turn them into table values
+function tableHelper.getTableFromSplit(inputString, pattern)
 
     local newTable = {}
 
-    for value in string.gmatch(inputString, patterns.commaSplit) do
+    for value in string.gmatch(inputString, pattern) do
         table.insert(newTable, value)
     end
 
     return newTable
+end
+
+-- Iterate through comma-separated values in a string and turn them into table values
+function tableHelper.getTableFromCommaSplit(inputString)
+    return tableHelper.getTableFromSplit(inputString, patterns.commaSplit)
 end
 
 -- Concatenate the indexes in a table, useful for printing out all the valid
