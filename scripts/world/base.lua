@@ -27,6 +27,7 @@ function BaseWorld:__init()
         kills = {},
         time = config.defaultTimeTable,
         mapExplored = {},
+        destinationOverrides = {},
         customVariables = {}
     }
 end
@@ -197,6 +198,10 @@ end
 
 function BaseWorld:LoadClientScriptVariables(pid)
     stateHelper:LoadClientScriptVariables(pid, self)
+end
+
+function BaseWorld:LoadDestinationOverrides(pid)
+    stateHelper:LoadDestinationOverrides(pid, self)
 end
 
 function BaseWorld:LoadMap(pid)

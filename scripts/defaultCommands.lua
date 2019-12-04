@@ -354,3 +354,62 @@ defaultCommands.regions = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("regions", defaultCommands.regions)
+
+defaultCommands.overrideDestination = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if isModerator == false then
+        invalidCommand(pid)
+        return
+    end
+
+    if cmd[2] == nil or cmd[3] == nil then
+        tes3mp.SendMessage(pid, 'Invalid inputs! Use /overridedestination all/<pid> "Old Cell Name" "New Cell Name"\n')
+        return
+    end
+
+    if cmd[2] ~= "all" and not logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        return
+    end
+
+    local inputConcatenation = tableHelper.concatenateFromIndex(cmd, 3)
+    local cellDescriptions = tableHelper.getTableFromSplit(inputConcatenation, patterns.quoteSplit)
+
+    if tableHelper.getCount(cellDescriptions) ~= 2 then
+        tes3mp.SendMessage(pid, "Invalid inputs! Please specify two different cells with their names between quotation marks.\n")
+        return
+    end
+
+    local stateObject
+    local targetPid
+
+    if cmd[2] == "all" then
+        stateObject = WorldInstance
+    else
+        targetPid = tonumber(cmd[2])
+        stateObject = Players[targetPid]
+    end
+
+    -- Get rid of quotation marks
+    for currentIndex, cellDescription in pairs(cellDescriptions) do
+        cellDescriptions[currentIndex] = string.gsub(cellDescription, '"', '')
+    end
+
+    stateObject.data.destinationOverrides[cellDescriptions[1]] = cellDescriptions[2]
+    stateObject:Save()
+
+    if cmd[2] == "all" then
+        for onlinePid, player in pairs(Players) do
+            if player:IsLoggedIn() then
+                WorldInstance:LoadDestinationOverrides(onlinePid)
+            end
+        end
+    else
+        Players[targetPid]:LoadDestinationOverrides()
+    end
+
+    tes3mp.SendMessage(pid, "Doors and clientside commands leading to " .. cellDescriptions[1] .. " now lead to " ..
+        cellDescriptions[2] .. " instead.\n")
+end
+
+customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)

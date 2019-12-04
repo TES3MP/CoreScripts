@@ -162,6 +162,27 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
     end
 end
 
+function StateHelper:LoadDestinationOverrides(pid, stateObject)
+
+    if stateObject.data.destinationOverrides == nil then
+        stateObject.data.destinationOverrides = {}
+    end
+
+    local destinationCount = 0
+
+    tes3mp.ClearDestinationOverrides()
+
+    for oldCellDescription, newCellDescription in pairs(stateObject.data.destinationOverrides) do
+
+        tes3mp.AddDestinationOverride(oldCellDescription, newCellDescription)
+        destinationCount = destinationCount + 1
+    end
+
+    if destinationCount > 0 then
+        tes3mp.SendWorldDestinationOverride(pid)
+    end
+end
+
 function StateHelper:LoadMap(pid, stateObject)
 
     if stateObject.data.mapExplored == nil then

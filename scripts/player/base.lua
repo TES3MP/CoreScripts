@@ -84,6 +84,7 @@ function BasePlayer:__init(pid, playerName)
         ipAddresses = {},
         recordLinks = {},
         teamMembers = {},
+        destinationOverrides = {},
         customVariables = {}
     }
 
@@ -266,6 +267,9 @@ function BasePlayer:FinishLogin()
 
         self:LoadClientScriptVariables()        
         WorldInstance:LoadClientScriptVariables(self.pid)
+
+        self:LoadDestinationOverrides()
+        WorldInstance:LoadDestinationOverrides(self.pid)
 
         self:LoadTeam()
         self:LoadCell()
@@ -1317,6 +1321,10 @@ end
 
 function BasePlayer:SaveClientScriptGlobalShort()
     stateHelper:SaveClientScriptGlobalShort(self.pid, self)
+end
+
+function BasePlayer:LoadDestinationOverrides(pid)
+    stateHelper:LoadDestinationOverrides(self.pid, self)
 end
 
 function BasePlayer:LoadMap()
