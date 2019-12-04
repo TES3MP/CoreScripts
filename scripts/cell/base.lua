@@ -1743,7 +1743,10 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
             local splitIndex = uniqueIndex:split("-")
             tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
-            tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
+
+            if self.data.objectData[uniqueIndex].refId ~= nil then
+                tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
+            end
             tes3mp.AddObject()
         end
     end
