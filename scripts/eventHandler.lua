@@ -903,7 +903,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
                     tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)
                 end
 
-                LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
+                LoadedCells[cellDescription]:SaveActorsByPacketType("death", actors)
             end
             customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription, actors})
         else
