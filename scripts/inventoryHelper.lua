@@ -12,9 +12,10 @@ function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharg
 
             if soul ~= nil and item.soul ~= soul then
                 isValid = false
-            elseif charge ~= nil and math.floor(item.charge) ~= charge then
+            elseif charge ~= nil and item.charge ~= nil and math.floor(item.charge) ~= charge then
                 isValid = false
-            elseif enchantmentCharge ~= nil and math.floor(item.enchantmentCharge) ~= enchantmentCharge then
+            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= nil and 
+                math.floor(item.enchantmentCharge) ~= enchantmentCharge then
                 isValid = false
             end
 
@@ -39,9 +40,10 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
 
             if soul ~= nil and item.soul ~= soul then
                 isValid = false
-            elseif charge ~= nil and math.floor(item.charge) ~= charge then
+            elseif charge ~= nil and item.charge ~= nil and math.floor(item.charge) ~= charge then
                 isValid = false
-            elseif enchantmentCharge ~= nil and math.floor(item.enchantmentCharge) ~= enchantmentCharge then
+            elseif enchantmentCharge ~= nil and item.enchantmentCharge ~= nil and
+                math.floor(item.enchantmentCharge) ~= enchantmentCharge then
                 isValid = false
             end
 
