@@ -1,12 +1,12 @@
 Menus["help player"] = {
     text = color.Orange .. "Player command list:\n" ..
         color.Yellow .. "/invite <pid>\n" ..
-            color.White .. "Invite a player to your team, with your AI followers being more forgiving towards " ..
-            "players on your team\n" ..
+            color.White .. "Invite a player to become your ally, with your AI followers being more forgiving towards " ..
+            "your allies\n" ..
         color.Yellow .. "/join <pid>\n" ..
-            color.White .. "Accept an invitation to join a player's team\n" ..
+            color.White .. "Accept an invitation to become a player's ally\n" ..
         color.Yellow .. "/leave <pid>\n" ..
-            color.White .. "Leave a player's team\n" ..
+            color.White .. "Leave an alliance with a player\n" ..
         color.Yellow .. "/message <pid> <text>\n" ..
             color.White .. "Send a private message to a player " ..
             color.Yellow .. "(/msg)\n" ..

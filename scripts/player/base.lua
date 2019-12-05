@@ -83,7 +83,7 @@ function BasePlayer:__init(pid, playerName)
         mapExplored = {},
         ipAddresses = {},
         recordLinks = {},
-        teamMembers = {},
+        alliedPlayers = {},
         destinationOverrides = {},
         customVariables = {}
     }
@@ -271,17 +271,17 @@ function BasePlayer:FinishLogin()
         self:LoadDestinationOverrides()
         WorldInstance:LoadDestinationOverrides(self.pid)
 
-        self:LoadTeam()
+        self:LoadAllies()
         self:LoadCell()
 
         self.loggedIn = true
 
-        if self.data.teamMembers == nil then self.data.teamMembers = {} end
+        if self.data.alliedPlayers == nil then self.data.alliedPlayers = {} end
 
-        for _, otherAccountName in ipairs(self.data.teamMembers) do
+        for _, otherAccountName in ipairs(self.data.alliedPlayers) do
             if logicHandler.IsPlayerNameLoggedIn(otherAccountName) then
                 local otherPlayer = logicHandler.GetPlayerByName(otherAccountName)
-                otherPlayer:LoadTeam()
+                otherPlayer:LoadAllies()
             end
         end
         
@@ -1331,20 +1331,20 @@ function BasePlayer:LoadMap()
     stateHelper:LoadMap(self.pid, self)
 end
 
-function BasePlayer:LoadTeam()
+function BasePlayer:LoadAllies()
     
-    if self.data.teamMembers == nil then self.data.teamMembers = {} end
+    if self.data.alliedPlayers == nil then self.data.alliedPlayers = {} end
 
-    tes3mp.ClearTeamMembersForPlayer(self.pid)
+    tes3mp.ClearAlliedPlayersForPlayer(self.pid)
 
-    for _, otherAccountName in ipairs(self.data.teamMembers) do
+    for _, otherAccountName in ipairs(self.data.alliedPlayers) do
         if logicHandler.IsPlayerNameLoggedIn(otherAccountName) then
             local otherPlayer = logicHandler.GetPlayerByName(otherAccountName)
-            tes3mp.AddTeamMemberForPlayer(self.pid, otherPlayer.pid)
+            tes3mp.AddAlliedPlayerForPlayer(self.pid, otherPlayer.pid)
         end
     end
 
-    tes3mp.SendTeam(self.pid, true)
+    tes3mp.SendAlliedPlayers(self.pid, true)
 end
 
 function BasePlayer:LoadBooks()

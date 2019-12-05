@@ -43,27 +43,27 @@ end
 customCommandHooks.registerCommand("msg", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
 
-defaultCommands.inviteToTeam = function(pid, cmd)
+defaultCommands.inviteAlly = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't invite yourself to a team.\n")
+        tes3mp.SendMessage(pid, "You can't invite yourself to be your own ally.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
         local senderMessage
         
-        if Players[pid].teamInvitesSent == nil then Players[pid].teamInvitesSent = {} end
-        if Players[targetPid].teamInvitesReceived == nil then Players[targetPid].teamInvitesReceived = {} end
+        if Players[pid].allyInvitesSent == nil then Players[pid].allyInvitesSent = {} end
+        if Players[targetPid].allyInvitesReceived == nil then Players[targetPid].allyInvitesReceived = {} end
 
-        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
-            senderMessage = "You are already on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
-        elseif tableHelper.containsValue(Players[pid].teamInvitesSent, Players[targetPid].accountName) then
-            senderMessage = "You have already invited " .. logicHandler.GetChatName(targetPid) .. " to your team.\n"
+        if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
+            senderMessage = "You already have " .. logicHandler.GetChatName(targetPid) .. "as your ally\n"
+        elseif tableHelper.containsValue(Players[pid].allyInvitesSent, Players[targetPid].accountName) then
+            senderMessage = "You have already invited " .. logicHandler.GetChatName(targetPid) .. " to be your ally.\n"
         else
-            table.insert(Players[pid].teamInvitesSent, Players[targetPid].accountName)
-            table.insert(Players[targetPid].teamInvitesReceived, Players[pid].accountName)
+            table.insert(Players[pid].allyInvitesSent, Players[targetPid].accountName)
+            table.insert(Players[targetPid].allyInvitesReceived, Players[pid].accountName)
 
-            senderMessage = "You have invited " .. logicHandler.GetChatName(targetPid) .. " to your team.\n"
-            local receiverMessage = logicHandler.GetChatName(pid) .. " has invited you to join their team. Write " ..
+            senderMessage = "You have invited " .. logicHandler.GetChatName(targetPid) .. " to be your ally.\n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has invited you to become their ally. Write " ..
                 color.Yellow .. "/join " .. pid .. color.White .. " to accept.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
         end
@@ -72,34 +72,35 @@ defaultCommands.inviteToTeam = function(pid, cmd)
     end
 end
 
-customCommandHooks.registerCommand("invite", defaultCommands.inviteToTeam)
+customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't join your own team.\n")
+        tes3mp.SendMessage(pid, "You can't join yourself as your own ally.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
         local senderMessage
 
-        if Players[pid].teamInvitesReceived == nil then Players[pid].teamInvitesReceived = {} end
+        if Players[pid].allyInvitesReceived == nil then Players[pid].allyInvitesReceived = {} end
 
-        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
-            senderMessage = "You are already on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
-        elseif tableHelper.containsValue(Players[pid].teamInvitesReceived, Players[targetPid].accountName) then
-            senderMessage = "You are now on the team of " .. logicHandler.GetChatName(targetPid) .. ". Write " ..
-                color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave it.\n"
-            local receiverMessage = logicHandler.GetChatName(pid) .. " has joined your team.\n"
+        if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
+            senderMessage = "You are already have " .. logicHandler.GetChatName(targetPid) .. "as an ally\n"
+        elseif tableHelper.containsValue(Players[pid].allyInvitesReceived, Players[targetPid].accountName) then
+            senderMessage = "You now have " .. logicHandler.GetChatName(targetPid) .. " as an ally. Write " ..
+                color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave " ..
+                "the partnership.\n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has agreed to become your ally.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
 
-            table.insert(Players[pid].data.teamMembers, Players[targetPid].accountName)
-            table.insert(Players[targetPid].data.teamMembers, Players[pid].accountName)
+            table.insert(Players[pid].data.alliedPlayers, Players[targetPid].accountName)
+            table.insert(Players[targetPid].data.alliedPlayers, Players[pid].accountName)
             Players[pid]:Save()
-            Players[pid]:LoadTeam()
+            Players[pid]:LoadAllies()
             Players[targetPid]:Save()
-            Players[targetPid]:LoadTeam()
+            Players[targetPid]:LoadAllies()
         else
-            senderMessage = "You have not yet been invited to the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+            senderMessage = "You have not yet been invited to become an ally of " .. logicHandler.GetChatName(targetPid) .. "\n"
         end
 
         tes3mp.SendMessage(pid, senderMessage, false)
@@ -110,27 +111,27 @@ customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
 
 defaultCommands.leaveTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't leave your own team.\n")
+        tes3mp.SendMessage(pid, "You can't leave an alliance with yourself.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
         local senderMessage
 
-        if tableHelper.containsValue(Players[pid].data.teamMembers, Players[targetPid].accountName) then
-            senderMessage = "You have now left the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
-            local receiverMessage = logicHandler.GetChatName(pid) .. " has left your team.\n"
+        if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
+            senderMessage = "You have stopped having " .. logicHandler.GetChatName(targetPid) .. "as your ally \n"
+            local receiverMessage = logicHandler.GetChatName(pid) .. " has stopped having you as an ally.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
 
-            tableHelper.removeValue(Players[pid].data.teamMembers, Players[targetPid].accountName)
-            tableHelper.cleanNils(Players[pid].data.teamMembers)
-            tableHelper.removeValue(Players[targetPid].data.teamMembers, Players[pid].accountName)
-            tableHelper.cleanNils(Players[targetPid].data.teamMembers)
+            tableHelper.removeValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName)
+            tableHelper.cleanNils(Players[pid].data.alliedPlayers)
+            tableHelper.removeValue(Players[targetPid].data.alliedPlayers, Players[pid].accountName)
+            tableHelper.cleanNils(Players[targetPid].data.alliedPlayers)
             Players[pid]:Save()
-            Players[pid]:LoadTeam()
+            Players[pid]:LoadAllies()
             Players[targetPid]:Save()
-            Players[targetPid]:LoadTeam()
+            Players[targetPid]:LoadAllies()
         else
-            senderMessage = "You are not on the team of " .. logicHandler.GetChatName(targetPid) .. "\n"
+            senderMessage = "You are not an ally of " .. logicHandler.GetChatName(targetPid) .. "\n"
         end
 
         tes3mp.SendMessage(pid, senderMessage, false)
