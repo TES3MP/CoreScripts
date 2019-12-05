@@ -842,7 +842,9 @@ function BaseCell:SaveActorDeath(actors)
 
         if self:ContainsObject(uniqueIndex) then
 
-            if actor.killerPid == nil then
+            self.data.objectData[uniqueIndex].deathState = actor.deathState
+
+            if actor.killerPid ~= nil then
                 self.data.objectData[uniqueIndex].killer = {
                     player = Players[actor.killerPid].accountName
                 }
@@ -1025,6 +1027,7 @@ function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
 
     if self:HasActorData() == true then
         self:LoadActorPositions(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.position))
+        self:LoadActorDeath(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
         self:LoadActorStatsDynamic(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
         self:LoadActorEquipment(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.equipment))
         self:LoadActorAI(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.ai))
@@ -1509,6 +1512,38 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
     end
 end
 
+function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
+
+    local actorCount = 0
+
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
+    tes3mp.SetActorListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+
+        local splitIndex = uniqueIndex:split("-")
+        tes3mp.SetActorRefNum(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].deathState ~= nil then
+            tes3mp.SetActorDeathState(objectData[uniqueIndex].deathState)
+            tes3mp.SetActorDeathInstant(true)
+            tes3mp.AddActor()
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
+                ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorDeath()
+    end    
+end
+
 function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1800,6 +1835,7 @@ function BaseCell:LoadInitialCellData(pid)
     if self:HasActorData() == true then
         tes3mp.LogAppend(enumerations.log.INFO, "- Had actor data")
         self:LoadActorCellChanges(pid, objectData)
+        self:LoadActorDeath(pid, objectData, packets.death)
         self:LoadActorEquipment(pid, objectData, packets.equipment)
         self:LoadActorAI(pid, objectData, packets.ai)
     elseif not self.isRequestingActorList then

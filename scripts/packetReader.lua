@@ -36,6 +36,7 @@ packetReader.GetActorPacketTables = function(packetType)
             end
         elseif packetType == "death" then
 
+            actor.deathState = tes3mp.GetActorDeathState(packetIndex)
             local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
 
             if doesActorHavePlayerKiller then
