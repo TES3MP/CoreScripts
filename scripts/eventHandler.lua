@@ -8,6 +8,8 @@ eventHandler.InitializeDefaultValidators = function()
 
     -- Don't validate object deletions for currently unusable containers (such as
     -- dying actors whose corpses players try to dispose of too early)
+    --
+    -- Additionally, don't delete objects mentioned in config.disallowedDeleteRefIds
     customEventHooks.registerValidator("OnObjectDelete", function(eventStatus, pid, cellDescription, objects)
 
         local cell = LoadedCells[cellDescription]
@@ -18,13 +20,33 @@ eventHandler.InitializeDefaultValidators = function()
             if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
                 return customEventHooks.makeEventStatus(false, false)
             end
+
+            if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at deleting " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
         end
     end)
 
+    -- Don't create objects mentioned in config.disallowedCreateRefIds
+    local defaultCreationValidator = function(eventStatus, pid, cellDescription, objects)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at creating " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end
+
+    customEventHooks.registerValidator("OnObjectPlace", defaultCreationValidator)
+    customEventHooks.registerValidator("OnObjectSpawn", defaultCreationValidator)
+
     -- Don't validate scales larger than the maximum set in the config
     customEventHooks.registerValidator("OnObjectScale", function(eventStatus, pid, cellDescription, objects)
-
-        local cell = LoadedCells[cellDescription]
 
         for uniqueIndex, object in pairs(objects) do
 
@@ -37,6 +59,70 @@ eventHandler.InitializeDefaultValidators = function()
         end
     end)
 
+    -- Don't change lock levels for objects mentioned in config.disallowedLockRefIds
+    customEventHooks.registerValidator("OnObjectLock", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedLockRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing lock for " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+    -- Don't change traps for objects mentioned in config.disallowedTrapRefIds
+    customEventHooks.registerValidator("OnObjectTrap", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing trap for " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+    -- Don't change states for objects mentioned in config.disallowedStateRefIds
+    customEventHooks.registerValidator("OnObjectState", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedStateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing state for " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+    -- Don't change door states for objects mentioned in config.disallowedDoorStateRefIds
+    customEventHooks.registerValidator("OnObjectDoorState", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedDoorStateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing door state for " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
+    -- Don't activate objects mentioned in config.disallowedActivateRefIds
+    customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        for uniqueIndex, object in pairs(objects) do
+
+            if tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at activating " .. object.refId .. 
+                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
 end
 
 eventHandler.InitializeDefaultHandlers = function()
@@ -930,7 +1016,7 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
     end
 end
 
-eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType, disallowedIds)
+eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -956,45 +1042,29 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType, d
         -- Iterate through the objects in the Object packet and only sync and save the
         -- ones whose refIds are valid
         local objects = packetReader.GetObjectPacketTables(packetType).objects
-        local acceptedObjects, rejectedObjects = {}, {}
 
-        for uniqueIndex, object in pairs(objects) do
-
-            if disallowedIds ~= nil and tableHelper.containsValue(disallowedIds, object.refId) then
-                rejectedObjects[uniqueIndex] = object
-            else
-                acceptedObjects[uniqueIndex] = object
-            end
-        end
-
-        if not tableHelper.isEmpty(rejectedObjects) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected Object" .. packetType:capitalizeFirstLetter() ..
-                " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for objects:\n" ..
-                tableHelper.getPrintableTable(rejectedObjects))
-        end
-
-        if not tableHelper.isEmpty(acceptedObjects) then
+        if not tableHelper.isEmpty(objects) then
 
             if not isCellLoaded then
                 logicHandler.LoadCell(cellDescription)
             end
 
             local eventStatus = customEventHooks.triggerValidators("OnObject" .. packetType:capitalizeFirstLetter(),
-                {pid, cellDescription, acceptedObjects})
+                {pid, cellDescription, objects})
 
             if eventStatus.validDefaultHandler then
 
                 tes3mp.LogMessage(enumerations.log.INFO, "Accepted Object" .. packetType:capitalizeFirstLetter() ..
                     " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for objects:\n" ..
-                    tableHelper.getPrintableTable(acceptedObjects))
+                    tableHelper.getPrintableTable(objects))
                 
-                LoadedCells[cellDescription]:SaveObjectsByPacketType(packetType, acceptedObjects)
-                LoadedCells[cellDescription]:LoadObjectsByPacketType(packetType, pid, acceptedObjects,
-                    tableHelper.getArrayFromIndexes(acceptedObjects), true)
+                LoadedCells[cellDescription]:SaveObjectsByPacketType(packetType, objects)
+                LoadedCells[cellDescription]:LoadObjectsByPacketType(packetType, pid, objects,
+                    tableHelper.getArrayFromIndexes(objects), true)
             end
 
             customEventHooks.triggerHandlers("OnObject" .. packetType:capitalizeFirstLetter(), eventStatus,
-                {pid, cellDescription, acceptedObjects})
+                {pid, cellDescription, objects})
 
             if not isCellLoaded then
                 logicHandler.UnloadCell(cellDescription)
@@ -1006,23 +1076,23 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType, d
 end
 
 eventHandler.OnObjectPlace = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "place", config.disallowedCreateRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "place")
 end
 
 eventHandler.OnObjectSpawn = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "spawn", config.disallowedCreateRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "spawn")
 end
 
 eventHandler.OnObjectDelete = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "delete", config.disallowedDeleteRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "delete")
 end
 
 eventHandler.OnObjectLock = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock", config.disallowedLockRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock")
 end
 
 eventHandler.OnObjectTrap = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "trap", config.disallowedTrapRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "trap")
 end
 
 eventHandler.OnObjectScale = function(pid, cellDescription)
@@ -1030,11 +1100,11 @@ eventHandler.OnObjectScale = function(pid, cellDescription)
 end
 
 eventHandler.OnObjectState = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "state", config.disallowedStateRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "state")
 end
 
 eventHandler.OnDoorState = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "doorState", config.disallowedDoorStateRefIds)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "doorState")
 end
 
 eventHandler.OnObjectActivate = function(pid, cellDescription)
@@ -1047,30 +1117,15 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
             local packetTables = packetReader.GetObjectPacketTables("activate")
             local objects = packetTables.objects
             local targetPlayers = packetTables.players
-            local acceptedObjects, rejectedObjects = {}, {}
 
-            for uniqueIndex, object in pairs(objects) do
-
-                if tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
-                    rejectedObjects[uniqueIndex] = object
-                else
-                    acceptedObjects[uniqueIndex] = object
-                end
-            end
-
-            if not tableHelper.isEmpty(rejectedObjects) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Rejected ObjectActivate from " .. logicHandler.GetChatName(pid) ..
-                    " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(rejectedObjects))
-            end
-
-            if not tableHelper.isEmpty(acceptedObjects) then
+            if not tableHelper.isEmpty(objects) or not tableHelper.isEmpty(targetPlayers) then
                 local eventStatus = customEventHooks.triggerValidators("OnObjectActivate", {pid, cellDescription,
-                    acceptedObjects, players})
+                    objects, targetPlayers})
 
                 if eventStatus.validDefaultHandler then
 
                     tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectActivate from " .. logicHandler.GetChatName(pid) ..
-                        " about " .. cellDescription .. " for objects:\n" .. tableHelper.getPrintableTable(acceptedObjects))
+                        " about " .. cellDescription)
 
                     local debugMessage = nil
 
@@ -1110,7 +1165,7 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                     tes3mp.SendObjectActivate(false, false)
                 end
                 customEventHooks.triggerHandlers("OnObjectActivate", eventStatus, {pid, cellDescription,
-                    acceptedObjects, targetPlayers})
+                    objects, targetPlayers})
             end
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
