@@ -1142,9 +1142,9 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
                         tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
                     end
 
-                    for pid, targetPlayer in pairs(targetPlayers) do
+                    for targetPid, targetPlayer in pairs(targetPlayers) do
                         debugMessage = "- "
-                        debugMessage = debugMessage .. logicHandler.GetChatName(pid) .. " has been activated by "
+                        debugMessage = debugMessage .. logicHandler.GetChatName(targetPid) .. " has been activated by "
 
                         if targetPlayer.activatingPid == nil then
                             debugMessage = debugMessage .. targetPlayer.activatingRefId .. " " .. targetPlayer.activatingUniqueIndex
