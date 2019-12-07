@@ -65,10 +65,9 @@ packetReader.GetObjectPacketTables = function(packetType)
     for packetIndex = 0, objectListSize - 1 do
         local object, uniqueIndex, player, pid = nil, nil, nil, nil
         
-        if packetType == "activate" then
+        if tableHelper.containsValue({"activate", "consoleCommand"}, packetType) then
 
             local isObjectPlayer = tes3mp.IsObjectPlayer(packetIndex)
-            local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(packetIndex)
 
             if isObjectPlayer then
                 pid = tes3mp.GetObjectPid(packetIndex)
@@ -80,19 +79,24 @@ packetReader.GetObjectPacketTables = function(packetType)
                 object.uniqueIndex = uniqueIndex
             end
 
-            if doesObjectHaveActivatingPlayer then
-                local activatingPid = tes3mp.GetObjectActivatingPid(packetIndex)
+            if packetType == "activate" then
 
-                if isObjectPlayer then
-                    player.activatingPid = activatingPid
-                    player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
+                local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(packetIndex)
+
+                if doesObjectHaveActivatingPlayer then
+                    local activatingPid = tes3mp.GetObjectActivatingPid(packetIndex)
+
+                    if isObjectPlayer then
+                        player.activatingPid = activatingPid
+                        player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
+                    else
+                        object.activatingPid = activatingPid
+                    end
                 else
-                    object.activatingPid = activatingPid
+                    object.activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
+                    object.activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
+                        "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
                 end
-            else
-                object.activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
-                object.activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
-                    "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
             end
         else
             object = {}

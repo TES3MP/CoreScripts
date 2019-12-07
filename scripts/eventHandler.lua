@@ -1176,6 +1176,44 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
     end
 end
 
+eventHandler.OnConsoleCommand = function(pid, cellDescription)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+
+        tes3mp.ReadReceivedObjectList()
+
+        local packetTables = packetReader.GetObjectPacketTables("consoleCommand")
+        local objects = packetTables.objects
+        local targetPlayers = packetTables.players
+        local consoleCommand = tes3mp.GetObjectListConsoleCommand()
+
+        local eventStatus = customEventHooks.triggerValidators("OnConsoleCommand", {pid, cellDescription, consoleCommand,
+            objects, targetPlayers})
+
+        if eventStatus.validDefaultHandler then
+
+            local debugMessage = "Accepted ConsoleCommand from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription
+
+            debugMessage = debugMessage .. "\n- consoleCommand: " .. consoleCommand
+
+            for uniqueIndex, object in pairs(objects) do
+                debugMessage = debugMessage .. "\n- object target: " .. object.refId .. " " .. uniqueIndex
+            end
+
+            for targetPid, targetPlayer in pairs(targetPlayers) do
+                debugMessage = debugMessage .. "\n- player target: " .. logicHandler.GetChatName(targetPid)
+            end
+
+            tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
+        end
+
+        customEventHooks.triggerHandlers("OnConsoleCommand", eventStatus, {pid, cellDescription, consoleCommand,
+            objects, targetPlayers})
+    else
+        tes3mp.Kick(pid)
+    end
+end
+
 eventHandler.OnContainer = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
