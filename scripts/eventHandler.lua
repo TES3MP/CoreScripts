@@ -1129,6 +1129,10 @@ eventHandler.OnObjectActivate = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "activate")
 end
 
+eventHandler.OnObjectHit = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "hit")
+end
+
 eventHandler.OnObjectPlace = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "place")
 end
