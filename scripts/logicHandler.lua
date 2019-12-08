@@ -85,6 +85,18 @@ logicHandler.GetChatName = function(pid)
     end
 end
 
+-- Get a array of chat names corresponding to an array of player IDs
+logicHandler.GetChatNames = function(pidArray)
+
+    local chatNames = {}
+
+    for _, pid in pairs(pidArray) do
+        table.insert(chatNames, logicHandler.GetChatName(pid))
+    end
+
+    return chatNames
+end
+
 -- Iterate through a table of pids and find the player with the
 -- lowest ping in it
 logicHandler.GetLowestPingPid = function(pidArray)
