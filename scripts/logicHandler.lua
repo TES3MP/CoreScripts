@@ -145,7 +145,7 @@ logicHandler.IsPlayerAllowedConsole = function(pid)
 
     if player ~= nil and player:IsLoggedIn() then
 
-        if player:IsAdmin() or player.data.settings.consoleAllowed then
+        if player:IsAdmin() or player.data.settings.consoleAllowed == true then
             return true
         elseif player.data.settings.consoleAllowed == "default" and config.allowConsole then
             return true
