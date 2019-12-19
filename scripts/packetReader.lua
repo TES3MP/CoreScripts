@@ -109,7 +109,10 @@ packetReader.GetObjectPacketTables = function(packetType)
             elseif packetType == "hit" then
 
                 local hit = {
-                    success = tes3mp.GetObjectHitSuccess(packetIndex)
+                    success = tes3mp.GetObjectHitSuccess(packetIndex),
+                    damage = tes3mp.GetObjectHitDamage(packetIndex),
+                    block = tes3mp.GetObjectHitBlock(packetIndex),
+                    knockdown = tes3mp.GetObjectHitKnockdown(packetIndex)
                 }
 
                 if isObjectPlayer then
