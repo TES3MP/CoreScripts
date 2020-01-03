@@ -10,6 +10,9 @@ fileHelper.invalidFilenames = { "CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM
 
 -- Turn an invalid filename into a valid one
 function fileHelper.fixFilename(filename)
+
+    -- Trim spaces at the start and end of the filename
+    filename = filename:trim()
     
     -- Replace characters not allowed in filenames
     filename = string.gsub(filename, ":", ";")

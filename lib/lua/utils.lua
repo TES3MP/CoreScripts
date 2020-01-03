@@ -13,6 +13,10 @@ function string:ciEqual(otherString)
     return self:lower() == otherString:lower()
 end
 
+function string:trim()
+    return (self:gsub("^%s*(.-)%s*$", "%1"))
+end
+
 function prefixZeroes(inputString, desiredLength)
 
     local length = string.len(inputString)
