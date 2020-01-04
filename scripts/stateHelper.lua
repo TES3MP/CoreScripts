@@ -143,22 +143,26 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
         stateObject.data.clientVariables.globals = {}
     end
 
-    local objectCount = 0
+    local variableCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
+    tes3mp.ClearClientGlobals()
 
-    for varName, value in pairs(stateObject.data.clientVariables.globals) do
+    for variableId, variableTable in pairs(stateObject.data.clientVariables.globals) do
 
-        tes3mp.SetScriptVariableName(varName)
-        tes3mp.SetScriptVariableShortValue(value)
-        tes3mp.AddObject()
+        if type(variableTable) == "table" then
 
-        objectCount = objectCount + 1
+            if variableTable.variableType == enumerations.variableType.INTEGER then
+                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue)
+            elseif variableTable.variableType == enumerations.variableType.FLOAT then
+                tes3mp.AddClientGlobalFloat(variableId, variableTable.floatValue)
+            end
+
+            variableCount = variableCount + 1
+        end
     end
 
-    if objectCount > 0 then
-        tes3mp.SendScriptGlobalShort()
+    if variableCount > 0 then
+        tes3mp.SendClientScriptGlobal(pid)
     end
 end
 
@@ -337,7 +341,7 @@ function StateHelper:SaveReputation(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
-function StateHelper:SaveClientScriptGlobalShort(pid, stateObject)
+function StateHelper:SaveClientScriptGlobal(pid, stateObject)
 
     if stateObject.data.clientVariables == nil then
         stateObject.data.clientVariables = {}
@@ -347,10 +351,17 @@ function StateHelper:SaveClientScriptGlobalShort(pid, stateObject)
         stateObject.data.clientVariables.globals = {}
     end
 
-    for index = 0, tes3mp.GetObjectListSize() - 1 do
-        local variableName = tes3mp.GetScriptVariableName(index)
-        local variableValue = tes3mp.GetScriptVariableShortValue(index)
-        stateObject.data.clientVariables.globals[variableName] = variableValue
+    for index = 0, tes3mp.GetClientGlobalsSize() - 1 do
+        local variableId = tes3mp.GetClientGlobalId(index)
+        local variableTable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
+
+        if variableTable.variableType == enumerations.variableType.INTEGER then
+            variableTable.intValue = tes3mp.GetClientGlobalIntValue(index)
+        elseif variableTable.variableType == enumerations.variableType.FLOAT then
+            variableTable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
+        end
+
+        stateObject.data.clientVariables.globals[variableId] = variableTable
     end
 
     stateObject:QuicksaveToDrive()

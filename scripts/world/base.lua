@@ -296,8 +296,8 @@ function BaseWorld:SaveReputation(pid)
     stateHelper:SaveReputation(pid, self)
 end
 
-function BaseWorld:SaveClientScriptGlobalShort(pid)
-    stateHelper:SaveClientScriptGlobalShort(pid, self)
+function BaseWorld:SaveClientScriptGlobal(pid)
+    stateHelper:SaveClientScriptGlobal(pid, self)
 end
 
 function BaseWorld:SaveKills(pid)
