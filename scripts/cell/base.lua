@@ -616,6 +616,7 @@ function BaseCell:SaveContainers(pid)
             local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
             local itemEnchantmentCharge = tes3mp.GetContainerItemEnchantmentCharge(objectIndex, itemIndex)
             local itemSoul = tes3mp.GetContainerItemSoul(objectIndex, itemIndex)
+            local actionCount = tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
 
             -- Check if the object's stored inventory contains this item already
             if inventoryHelper.containsItem(inventory, itemRefId, itemCharge, itemEnchantmentCharge, itemSoul) then
@@ -624,21 +625,25 @@ function BaseCell:SaveContainers(pid)
                 local item = inventory[foundIndex]
 
                 if action == enumerations.container.ADD then
+                    tes3mp.LogAppend(enumerations.log.VERBOSE, "- Adding count of " .. itemCount .. " to existing item " ..
+                        item.refId .. " with current count of " .. item.count)
                     item.count = item.count + itemCount
 
                 elseif action == enumerations.container.REMOVE then
-                    local actionCount = tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
                     local newCount = item.count - actionCount
 
                     -- The item will still exist in the container with a lower count
                     if newCount > 0 then
+                        tes3mp.LogAppend(enumerations.log.VERBOSE, "- Removed count of " .. actionCount .. " from item " ..
+                            item.refId .. " that had count of " .. item.count .. ", resulting in remaining count of " .. newCount)
                         item.count = newCount
                     -- The item is to be completely removed
                     elseif newCount == 0 then
                         inventory[foundIndex] = nil
                     else
                         actionCount = item.count
-                        tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove more than possible from item")
+                        tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount ..
+                            " from item" .. item.refId .. " that only had count of " .. item.count)
                         tes3mp.LogAppend(enumerations.log.WARN, "- Removed just " .. actionCount .. " instead")
                         tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
@@ -655,9 +660,12 @@ function BaseCell:SaveContainers(pid)
                 end
             else
                 if action == enumerations.container.REMOVE then
-                    tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove non-existent item")
+                    tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount .. 
+                        " from non-existent item " .. itemRefId)
                     tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
+                    tes3mp.LogAppend(enumerations.log.VERBOSE, "- Added new item " .. itemRefId .. " with count of " ..
+                        itemCount)
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
                         itemCharge, itemEnchantmentCharge, itemSoul)
 
