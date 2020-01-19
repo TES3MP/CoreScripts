@@ -216,6 +216,8 @@ eventHandler.InitializeDefaultHandlers = function()
     -- Print object activations and send an ObjectActivate packet back to the player
     customEventHooks.registerHandler("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
+        if eventStatus.validDefaultHandler == false then return end
+
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
@@ -255,6 +257,8 @@ eventHandler.InitializeDefaultHandlers = function()
 
     -- Print object hits
     customEventHooks.registerHandler("OnObjectHit", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        if eventStatus.validDefaultHandler == false then return end
 
         local debugMessage = nil
 
