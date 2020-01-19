@@ -19,9 +19,7 @@ eventHandler.InitializeDefaultValidators = function()
 
             if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
                 return customEventHooks.makeEventStatus(false, false)
-            end
-
-            if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
+            elseif tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
                 tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at deleting " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
@@ -111,14 +109,32 @@ eventHandler.InitializeDefaultValidators = function()
         end
     end)
 
-    -- Don't activate objects mentioned in config.disallowedActivateRefIds
+    -- Don't activate objects that are supposed to already be deleted according to the
+    -- server, preventing item duping
+    --
+    -- Additionally, don't activate objects mentioned in config.disallowedActivateRefIds
     customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
         for uniqueIndex, object in pairs(objects) do
 
-            if tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at activating " .. object.refId .. 
-                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+            local debugMessage = "- Rejected attempt at activating " .. object.refId .. " " ..
+                object.uniqueIndex .. " because it"
+            local splitIndex = uniqueIndex:split("-")
+            local refNum = tonumber(splitIndex[1])
+            local mpNum = tonumber(splitIndex[2])
+
+            -- If this is a preexisting object from the data files, make sure it doesn't
+            -- have a Delete packet recorded for it
+            if refNum ~= 0 and tableHelper.containsValue(LoadedCells[cellDescription].data.packets.delete, uniqueIndex) then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a preexisting object that is already "
+                    .. "tracked as being deleted")
+                return customEventHooks.makeEventStatus(false, false)
+            elseif mpNum ~= 0 and LoadedCells[cellDescription].data.objectData[uniqueIndex] == nil then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a server-created object that is "
+                    .. "no longer supposed to exist")
+                return customEventHooks.makeEventStatus(false, false)
+            elseif tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
         end
