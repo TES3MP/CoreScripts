@@ -602,13 +602,14 @@ eventHandler.OnPlayerItemUse = function(pid)
         customEventHooks.triggerHandlers("OnPlayerItemUse", eventStatus, {pid, itemRefId})
     end
 
-    -- Add use time marker to a piece of equipment that matches this itemRefId. I don't like this
-    -- solution and I'm hopeful there is a better solution to swapping equipment in-place that doesn't
-    -- involve timestamps and such. I suspect it is as simple as "unequipping" the piece of equipment
-    -- that got swapped right here, but I haven't tested that yet so this will have to do for now.
+    -- Unequip whatever was just used, if it's equipped. This is just in case its the case where a piece of
+    -- equipment is swapped in-place with another piece with the same refId but a different condition. The
+    -- piece of equipment will be set back to equipped at the next call to SaveEquipment
     for index = 0, tes3mp.GetEquipmentSize() - 1 do
         if Players[pid].data.equipment[index] ~= nil and Players[pid].data.equipment[index].refId == itemRefId then
-            Players[pid].data.equipment[index].useTime = os.time()
+            local eq = Players[pid].data.equipment[index]
+            inventoryHelper.setItemToUnequipped(Players[pid].data.inventory, itemRefId, eq.charge, eq.enchantmentCharge)
+            Players[pid].data.equipment[index] = nil
         end
     end
 end

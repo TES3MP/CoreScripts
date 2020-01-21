@@ -1020,39 +1020,8 @@ function BasePlayer:SaveEquipment()
             table.insert(newlyEquippedItems, newlyEquippedItem)
             table.insert(unequippedItems, self.data.equipment[index])
 
-        -- Special equip check case that can only be handled with help from eventHandler.lua: It is impossible
-        -- to detect here that a piece of equipment with an identical refId but a different charge was swapped
-        -- in-place (player equipped an iron longsword with full charge while they already had an identical
-        -- iron longsword except its charge is not full). With the information we have here, that case looks
-        -- identical to the case where a piece of equipment is simply being used and the charge decreases.
-        -- The solution used here is to record the fact that a piece of equipment just got activated by the
-        -- OnPlayerItemUse event, which conveniently gets activated when a piece of equipment is equipped.
-        elseif self.data.equipment[index].useTime ~= nil and self.data.equipment[index].useTime >= os.time() - 1 then
-
-            -- We make sure the client charge or enchantment is not equal to the server
-            local clientSideCharge = tes3mp.GetEquipmentItemCharge(self.pid, index)
-            local clientSideEnchantment = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index)
-            if self.data.equipment[index].charge ~= clientSideCharge or self.data.equipment[index].enchantmentCharge ~= clientSideEnchantment then
-
-                -- Next, we make sure the client equipment matches a non-equipped server inventory item
-                local localNewEquipItemIndex = inventoryHelper.getItemIndex(self.data.inventory, itemRefId, clientSideCharge, clientSideEnchantment)
-                if localNewEquipItemIndex ~= nil then
-                    local newlyEquippedItem = {
-                        refId = itemRefId,
-                        count = tes3mp.GetEquipmentItemCount(self.pid, index),
-                        charge = tes3mp.GetEquipmentItemCharge(self.pid, index),
-                        enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index),
-                        equipmentIndex = index
-                    }
-                    table.insert(newlyEquippedItems, newlyEquippedItem)
-                    table.insert(unequippedItems, self.data.equipment[index])
-                end
-            end
-        end
-
-        -- clear useTime so that it can't be mistakenly used again.
-        if self.data.equipment[index] ~= nil then
-            self.data.equipment[index].useTime = nil
+        -- There is another case, where a piece of equipment is swapped for the same equipment type but
+        -- with a different charge or enchantment charge. This case is handled 
         end
     end
 
