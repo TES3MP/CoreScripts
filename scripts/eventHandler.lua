@@ -601,6 +601,16 @@ eventHandler.OnPlayerItemUse = function(pid)
         end
         customEventHooks.triggerHandlers("OnPlayerItemUse", eventStatus, {pid, itemRefId})
     end
+
+    -- Add use time marker to a piece of equipment that matches this itemRefId. I don't like this
+    -- solution and I'm hopeful there is a better solution to swapping equipment in-place that doesn't
+    -- involve timestamps and such. I suspect it is as simple as "unequipping" the piece of equipment
+    -- that got swapped right here, but I haven't tested that yet so this will have to do for now.
+    for index = 0, tes3mp.GetEquipmentSize() - 1 do
+        if Players[pid].data.equipment[index] ~= nil and Players[pid].data.equipment[index].refId == itemRefId then
+            Players[pid].data.equipment[index].useTime = os.time()
+        end
+    end
 end
 
 eventHandler.OnPlayerMiscellaneous = function(pid)

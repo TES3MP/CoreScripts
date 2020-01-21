@@ -201,6 +201,7 @@ function BasePlayer:FinishLogin()
         end
 
         self:CleanInventory()
+        self:ValidateEquippedInventory()
         self:LoadInventory()
         self:LoadEquipment()
         self:CleanSpellbook()
@@ -977,10 +978,101 @@ end
 
 function BasePlayer:SaveEquipment()
 
+    -- TODO Right now, we erase the whole equipment table and repopulate it. Perhaps this was
+    -- more performant because we didn't have to worry about doing compares, etc since we
+    -- were just copying exactly what was given to us by tes3mp. Maybe we don't have to erase
+    -- the table though, especially if we have to look at the old and new equipment tables?
+
     local reloadAtEnd = false
 
+    -- gather information about all items that have been equipped and unequipped
+    local newlyEquippedItems = {}
+    local unequippedItems = {}
+    for index = 0, tes3mp.GetEquipmentSize() - 1 do
+        local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, index)
+
+        -- here, we collect information on potentially newly-equipped items
+        if self.data.equipment[index] == nil then
+            if itemRefId ~= "" then
+                local newlyEquippedItem = {
+                    refId = itemRefId,
+                    count = tes3mp.GetEquipmentItemCount(self.pid, index),
+                    charge = tes3mp.GetEquipmentItemCharge(self.pid, index),
+                    enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index),
+                    equipmentIndex = index
+                }
+                table.insert(newlyEquippedItems, newlyEquippedItem)
+            end
+
+        -- here, we collect information on unequipped items
+        elseif itemRefId == "" then
+            table.insert(unequippedItems, self.data.equipment[index])
+
+        -- here, we collect information on items that were swapped for an item with a different refId
+        elseif itemRefId ~= self.data.equipment[index]["refId"] then
+            local newlyEquippedItem = {
+                refId = itemRefId,
+                count = tes3mp.GetEquipmentItemCount(self.pid, index),
+                charge = tes3mp.GetEquipmentItemCharge(self.pid, index),
+                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index),
+                equipmentIndex = index
+            }
+            table.insert(newlyEquippedItems, newlyEquippedItem)
+            table.insert(unequippedItems, self.data.equipment[index])
+
+        -- Special equip check case that can only be handled with help from eventHandler.lua: It is impossible
+        -- to detect here that a piece of equipment with an identical refId but a different charge was swapped
+        -- in-place (player equipped an iron longsword with full charge while they already had an identical
+        -- iron longsword except its charge is not full). With the information we have here, that case looks
+        -- identical to the case where a piece of equipment is simply being used and the charge decreases.
+        -- The solution used here is to record the fact that a piece of equipment just got activated by the
+        -- OnPlayerItemUse event, which conveniently gets activated when a piece of equipment is equipped.
+        elseif self.data.equipment[index].useTime ~= nil and self.data.equipment[index].useTime >= os.time() - 1 then
+
+            -- We make sure the client charge or enchantment is not equal to the server
+            local clientSideCharge = tes3mp.GetEquipmentItemCharge(self.pid, index)
+            local clientSideEnchantment = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index)
+            if self.data.equipment[index].charge ~= clientSideCharge or self.data.equipment[index].enchantmentCharge ~= clientSideEnchantment then
+
+                -- Next, we make sure the client equipment matches a non-equipped server inventory item
+                local localNewEquipItemIndex = inventoryHelper.getItemIndex(self.data.inventory, itemRefId, clientSideCharge, clientSideEnchantment)
+                if localNewEquipItemIndex ~= nil then
+                    local newlyEquippedItem = {
+                        refId = itemRefId,
+                        count = tes3mp.GetEquipmentItemCount(self.pid, index),
+                        charge = tes3mp.GetEquipmentItemCharge(self.pid, index),
+                        enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, index),
+                        equipmentIndex = index
+                    }
+                    table.insert(newlyEquippedItems, newlyEquippedItem)
+                    table.insert(unequippedItems, self.data.equipment[index])
+                end
+            end
+        end
+
+        -- clear useTime so that it can't be mistakenly used again.
+        if self.data.equipment[index] ~= nil then
+            self.data.equipment[index].useTime = nil
+        end
+    end
+
+    -- for every unequipped item, update the inventory version with the latest charge and enchantmentCharge
+    for i, v in ipairs(unequippedItems) do 
+        inventoryHelper.setItemToUnequipped(self.data.inventory, v.refId, v.charge, v.enchantmentCharge)
+    end
+
+    -- for every newly equipped item, update the inventory version with a marker indicating it is now equipped
+    -- except for banned items, which do not get set to equipped
+    for i, v in ipairs(newlyEquippedItems) do
+        if not (tableHelper.containsValue(config.bannedEquipmentItems, v.refId)) then
+            inventoryHelper.setItemToEquipped(self.data.inventory, v.refId, v.count, v.charge, v.enchantmentCharge, v.equipmentIndex)
+        end
+    end
+
+    -- clear the equipment table
     self.data.equipment = {}
 
+    -- Now set the new equipment table with all equipped items
     for index = 0, tes3mp.GetEquipmentSize() - 1 do
         local itemRefId = tes3mp.GetEquipmentItemRefId(self.pid, index)
 
@@ -1026,6 +1118,36 @@ function BasePlayer:CleanInventory()
     end
 end
 
+-- Iterate through Equipment and ensure that there is an inventory item with that equipment's
+-- index to indicate that it's equipped. Equipment that does not have a flagged inventory
+-- item will set their equipmentIndex on the first inventory item that matches the refId of
+-- the equipment. Equipment that matches nothing from the inventory will be removed entirely,
+-- as that equipment piece is assumed to have appeared because of an invalid state.
+function BasePlayer:ValidateEquippedInventory()
+    for equipmentIndex = 0, tes3mp.GetEquipmentSize() - 1 do
+
+        local currentEquipment = self.data.equipment[equipmentIndex]
+
+        if currentEquipment ~= nil then
+            local inventoryIndex = inventoryHelper.getItemIndexByEquipmentIndex(self.data.inventory, equipmentIndex)
+
+            -- If there is no inventory item for this equipment, then find one and add equipmentIndex
+            if inventoryIndex == nil then
+                inventoryIndex = inventoryHelper.getItemIndex(self.data.inventory, currentEquipment.refId)
+
+                -- If we found a matching index, put equipmentIndex on it. If not, then remove
+                -- the equipment entry altogether, because it is probably there by mistake.
+                if inventoryIndex ~= nil then
+                    local currentItem = self.data.inventory[inventoryIndex]
+                    inventoryHelper.setItemToEquipped(self.data.inventory, currentItem.refId, currentItem.count, currentItem.charge, currentItem.enchantmentCharge, equipmentIndex)
+                else
+                    self.data.equipment[equipmentIndex] = nil
+                end
+            end
+        end
+    end
+end
+
 -- Send a packet with some specific item changes to the player, to avoid having
 -- to resend the entire inventory
 --
@@ -1054,7 +1176,13 @@ function BasePlayer:LoadInventory()
     tes3mp.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
 
     for index, currentItem in pairs(self.data.inventory) do
-
+        -- Write all equipment information into the inventory
+        if currentItem.equipmentIndex ~= nil then
+            local equipmentIndex = currentItem.equipmentIndex
+            currentItem.charge = self.data.equipment[equipmentIndex].charge
+            currentItem.enchantmentCharge = self.data.equipment[equipmentIndex].enchantmentCharge
+        end
+        
         if currentItem.count ~= nil and currentItem.count > 0 then
             packetBuilder.AddPlayerInventoryItemChange(self.pid, currentItem)
         else
@@ -1109,8 +1237,24 @@ function BasePlayer:SaveInventory()
 
             elseif action == enumerations.inventory.REMOVE then
 
-                inventoryHelper.removeClosestItem(self.data.inventory, item.refId, item.count,
-                    item.charge, item.enchantmentCharge, item.soul)
+                local equipmentIndex = inventoryHelper.removeClosestItem(self.data.inventory, item.refId,
+                    item.count, item.charge, item.enchantmentCharge, item.soul)
+
+                -- If we removed an inventory entry that had an equipmentIndex (i.e. it was equipped) then
+                -- we need to maintain consistency by removing that entry from the equipment table as well.
+                -- This must be done because of the way the repair hammer and repair prongs work on the
+                -- server side: they remove items and replace them with the same item but with a higher
+                -- condition. The new added item does not have an equipmentIndex, but if we remove the
+                -- equipment table entry, then the next SaveEquipment call will treat it as a newly equipped
+                -- item and will reassign the equipmentIndex. If we did not do this, then the inventory table
+                -- entry would not be given an equipmentIndex, causing a desync between the equipment table
+                -- and the inventory table.
+                if equipmentIndex ~= nil then
+                    local equipmentRefId = tes3mp.GetEquipmentItemRefId(self.pid, equipmentIndex)
+                    if equipmentRefId ~= nil then
+                        self.data.equipment[equipmentIndex] = nil
+                    end
+                end
 
                 if not inventoryHelper.containsItem(self.data.inventory, item.refId) and
                     logicHandler.IsGeneratedRecord(item.refId) then

@@ -27,8 +27,16 @@ function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharg
     return false
 end
 
-function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
+-- Gets the index of an item in the inventory. Will not get the index of an inventory item that has an equipment index,
+-- as that should be considered to be "equipment" for the purposes of altering an item's charges or condition
+function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul, equipmentIndex)
 
+    -- short circuit: if equipmentIndex is not nil, then all we need to do is search for the itemIndex
+    -- whose equipmentIndex matches. If this is false, then move on and make sure not to return an item
+    -- whose equipmentIndex is non-nil later on in the function.
+    if equipmentIndex ~= nil then return getItemIndexByEquipmentIndex(inventory, equipmentIndex) end
+
+    -- if we don't have an equipmentIndex, then we need to do it the old-fashioned way
     if charge ~= nil then charge = math.floor(charge) end
     if enchantmentCharge ~= nil then enchantmentCharge = math.floor(enchantmentCharge) end
 
@@ -37,7 +45,9 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
 
             local isValid = true
 
-            if soul ~= nil and item.soul ~= soul then
+            if item.equipmentIndex ~= nil then -- by this point we know we're not looking for an equipment item
+                isValid = false
+            elseif soul ~= nil and item.soul ~= soul then
                 isValid = false
             elseif charge ~= nil and math.floor(item.charge) ~= charge then
                 isValid = false
@@ -48,6 +58,31 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
             if isValid then
                 return itemIndex
             end
+        end
+    end
+
+    return nil
+end
+
+-- Gets the index of the inventory item with refId that has an equipmentIndex value
+function inventoryHelper.getItemIndexOfEquipment(inventory, refId)
+
+    for itemIndex, item in pairs(inventory) do
+        if item.refId == refId and item.equipmentIndex ~= nil then
+            return itemIndex
+        end
+    end
+
+    return nil
+end
+
+-- Gets the index of the inventory item with the given equipmentIndex, or nil if no
+-- inventory item has the given equipmentIndex
+function inventoryHelper.getItemIndexByEquipmentIndex(inventory, equipmentIndex)
+
+    for itemIndex, item in pairs(inventory) do
+        if item.equipmentIndex == equipmentIndex then
+            return itemIndex
         end
     end
 
@@ -67,11 +102,13 @@ function inventoryHelper.getItemIndexes(inventory, refId)
     return indexes
 end
 
+-- Adds an item to the given inventory. The new item will not stack with an existing instance of the same exact item if
+-- the existing item is equipped, it will instead stack with non-equipped entries of that item 
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
-    if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
-        local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
+    local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
 
+    if index ~= nil then
         inventory[index].count = inventory[index].count + count
     else
         local item = {}
@@ -82,6 +119,60 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
         item.soul = soul
 
         table.insert(inventory, item)
+    end
+end
+
+-- Sets a flag on an item in the inventory that indicates it is supposed to be in the player's equipment
+-- table. This flag exists to map inventory items to their equivalent equipment table entries.
+function inventoryHelper.setItemToEquipped(inventory, refId, count, charge, enchantmentCharge, equipIndex)
+
+    -- If we're equipping an item, then it must exist in the inventory. If it does not exist in the inventory,
+    -- then we want to do nothing so as not to compromise the inventory. This case occurs with lockpicks and
+    -- probes reducing their charge (but not the last charge) because the inventory updates are handled elsewhere.
+    if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, nil) then
+        local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, nil)
+
+        -- If there are multiple copies of the same exact item, we want to introduce a different, distinct copy of
+        -- this item that has the equipmentIndex value set. To that end, we will remove one count of the equipped
+        -- item from inventory and re-add it with equipmentIndex. Here we construct that copy, with equipmentIndex.
+        local item = {}
+        item.refId = inventory[index].refId
+        item.count = count
+        item.charge = inventory[index].charge
+        item.enchantmentCharge = inventory[index].enchantmentCharge
+        item.soul = inventory[index].soul
+        item.equipmentIndex = equipIndex
+
+        if inventory[index].count == count then
+            -- remove the existing instance, it will be replaced
+            table.remove(inventory, index)
+        else
+            -- reduce existing instance by one, that one will be added back in next
+            inventory[index].count = inventory[index].count - count
+        end
+
+        -- We always want to add equipped items to the front of the inventory, so that on server
+        -- start, they're always the first ones equipped. This is to address a bug where players on
+        -- connect are equipped with the first item in their inventory of a given refId instead of
+        -- being equipped with the item that most closely matches their current inventory.
+        table.insert(inventory, count, item)
+    end
+end
+
+function inventoryHelper.setItemToUnequipped(inventory, refId, charge, enchantmentCharge)
+
+    local index = inventoryHelper.getItemIndexOfEquipment(inventory, refId)
+
+    if index ~= nil then
+        -- save soul and count, we'll need them in a moment
+        local itemSoul = inventory[index].soul
+        local itemCount = inventory[index].count
+
+        -- first, remove the item with the equipmentIndex value from the inventory
+        inventory[index] = nil
+
+        -- next, add it back in, but without the equipmentIndex tag
+        inventoryHelper.addItem(inventory, refId, itemCount, charge, enchantmentCharge, itemSoul)
     end
 end
 
@@ -163,6 +254,8 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
     return false
 end
 
+-- Removes the items in the inventory that most closely match the given parameters. If an entry in the inventory
+-- is removed and it had an equipmentIndex, the removed equipmentIndex is returned.
 function inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId) then
@@ -192,6 +285,7 @@ function inventoryHelper.removeClosestItem(inventory, refId, count, charge, ench
         end
 
         local remainingCount = count
+        local equipmentIndex = nil
 
         for closenessRanking, currentItemIndex in ipairs(itemIndexesByCloseness) do
 
@@ -201,6 +295,11 @@ function inventoryHelper.removeClosestItem(inventory, refId, count, charge, ench
                 currentItem.count = currentItem.count - remainingCount
 
                 if currentItem.count < 1 then
+                    -- If there is an equipmentIndex, we want to record it so we can return it
+                    if currentItem.equipmentIndex ~= nil then
+                        equipmentIndex = currentItem.equipmentIndex
+                    end
+                
                     remainingCount = 0 - currentItem.count
                     currentItem = nil
                 else
@@ -212,19 +311,8 @@ function inventoryHelper.removeClosestItem(inventory, refId, count, charge, ench
                 break
             end
         end
-    end
-end
 
-function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchantmentCharge, soul)
-
-    if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
-        local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
-
-        inventory[index].count = inventory[index].count - count
-
-        if inventory[index].count < 1 then
-            inventory[index] = nil
-        end
+        return equipmentIndex
     end
 end
 
