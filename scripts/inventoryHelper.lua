@@ -31,12 +31,10 @@ end
 -- as that should be considered to be "equipment" for the purposes of altering an item's charges or condition
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul, equipmentIndex)
 
-    -- short circuit: if equipmentIndex is not nil, then all we need to do is search for the itemIndex
-    -- whose equipmentIndex matches. If this is false, then move on and make sure not to return an item
-    -- whose equipmentIndex is non-nil later on in the function.
+    -- short circuit: if equipmentIndex is not nil, then just search for the itemIndex whose equipmentIndex matches.
+    -- If equipmentIndex is nil, then continue, and do not return any entries that have an equipmentIndex.
     if equipmentIndex ~= nil then return getItemIndexByEquipmentIndex(inventory, equipmentIndex) end
 
-    -- if we don't have an equipmentIndex, then we need to do it the old-fashioned way
     if charge ~= nil then charge = math.floor(charge) end
     if enchantmentCharge ~= nil then enchantmentCharge = math.floor(enchantmentCharge) end
 
@@ -110,19 +108,16 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
     end
 end
 
--- Sets a flag on an item in the inventory that indicates it is supposed to be in the player's equipment
--- table. This flag exists to map inventory items to their equivalent equipment table entries.
+-- Sets a flag on an item in the inventory to relate the inventory entry to an equipment entry.
 function inventoryHelper.setItemToEquipped(inventory, refId, count, charge, enchantmentCharge, equipIndex)
 
     -- If we're equipping an item, then it must exist in the inventory. If it does not exist in the inventory,
-    -- then we want to do nothing so as not to compromise the inventory. This case occurs with lockpicks and
-    -- probes reducing their charge (but not the last charge) because the inventory updates are handled elsewhere.
+    -- then we want to do nothing, because inventory handles lockpick and probe charges elsewhere.
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, nil) then
         local index = inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, nil)
 
-        -- If there are multiple copies of the same exact item, we want to introduce a different, distinct copy of
-        -- this item that has the equipmentIndex value set. To that end, we will remove one count of the equipped
-        -- item from inventory and re-add it with equipmentIndex. Here we construct that copy, with equipmentIndex.
+        -- Equipped items must have a distinct inventory entry, even if there are other copies of the same thing in
+        -- the inventory. So, we remove one copy of the inventory entry and add it back with an equipmentIndex.
         local item = {}
         item.refId = inventory[index].refId
         item.count = count
@@ -139,10 +134,10 @@ function inventoryHelper.setItemToEquipped(inventory, refId, count, charge, ench
             inventory[index].count = inventory[index].count - count
         end
 
-        -- We always want to add equipped items to the front of the inventory, so that on server
-        -- start, they're always the first ones equipped. This is to address a bug where players on
-        -- connect are equipped with the first item in their inventory of a given refId instead of
-        -- being equipped with the item that most closely matches their current inventory.
+        -- Always  add equipped items to the front of the inventory. On server start, the stats
+        -- in the equipment table are ignored, and the stats given to equipment are always
+        -- whatever items show up first in order of inventory. This is probably a client-side bug,
+        -- but placing equipment first in the inventory compensates for it.
         table.insert(inventory, count, item)
     end
 end

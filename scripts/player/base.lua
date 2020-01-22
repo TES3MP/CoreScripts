@@ -978,11 +978,6 @@ end
 
 function BasePlayer:SaveEquipment()
 
-    -- TODO Right now, we erase the whole equipment table and repopulate it. Perhaps this was
-    -- more performant because we didn't have to worry about doing compares, etc since we
-    -- were just copying exactly what was given to us by tes3mp. Maybe we don't have to erase
-    -- the table though, especially if we have to look at the old and new equipment tables?
-
     local reloadAtEnd = false
 
     -- gather information about all items that have been equipped and unequipped
@@ -1021,7 +1016,8 @@ function BasePlayer:SaveEquipment()
             table.insert(unequippedItems, self.data.equipment[index])
 
         -- There is another case, where a piece of equipment is swapped for the same equipment type but
-        -- with a different charge or enchantment charge. This case is handled 
+        -- with a different charge or enchantment charge. This case is handled in eventHandler.lua,
+        -- in the OnPlayerItemUse event.
         end
     end
 
@@ -1087,11 +1083,10 @@ function BasePlayer:CleanInventory()
     end
 end
 
--- Iterate through Equipment and ensure that there is an inventory item with that equipment's
--- index to indicate that it's equipped. Equipment that does not have a flagged inventory
--- item will set their equipmentIndex on the first inventory item that matches the refId of
--- the equipment. Equipment that matches nothing from the inventory will be removed entirely,
--- as that equipment piece is assumed to have appeared because of an invalid state.
+-- Iterate through Equipment and ensure that there is an inventory item with that equipment's index
+-- to indicate that it's equipped. Equipment that does not have a flagged inventory item will set
+-- their equipmentIndex on the first inventory item that matches the refId of the equipment.
+-- Equipment that matches nothing from the inventory will be removed from the equipment table.
 function BasePlayer:ValidateEquippedInventory()
     for equipmentIndex = 0, tes3mp.GetEquipmentSize() - 1 do
 
@@ -1211,13 +1206,7 @@ function BasePlayer:SaveInventory()
 
                 -- If we removed an inventory entry that had an equipmentIndex (i.e. it was equipped) then
                 -- we need to maintain consistency by removing that entry from the equipment table as well.
-                -- This must be done because of the way the repair hammer and repair prongs work on the
-                -- server side: they remove items and replace them with the same item but with a higher
-                -- condition. The new added item does not have an equipmentIndex, but if we remove the
-                -- equipment table entry, then the next SaveEquipment call will treat it as a newly equipped
-                -- item and will reassign the equipmentIndex. If we did not do this, then the inventory table
-                -- entry would not be given an equipmentIndex, causing a desync between the equipment table
-                -- and the inventory table.
+                -- If we didn't do this, then repair hammers would cause issues with equipped items.
                 if equipmentIndex ~= nil then
                     local equipmentRefId = tes3mp.GetEquipmentItemRefId(self.pid, equipmentIndex)
                     if equipmentRefId ~= nil then
