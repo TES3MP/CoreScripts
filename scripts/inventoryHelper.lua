@@ -64,18 +64,6 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
     return nil
 end
 
--- Gets the index of the inventory item with refId that has an equipmentIndex value
-function inventoryHelper.getItemIndexOfEquipment(inventory, refId)
-
-    for itemIndex, item in pairs(inventory) do
-        if item.refId == refId and item.equipmentIndex ~= nil then
-            return itemIndex
-        end
-    end
-
-    return nil
-end
-
 -- Gets the index of the inventory item with the given equipmentIndex, or nil if no
 -- inventory item has the given equipmentIndex
 function inventoryHelper.getItemIndexByEquipmentIndex(inventory, equipmentIndex)
@@ -161,8 +149,17 @@ end
 
 function inventoryHelper.setItemToUnequipped(inventory, refId, charge, enchantmentCharge)
 
-    local index = inventoryHelper.getItemIndexOfEquipment(inventory, refId)
+    local index = nil
 
+    -- find the inventory index with an equipmentIndex and which matches the given refId
+    for itemIndex, item in pairs(inventory) do
+        if item.refId == refId and item.equipmentIndex ~= nil then
+            index = itemIndex
+            break
+        end
+    end
+
+    -- if we got an index, then that's the index of the inventory item to unequip
     if index ~= nil then
         -- save soul and count, we'll need them in a moment
         local itemSoul = inventory[index].soul
