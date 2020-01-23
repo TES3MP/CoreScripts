@@ -319,6 +319,26 @@ eventHandler.InitializeDefaultHandlers = function()
         end
     end)
 
+    -- Print object restocking and send an ObjectRestock packet back to the player
+    customEventHooks.registerHandler("OnObjectRestock", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        if eventStatus.validDefaultHandler == false then return end
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting restock request for " .. object.refId .. " " .. uniqueIndex)
+        end
+
+        tes3mp.CopyReceivedObjectListToStore()
+        -- Objects can't be restocked clientside without the server's approval, so we send
+        -- the packet back to the player who sent it, but we avoid sending it to other
+        -- players because the Container packet resulting from the restocking will get
+        -- sent to them instead
+        -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+        tes3mp.SendObjectRestock(false, false)
+    end)
+
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
@@ -1220,6 +1240,10 @@ end
 
 eventHandler.OnObjectLock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock")
+end
+
+eventHandler.OnObjectRestock = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "restock")
 end
 
 eventHandler.OnObjectTrap = function(pid, cellDescription)
