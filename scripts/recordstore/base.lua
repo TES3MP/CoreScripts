@@ -391,7 +391,7 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
             cost = tes3mp.GetRecordCost(recordIndex),
             charge = tes3mp.GetRecordCharge(recordIndex),
             autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
         }
 
         self.data.generatedRecords[recordId] = record
@@ -423,7 +423,7 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
             icon = tes3mp.GetRecordIcon(recordIndex),
             model = tes3mp.GetRecordModel(recordIndex),
             script = tes3mp.GetRecordScript(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
         }
 
         -- Is there already a record exactly like this one, icon and model aside?
@@ -462,7 +462,7 @@ function BaseRecordStore:SaveGeneratedSpells(pid)
             subtype = tes3mp.GetRecordSubtype(recordIndex),
             cost = tes3mp.GetRecordCost(recordIndex),
             flags = tes3mp.GetRecordFlags(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
+            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
         }
 
         self.data.generatedRecords[recordId] = record

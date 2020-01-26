@@ -213,7 +213,7 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
-packetReader.GetRecordEffects = function(recordIndex)
+packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}
     local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
