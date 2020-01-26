@@ -341,7 +341,7 @@ function StateHelper:SaveReputation(pid, stateObject)
     stateObject:QuicksaveToDrive()
 end
 
-function StateHelper:SaveClientScriptGlobal(pid, stateObject)
+function StateHelper:SaveClientScriptGlobal(stateObject, variables)
 
     if stateObject.data.clientVariables == nil then
         stateObject.data.clientVariables = {}
@@ -351,17 +351,8 @@ function StateHelper:SaveClientScriptGlobal(pid, stateObject)
         stateObject.data.clientVariables.globals = {}
     end
 
-    for index = 0, tes3mp.GetClientGlobalsSize() - 1 do
-        local variableId = tes3mp.GetClientGlobalId(index)
-        local variableTable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
-
-        if variableTable.variableType == enumerations.variableType.INTEGER then
-            variableTable.intValue = tes3mp.GetClientGlobalIntValue(index)
-        elseif variableTable.variableType == enumerations.variableType.FLOAT then
-            variableTable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
-        end
-
-        stateObject.data.clientVariables.globals[variableId] = variableTable
+    for id, variable in pairs (variables) do
+        stateObject.data.clientVariables.globals[id] = variable
     end
 
     stateObject:QuicksaveToDrive()

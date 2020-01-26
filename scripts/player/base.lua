@@ -1319,8 +1319,8 @@ function BasePlayer:LoadClientScriptVariables()
     stateHelper:LoadClientScriptVariables(self.pid, self)
 end
 
-function BasePlayer:SaveClientScriptGlobal()
-    stateHelper:SaveClientScriptGlobal(self.pid, self)
+function BasePlayer:SaveClientScriptGlobal(variables)
+    stateHelper:SaveClientScriptGlobal(self, variables)
 end
 
 function BasePlayer:LoadDestinationOverrides(pid)

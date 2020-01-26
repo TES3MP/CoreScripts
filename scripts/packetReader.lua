@@ -213,6 +213,27 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
+packetReader.GetClientScriptGlobalPacketTable = function()
+
+    local variables = {}
+    local variableCount = tes3mp.GetClientGlobalsSize()
+
+    for index = 0, variableCount - 1 do
+        local id = tes3mp.GetClientGlobalId(index)
+        local variable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
+
+        if variable.variableType == enumerations.variableType.INTEGER then
+            variable.intValue = tes3mp.GetClientGlobalIntValue(index)
+        elseif variable.variableType == enumerations.variableType.FLOAT then
+            variable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
+        end
+
+        variables[id] = variable
+    end
+
+    return variables
+end
+
 packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}
