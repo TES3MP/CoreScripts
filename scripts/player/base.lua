@@ -511,7 +511,7 @@ end
 
 function BasePlayer:Resurrect()
 
-    local currentResurrectType
+    local currentResurrectType = enumerations.resurrect.REGULAR
 
     if config.respawnAtImperialShrine == true then
         if config.respawnAtTribunalTemple == true then
