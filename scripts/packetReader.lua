@@ -213,6 +213,33 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
+packetReader.GetPlayerJournalItemArray = function(pid)
+
+    local journalItemArray = {}
+    local journalChangesCount = tes3mp.GetJournalChangesSize(pid)
+
+    for index = 0, journalChangesCount - 1 do
+        local journalItem = {
+            type = tes3mp.GetJournalItemType(pid, index),
+            index = tes3mp.GetJournalItemIndex(pid, index),
+            quest = tes3mp.GetJournalItemQuest(pid, index),
+            timestamp = {
+                daysPassed = WorldInstance.data.time.daysPassed,
+                month = WorldInstance.data.time.month,
+                day = WorldInstance.data.time.day
+            }
+        }
+
+        if journalItem.type == enumerations.journal.ENTRY then
+            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, index)
+        end
+
+        table.insert(journalItemArray, journalItem)
+    end
+
+    return journalItemArray
+end
+
 packetReader.GetClientScriptGlobalPacketTable = function()
 
     local variables = {}

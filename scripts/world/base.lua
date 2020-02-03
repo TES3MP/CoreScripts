@@ -268,8 +268,8 @@ function BaseWorld:LoadTime(pid, forEveryone)
     tes3mp.SendWorldTime(pid, forEveryone)
 end
 
-function BaseWorld:SaveJournal(pid)
-    stateHelper:SaveJournal(pid, self)
+function BaseWorld:SaveJournal(journalItemArray)
+    stateHelper:SaveJournal(self, journalItemArray)
 end
 
 function BaseWorld:SaveFactionRanks(pid)

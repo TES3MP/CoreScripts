@@ -1263,8 +1263,8 @@ function BasePlayer:LoadJournal()
     stateHelper:LoadJournal(self.pid, self)
 end
 
-function BasePlayer:SaveJournal()
-    stateHelper:SaveJournal(self.pid, self)
+function BasePlayer:SaveJournal(journalItemArray)
+    stateHelper:SaveJournal(self, journalItemArray)
 end
 
 function BasePlayer:LoadFactionRanks()

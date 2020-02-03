@@ -219,7 +219,7 @@ function StateHelper:LoadMap(pid, stateObject)
     end
 end
 
-function StateHelper:SaveJournal(pid, stateObject)
+function StateHelper:SaveJournal(stateObject, journalItemArray)
 
     if stateObject.data.journal == nil then
         stateObject.data.journal = {}
@@ -229,22 +229,7 @@ function StateHelper:SaveJournal(pid, stateObject)
         stateObject.data.customVariables = {}
     end
 
-    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
-
-        local journalItem = {
-            type = tes3mp.GetJournalItemType(pid, i),
-            index = tes3mp.GetJournalItemIndex(pid, i),
-            quest = tes3mp.GetJournalItemQuest(pid, i),
-            timestamp = {
-                daysPassed = WorldInstance.data.time.daysPassed,
-                month = WorldInstance.data.time.month,
-                day = WorldInstance.data.time.day
-            }
-        }
-
-        if journalItem.type == enumerations.journal.ENTRY then
-            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
-        end
+    for _, journalItem in ipairs(journalItemArray) do
 
         table.insert(stateObject.data.journal, journalItem)
 
