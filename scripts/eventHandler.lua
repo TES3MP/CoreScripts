@@ -1607,9 +1607,13 @@ end
 
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid})
+
+        tes3mp.ReadReceivedWorldstate()
+        local mapTileArray = packetReader.GetWorldMapTileArray()
+
+        local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid, mapTileArray})
         if eventStatus.validDefaultHandler then
-            WorldInstance:SaveMapTiles(pid)
+            WorldInstance:SaveMapTiles(mapTileArray)
 
             if config.shareMapExploration == true then
                 tes3mp.CopyReceivedWorldstateToStore()
@@ -1619,7 +1623,7 @@ eventHandler.OnWorldMap = function(pid)
                 tes3mp.SendWorldMap(pid, true, true)
             end
         end
-        customEventHooks.triggerHandlers("OnWorldMap", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnWorldMap", eventStatus, {pid, mapTileArray})
     end
 end
 

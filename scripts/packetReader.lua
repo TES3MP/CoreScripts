@@ -240,6 +240,25 @@ packetReader.GetPlayerJournalItemArray = function(pid)
     return journalItemArray
 end
 
+packetReader.GetWorldMapTileArray = function()
+
+    local mapTileArray = {}
+    local mapTileCount = tes3mp.GetMapChangesSize()
+
+    for index = 0, mapTileCount - 1 do
+        mapTile = {
+            cellX = tes3mp.GetMapTileCellX(index),
+            cellY = tes3mp.GetMapTileCellY(index),
+        }
+
+        mapTile.filename = mapTile.cellX .. ", " .. mapTile.cellY .. ".png"
+
+        table.insert(mapTileArray, mapTile)
+    end
+
+    return mapTileArray
+end
+
 packetReader.GetClientScriptGlobalPacketTable = function()
 
     local variables = {}
