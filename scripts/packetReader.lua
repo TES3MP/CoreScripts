@@ -268,7 +268,8 @@ packetReader.GetClientScriptGlobalPacketTable = function()
         local id = tes3mp.GetClientGlobalId(index)
         local variable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
 
-        if variable.variableType == enumerations.variableType.INTEGER then
+        if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
+            variable.variableType) then
             variable.intValue = tes3mp.GetClientGlobalIntValue(index)
         elseif variable.variableType == enumerations.variableType.FLOAT then
             variable.floatValue = tes3mp.GetClientGlobalFloatValue(index)

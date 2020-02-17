@@ -151,8 +151,10 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
 
         if type(variableTable) == "table" then
 
-            if variableTable.variableType == enumerations.variableType.INTEGER then
-                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue)
+            if variableTable.variableType == enumerations.variableType.SHORT then
+                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.SHORT)
+            elseif variableTable.variableType == enumerations.variableType.LONG then
+                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.LONG)
             elseif variableTable.variableType == enumerations.variableType.FLOAT then
                 tes3mp.AddClientGlobalFloat(variableId, variableTable.floatValue)
             end

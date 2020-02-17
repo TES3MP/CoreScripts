@@ -22,6 +22,6 @@ enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 
     SPELL = 20, STATIC = 21, WEAPON = 22 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
-enumerations.variableType = { INTEGER = 0, FLOAT = 1 }
+enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2 }
 
 return enumerations
