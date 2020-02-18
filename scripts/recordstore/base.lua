@@ -235,7 +235,7 @@ function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEvery
     end
 
     for _, recordId in pairs(idArray) do
-        if not tableHelper.containsValue(Players[pid].generatedRecordsReceived, recordId) then
+        if recordList[recordId] ~= nil and not tableHelper.containsValue(Players[pid].generatedRecordsReceived, recordId) then
 
             table.insert(Players[pid].generatedRecordsReceived, recordId)
             table.insert(validIdArray, recordId)
