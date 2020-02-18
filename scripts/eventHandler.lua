@@ -1455,6 +1455,7 @@ eventHandler.OnRecordDynamic = function(pid)
         local rejectedRecords = {}
 
         local recordArray = packetReader.GetRecordDynamicArray(pid)
+        local recordTable = {}
         
         if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then            
             for _, record in pairs(recordArray) do
@@ -1474,7 +1475,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
         local storeType = string.lower(tableHelper.getIndexByValue(enumerations.recordType, recordNumericalType))
         local recordStore = RecordStores[storeType]
-        local isEnchantable, recordAdditions
+        local isEnchantable
 
         if recordStore == nil then
             tes3mp.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " ..
@@ -1487,47 +1488,43 @@ eventHandler.OnRecordDynamic = function(pid)
         local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray})
         
         if eventStatus.validDefaultHandler then
-        
-            if storeType == "spell" then
-                recordAdditions = recordStore:SaveGeneratedSpells(recordArray)
-            elseif storeType == "potion" then
-                recordAdditions = recordStore:SaveGeneratedPotions(recordArray, pid)
-            elseif storeType == "enchantment" then
-                recordAdditions = recordStore:SaveGeneratedEnchantments(recordArray)
-            elseif isEnchantable then
-                recordAdditions = recordStore:SaveGeneratedEnchantedItems(recordArray)
-            end
 
-            tes3mp.CopyReceivedWorldstateToStore()
+            for _, record in ipairs(recordArray) do
 
-            -- Iterate through the record additions and make any necessary adjustments
-            for recordIndex, recordAddition in pairs(recordAdditions) do
+                local recordId
 
-                -- Set the server-generated ids of the records in our stored copy of the
-                -- RecordsDynamic packet before we send it to the players
-                tes3mp.SetRecordIdByIndex(recordIndex - 1, recordAddition.id)
+                -- Is there already a record exactly like this one, icon and model aside?
+                -- If so, we'll just reuse it the way OpenMW would
+                if storeType == "potion" then
+
+                    recordId = recordStore:GetMatchingRecordId(record, recordStore.data.generatedRecords,
+                        Players[pid].data.recordLinks[storeType], {"icon", "model"}, true, 25)
+                end
+
+                if recordId == nil then
+                    recordId = recordStore:GenerateRecordId()
+                end
 
                 if storeType == "enchantment" then
                     -- We need to store this enchantment's original client-generated id
                     -- on this player so we can match it with its server-generated correct
                     -- id once the player sends the record of the enchanted item they've
                     -- used it on
-                    Players[pid].unresolvedEnchantments[recordAddition.clientsideId] = recordAddition.id
-                elseif isEnchantable then
-                    -- Set the server-generated id for this enchanted item's enchantment
-                    tes3mp.SetRecordEnchantmentIdByIndex(recordIndex - 1, recordAddition.enchantmentId)
+                    Players[pid].unresolvedEnchantments[record.clientsideEnchantmentId] = recordId
+                    record.clientsideEnchantmentId = nil
                 end
 
-                -- This record will be sent to everyone on the server just after this loop,
-                -- so track it as having already been received by players
-                for _, player in pairs(Players) do
-                    table.insert(player.generatedRecordsReceived, recordAddition.id)
-                end
+                recordTable[recordId] = record
             end
 
-            -- Send this RecordDynamic packet to other players (sendToOthersPlayers is true),
-            -- and also send it to the player we got it from (skipAttachedPlayer is false)
-            tes3mp.SendRecordDynamic(pid, true, false)
+            recordStore:SaveGeneratedRecords(recordTable)
+            recordStore:LoadGeneratedRecords(pid, recordTable, tableHelper.getArrayFromIndexes(recordTable), true)
+
+            for _, player in pairs(Players) do
+                for recordId, record in pairs(recordTable) do
+                    table.insert(player.generatedRecordsReceived, recordId)
+                end
+            end
 
             -- Add the final spell to the player's spellbook
             if storeType == "spell" then
@@ -1535,11 +1532,11 @@ eventHandler.OnRecordDynamic = function(pid)
                 tes3mp.ClearSpellbookChanges(pid)
                 tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
 
-                for _, recordAddition in pairs(recordAdditions) do
-                    table.insert(Players[pid].data.spellbook, recordAddition.id)
-                    tes3mp.AddSpell(pid, recordAddition.id)
+                for recordId, record in pairs(recordTable) do
+                    table.insert(Players[pid].data.spellbook, recordId)
+                    tes3mp.AddSpell(pid, recordId)
 
-                    Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
+                    Players[pid]:AddLinkToRecord(storeType, recordId)
                 end
 
                 recordStore:QuicksaveToDrive()
@@ -1555,20 +1552,20 @@ eventHandler.OnRecordDynamic = function(pid)
 
                 local itemArray = {}
 
-                for _, recordAddition in pairs(recordAdditions) do
+                for recordId, record in pairs(recordTable) do
 
-                    local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
+                    local item = { refId = recordId, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
                     inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
                         item.enchantmentCharge, item.soul)
                     table.insert(itemArray, item)
 
-                    Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
+                    Players[pid]:AddLinkToRecord(storeType, recordId)
 
                     -- If this is an enchantable item record, add a link to it from its associated
                     -- enchantment record
                     if isEnchantable then
-                        enchantmentStore:AddLinkToRecord(recordAddition.enchantmentId,
-                            recordAddition.id, storeType)
+                        enchantmentStore:AddLinkToRecord(record.enchantmentId,
+                            recordId, storeType)
                     end
                 end
 
@@ -1580,7 +1577,7 @@ eventHandler.OnRecordDynamic = function(pid)
             end
             
         end
-        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordArray})
+        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable})
     end
 end
 

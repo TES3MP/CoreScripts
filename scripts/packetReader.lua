@@ -315,6 +315,7 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.charge = tes3mp.GetRecordCharge(recordIndex)
             record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+            record.clientsideEnchantmentId = tes3mp.GetRecordId(recordIndex)
 
         else
             record.baseId = tes3mp.GetRecordBaseId(recordIndex)

@@ -328,88 +328,11 @@ function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray
     return nil
 end
 
-function BaseRecordStore:SaveGeneratedEnchantedItems(recordArray)
+function BaseRecordStore:SaveGeneratedRecords(recordTable)
 
-    if self.storeType ~= "armor" and self.storeType ~= "book" and
-        self.storeType ~= "clothing" and self.storeType ~= "weapon" then
-        return
-    end
-
-    local recordAdditions = {}
-
-    for recordIndex, record in ipairs(recordArray) do
-
-        local recordId = self:GenerateRecordId()
-
+    for recordId, record in pairs(recordTable) do
         self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { id = recordId,
-            enchantmentId = record.enchantmentId })
     end
-
-    self:QuicksaveToDrive()
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedEnchantments(recordArray)
-
-    if self.storeType ~= "enchantment" then return end
-
-    local recordAdditions = {}
-
-    for recordIndex, record in pairs(recordArray) do
-
-        local recordId = self:GenerateRecordId()
-
-        self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { id = recordId,
-            clientsideId = tes3mp.GetRecordId(recordIndex - 1) })
-    end
-
-    self:QuicksaveToDrive()
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedPotions(recordArray, pid)
-
-    if self.storeType ~= "potion" then return end
-
-    local recordAdditions = {}
-
-    for _, record in pairs(recordArray) do
-
-        -- Is there already a record exactly like this one, icon and model aside?
-        -- If so, we'll just reuse it the way OpenMW would
-        local recordId = self:GetMatchingRecordId(record, self.data.generatedRecords,
-            Players[pid].data.recordLinks.potion, {"icon", "model"}, true, 25)
-
-        if recordId == nil then
-            recordId = self:GenerateRecordId()
-            self.data.generatedRecords[recordId] = record
-        end
-
-        table.insert(recordAdditions, { id = recordId })
-    end
-
-    self:QuicksaveToDrive()
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedSpells(recordArray)
-
-    if self.storeType ~= "spell" then return end
-
-    local recordAdditions = {}
-
-    for _, record in pairs(recordArray) do
-
-        local recordId = self:GenerateRecordId()
-
-        self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { id = recordId })
-    end
-
-    self:QuicksaveToDrive()
-    return recordAdditions
 end
 
 return BaseRecordStore
