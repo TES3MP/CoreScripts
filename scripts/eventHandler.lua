@@ -1454,19 +1454,14 @@ eventHandler.OnRecordDynamic = function(pid)
         local isAllowed = true
         local rejectedRecords = {}
 
-        local records = {}
+        local recordArray = packetReader.GetRecordDynamicArray(pid)
         
-        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
-            local recordCount = tes3mp.GetRecordCount(pid)
-            
-            for recordIndex = 0, recordCount - 1 do
-                local record = {}
-                recordName = tes3mp.GetRecordName(recordIndex)
-
-                if not logicHandler.IsNameAllowed(recordName) then
+        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then            
+            for _, record in pairs(recordArray) do
+                if not logicHandler.IsNameAllowed(record.name) then
                     isAllowed = false
 
-                    Players[pid]:Message("You are not allowed to create a record called " .. recordName .. "\n")
+                    Players[pid]:Message("You are not allowed to create a record called " .. record.name .. "\n")
                 end
             end
         end
@@ -1489,28 +1484,28 @@ eventHandler.OnRecordDynamic = function(pid)
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
         end
         
-        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid})
+        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray})
         
         if eventStatus.validDefaultHandler then
         
             if storeType == "spell" then
-                recordAdditions = recordStore:SaveGeneratedSpells(pid)
+                recordAdditions = recordStore:SaveGeneratedSpells(recordArray)
             elseif storeType == "potion" then
-                recordAdditions = recordStore:SaveGeneratedPotions(pid)
+                recordAdditions = recordStore:SaveGeneratedPotions(recordArray, pid)
             elseif storeType == "enchantment" then
-                recordAdditions = recordStore:SaveGeneratedEnchantments(pid)
+                recordAdditions = recordStore:SaveGeneratedEnchantments(recordArray)
             elseif isEnchantable then
-                recordAdditions = recordStore:SaveGeneratedEnchantedItems(pid)
+                recordAdditions = recordStore:SaveGeneratedEnchantedItems(recordArray)
             end
 
             tes3mp.CopyReceivedWorldstateToStore()
 
             -- Iterate through the record additions and make any necessary adjustments
-            for _, recordAddition in pairs(recordAdditions) do
+            for recordIndex, recordAddition in pairs(recordAdditions) do
 
                 -- Set the server-generated ids of the records in our stored copy of the
                 -- RecordsDynamic packet before we send it to the players
-                tes3mp.SetRecordIdByIndex(recordAddition.index, recordAddition.id)
+                tes3mp.SetRecordIdByIndex(recordIndex - 1, recordAddition.id)
 
                 if storeType == "enchantment" then
                     -- We need to store this enchantment's original client-generated id
@@ -1520,7 +1515,7 @@ eventHandler.OnRecordDynamic = function(pid)
                     Players[pid].unresolvedEnchantments[recordAddition.clientsideId] = recordAddition.id
                 elseif isEnchantable then
                     -- Set the server-generated id for this enchanted item's enchantment
-                    tes3mp.SetRecordEnchantmentIdByIndex(recordAddition.index, recordAddition.enchantmentId)
+                    tes3mp.SetRecordEnchantmentIdByIndex(recordIndex - 1, recordAddition.enchantmentId)
                 end
 
                 -- This record will be sent to everyone on the server just after this loop,
@@ -1585,7 +1580,7 @@ eventHandler.OnRecordDynamic = function(pid)
             end
             
         end
-        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordArray})
     end
 end
 

@@ -281,6 +281,64 @@ packetReader.GetClientScriptGlobalPacketTable = function()
     return variables
 end
 
+packetReader.GetRecordDynamicArray = function(pid)
+
+    local recordArray = {}
+    local recordCount = tes3mp.GetRecordCount(pid)
+    local recordNumericalType = tes3mp.GetRecordType(pid)
+
+    for recordIndex = 0, recordCount - 1 do
+        local record = {}
+
+        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
+            record.name = tes3mp.GetRecordName(recordIndex)
+        end
+
+        if recordNumericalType == enumerations.recordType.SPELL then
+            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
+            record.cost = tes3mp.GetRecordCost(recordIndex)
+            record.flags = tes3mp.GetRecordFlags(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+        elseif recordNumericalType == enumerations.recordType.POTION then
+            record.weight = tes3mp.GetRecordWeight(recordIndex)
+            record.value = tes3mp.GetRecordValue(recordIndex)
+            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
+            record.icon = tes3mp.GetRecordIcon(recordIndex)
+            record.model = tes3mp.GetRecordModel(recordIndex)
+            record.script = tes3mp.GetRecordScript(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+        elseif recordNumericalType == enumerations.recordType.ENCHANTMENT then
+            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
+            record.cost = tes3mp.GetRecordCost(recordIndex)
+            record.charge = tes3mp.GetRecordCharge(recordIndex)
+            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+        else
+            record.baseId = tes3mp.GetRecordBaseId(recordIndex)
+            record.enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
+
+            -- Enchanted item records always have client-set ids for their enchantments
+            -- when received by us, so we need to check for the server-set ids matching
+            -- them in the player's unresolved enchantments
+            local clientEnchantmentId = tes3mp.GetRecordEnchantmentId(recordIndex)
+            record.enchantmentId = Players[pid].unresolvedEnchantments[clientEnchantmentId]
+
+            -- Stop tracking this as an unresolved enchantment, assuming the enchantment
+            -- itself wasn't previously denied
+            if record.enchantmentId ~= nil and Players[pid] ~= nil then
+                Players[pid].unresolvedEnchantments[clientEnchantmentId] = nil
+            end
+        end
+
+        table.insert(recordArray, record)
+    end
+
+    return recordArray
+end
+
 packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}

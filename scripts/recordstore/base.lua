@@ -328,7 +328,7 @@ function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray
     return nil
 end
 
-function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
+function BaseRecordStore:SaveGeneratedEnchantedItems(recordArray)
 
     if self.storeType ~= "armor" and self.storeType ~= "book" and
         self.storeType ~= "clothing" and self.storeType ~= "weapon" then
@@ -336,95 +336,46 @@ function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
     end
 
     local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
 
-    for recordIndex = 0, recordCount - 1 do
+    for recordIndex, record in ipairs(recordArray) do
 
-        -- Enchanted item records always have client-set ids for their enchantments
-        -- when received by us, so we need to check for the server-set ids matching
-        -- them in the player's unresolved enchantments
-        local clientEnchantmentId = tes3mp.GetRecordEnchantmentId(recordIndex)
-        local serverEnchantmentId = Players[pid].unresolvedEnchantments[clientEnchantmentId]
+        local recordId = self:GenerateRecordId()
 
-        if serverEnchantmentId ~= nil then
-
-            -- Stop tracking this as an unresolved enchantment
-            Players[pid].unresolvedEnchantments[clientEnchantmentId] = nil
-
-            local recordId = self:GenerateRecordId()
-
-            -- We don't need to track all the details of the enchanted items, just their base
-            -- id and their enchantment information
-            local record = {
-                baseId = tes3mp.GetRecordBaseId(recordIndex),
-                name = tes3mp.GetRecordName(recordIndex),
-                enchantmentId = serverEnchantmentId,
-                enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
-            }
-
-            self.data.generatedRecords[recordId] = record
-            table.insert(recordAdditions, { index = recordIndex, id = recordId,
-                enchantmentId = serverEnchantmentId })
-        end
+        self.data.generatedRecords[recordId] = record
+        table.insert(recordAdditions, { id = recordId,
+            enchantmentId = record.enchantmentId })
     end
 
     self:QuicksaveToDrive()
     return recordAdditions
 end
 
-function BaseRecordStore:SaveGeneratedEnchantments(pid)
+function BaseRecordStore:SaveGeneratedEnchantments(recordArray)
 
     if self.storeType ~= "enchantment" then return end
 
     local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
 
-    for recordIndex = 0, recordCount - 1 do
+    for recordIndex, record in pairs(recordArray) do
 
         local recordId = self:GenerateRecordId()
 
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            subtype = tes3mp.GetRecordSubtype(recordIndex),
-            cost = tes3mp.GetRecordCost(recordIndex),
-            charge = tes3mp.GetRecordCharge(recordIndex),
-            autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
-        }
-
         self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { index = recordIndex, id = recordId,
-            clientsideId = tes3mp.GetRecordId(recordIndex) })
+        table.insert(recordAdditions, { id = recordId,
+            clientsideId = tes3mp.GetRecordId(recordIndex - 1) })
     end
 
     self:QuicksaveToDrive()
     return recordAdditions
 end
 
-function BaseRecordStore:SaveGeneratedPotions(pid)
+function BaseRecordStore:SaveGeneratedPotions(recordArray, pid)
 
     if self.storeType ~= "potion" then return end
 
     local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
 
-    for recordIndex = 0, recordCount - 1 do
-
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            name = tes3mp.GetRecordName(recordIndex),
-            weight = tes3mp.GetRecordWeight(recordIndex),
-            value = tes3mp.GetRecordValue(recordIndex),
-            autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            icon = tes3mp.GetRecordIcon(recordIndex),
-            model = tes3mp.GetRecordModel(recordIndex),
-            script = tes3mp.GetRecordScript(recordIndex),
-            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
-        }
+    for _, record in pairs(recordArray) do
 
         -- Is there already a record exactly like this one, icon and model aside?
         -- If so, we'll just reuse it the way OpenMW would
@@ -436,37 +387,25 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
             self.data.generatedRecords[recordId] = record
         end
 
-        table.insert(recordAdditions, { index = recordIndex, id = recordId })
+        table.insert(recordAdditions, { id = recordId })
     end
 
     self:QuicksaveToDrive()
     return recordAdditions
 end
 
-function BaseRecordStore:SaveGeneratedSpells(pid)
+function BaseRecordStore:SaveGeneratedSpells(recordArray)
 
     if self.storeType ~= "spell" then return end
 
     local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
 
-    for recordIndex = 0, recordCount - 1 do
+    for _, record in pairs(recordArray) do
 
         local recordId = self:GenerateRecordId()
 
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            name = tes3mp.GetRecordName(recordIndex),
-            subtype = tes3mp.GetRecordSubtype(recordIndex),
-            cost = tes3mp.GetRecordCost(recordIndex),
-            flags = tes3mp.GetRecordFlags(recordIndex),
-            effects = packetReader.GetRecordPacketEffectArray(recordIndex)
-        }
-
         self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { index = recordIndex, id = recordId })
+        table.insert(recordAdditions, { id = recordId })
     end
 
     self:QuicksaveToDrive()
