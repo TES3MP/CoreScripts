@@ -301,7 +301,7 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
         elseif recordNumericalType == enumerations.recordType.POTION then
-            record.weight = tes3mp.GetRecordWeight(recordIndex)
+            record.weight = math.floor(tes3mp.GetRecordWeight(recordIndex) * 100) / 100
             record.value = tes3mp.GetRecordValue(recordIndex)
             record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
             record.icon = tes3mp.GetRecordIcon(recordIndex)
