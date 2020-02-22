@@ -331,7 +331,11 @@ end
 function BaseRecordStore:SaveGeneratedRecords(recordTable)
 
     for recordId, record in pairs(recordTable) do
-        self.data.generatedRecords[recordId] = record
+        self.data.generatedRecords[recordId] = tableHelper.shallowCopy(record)
+
+        -- Retain the quantity in the input table (when applicable) so we can check it
+        -- elsewhere, but remove it from here
+        self.data.generatedRecords[recordId].quantity = nil
     end
 end
 

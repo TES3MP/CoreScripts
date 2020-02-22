@@ -1554,7 +1554,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
                 for recordId, record in pairs(recordTable) do
 
-                    local item = { refId = recordId, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
+                    local item = { refId = recordId, count = record.quantity, charge = -1, enchantmentCharge = -1, soul = "" }
                     inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
                         item.enchantmentCharge, item.soul)
                     table.insert(itemArray, item)
