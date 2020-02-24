@@ -13,7 +13,7 @@ BaseRecordStore.defaultData =
 
 function BaseRecordStore:__init(storeType)
 
-    self.data = tableHelper.shallowCopy(self.defaultData)
+    self.data = tableHelper.deepCopy(self.defaultData)
     self.storeType = storeType
 end
 
@@ -25,7 +25,7 @@ function BaseRecordStore:EnsureDataStructure()
 
     for key, value in pairs(self.defaultData) do
         if self.data[key] == nil then
-            self.data[key] = tableHelper.shallowCopy(value)
+            self.data[key] = tableHelper.deepCopy(value)
         end
     end
 end
@@ -331,7 +331,7 @@ end
 function BaseRecordStore:SaveGeneratedRecords(recordTable)
 
     for recordId, record in pairs(recordTable) do
-        self.data.generatedRecords[recordId] = tableHelper.shallowCopy(record)
+        self.data.generatedRecords[recordId] = tableHelper.deepCopy(record)
 
         -- Retain the quantity in the input table (when applicable) so we can check it
         -- elsewhere, but remove it from here

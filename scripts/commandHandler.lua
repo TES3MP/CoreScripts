@@ -1316,7 +1316,7 @@ function commandHandler.CreateRecord(pid, cmd)
 
     -- We don't want to insert a direct reference to the storedTable in our record data,
     -- so create a copy of the storedTable and insert that instead
-    local savedTable = tableHelper.shallowCopy(storedTable)
+    local savedTable = tableHelper.deepCopy(storedTable)
 
     -- The id and the savedTable will form a key-value pair, so there's no need to keep
     -- the id in the savedTable as well
