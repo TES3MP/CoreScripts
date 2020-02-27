@@ -31,6 +31,7 @@ packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
     local enchantmentCharge = objectData.enchantmentCharge
     local soul = objectData.soul
     local goldValue = objectData.goldValue
+    local droppedByPlayer = objectData.droppedByPlayer
 
     -- Use default values when necessary
     if count == nil then count = 1 end
@@ -38,12 +39,14 @@ packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
     if enchantmentCharge == nil then enchantmentCharge = -1 end
     if soul == nil then soul = "" end
     if goldValue == nil then goldValue = 1 end
+    if droppedByPlayer == nil then droppedByPlayer = false end
 
     tes3mp.SetObjectCount(count)
     tes3mp.SetObjectCharge(charge)
     tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
     tes3mp.SetObjectSoul(soul)
     tes3mp.SetObjectGoldValue(goldValue)
+    tes3mp.SetObjectDroppedByPlayerState(droppedByPlayer)
 
     local location = objectData.location
     tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)

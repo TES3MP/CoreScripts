@@ -166,6 +166,7 @@ packetReader.GetObjectPacketTables = function(packetType)
                     object.soul = tes3mp.GetObjectSoul(packetIndex)
                     object.goldValue = tes3mp.GetObjectGoldValue(packetIndex)
                     object.hasContainer = tes3mp.DoesObjectHaveContainer(packetIndex)
+                    object.droppedByPlayer = tes3mp.IsObjectDroppedByPlayer(packetIndex)
                 elseif packetType == "spawn" then
                     local summonState = tes3mp.GetObjectSummonState(packetIndex)
 
