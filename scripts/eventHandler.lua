@@ -332,6 +332,32 @@ eventHandler.InitializeDefaultHandlers = function()
         end
     end)
 
+    -- Print object sounds and send an ObjectSound packet to other players
+    customEventHooks.registerHandler("OnObjectSound", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        if eventStatus.validDefaultHandler == false then return end
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            debugMessage = "- " .. uniqueIndex .. " played sound " .. object.soundId
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+        end
+
+        for targetPid, targetPlayer in pairs(targetPlayers) do
+            debugMessage = "- " .. logicHandler.GetChatName(targetPid) .. " played sound " .. targetPlayer.soundId
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage) 
+        end
+
+        tes3mp.CopyReceivedObjectListToStore()
+        -- Sounds are played unilaterally clientside before being sent to the server, so we
+        -- send the packet to other players, but we avoid sending it to the original player
+        -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
+        tes3mp.SendObjectSound(true, true)
+    end)
+
     -- Print object restocking and send an ObjectRestock packet back to the player
     customEventHooks.registerHandler("OnObjectRestock", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
@@ -1240,6 +1266,10 @@ end
 
 eventHandler.OnObjectHit = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "hit")
+end
+
+eventHandler.OnObjectSound = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "sound")
 end
 
 eventHandler.OnObjectPlace = function(pid, cellDescription)
