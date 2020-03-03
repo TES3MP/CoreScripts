@@ -1515,7 +1515,7 @@ eventHandler.OnRecordDynamic = function(pid)
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
         end
         
-        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray})
+        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray, storeType})
         
         if eventStatus.validDefaultHandler then
 
@@ -1607,7 +1607,7 @@ eventHandler.OnRecordDynamic = function(pid)
             end
             
         end
-        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable})
+        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable, storeType})
     end
 end
 
