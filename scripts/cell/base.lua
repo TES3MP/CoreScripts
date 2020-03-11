@@ -1215,12 +1215,15 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = objectData[uniqueIndex].refId
-        local scale = objectData[uniqueIndex].scale
+        if objectData[uniqueIndex] ~= nil then
 
-        if refId ~= nil and scale ~= nil then
-            packetBuilder.AddObjectScale(uniqueIndex, objectData[uniqueIndex])
-            objectCount = objectCount + 1
+            local refId = objectData[uniqueIndex].refId
+            local scale = objectData[uniqueIndex].scale
+
+            if refId ~= nil and scale ~= nil then
+                packetBuilder.AddObjectScale(uniqueIndex, objectData[uniqueIndex])
+                objectCount = objectCount + 1
+            end
         end
     end
 
