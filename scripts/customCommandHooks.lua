@@ -79,21 +79,21 @@ function customCommandHooks.validator(eventStatus, pid, message)
             if customCommandHooks.nameRequirement[cmd[1]] ~= nil then
                 if tableHelper.containsValue(customCommandHooks.nameRequirement[cmd[1]], Players[pid].accountName) then
                     callback(pid, cmd)
-                    return customEventHooks.makeEventStatus(false, nil)
+                    return EventBus.makeStatus(false, nil)
                 end
             elseif customCommandHooks.rankRequirement[cmd[1]] ~= nil then
                 if Players[pid].data.settings.staffRank >= customCommandHooks.rankRequirement[cmd[1]] then
                     callback(pid, cmd)
-                    return customEventHooks.makeEventStatus(false, nil)
+                    return EventBus.makeStatus(false, nil)
                 end
             else
                 callback(pid, cmd)
-                return customEventHooks.makeEventStatus(false, nil)
+                return EventBus.makeStatus(false, nil)
             end
         end
     end
 end
 
-customEventHooks.registerValidator("OnPlayerSendMessage", customCommandHooks.validator)
+coreEvents:registerValidator("OnPlayerSendMessage", customCommandHooks.validator)
 
 return customCommandHooks

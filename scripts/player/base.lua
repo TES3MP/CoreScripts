@@ -285,8 +285,8 @@ function BasePlayer:FinishLogin()
             end
         end
         
-        customEventHooks.triggerHandlers("OnPlayerFinishLogin", customEventHooks.makeEventStatus(true, true), {self.pid})
-        customEventHooks.triggerHandlers("OnPlayerAuthentified", customEventHooks.makeEventStatus(true, true), {self.pid})
+        coreEvents:triggerHandlers("OnPlayerFinishLogin", EventBus.makeStatus(true, true), {self.pid})
+        coreEvents:triggerHandlers("OnPlayerAuthentified", EventBus.makeStatus(true, true), {self.pid})
     end
 end
 

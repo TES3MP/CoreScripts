@@ -1,10 +1,10 @@
-Using the customEventHooks API:
+Using the coreEvents API:
 ===
 
 Handling events:
 ---
 
-To handle various events you will need to use two functions: `customEventHooks.registerValidator` and `customEventHooks.registerHandler`.
+To handle various events you will need to use two functions: `coreEvents:registerValidator` and `coreEvents:registerHandler`.
 Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was peformed or not). 
 
 Both of these functions accept an event string (you can find a table below) and a callback function as their arguments.
@@ -14,14 +14,14 @@ eventStatus is a table that defines the way handlers should behave. It has two f
 First defines if default behaviour should be performed, the second signals custom handlers that they should not run.
 However, their callbacks are still ran, and it is scripts' responsibility to handle `eventStatus.validCustomHandlers` being `false`.
 
-Validators can change the current eventStatus. If your validators returns nothing, it stays the same, however if you return a non-`nil` value for either of the two fields, it will override the previous one. You can use `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)` for this.
+Validators can change the current eventStatus. If your validators returns nothing, it stays the same, however if you return a non-`nil` value for either of the two fields, it will override the previous one. You can use `EventBus.makeStatus(validDefaultHandler, validCustomHandlers)` for this.
 
 Examples:
 ---
 Imagine you want to taunt a player whenever they die.
 
 ```Lua
-customEventHooks.registerHandler("OnPlayerDeath", function(eventStatus, pid)
+coreEvents:registerHandler("OnPlayerDeath", function(eventStatus, pid)
     if eventStatus.validCustomHandlers then --check if some other script made this event obsolete
         tes3mp.SendMessage(pid, "Don't worry, he'll be gentle!\n")
     end
@@ -32,7 +32,7 @@ Now let's do something more practical: limiting players' level:
 
 ```Lua
 local maxLevel = 20
-customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
+coreEvents:registerValidator("OnPlayerLevel", function(eventStatus, pid)
     local player = Players[pid]
     if player.data.stats.level >= maxLevel then
         player.data.stats.level = maxLevel
@@ -40,7 +40,7 @@ customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
         player:LoadLevel()
         --cancel the level increase on the server side
         --there have been no level up anymore, so don't run custom handlers for it either
-        return customEventHooks.makeEventStatus(false,false) 
+        return EventBus.makeStatus(false,false) 
     end
 end)
 ```
@@ -48,21 +48,21 @@ end)
 Custom events
 ---
 
-You can also use this API to allow other scripts to interact with yours. For that you will need to add `customEventHooks.triggerValidators(event, args)` and `customEventHooks.triggerHandlers(event, eventStatus, args)` to your code. `event` is a string labeling the event, `eventStatus` should be whatever was returned by `triggerValidators` and `args` is a list or arguments relevant callbacks will receive.
+You can also use this API to allow other scripts to interact with yours. For that you will need to add `coreEvents:triggerValidators(event, args)` and `coreEvents:triggerHandlers(event, eventStatus, args)` to your code. `event` is a string labeling the event, `eventStatus` should be whatever was returned by `triggerValidators` and `args` is a list or arguments relevant callbacks will receive.
 
 Here's an example from `eventHandler.lua`:
 ```Lua
-local eventStatus = customEventHooks.triggerValidators("OnPlayerLevel", {pid})
+local eventStatus = coreEvents:triggerValidators("OnPlayerLevel", {pid})
 if eventStatus.validDefaultHandler then
     Players[pid]:SaveLevel()
     Players[pid]:SaveStatsDynamic()
 end
-customEventHooks.triggerHandlers("OnPlayerLevel", eventStatus, {pid})
+coreEvents:triggerHandlers("OnPlayerLevel", eventStatus, {pid})
 ```
 
 If you don't want other scripts replacing logic from yours, you can provide just the handlers:
 ```Lua
-customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {})
+coreEvents:triggerHandlers("OnServerExit", EventBus.makeStatus(true, true), {})
 ```
 
 Using the customCommandHooks API:
@@ -77,7 +77,7 @@ You can then perform staff rank checks by calling `Players[pid]:IsAdmin()` etc.
 Event table
 ===
 
-This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*
+This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the coreEvents API:*
 
 Most of the events are the same as `eventHandler.lua` functions, with some extra arguments:
 

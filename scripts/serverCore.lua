@@ -17,6 +17,8 @@ class = require("classy")
 tableHelper = require("tableHelper")
 require("time")
 
+EventBus = require("EventBus")
+coreEvents = EventBus()
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
@@ -181,7 +183,7 @@ function OnServerInit()
         tes3mp.StopServer(1)
     end
     
-    local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
+    local eventStatus = coreEvents:triggerValidators("OnServerInit", {})
 
     if eventStatus.validDefaultHandler then
         logicHandler.InitializeWorld()
@@ -204,12 +206,12 @@ function OnServerInit()
         tes3mp.SetScriptErrorIgnoringState(config.ignoreScriptErrors)
     end
 
-    customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
+    coreEvents:triggerHandlers("OnServerInit", eventStatus, {})
 end
 
 function OnServerPostInit()
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
-    local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
+    local eventStatus = coreEvents:triggerValidators("OnServerPostInit", {})
     if eventStatus.validDefaultHandler then
 
         clientVariableScopes = require("clientVariableScopes")
@@ -277,18 +279,18 @@ function OnServerPostInit()
 
         tes3mp.SetRuleString("respawnCell", respawnCell)
     end
-    customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
+    coreEvents:triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
 function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
-    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
+    coreEvents:triggerHandlers("OnServerExit", EventBus.makeStatus(true, true) , {errorState})
 end
 
 function OnServerScriptCrash(errorMessage)
     tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
-    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
+    coreEvents:triggerHandlers("OnServerExit", EventBus.makeStatus(true, true), {errorMessage})
 end
 
 function LoadDataFileList(filename)
@@ -380,7 +382,7 @@ function OnPlayerDisconnect(pid)
 end
 
 function OnPlayerResurrect(pid)
-    customEventHooks.triggerHandlers("OnPlayerResurrect", customEventHooks.makeEventStatus(true, true), {pid})
+    coreEvents:triggerHandlers("OnPlayerResurrect", EventBus.makeStatus(true, true), {pid})
 end
 
 function OnPlayerSendMessage(pid, message)
