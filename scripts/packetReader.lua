@@ -348,6 +348,9 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.baseId = tes3mp.GetRecordBaseId(recordIndex)
             record.enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
 
+            -- Temporary data that should be discarded afterwards
+            record.quantity = 1
+
             -- Enchanted item records always have client-set ids for their enchantments
             -- when received by us, so we need to check for the server-set ids matching
             -- them in the player's unresolved enchantments

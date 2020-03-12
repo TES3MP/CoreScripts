@@ -513,6 +513,16 @@ eventHandler.OnPlayerDisconnect = function(pid)
     local message = logicHandler.GetChatName(pid) .. " has left the server.\n"
     tes3mp.SendMessage(pid, message, true)
 
+    -- If this player has disconnected before properly logging in, remove their pid
+    -- from the table tracking IP addresses
+    if tes3mp.GetIP(pid) == "UNASSIGNED_SYSTEM_ADDRESS" then
+        for ipAddress, pids in pairs(pidsByIpAddress) do
+            if tableHelper.containsValue(pids, pid) then
+                tableHelper.removeValue(pids, pid)
+            end
+        end
+    end
+
     if Players[pid] ~= nil then
         if Players[pid]:IsLoggedIn() then
             local eventStatus = customEventHooks.triggerValidators("OnPlayerDisconnect", {pid})
@@ -1430,7 +1440,7 @@ eventHandler.OnRecordDynamic = function(pid)
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
         end
         
-        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray})
+        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray, storeType})
         
         if eventStatus.validDefaultHandler then
 
@@ -1519,7 +1529,7 @@ eventHandler.OnRecordDynamic = function(pid)
                 recordStore:QuicksaveToDrive()
             end)
         end
-        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable})
+        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable, storeType})
     end
 end
 
