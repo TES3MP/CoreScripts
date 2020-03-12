@@ -255,7 +255,7 @@ config.generatedRecordIdPrefix = "$custom"
 -- players, with the correct order ensuring that enchantments are loaded before items that might be
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
-config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "bodypart", "armor",
+config.recordStoreLoadOrder = { "magic_effect", "script", "spell", "potion", "enchantment", "bodypart", "armor",
     "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
     "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell" }
 

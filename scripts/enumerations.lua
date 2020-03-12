@@ -19,7 +19,7 @@ enumerations.packetOrigin = { CLIENT_GAMEPLAY = 0, CLIENT_CONSOLE = 1, CLIENT_DI
 enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 3, BOOK = 4, CELL = 5,
     CLOTHING = 6, CONTAINER = 7, CREATURE = 8, DOOR = 9, ENCHANTMENT = 10, INGREDIENT = 11, LIGHT = 12,
     LOCKPICK = 13, MISCELLANEOUS = 14, NPC = 15, POTION = 16, PROBE = 17, REPAIR = 18, SCRIPT = 19,
-    SPELL = 20, STATIC = 21, WEAPON = 22 }
+    SPELL = 20, STATIC = 21, WEAPON = 22, MAGIC_EFFECT = 24 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2 }

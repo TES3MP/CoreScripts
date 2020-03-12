@@ -229,6 +229,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddLightRecord(id, record)
     elseif storeType == "lockpick" then
         packetBuilder.AddLockpickRecord(id, record)
+    elseif storeType == "magic_effect" then
+        packetBuilder.AddMagicEffectRecord(id, record)
     elseif storeType == "miscellaneous" then
         packetBuilder.AddMiscellaneousRecord(id, record)
     elseif storeType == "npc" then
@@ -502,6 +504,19 @@ packetBuilder.AddLockpickRecord = function(id, record)
     if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
     if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
     if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddMagicEffectRecord = function(id, record)
+    tes3mp.SetRecordId(id)
+
+    if record.index == nil then
+        error("Trying to send a magic effect record without an index!")
+    end
+    tes3mp.SetRecordIndex(record.index)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
 
     tes3mp.AddRecord()
 end
