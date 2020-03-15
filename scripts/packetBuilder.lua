@@ -349,6 +349,8 @@ packetBuilder.AddCellRecord = function(id, record)
     if record.fog ~= nil then
         tes3mp.SetRecordFog(record.fog.red, record.fog.green, record.fog.blue, record.fog.density)
     end
+    if record.hasWater ~= nil then tes3mp.SetRecordHasWater(record.hasWater) end
+    if record.waterLevel ~= nil then tes3mp.SetRecordWaterLevel(record.waterLevel) end
 
     tes3mp.AddRecord()
 end
