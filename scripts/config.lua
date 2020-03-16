@@ -257,7 +257,7 @@ config.generatedRecordIdPrefix = "$custom"
 -- inventories
 config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "bodypart", "armor",
     "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
-    "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell" }
+    "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell", "sound" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -301,7 +301,8 @@ config.validRecordSettings = {
     static = { "baseId", "id", "model" },
     weapon = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value", "health", "speed", "reach", "damageChop", "damageSlash", "damageThrust",
-        "flags" }
+        "flags" },
+    sound = { "baseId", "id", "sound", "volume", "pitch" }
 }
 
 -- The settings which need to be provided when creating a new record that isn't based at all
@@ -329,7 +330,8 @@ config.requiredRecordSettings = {
     script = { "id" },
     spell = { "name" },
     static = { "model" },
-    weapon = { "name", "model" }
+    weapon = { "name", "model" },
+    sound = { "sound" }
 }
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
