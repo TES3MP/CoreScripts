@@ -351,6 +351,9 @@ packetBuilder.AddCellRecord = function(id, record)
     end
     if record.hasWater ~= nil then tes3mp.SetRecordHasWater(record.hasWater) end
     if record.waterLevel ~= nil then tes3mp.SetRecordWaterLevel(record.waterLevel) end
+    if record.noSleep ~= nil then tes3mp.SetRecordNoSleep(record.noSleep) end
+    if record.quasiEx ~= nil then tes3mp.SetRecordQuasiEx(record.quasiEx) end
+    if record.region ~= nil then tes3mp.SetRecordRegion(record.region) end
 
     tes3mp.AddRecord()
 end
