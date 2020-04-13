@@ -284,7 +284,7 @@ config.validRecordSettings = {
     creature = { "baseId", "id", "name", "model", "script", "scale", "bloodType", "subtype", "level",
         "health", "magicka", "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "flags" },
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
-    enchantment = { "baseId", "id", "subtype", "cost", "charge", "autoCalc", "effects" },
+    enchantment = { "baseId", "id", "subtype", "cost", "charge", "flags", "effects" },
     ingredient = { "baseId", "id", "name", "model", "icon", "script", "weight", "value" },
     light = { "baseId", "id", "name", "model", "icon", "sound", "script", "weight", "value", "time",
         "radius", "color", "flags" },

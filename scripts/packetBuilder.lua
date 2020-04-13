@@ -436,7 +436,10 @@ packetBuilder.AddEnchantmentRecord = function(id, record)
     if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
     if record.cost ~= nil then tes3mp.SetRecordCost(record.cost) end
     if record.charge ~= nil then tes3mp.SetRecordCharge(record.charge) end
-    if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
+
+    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags)
+    -- Keep this for compatibility with older data which used autoCalc
+    elseif record.autoCalc ~= nil then tes3mp.SetRecordFlags(record.autoCalc) end
 
     if type(record.effects) == "table" then
         for _, effect in pairs(record.effects) do

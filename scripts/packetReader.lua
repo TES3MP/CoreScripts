@@ -327,7 +327,7 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.subtype = tes3mp.GetRecordSubtype(recordIndex)
             record.cost = tes3mp.GetRecordCost(recordIndex)
             record.charge = tes3mp.GetRecordCharge(recordIndex)
-            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
+            record.flags = tes3mp.GetRecordFlags(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
             -- Temporary data that should be discarded afterwards
