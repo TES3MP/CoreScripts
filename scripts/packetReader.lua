@@ -338,7 +338,11 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
 
             -- Temporary data that should be discarded afterwards
-            record.quantity = 1
+            if recordNumericalType == enumerations.recordType.WEAPON then
+                record.quantity = tes3mp.GetRecordQuantity(recordIndex)
+            else
+                record.quantity = 1
+            end
 
             -- Enchanted item records always have client-set ids for their enchantments
             -- when received by us, so we need to check for the server-set ids matching
