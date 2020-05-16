@@ -509,6 +509,23 @@ function BaseCell:SaveObjectsLocked(objects)
     end
 end
 
+function BaseCell:SaveObjectsMiscellaneous(objects)
+
+    for uniqueIndex, object in pairs(objects) do
+
+        local refId = object.refId
+        local goldPool = object.goldPool
+
+        self:InitializeObjectData(uniqueIndex, refId)
+        self.data.objectData[uniqueIndex].goldPool = goldPool
+
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            ", goldPool: " .. goldPool)
+
+        tableHelper.insertValueIfMissing(self.data.packets.miscellaneous, uniqueIndex)
+    end
+end
+
 function BaseCell:SaveObjectTrapsTriggered(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -733,6 +750,8 @@ function BaseCell:SaveObjectsByPacketType(packetType, objects)
         self:SaveObjectsDeleted(objects)
     elseif packetType == "lock" then
         self:SaveObjectsLocked(objects)
+    elseif packetType == "miscellaneous" then
+        self:SaveObjectsMiscellaneous(objects)
     elseif packetType == "trap" then
         self:SaveObjectTrapsTriggered(objects)
     elseif packetType == "scale" then
@@ -1187,6 +1206,32 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
     end
 end
 
+function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, forEveryone)
+
+    local objectCount = 0
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+    tes3mp.SetObjectListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+
+        local refId = objectData[uniqueIndex].refId
+        local goldPool = objectData[uniqueIndex].goldPool
+
+        if refId ~= nil and goldPool ~= nil then
+            packetBuilder.AddObjectMiscellaneous(uniqueIndex, objectData[uniqueIndex])
+            objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendObjectMiscellaneous(forEveryone)
+    end
+end
+
 function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1339,6 +1384,8 @@ function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueInd
         self:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEveryone)
     elseif packetType == "lock" then
         self:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "miscellaneous" then
+        self:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, forEveryone)
     elseif packetType == "trap" then
         self:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, forEveryone)
     elseif packetType == "scale" then
@@ -1832,6 +1879,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadObjectsLocked(pid, objectData, packets.lock)
     self:LoadObjectTrapsTriggered(pid, objectData, packets.trap)
     self:LoadObjectsScaled(pid, objectData, packets.scale)
+    self:LoadObjectsMiscellaneous(pid, objectData, packets.miscellaneous)
     self:LoadObjectStates(pid, objectData, packets.state)
     self:LoadDoorStates(pid, objectData, packets.doorState)
 

@@ -205,6 +205,8 @@ packetReader.GetObjectPacketTables = function(packetType)
 
             elseif packetType == "lock" then
                 object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+            elseif packetType == "miscellaneous" then
+                object.goldPool = tes3mp.GetObjectGoldPool(packetIndex)
             elseif packetType == "scale" then
                 object.scale = tes3mp.GetObjectScale(packetIndex)
             elseif packetType == "state" then

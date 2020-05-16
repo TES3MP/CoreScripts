@@ -1298,6 +1298,10 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock")
 end
 
+eventHandler.OnObjectMiscellaneous = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "miscellaneous")
+end
+
 eventHandler.OnObjectRestock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "restock")
 end

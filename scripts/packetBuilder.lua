@@ -99,6 +99,16 @@ packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    tes3mp.SetObjectGoldPool(objectData.goldPool)
+    tes3mp.AddObject()
+end
+
 packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
