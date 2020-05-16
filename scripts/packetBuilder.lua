@@ -106,6 +106,8 @@ packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
     tes3mp.SetObjectMpNum(splitIndex[2])
     tes3mp.SetObjectRefId(objectData.refId)
     tes3mp.SetObjectGoldPool(objectData.goldPool)
+    tes3mp.SetObjectLastGoldRestockHour(objectData.lastGoldRestockHour)
+    tes3mp.SetObjectLastGoldRestockDay(objectData.lastGoldRestockDay)
     tes3mp.AddObject()
 end
 

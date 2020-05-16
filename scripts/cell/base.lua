@@ -514,13 +514,15 @@ function BaseCell:SaveObjectsMiscellaneous(objects)
     for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
-        local goldPool = object.goldPool
 
         self:InitializeObjectData(uniqueIndex, refId)
-        self.data.objectData[uniqueIndex].goldPool = goldPool
+        self.data.objectData[uniqueIndex].goldPool = object.goldPool
+        self.data.objectData[uniqueIndex].lastGoldRestockHour = object.lastGoldRestockHour
+        self.data.objectData[uniqueIndex].lastGoldRestockDay = object.lastGoldRestockDay
 
         tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
-            ", goldPool: " .. goldPool)
+            ", goldPool: " .. object.goldPool .. ", lastGoldRestockHour: " .. object.lastGoldRestockHour ..
+            ", lastGoldRestockDay: " .. object.lastGoldRestockDay)
 
         tableHelper.insertValueIfMissing(self.data.packets.miscellaneous, uniqueIndex)
     end
@@ -1218,8 +1220,16 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
 
         local refId = objectData[uniqueIndex].refId
         local goldPool = objectData[uniqueIndex].goldPool
+        local lastGoldRestockHour = objectData[uniqueIndex].lastGoldRestockHour
+        local lastGoldRestockDay = objectData[uniqueIndex].lastGoldRestockDay
 
         if refId ~= nil and goldPool ~= nil then
+
+            if lastGoldRestockHour == nil or lastGoldRestockDay == nil then
+                objectData[uniqueIndex].lastGoldRestockHour = 0
+                objectData[uniqueIndex].lastGoldRestockDay = 0
+            end
+
             packetBuilder.AddObjectMiscellaneous(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
