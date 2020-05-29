@@ -733,34 +733,34 @@ end
 
 function BaseCell:SaveActorsByPacketType(packetType, actors)
 
-    if packetType == "list" then
+    if packetType == "ActorList" then
         self:SaveActorList(actors)
-    elseif packetType == "equipment" then
+    elseif packetType == "ActorEquipment" then
         self:SaveActorEquipment(actors)
-    elseif packetType == "death" then
+    elseif packetType == "ActorDeath" then
         self:SaveActorDeath(actors)
     end    
 end
 
 function BaseCell:SaveObjectsByPacketType(packetType, objects)
 
-    if packetType == "place" then
+    if packetType == "ObjectPlace" then
         self:SaveObjectsPlaced(objects)
-    elseif packetType == "spawn" then
+    elseif packetType == "ObjectSpawn" then
         self:SaveObjectsSpawned(objects)
-    elseif packetType == "delete" then
+    elseif packetType == "ObjectDelete" then
         self:SaveObjectsDeleted(objects)
-    elseif packetType == "lock" then
+    elseif packetType == "ObjectLock" then
         self:SaveObjectsLocked(objects)
-    elseif packetType == "miscellaneous" then
+    elseif packetType == "ObjectMiscellaneous" then
         self:SaveObjectsMiscellaneous(objects)
-    elseif packetType == "trap" then
+    elseif packetType == "ObjectTrap" then
         self:SaveObjectTrapsTriggered(objects)
-    elseif packetType == "scale" then
+    elseif packetType == "ObjectScale" then
         self:SaveObjectsScaled(objects)
-    elseif packetType == "state" then
+    elseif packetType == "ObjectState" then
         self:SaveObjectStates(objects)
-    elseif packetType == "doorState" then
+    elseif packetType == "DoorState" then
         self:SaveDoorStates(objects)
     end
 end
@@ -1386,23 +1386,23 @@ end
 
 function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueIndexArray, forEveryone)
 
-    if packetType == "place" then
+    if packetType == "ObjectPlace" then
         self:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "spawn" then
+    elseif packetType == "ObjectSpawn" then
         self:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "delete" then
+    elseif packetType == "ObjectDelete" then
         self:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "lock" then
+    elseif packetType == "ObjectLock" then
         self:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "miscellaneous" then
+    elseif packetType == "ObjectMiscellaneous" then
         self:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "trap" then
+    elseif packetType == "ObjectTrap" then
         self:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "scale" then
+    elseif packetType == "ObjectScale" then
         self:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "state" then
+    elseif packetType == "ObjectState" then
         self:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryone)
-    elseif packetType == "doorState" then
+    elseif packetType == "DoorState" then
         self:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end

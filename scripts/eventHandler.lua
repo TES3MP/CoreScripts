@@ -97,7 +97,7 @@ eventHandler.InitializeDefaultValidators = function()
     end)
 
     -- Don't change door states for objects mentioned in config.disallowedDoorStateRefIds
-    customEventHooks.registerValidator("OnObjectDoorState", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+    customEventHooks.registerValidator("OnDoorState", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
         for uniqueIndex, object in pairs(objects) do
 
@@ -1085,21 +1085,21 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
             tes3mp.ReadReceivedActorList()
             local actors = packetReader.GetActorPacketTables(packetType).actors
 
-            local eventStatus = customEventHooks.triggerValidators("OnActor" .. packetType:capitalizeFirstLetter(),
+            local eventStatus = customEventHooks.triggerValidators("On" .. packetType,
                 {pid, cellDescription, actors})
 
             if eventStatus.validDefaultHandler then
 
-                tes3mp.LogMessage(enumerations.log.INFO, "Saving Actor" .. packetType:capitalizeFirstLetter() ..
+                tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. packetType ..
                     " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription)
 
                 LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
             end
-            customEventHooks.triggerHandlers("OnActor" .. packetType:capitalizeFirstLetter(), eventStatus,
+            customEventHooks.triggerHandlers("On" .. packetType, eventStatus,
                 {pid, cellDescription, actors})
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent Actor" .. packetType:capitalizeFirstLetter() .. " for unloaded " .. cellDescription)
+                " sent " .. packetType .. " for unloaded " .. cellDescription)
         end
     else
         tes3mp.Kick(pid)
@@ -1107,11 +1107,11 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
 end
 
 eventHandler.OnActorList = function(pid, cellDescription)
-    eventHandler.OnGenericActorEvent(pid, cellDescription, "list")
+    eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorList")
 end
 
 eventHandler.OnActorEquipment = function(pid, cellDescription)
-    eventHandler.OnGenericActorEvent(pid, cellDescription, "equipment")
+    eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorEquipment")
 end
 
 eventHandler.OnActorAI = function(pid, cellDescription)
@@ -1167,7 +1167,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
                     tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)
                 end
 
-                LoadedCells[cellDescription]:SaveActorsByPacketType("death", actors)
+                LoadedCells[cellDescription]:SaveActorsByPacketType("ActorDeath", actors)
             end
             customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription, actors})
         else
@@ -1212,7 +1212,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
         if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid Object" .. packetType:capitalizeFirstLetter() ..
+            tes3mp.LogMessage(enumerations.log.WARN, "Invalid " .. packetType ..
                 logicHandler.GetChatName(pid) .. " used impossible packetOrigin for unloaded " .. cellDescription)
             return
         end
@@ -1227,13 +1227,13 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
                 logicHandler.LoadCell(cellDescription)
             end
 
-            local eventStatus = customEventHooks.triggerValidators("OnObject" .. packetType:capitalizeFirstLetter(),
+            local eventStatus = customEventHooks.triggerValidators("On" .. packetType,
                 {pid, cellDescription, objects, targetPlayers})
 
             if eventStatus.validDefaultHandler then
 
-                local debugMessage = "Accepted Object" .. packetType:capitalizeFirstLetter() .. " from " ..
-                    logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for "
+                local debugMessage = "Accepted " .. packetType .. " from " .. logicHandler.GetChatName(pid) ..
+                    " about " .. cellDescription .. " for "
 
                 if not tableHelper.isEmpty(objects) then
                     debugMessage = debugMessage .. "objects: "
@@ -1258,7 +1258,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
                     tableHelper.getArrayFromIndexes(objects), true)
             end
 
-            customEventHooks.triggerHandlers("OnObject" .. packetType:capitalizeFirstLetter(), eventStatus,
+            customEventHooks.triggerHandlers("On" .. packetType, eventStatus,
                 {pid, cellDescription, objects, targetPlayers})
 
             if not isCellLoaded then
@@ -1271,55 +1271,55 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
 end
 
 eventHandler.OnObjectActivate = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "activate")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectActivate")
 end
 
 eventHandler.OnObjectHit = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "hit")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectHit")
 end
 
 eventHandler.OnObjectSound = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "sound")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectSound")
 end
 
 eventHandler.OnObjectPlace = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "place")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectPlace")
 end
 
 eventHandler.OnObjectSpawn = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "spawn")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectSpawn")
 end
 
 eventHandler.OnObjectDelete = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "delete")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectDelete")
 end
 
 eventHandler.OnObjectLock = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectLock")
 end
 
 eventHandler.OnObjectMiscellaneous = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "miscellaneous")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectMiscellaneous")
 end
 
 eventHandler.OnObjectRestock = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "restock")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectRestock")
 end
 
 eventHandler.OnObjectTrap = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "trap")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectTrap")
 end
 
 eventHandler.OnObjectScale = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "scale")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectScale")
 end
 
 eventHandler.OnObjectState = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "state")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectState")
 end
 
 eventHandler.OnDoorState = function(pid, cellDescription)
-    eventHandler.OnGenericObjectEvent(pid, cellDescription, "doorState")
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "DoorState")
 end
 
 eventHandler.OnConsoleCommand = function(pid, cellDescription)
