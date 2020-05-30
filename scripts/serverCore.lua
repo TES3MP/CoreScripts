@@ -17,6 +17,9 @@ class = require("classy")
 tableHelper = require("tableHelper")
 require("time")
 
+threadHandler = require("threadHandler")
+require("postgres.core")
+
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
