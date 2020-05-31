@@ -89,7 +89,7 @@ function ProcessRequest(req)
     
     if type(cur) == "number" then
       return effil.table{
-        log = query,
+        log = sql,
         count = cur,
         rows = {},
         types = {}
@@ -109,7 +109,7 @@ function ProcessRequest(req)
     cur:close()
 
     return effil.table{
-      log = query,
+      log = sql,
       count = count,
       rows = rows,
       types = types
