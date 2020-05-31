@@ -51,26 +51,7 @@ function jsonInterface.load(fileName)
         local content = file:read("*all")
         file:close()
 
-        if cjsonExists then
-            -- Lua CJSON does not support comments before the JSON data, so remove them if
-            -- they are present
-            if content:sub(1, 2) == "//" then
-                content = jsonInterface.removeHeader(content)
-            end
-
-            local decodedContent
-            local status, result = pcall(function() decodedContent = cjson.decode(content) end)
-
-            if status then
-                return decodedContent
-            else
-                tes3mp.LogMessage(enumerations.log.ERROR, "Could not load " .. fileName .. " using Lua CJSON " ..
-                    "due to improperly formatted JSON! Error:\n" .. result .. "\n" .. fileName .. " is being read " ..
-                    "via the slower dkjson instead.")
-            end
-        end
-
-        return dkjson.decode(content)
+        return jsonInterface.decode(content, fileName)
     else
         return nil
     end
@@ -99,22 +80,48 @@ end
 -- Save data to JSON in a slower but human-readable way, with identation and a specific order
 -- to the keys, provided via dkjson
 function jsonInterface.save(fileName, data, keyOrderArray)
-
-    local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
-
+    local content = jsonInterface.encode(data, keyOrderArray)
     return jsonInterface.writeToFile(fileName, content)
 end
 
 -- Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
 -- that need to be saved over and over
 function jsonInterface.quicksave(fileName, data)
+    return jsonInterface.save(fileName, data)
+end
 
+
+-- Parse a JSON string and return it as a table
+-- fileName is an optional argument, used for logging
+function jsonInterface.decode(content, fileName)
     if cjsonExists then
-        local content = cjson.encode(data)
-        return jsonInterface.writeToFile(fileName, content)
-    else
-        return jsonInterface.save(fileName, data)
+        if content:sub(1, 2) == "//" then
+            content = jsonInterface.removeHeader(content)
+        end
+        local decodedContent = nil
+        local status, error = pcall(function() decodedContent = cjson.decode(content) end)
+
+        if status then
+            return decodedContent
+        else
+            if not fileName then
+                fileName = "string"
+            end
+            tes3mp.LogMessage(enumerations.log.ERROR, "Could not decode " .. fileName .. " using Lua CJSON " ..
+                "due to improperly formatted JSON! Error:\n" .. error .. "\n" .. fileName .. " is being decoded " ..
+                "via the slower dkjson instead.")
+        end
     end
+    return dkjson.decode(content)
+end
+
+-- Encode a Lua table as JSON
+-- keyOrder is an optional argument, forces use of slower dkjson
+function jsonInterface.encode(data, keyOrderArray)
+    if keyOrderArray ~= nil or not cjsonExists then
+        return dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
+    end
+    return cjson.encode(data)
 end
 
 return jsonInterface
