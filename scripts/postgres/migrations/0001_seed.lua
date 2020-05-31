@@ -1,7 +1,9 @@
 local postgresClient = require("postgres.client")
 
+-- generated from https://dbdiagram.io/d/5eb7f43539d18f5553fef7a2
 local sql = 
-[[CREATE TYPE "record_type" AS ENUM (
+[[
+CREATE TYPE "record_type" AS ENUM (
   'permanent',
   'generated'
 );
@@ -14,8 +16,8 @@ CREATE TABLE "players" (
 
 CREATE TABLE "player_links" (
   "id" bigserial PRIMARY KEY,
-  "player" serial,
-  "record" bigserial
+  "player_name" varchar,
+  "record_refId" varchar
 );
 
 CREATE TABLE "cells" (
@@ -26,20 +28,21 @@ CREATE TABLE "cells" (
 
 CREATE TABLE "cell_links" (
   "id" bigserial PRIMARY KEY,
-  "cell" serial,
-  "record" bigserial
+  "cell_description" varchar,
+  "record_refId" varchar
 );
 
 CREATE TABLE "record_stores" (
   "id" serial PRIMARY KEY,
-  "type" varchar UNIQUE
+  "type" varchar UNIQUE,
+  "data" jsonb
 );
 
 CREATE TABLE "records" (
   "id" bigserial PRIMARY KEY,
   "refId" varchar UNIQUE,
-  "record_store_id" serial,
   "type" record_type,
+  "store_type" varchar,
   "data" jsonb
 );
 
@@ -49,15 +52,16 @@ CREATE TABLE "data_storage" (
   "data" jsonb
 );
 
-ALTER TABLE "player_links" ADD FOREIGN KEY ("player") REFERENCES "players" ("id");
+ALTER TABLE "player_links" ADD FOREIGN KEY ("player_name") REFERENCES "players" ("name");
 
-ALTER TABLE "player_links" ADD FOREIGN KEY ("record") REFERENCES "records" ("id");
+ALTER TABLE "player_links" ADD FOREIGN KEY ("record_refId") REFERENCES "records" ("refId");
 
-ALTER TABLE "cell_links" ADD FOREIGN KEY ("cell") REFERENCES "cells" ("id");
+ALTER TABLE "cell_links" ADD FOREIGN KEY ("cell_description") REFERENCES "cells" ("description");
 
-ALTER TABLE "cell_links" ADD FOREIGN KEY ("record") REFERENCES "records" ("id");
+ALTER TABLE "cell_links" ADD FOREIGN KEY ("record_refId") REFERENCES "records" ("refId");
 
-ALTER TABLE "records" ADD FOREIGN KEY ("record_store_id") REFERENCES "record_stores" ("id");]]
+ALTER TABLE "records" ADD FOREIGN KEY ("store_type") REFERENCES "record_stores" ("type");
+]]
 
 local result = postgresClient.QueryAwait(sql)
 if result.error then

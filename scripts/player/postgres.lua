@@ -23,7 +23,7 @@ function Player:Upsert(keyOrderArray)
   return postgresClient.QueryAwait(
     [[INSERT INTO players (name, data) VALUES (?, ?)
     ON CONFLICT (name) DO
-    UPDATE SET (name, data) = (EXCLUDED.name, EXCLUDED.data);]],
+    UPDATE SET data = EXCLUDED.data;]],
     { self.accountName, jsonInterface.encode(self.data, keyOrderArray) }
   )
 end
@@ -62,27 +62,26 @@ end
 
 function Player:LoadFromDrive()
   local result = postgresClient.QueryAwait(
-      [[SELECT data FROM players
-      WHERE name = ?
-      LIMIT 1;]],
-      { self.accountName }
-    )
-    if result.error then
-      error("Failed to load the player " .. self.accountName)
-    end
+    [[SELECT data FROM players
+    WHERE name = ?;]],
+    { self.accountName }
+  )
+  if result.error then
+    error("Failed to load the player " .. self.accountName)
+  end
 
-    if result.count > 1 then
-      error("Duplicate records in the database for player " .. self.accountName)
-    end
+  if result.count > 1 then
+    error("Duplicate records in the database for player " .. self.accountName)
+  end
 
-    -- if no data is present, just keep the default
-    if result.count == 1 then
-      self.data = jsonInterface.decode(result.rows[1].data)
+  -- if no data is present, just keep the default
+  if result.count == 1 then
+    self.data = jsonInterface.decode(result.rows[1].data)
 
-      -- JSON doesn't allow numerical keys, but we use them, so convert
-      -- all string number keys into numerical keys
-      tableHelper.fixNumericalKeys(self.data)
-    end
+    -- JSON doesn't allow numerical keys, but we use them, so convert
+    -- all string number keys into numerical keys
+    tableHelper.fixNumericalKeys(self.data)
+  end
 end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility

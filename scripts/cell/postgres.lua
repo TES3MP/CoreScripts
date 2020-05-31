@@ -20,7 +20,7 @@ function Cell:SaveToDrive()
         local result = postgresClient.QueryAwait(
           [[INSERT INTO cells (description, data) VALUES (?, ?)
           ON CONFLICT (description) DO
-          UPDATE SET (description, data) = (EXCLUDED.description, EXCLUDED.data);]],
+          UPDATE SET data = EXCLUDED.data;]],
           { self.entryName, jsonInterface.encode(self.data) }
         )
         if result.error then

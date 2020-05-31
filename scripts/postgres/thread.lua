@@ -40,8 +40,6 @@ function PrepareQuery(sql, parameters)
   local result = {}
   local escaped = false
 
-  print(parameters[pI])
-
   while sI <= sN and pI <= pN do
     local ch = sql:sub(sI, sI)
     if ch == '?' and not escaped then
