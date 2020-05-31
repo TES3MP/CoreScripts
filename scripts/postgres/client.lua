@@ -21,9 +21,9 @@ end
 
 function DB.ProcessResponse(res)
   if res.error then
-    tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] " .. res.error)
+    tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] [[" .. res.error .. "]]")
   elseif res.log then
-    tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] " .. res.log)
+    tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] [[" .. res.log .. "]]")
   end
 end
 

@@ -8,7 +8,7 @@ local threadHandler = {
   args = {},
   checkCoroutine = nil,
   timer = nil,
-  delay = 50 -- move this number to config.lua
+  interval = config.threadHandlerInterval
 }
 
 function threadHandler.CreateThread(body, args)
@@ -55,7 +55,7 @@ function threadHandler.SendAwait(id, message, sync)
       responseMessage = result
     end)
     while not flag do
-      effil.sleep(threadHandler.delay, "ms")
+      effil.sleep(threadHandler.interval, "ms")
       threadHandler.Check()
     end
   else
@@ -98,12 +98,12 @@ end
 
 function threadHandler.Initiate()
   threadHandler.checkCoroutine = threadHandler.GetCheckCoroutine()
-  threadHandler.timer = tes3mp.CreateTimer("threadHandler_TIMER_FUNCTION", threadHandler.delay)
+  threadHandler.timer = tes3mp.CreateTimer("threadHandler_TIMER_FUNCTION", threadHandler.interval)
   tes3mp.StartTimer(threadHandler.timer)
 end
 
 function threadHandler.RestartTimer()
-  tes3mp.RestartTimer(threadHandler.timer, threadHandler.delay)
+  tes3mp.RestartTimer(threadHandler.timer, threadHandler.interval)
 end
 
 threadHandler.Initiate()

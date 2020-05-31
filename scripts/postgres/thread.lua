@@ -40,8 +40,10 @@ function PrepareQuery(sql, parameters)
   local result = {}
   local escaped = false
 
+  print(parameters[pI])
+
   while sI <= sN and pI <= pN do
-    local ch = sql:sub(sI, sI + 1)
+    local ch = sql:sub(sI, sI)
     if ch == '?' and not escaped then
       table.insert(result, sql:sub(sT, sI - 1))
       table.insert(result, "'" .. parameters[pI] .. "'")
@@ -84,6 +86,15 @@ function ProcessRequest(req)
         error = err
       }
     end
+    
+    if type(cur) == "number" then
+      return effil.table{
+        log = query,
+        count = cur,
+        rows = {},
+        types = {}
+      }
+    end
 
     local types = cur:getcoltypes()
     local count = cur:numrows()
@@ -98,7 +109,7 @@ function ProcessRequest(req)
     cur:close()
 
     return effil.table{
-      log = "Queried [[" .. query .. "]]",
+      log = query,
       count = count,
       rows = rows,
       types = types

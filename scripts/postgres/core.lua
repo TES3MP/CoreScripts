@@ -1,11 +1,32 @@
-local effil = require("effil")
+postgresClient.Initiate()
+postgresClient.Connect(config.postgresConnectionString)
 
-local postgres = require("postgres.client")
+local function ProcessMigration(id, path)
+  tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)
+  local status = require("postgres.migrations." .. path)
+  if status ~= 0 then
+    tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] Fatal migration error!")
+    tes3mp.StopServer(1)
+  end
+  postgresClient.Query("INSERT INTO migrations(id, processed_at) VALUES( ?, TO_TIMESTAMP(?) )", { id, os.time() })
+end
 
--- temporary test
-coroutine.wrap(function()
-  postgres.Initiate()
-  postgres.Connect("host=localhost port=5432 dbname=tes3mp user=postgres password=postgres connect_timeout=10")
-  local res = postgres.QueryAwait("SELECT name FROM players", { "test4" })
-  tableHelper.print(effil.dump(res))
-end)()
+-- apply necessary migrations
+local migrations = require("postgres.migrations")
+local doneMigrations = postgresClient.QueryAwait("SELECT * FROM migrations")
+local doneTable = {}
+if doneMigrations.error then
+  tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Seeding database for the first time, ignore the SQL error above!")
+  ProcessMigration(0, "0000_migrations")
+else
+  for i = 1, doneMigrations.count do
+    local row = doneMigrations.rows[i]
+    doneTable[tonumber(row.id)] = true
+  end
+end
+
+for i, path in ipairs(migrations) do
+  if not doneTable[i] then
+    ProcessMigration(i, path)
+  end
+end
