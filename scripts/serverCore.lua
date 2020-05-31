@@ -59,7 +59,7 @@ elseif config.databaseType == "postgres" and doesModuleExist("luasql.postgres") 
     Player = require("player.postgres")
     Cell = require("cell.postgres")
     RecordStore = require("recordstore.postgres")
-    World = require("world.json")
+    World = require("world.postgres")
 elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") then
     Database = require("database")
     Database:LoadDriver(config.databaseType)
