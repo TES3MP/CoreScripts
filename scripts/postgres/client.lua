@@ -12,6 +12,12 @@ function DB.ThreadWork(input, output)
   end)
   if err then
     print(err)
+    output:push(effil.table{
+      id = 0,
+      message = effil.table{
+        error = err
+      }
+    })
   end
 end
 

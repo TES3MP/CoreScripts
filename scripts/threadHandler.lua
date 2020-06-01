@@ -11,6 +11,15 @@ local threadHandler = {
   interval = config.threadHandlerInterval
 }
 
+function threadHandler.CoroutineWrap(func)
+  --func()
+  local co = coroutine.create(func)
+  local ok, err = coroutine.resume(co)
+  if not ok then
+    error(err)
+  end
+end
+
 function threadHandler.CreateThread(body, args)
   local thread = {}
   thread.input = effil.channel()
@@ -82,22 +91,12 @@ function threadHandler.Check()
   end
 end
 
-function threadHandler.GetCheckCoroutine()
-  return coroutine.create(function()
-    while true do
-      threadHandler.Check()
-      coroutine.yield()
-    end
-  end)
-end
-
 function threadHandler_TIMER_FUNCTION()
-  coroutine.resume(threadHandler.checkCoroutine)
+  threadHandler.Check()
   threadHandler.RestartTimer()
 end
 
 function threadHandler.Initiate()
-  threadHandler.checkCoroutine = threadHandler.GetCheckCoroutine()
   threadHandler.timer = tes3mp.CreateTimer("threadHandler_TIMER_FUNCTION", threadHandler.interval)
   tes3mp.StartTimer(threadHandler.timer)
 end

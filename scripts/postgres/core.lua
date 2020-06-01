@@ -5,8 +5,7 @@ local function ProcessMigration(id, path)
   tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)
   local status = require("postgres.migrations." .. path)
   if status ~= 0 then
-    tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] Fatal migration error!")
-    tes3mp.StopServer(1)
+    error("[Postgres] Fatal migration error!")
   end
   postgresClient.Query("INSERT INTO migrations(id, processed_at) VALUES( ?, TO_TIMESTAMP(?) )", { id, os.time() })
 end
@@ -30,3 +29,7 @@ for i, path in ipairs(migrations) do
     ProcessMigration(i, path)
   end
 end
+
+customEventHooks.registerHandler("OnServerExit", function()
+  postgresClient.DisconnectAwait()
+end)

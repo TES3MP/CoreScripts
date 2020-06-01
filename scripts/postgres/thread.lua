@@ -2,6 +2,7 @@ local effil = require("effil")
 local Request = require("postgres.request")
 local luasql = require("luasql.postgres").postgres()
 local connection
+local connectionString
 
 function Run(inputChannel, outputChannel)
   input = inputChannel
@@ -64,8 +65,17 @@ function PrepareQuery(sql, parameters)
   return table.concat(result)
 end
 
+function Reconnect(err)
+  local fl = err:find("PostgreSQL: no connection to the server") ~= nil
+  if fl then
+    connection = luasql:connect(connectionString)
+  end
+  return fl
+end
+
 function ProcessRequest(req)
   if req.type == Request.CONNECT then
+    connectionString = req.sql
     connection = assert(luasql:connect(req.sql))
     return effil.table{
       log = "Successfully connected!"
@@ -79,10 +89,14 @@ function ProcessRequest(req)
     PrepareParameters(req.parameters)
     local query = PrepareQuery(req.sql, req.parameters)
     local cur, err = connection:execute(query)
-    if err then
-      return effil.table{
-        error = err
-      }
+    while err do
+      if Reconnect(err) then
+        cur, err = connection:execute(query)
+      else
+        return effil.table{
+          error = err
+        }
+      end
     end
     
     if type(cur) == "number" then
