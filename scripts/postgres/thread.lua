@@ -4,6 +4,9 @@ local luasql = require("luasql.postgres").postgres()
 local connection
 local connectionString
 
+local RECONNECT_LIMIT = 5
+local reconnectCounter = 0
+
 function Run(inputChannel, outputChannel)
   input = inputChannel
   output = outputChannel
@@ -68,6 +71,10 @@ end
 function Reconnect(err)
   local fl = err:find("PostgreSQL: no connection to the server") ~= nil
   if fl then
+    reconnectCounter = reconnectCounter + 1
+    if reconnectCounter > RECONNECT_LIMIT then
+      error("Failed to reconnect!")
+    end
     connection = luasql:connect(connectionString)
   end
   return fl
@@ -76,6 +83,7 @@ end
 function ProcessRequest(req)
   if req.type == Request.CONNECT then
     connectionString = req.sql
+    reconnectCounter = 0
     connection = assert(luasql:connect(req.sql))
     return effil.table{
       log = "Successfully connected!"
@@ -98,6 +106,8 @@ function ProcessRequest(req)
         }
       end
     end
+
+    reconnectCounter = 0
     
     if type(cur) == "number" then
       return effil.table{
