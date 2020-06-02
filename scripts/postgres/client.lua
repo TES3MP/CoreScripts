@@ -3,7 +3,9 @@ local Request = require("postgres.request")
 
 local DB = {}
 
-DB.thread = nil
+DB.threads = {}
+
+DB.currentJobs = {}
 
 function DB.ThreadWork(input, output)
   local status, err = pcall(function()
@@ -22,7 +24,11 @@ function DB.ThreadWork(input, output)
 end
 
 function DB.Initiate()
-  DB.thread = threadHandler.CreateThread(DB.ThreadWork)
+  for i = 1, config.postgresThreadCount do
+    local threadId = threadHandler.CreateThread(DB.ThreadWork)
+    table.insert(DB.threads, threadId)
+    DB.currentJobs[threadId] = 0
+  end
 end
 
 function DB.ProcessResponse(res)
@@ -33,15 +39,43 @@ function DB.ProcessResponse(res)
   end
 end
 
-function DB.Send(action, sql, parameters, callback)
+function DB.ChooseThread()
+  local minThread = DB.threads[1]
+  local min = DB.currentJobs[minThread]
+  for _, thread in pairs(DB.threads) do
+    if min == 0 then
+      break
+    end
+    if DB.currentJobs[thread] < min then
+      min = DB.currentJobs[thread]
+      minThread = thread
+    end
+  end
+  return minThread
+end
+
+function DB.StartJob(thread)
+  DB.currentJobs[thread] = DB.currentJobs[thread] + 1
+end
+
+function DB.FinishJob(thread)
+  DB.currentJobs[thread] = DB.currentJobs[thread] - 1
+  if DB.currentJobs[thread] < 0 then
+    DB.currentJobs[thread] = 0
+  end
+end
+
+function DB.Send(thread, action, sql, parameters, callback)
+  DB.StartJob(thread)
   threadHandler.Send(
-    DB.thread,
+    thread,
     Request.form(
       action,
       sql or "",
       parameters or {}
     ),
     function(res)
+      DB.FinishJob(thread)
       DB.ProcessResponse(res)
       if callback ~= nil then
         callback(res)
@@ -50,48 +84,60 @@ function DB.Send(action, sql, parameters, callback)
   )
 end
 
-function DB.SendAwait(action, sql, parameters)
+function DB.SendAwait(thread, action, sql, parameters)
+  DB.StartJob(thread)
   local res = threadHandler.SendAwait(
-    DB.thread,
+    thread,
     Request.form(
       action,
       sql or "",
       parameters or {}
     )
   )
+  DB.FinishJob(thread)
   DB.ProcessResponse(res)
   return res
 end
 
 function DB.Connect(connectString, callback)
-  DB.Send(Request.CONNECT, connectString, callback)
+  for i, thread in pairs(DB.threads) do
+    DB.Send(thread, Request.CONNECT, connectString, callback)
+  end
 end
 
 function DB.ConnectAwait(connectString)
-  return DB.SendAwait(Request.CONNECT, connectString)
+  for i, thread in pairs(DB.threads) do
+    DB.SendAwait(thread, Request.CONNECT, connectString)
+  end
 end
 
 function DB.Disconnect(callback)
-  DB.Send(Request.DISCONNECT, callback)
+  for i, thread in pairs(DB.threads) do
+    DB.Send(Request.DISCONNECT, callback)
+  end
 end
 
 function DB.DisconnectAwait()
-  return DB.SendAwait(Request.DISCONNECT)
+  for i, thread in pairs(DB.threads) do
+    DB.SendAwait(thread, Request.DISCONNECT)
+  end
 end
 
 function DB.Query(sql, parameters, callback, numericalIndices)
+  local thread = DB.ChooseThread()
   if numericalIndices then
-    DB.Send(Request.QUERY_NUMERICAL_INDICES, sql, parameters, callback)
+    DB.Send(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters, callback)
   else
-    DB.Send(Request.QUERY, sql, parameters, callback)
+    DB.Send(thread, Request.QUERY, sql, parameters, callback)
   end
 end
 
 function DB.QueryAwait(sql, parameters, numericalIndices)
+  local thread = DB.ChooseThread()
   if numericalIndices then
-    return DB.SendAwait(Request.QUERY_NUMERICAL_INDICES, sql, parameters)
+    return DB.SendAwait(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters)
   else
-    return DB.SendAwait(Request.QUERY, sql, parameters)
+    return DB.SendAwait(thread, Request.QUERY, sql, parameters)
   end
 end
 

@@ -16,10 +16,19 @@ function Run(inputChannel, outputChannel)
   end
 end
 
+function Escape(str)
+  return str:gsub("'", "''")
+end
+
 function PrepareParameters(parameters)
   local n = #parameters
   for i = 1, n do
-    parameters[i] = connection:escape(tostring(parameters[i]))
+    local p = tostring(parameters[i])
+    if #p > 1000 then
+      parameters[i] = Escape(p)
+    else
+      parameters[i] = connection:escape(p)
+    end
   end
   return parameters
 end

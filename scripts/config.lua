@@ -312,6 +312,9 @@ config.databaseType = "postgres"
 -- Note: Not applicable when using json
 config.databasePath = config.dataPath .. "/database.db" -- Path where database is stored
 
+-- Amount of threads to use for postgres communication
+config.postgresThreadCount = 90
+
 -- Parameters necessary to connect to postgres.
 -- Note: Only used if databaseType is "postgres"
 config.postgresConnectionString = "host=localhost port=5432 dbname=tes3mp user=postgres password=postgres connect_timeout=0"

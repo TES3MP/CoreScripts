@@ -36,7 +36,6 @@ end
 
 function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
     self.data.general.currentGeneratedNum = currentGeneratedNum
-    self:QuicksaveToDrive()
 end
 
 function BaseRecordStore:IncrementGeneratedNum()
@@ -367,8 +366,6 @@ function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
                 enchantmentId = serverEnchantmentId })
         end
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -399,7 +396,6 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
             clientsideId = tes3mp.GetRecordId(recordIndex) })
     end
 
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -438,8 +434,6 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
 
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -468,8 +462,6 @@ function BaseRecordStore:SaveGeneratedSpells(pid)
         self.data.generatedRecords[recordId] = record
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 

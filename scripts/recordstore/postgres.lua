@@ -39,7 +39,9 @@ function RecordStore:SaveToDrive()
 end
 
 function RecordStore:QuicksaveToDrive()
-  self:SaveToDrive()
+  threadHandler.CoroutineWrap(function()
+    self:SaveToDrive()
+  end)
 end
 
 function RecordStore:LoadFromDrive()

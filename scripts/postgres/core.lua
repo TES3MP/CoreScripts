@@ -1,5 +1,5 @@
 postgresClient.Initiate()
-postgresClient.Connect(config.postgresConnectionString)
+postgresClient.ConnectAwait(config.postgresConnectionString)
 
 local function ProcessMigration(id, path)
   tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)

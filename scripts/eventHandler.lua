@@ -1630,13 +1630,10 @@ eventHandler.OnRecordDynamic = function(pid)
                     end
                 end
 
-                if isEnchantable then enchantmentStore:QuicksaveToDrive() end
-
                 Players[pid]:LoadItemChanges(itemArray, enumerations.inventory.ADD)
             end
 
             threadHandler.CoroutineWrap(function()
-                recordStore:QuicksaveToDrive()
                 Players[pid]:QuicksaveToDrive()
             end)
         end
