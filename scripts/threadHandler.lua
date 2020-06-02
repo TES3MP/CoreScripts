@@ -12,7 +12,6 @@ local threadHandler = {
 }
 
 function threadHandler.CoroutineWrap(func)
-  --func()
   local co = coroutine.create(func)
   local ok, err = coroutine.resume(co)
   if not ok then

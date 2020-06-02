@@ -455,7 +455,9 @@ eventHandler.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerInventory", {pid})
         if eventStatus.validDefaultHandler then
-            Players[pid]:SaveInventory()
+            threadHandler.CoroutineWrap(function()
+                Players[pid]:SaveInventory()
+            end)
         end
         customEventHooks.triggerHandlers("OnPlayerInventory", eventStatus, {pid})
     end
@@ -1599,9 +1601,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
                     Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
                 end
-
-                recordStore:QuicksaveToDrive()
-                Players[pid]:QuicksaveToDrive()
+                
                 tes3mp.SendSpellbookChanges(pid)
 
             -- Add the final items to the player's inventory
@@ -1632,11 +1632,13 @@ eventHandler.OnRecordDynamic = function(pid)
 
                 if isEnchantable then enchantmentStore:QuicksaveToDrive() end
 
-                recordStore:QuicksaveToDrive()
-                Players[pid]:QuicksaveToDrive()
                 Players[pid]:LoadItemChanges(itemArray, enumerations.inventory.ADD)
             end
-            
+
+            threadHandler.CoroutineWrap(function()
+                recordStore:QuicksaveToDrive()
+                Players[pid]:QuicksaveToDrive()
+            end)
         end
         customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid})
     end
