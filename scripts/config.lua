@@ -306,9 +306,9 @@ config.ignoreScriptErrors = false
 config.threadHandlerInterval = 10
 
 -- The type of database or data format used by the server
--- Valid values: json, sqlite3
+-- Valid values: json, sqlite3, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "postgres"
+config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
