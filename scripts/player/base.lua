@@ -1105,8 +1105,6 @@ function BasePlayer:SaveInventory()
             end
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 -- Iterate through spells and remove nil values as well as spells whose records

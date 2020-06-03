@@ -53,10 +53,12 @@ end
 
 function Player:QuicksaveToDrive()
   if self.hasAccount then
-    local result = self:Upsert()
-    if result.error then
-      error("Failed to save the player " .. self.accountName)
-    end
+    threadHandler.CoroutineWrap(function()
+      local result = self:Upsert()
+      if result.error then
+        error("Failed to save the player " .. self.accountName)
+      end
+    end)
   end
 end
 

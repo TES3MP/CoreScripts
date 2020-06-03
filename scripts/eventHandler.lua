@@ -455,9 +455,8 @@ eventHandler.OnPlayerInventory = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerInventory", {pid})
         if eventStatus.validDefaultHandler then
-            threadHandler.CoroutineWrap(function()
-                Players[pid]:SaveInventory()
-            end)
+            Players[pid]:SaveInventory()
+            Players[pid]:QuicksaveToDrive()
         end
         customEventHooks.triggerHandlers("OnPlayerInventory", eventStatus, {pid})
     end
