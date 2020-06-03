@@ -462,6 +462,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
             end
         end
     end
+    WorldInstance:QuicksaveToDrive()
 
     if shouldSendPacket then
 

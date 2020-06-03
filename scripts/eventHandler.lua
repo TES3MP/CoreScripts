@@ -488,12 +488,14 @@ eventHandler.OnPlayerJournal = function(pid)
         if eventStatus.validDefaultHandler then
             if config.shareJournal == true then
                 WorldInstance:SaveJournal(pid)
+                WorldInstance:QuicksaveToDrive()
 
                 -- Send this PlayerJournal packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                 tes3mp.SendJournalChanges(pid, true, true)
             else
                 Players[pid]:SaveJournal()
+                Players[pid]:QuicksaveToDrive()
             end
         end
         customEventHooks.triggerHandlers("OnPlayerJournal", eventStatus, {pid})
@@ -512,29 +514,35 @@ eventHandler.OnPlayerFaction = function(pid)
                 if config.shareFactionRanks == true then
 
                     WorldInstance:SaveFactionRanks(pid)
+                    WorldInstance:QuicksaveToDrive()
                     -- Send this PlayerFaction packet to other players (sendToOthersPlayers is true),
                     -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                     tes3mp.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionRanks()
+                    Players[pid]:QuicksaveToDrive()
                 end
             elseif action == enumerations.faction.EXPULSION then
                 if config.shareFactionExpulsion == true then
 
                     WorldInstance:SaveFactionExpulsion(pid)
+                    WorldInstance:QuicksaveToDrive()
                     -- As above, send this to everyone other than the original sender
                     tes3mp.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionExpulsion()
+                    Players[pid]:QuicksaveToDrive()
                 end
             elseif action == enumerations.faction.REPUTATION then
                 if config.shareFactionReputation == true then
                     WorldInstance:SaveFactionReputation(pid)
+                    WorldInstance:QuicksaveToDrive()
 
                     -- As above, send this to everyone other than the original sender
                     tes3mp.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionReputation()
+                    Players[pid]:QuicksaveToDrive()
                 end
             end
         end
@@ -550,11 +558,13 @@ eventHandler.OnPlayerTopic = function(pid)
         if eventStatus.validDefaultHandler then
             if config.shareTopics == true then
                 WorldInstance:SaveTopics(pid)
+                WorldInstance:QuicksaveToDrive()
                 -- Send this PlayerTopic packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                 tes3mp.SendTopicChanges(pid, true, true)
             else
                 Players[pid]:SaveTopics()
+                Players[pid]:QuicksaveToDrive()
             end
         end
         
@@ -570,6 +580,7 @@ eventHandler.OnPlayerBounty = function(pid)
         if eventStatus.validDefaultHandler then
             if config.shareBounty == true then
                 WorldInstance:SaveBounty(pid)
+                WorldInstance:QuicksaveToDrive()
 
                 -- Bounty packets are special in that they are always sent
                 -- to all players, but only affect their target player on
@@ -588,6 +599,7 @@ eventHandler.OnPlayerBounty = function(pid)
                 end
             else
                 Players[pid]:SaveBounty()
+                Players[pid]:QuicksaveToDrive()
             end
         end
         
@@ -603,11 +615,13 @@ eventHandler.OnPlayerReputation = function(pid)
             if config.shareReputation == true then
 
                 WorldInstance:SaveReputation(pid)
+                WorldInstance:QuicksaveToDrive()
                 -- Send this PlayerReputation packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                 tes3mp.SendReputation(pid, true, true)
             else
                 Players[pid]:SaveReputation()
+                Players[pid]:QuicksaveToDrive()
             end
         
         end
@@ -1657,6 +1671,7 @@ eventHandler.OnWorldKillCount = function(pid)
         local eventStatus = customEventHooks.triggerValidators("OnWorldKillCount", {pid})
         if eventStatus.validDefaultHandler then
             WorldInstance:SaveKills(pid)
+            WorldInstance:QuicksaveToDrive()
             -- Send this WorldKillCount packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
             tes3mp.SendKillChanges(pid, true, true)
@@ -1722,6 +1737,7 @@ end
 
 eventHandler.OnMpNumIncrement = function(currentMpNum)
     WorldInstance:SetCurrentMpNum(currentMpNum)
+    WorldInstance:QuicksaveToDrive()
 end
 
 eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)

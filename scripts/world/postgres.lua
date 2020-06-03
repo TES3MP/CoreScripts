@@ -38,7 +38,9 @@ function World:SaveToDrive()
 end
 
 function World:QuicksaveToDrive()
-  self:SaveToDrive()
+  threadHandler.CoroutineWrap(function()
+    self:SaveToDrive()
+  end)
 end
 
 function World:LoadFromDrive()
@@ -66,11 +68,11 @@ end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility
 function World:Save()
-    self:SaveToDrive()
+  self:SaveToDrive()
 end
 
 function World:Load()
-    self:LoadFromDrive()
+  self:LoadFromDrive()
 end
 
 return World
