@@ -191,13 +191,6 @@ do
             end
         end
 
-        -- TODO: make this a separate timer
-        for _, recordStore in pairs(RecordStores) do
-            if recordStore and recordStore.QuicksaveToDrive then
-                recordStore:QuicksaveToDrive()
-            end
-        end
-
         tes3mp.RestartTimer(updateTimerId, time.seconds(1))
     end
 end

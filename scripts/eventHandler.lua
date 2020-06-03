@@ -1635,6 +1635,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
             threadHandler.CoroutineWrap(function()
                 Players[pid]:QuicksaveToDrive()
+                recordStore:QuicksaveToDrive()
             end)
         end
         customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid})

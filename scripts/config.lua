@@ -230,6 +230,8 @@ config.generatedRecordIdPrefix = "$custom"
 config.recordStoreLoadOrder = { "spell", "potion", "enchantment", "armor", "book", "clothing", "weapon",
     "miscellaneous", "creature", "npc" }
 
+config.recordStoreSaveDelay = 10
+
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
 
@@ -301,7 +303,7 @@ config.enforceDataFiles = true
 config.ignoreScriptErrors = false
 
 -- Interval (in miliseconds) at which to read responses from secondary threads
-config.threadHandlerInterval = 50
+config.threadHandlerInterval = 10
 
 -- The type of database or data format used by the server
 -- Valid values: json, sqlite3

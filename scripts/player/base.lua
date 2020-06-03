@@ -362,7 +362,6 @@ function BasePlayer:AddLinkToRecord(storeType, recordId)
         end
 
         recordStore:AddLinkToPlayer(recordId, self)
-        recordStore:QuicksaveToDrive()
     end
 end
 

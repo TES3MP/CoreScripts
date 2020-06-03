@@ -3,6 +3,10 @@ local BaseRecordStore = require("recordstore.base")
 
 local RecordStore = class("RecordStore", BaseRecordStore)
 
+function RecordStoreSaveTimer(storeType)
+  coroutine.resume(RecordStores[storeType].saveCoroutine)
+end
+
 function RecordStore:__init(storeType)
   BaseRecordStore.__init(self, storeType)
 
@@ -18,6 +22,14 @@ function RecordStore:__init(storeType)
   end
 
   self.hasEntry = result.count > 0
+  self.saveCoroutine = coroutine.create(function()
+    while true do
+      tes3mp.LogMessage(enumerations.log.INFO, "Saving recordstore " .. self.storeType)
+      self:SaveToDrive()
+      coroutine.yield()
+    end
+  end)
+  self.quickSaveTimer = tes3mp.CreateTimerEx("RecordStoreSaveTimer", time.seconds(config.recordStoreSaveDelay), "s", self.storeType)
 end
 
 function RecordStore:CreateEntry()
@@ -39,9 +51,7 @@ function RecordStore:SaveToDrive()
 end
 
 function RecordStore:QuicksaveToDrive()
-  threadHandler.CoroutineWrap(function()
-    self:SaveToDrive()
-  end)
+  tes3mp.StartTimer(self.quickSaveTimer)
 end
 
 function RecordStore:LoadFromDrive()
@@ -70,7 +80,7 @@ end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility
 function RecordStore:Save()
-  self:SaveToDrive()
+  self:QuicksaveToDrive()
 end
 
 function RecordStore:Load()
