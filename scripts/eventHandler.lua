@@ -699,6 +699,7 @@ eventHandler.OnActorList = function(pid, cellDescription)
             local eventStatus = customEventHooks.triggerValidators("OnActorList", {pid, cellDescription})
             if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorList(pid)
+                LoadedCells[cellDescription]:QuicksaveToDrive()
             end
             customEventHooks.triggerHandlers("OnActorList", eventStatus, {pid, cellDescription})
         else
@@ -716,6 +717,7 @@ eventHandler.OnActorEquipment = function(pid, cellDescription)
             local eventStatus = customEventHooks.triggerValidators("OnActorEquipment", {pid, cellDescription})
             if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorEquipment(pid)
+                LoadedCells[cellDescription]:QuicksaveToDrive()
             end
             customEventHooks.triggerHandlers("OnActorEquipment", eventStatus, {pid, cellDescription})
         else
@@ -758,6 +760,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
             local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription})
             if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorDeath(pid)
+                LoadedCells[cellDescription]:QuicksaveToDrive()
             end
             customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription})
         else
@@ -773,6 +776,7 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
             local eventStatus = customEventHooks.triggerValidators("OnActorCellChange", {pid, cellDescription})
             if eventStatus.validDefaultHandler then
                 LoadedCells[cellDescription]:SaveActorCellChanges(pid)
+                LoadedCells[cellDescription]:QuicksaveToDrive()
             end
             customEventHooks.triggerHandlers("OnActorCellChange", eventStatus, {pid, cellDescription})
         else
@@ -916,6 +920,8 @@ eventHandler.OnObjectPlace = function(pid, cellDescription)
                     -- the packet to other players and also back to the player who sent it,
                     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
                     tes3mp.SendObjectPlace(true, false)
+
+                    LoadedCells[cellDescription]:QuicksaveToDrive()
                 end
                 
                 customEventHooks.triggerHandlers("OnObjectPlace", eventStatus, {pid, cellDescription, objects})
@@ -1448,8 +1454,13 @@ eventHandler.OnContainer = function(pid, cellDescription)
                 -- deal with it
                 LoadedCells[cellDescription]:SaveContainers(pid)
 
+
                 if useTemporaryLoad then
-                    logicHandler.UnloadCell(cellDescription)
+                    threadHandler.CoroutineWrap(function()
+                        logicHandler.UnloadCell(cellDescription)
+                    end)
+                else
+                    LoadedCells[cellDescription]:QuicksaveToDrive()
                 end
             end
             customEventHooks.triggerHandlers("OnContainer", eventStatus, {pid, cellDescription, objects})

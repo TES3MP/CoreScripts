@@ -453,8 +453,6 @@ function BaseCell:SaveObjectsPlaced(pid)
         end
     end
 
-    self:QuicksaveToDrive()
-
     if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
@@ -799,8 +797,6 @@ function BaseCell:SaveContainers(pid)
         tes3mp.SendContainer(true, false)
     end
 
-    self:QuicksaveToDrive()
-
     if action == enumerations.container.SET then
         self.isRequestingContainers = false
     end
@@ -822,8 +818,6 @@ function BaseCell:SaveActorList(pid)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end
-
-    self:QuicksaveToDrive()
 
     self.isRequestingActorList = false
 end
@@ -927,8 +921,6 @@ function BaseCell:SaveActorEquipment(pid)
             tableHelper.insertValueIfMissing(self.data.packets.equipment, uniqueIndex)
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:SaveActorDeath(pid)
@@ -996,8 +988,6 @@ function BaseCell:SaveActorDeath(pid)
     if not tableHelper.isEmpty(containerUniqueIndexesRequested) then
         self:RequestContainers(pid, containerUniqueIndexesRequested)
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:SaveActorCellChanges(pid)
@@ -1147,8 +1137,6 @@ function BaseCell:SaveActorCellChanges(pid)
     for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
         logicHandler.UnloadCell(newCellDescription)
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)

@@ -30,7 +30,9 @@ function Cell:SaveToDrive()
 end
 
 function Cell:QuicksaveToDrive()
+  threadHandler.CoroutineWrap(function()
     self:SaveToDrive()
+  end)
 end
 
 function Cell:LoadFromDrive()

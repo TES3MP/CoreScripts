@@ -315,7 +315,7 @@ config.databaseType = "postgres"
 config.databasePath = config.dataPath .. "/database.db" -- Path where database is stored
 
 -- Amount of threads to use for postgres communication
-config.postgresThreadCount = 90
+config.postgresThreadCount = 5
 
 -- Parameters necessary to connect to postgres.
 -- Note: Only used if databaseType is "postgres"

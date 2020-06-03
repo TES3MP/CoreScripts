@@ -129,6 +129,8 @@ function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType
     if not tableHelper.containsValue(recordLinks[recordId].records[otherStoreType], otherRecordId) then
         table.insert(recordLinks[recordId].records[otherStoreType], otherRecordId)
     end
+
+    self:QuicksaveToDrive()
 end
 
 function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
@@ -148,6 +150,8 @@ function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreT
             table.insert(self.data.unlinkedRecordsToCheck, recordId)
         end
     end
+
+    self:QuicksaveToDrive()
 end
 
 -- Add a link between a record and a cell it is found in
