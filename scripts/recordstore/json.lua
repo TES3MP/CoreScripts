@@ -5,6 +5,10 @@ local BaseRecordStore = require("recordstore.base")
 
 local RecordStore = class("RecordStore", BaseRecordStore)
 
+function RecordStoreSaveTimer(storeType)
+    coroutine.resume(RecordStores[storeType].saveCoroutine)
+end
+
 function RecordStore:__init(storeType)
     BaseRecordStore.__init(self, storeType)
 
@@ -21,6 +25,14 @@ function RecordStore:__init(storeType)
             self.hasEntry = false
         end
     end
+    self.saveCoroutine = coroutine.create(function()
+    while true do
+        tes3mp.LogMessage(enumerations.log.INFO, "Saving recordstore " .. self.storeType)
+        jsonInterface.quicksave("recordstore/" .. self.recordstoreFile, self.data)
+        coroutine.yield()
+    end
+    end)
+    self.quickSaveTimer = tes3mp.CreateTimerEx("RecordStoreSaveTimer", time.seconds(config.recordStoreSaveDelay), "s", self.storeType)
 end
 
 function RecordStore:CreateEntry()
@@ -36,7 +48,7 @@ end
 
 function RecordStore:QuicksaveToDrive()
     if self.hasEntry then
-        jsonInterface.quicksave("recordstore/" .. self.recordstoreFile, self.data)
+        tes3mp.StartTimer(self.quickSaveTimer)
     end
 end
 

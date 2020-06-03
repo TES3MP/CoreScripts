@@ -16,7 +16,9 @@ require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
 require("time")
+require("effil")
 
+threadHandler = require("threadHandler")
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
@@ -44,8 +46,22 @@ updateTimerId = nil
 
 banList = {}
 
-if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
+postgresClient = nil
 
+if config.databaseType == "json" or config.databaseType == nil then
+    Player = require("player.json")
+    Cell = require("cell.json")
+    RecordStore = require("recordstore.json")
+    World = require("world.json")
+elseif config.databaseType == "postgres" and doesModuleExist("luasql.postgres") then
+    postgresClient = require("postgres.client")
+    require("postgres.core")
+    
+    Player = require("player.postgres")
+    Cell = require("cell.postgres")
+    RecordStore = require("recordstore.postgres")
+    World = require("world.postgres")
+elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") then
     Database = require("database")
     Database:LoadDriver(config.databaseType)
 
@@ -65,10 +81,7 @@ if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModule
     RecordStore = require("recordstore.sql")
     World = require("world.sql")
 else
-    Player = require("player.json")
-    Cell = require("cell.json")
-    RecordStore = require("recordstore.json")
-    World = require("world.json")
+    
 end
 
 function LoadBanList()

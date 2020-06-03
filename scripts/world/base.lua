@@ -165,7 +165,6 @@ end
 
 function BaseWorld:SetCurrentMpNum(currentMpNum)
     self.data.general.currentMpNum = currentMpNum
-    self:QuicksaveToDrive()
 end
 
 function BaseWorld:LoadJournal(pid)
@@ -310,8 +309,6 @@ function BaseWorld:SaveKills(pid)
         local number = tes3mp.GetKillNumber(index)
         self.data.kills[refId] = number
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseWorld:SaveRegionWeather(regionName)

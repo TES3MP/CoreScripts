@@ -259,6 +259,8 @@ config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "bod
     "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
     "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell" }
 
+config.recordStoreSaveDelay = 10
+
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
 
@@ -364,14 +366,24 @@ config.enforceDataFiles = true
 --          important data can potentially stay unloaded or get overwritten
 config.ignoreScriptErrors = false
 
+-- Interval (in miliseconds) at which to read responses from secondary threads
+config.threadHandlerInterval = 10
+
 -- The type of database or data format used by the server
--- Valid values: json, sqlite3
+-- Valid values: json, sqlite3, postgres
 -- Note: The latter is only partially implemented as of now
 config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json
 config.databasePath = config.dataPath .. "/database.db" -- Path where database is stored
+
+-- Amount of threads to use for postgres communication
+config.postgresThreadCount = 5
+
+-- Parameters necessary to connect to postgres.
+-- Note: Only used if databaseType is "postgres"
+config.postgresConnectionString = "host=localhost port=5432 dbname=tes3mp user=postgres password=postgres connect_timeout=0"
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

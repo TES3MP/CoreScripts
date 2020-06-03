@@ -425,8 +425,6 @@ function BaseCell:SaveObjectsPlaced(objects)
             end
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:SaveObjectsSpawned(objects)
@@ -697,8 +695,6 @@ function BaseCell:SaveContainers(pid)
         tes3mp.SendContainer(true, false)
     end
 
-    self:QuicksaveToDrive()
-
     if action == enumerations.container.SET then
         self.isRequestingContainers = false
     end
@@ -745,8 +741,6 @@ function BaseCell:SaveActorList(actors)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end
-
-    self:QuicksaveToDrive()
 
     self.isRequestingActorList = false
 end
@@ -828,8 +822,6 @@ function BaseCell:SaveActorEquipment(actors)
             tableHelper.insertValueIfMissing(self.data.packets.equipment, uniqueIndex)
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:SaveActorDeath(actors)
@@ -858,8 +850,6 @@ function BaseCell:SaveActorDeath(actors)
             tableHelper.insertValueIfMissing(self.data.packets.death, uniqueIndex)
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:SaveActorCellChanges(pid)
@@ -1009,8 +999,6 @@ function BaseCell:SaveActorCellChanges(pid)
     for arrayIndex, newCellDescription in pairs(temporaryLoadedCells) do
         logicHandler.UnloadCell(newCellDescription)
     end
-
-    self:QuicksaveToDrive()
 end
 
 function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)

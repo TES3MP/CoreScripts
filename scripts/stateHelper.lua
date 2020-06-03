@@ -248,8 +248,6 @@ function StateHelper:SaveJournal(pid, stateObject)
             stateObject.data.customVariables.deliveredCaiusPackage = true
         end
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionRanks(pid, stateObject)
@@ -263,8 +261,6 @@ function StateHelper:SaveFactionRanks(pid, stateObject)
         local factionId = tes3mp.GetFactionId(pid, i)
         stateObject.data.factionRanks[factionId] = tes3mp.GetFactionRank(pid, i)
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionExpulsion(pid, stateObject)
@@ -278,8 +274,6 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
         local factionId = tes3mp.GetFactionId(pid, i)
         stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveFactionReputation(pid, stateObject)
@@ -293,8 +287,6 @@ function StateHelper:SaveFactionReputation(pid, stateObject)
         local factionId = tes3mp.GetFactionId(pid, i)
         stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveTopics(pid, stateObject)
@@ -311,8 +303,6 @@ function StateHelper:SaveTopics(pid, stateObject)
             table.insert(stateObject.data.topics, topicId)
         end
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveBounty(pid, stateObject)
@@ -322,8 +312,6 @@ function StateHelper:SaveBounty(pid, stateObject)
     end
 
     stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveReputation(pid, stateObject)
@@ -333,8 +321,6 @@ function StateHelper:SaveReputation(pid, stateObject)
     end
 
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveClientScriptGlobalShort(pid, stateObject)

@@ -36,7 +36,6 @@ end
 
 function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
     self.data.general.currentGeneratedNum = currentGeneratedNum
-    self:QuicksaveToDrive()
 end
 
 function BaseRecordStore:IncrementGeneratedNum()
@@ -130,6 +129,8 @@ function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType
     if not tableHelper.containsValue(recordLinks[recordId].records[otherStoreType], otherRecordId) then
         table.insert(recordLinks[recordId].records[otherStoreType], otherRecordId)
     end
+
+    self:QuicksaveToDrive()
 end
 
 function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
@@ -149,6 +150,8 @@ function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreT
             table.insert(self.data.unlinkedRecordsToCheck, recordId)
         end
     end
+
+    self:QuicksaveToDrive()
 end
 
 -- Add a link between a record and a cell it is found in
@@ -367,8 +370,6 @@ function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
                 enchantmentId = serverEnchantmentId })
         end
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -399,7 +400,6 @@ function BaseRecordStore:SaveGeneratedEnchantments(pid)
             clientsideId = tes3mp.GetRecordId(recordIndex) })
     end
 
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -438,8 +438,6 @@ function BaseRecordStore:SaveGeneratedPotions(pid)
 
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 
@@ -468,8 +466,6 @@ function BaseRecordStore:SaveGeneratedSpells(pid)
         self.data.generatedRecords[recordId] = record
         table.insert(recordAdditions, { index = recordIndex, id = recordId })
     end
-
-    self:QuicksaveToDrive()
     return recordAdditions
 end
 

@@ -395,7 +395,6 @@ function BasePlayer:AddLinkToRecord(storeType, recordId)
         end
 
         recordStore:AddLinkToPlayer(recordId, self)
-        recordStore:QuicksaveToDrive()
     end
 end
 
@@ -511,7 +510,7 @@ end
 
 function BasePlayer:Resurrect()
 
-    local currentResurrectType
+    local currentResurrectType = enumerations.resurrect.REGULAR
 
     if config.respawnAtImperialShrine == true then
         if config.respawnAtTribunalTemple == true then
@@ -1139,8 +1138,6 @@ function BasePlayer:SaveInventory()
             end
         end
     end
-
-    self:QuicksaveToDrive()
 end
 
 -- Iterate through spells and remove nil values as well as spells whose records
