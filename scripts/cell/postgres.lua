@@ -29,7 +29,7 @@ function Cell:SaveToDrive()
 end
 
 function Cell:QuicksaveToDrive()
-    threadHandler.CoroutineWrap(function()
+    threadHandler.Async(function()
         self:SaveToDrive()
     end)
 end

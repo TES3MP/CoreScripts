@@ -11,12 +11,13 @@ local threadHandler = {
     interval = config.threadHandlerInterval
 }
 
-function threadHandler.CoroutineWrap(func)
+function threadHandler.Async(func)
     local co = coroutine.create(func)
-    local ok, err = coroutine.resume(co)
-    if not ok then
+    local result, err = coroutine.resume(co)
+    if err then
         error(err)
     end
+    return result
 end
 
 function threadHandler.CreateThread(body, args)
