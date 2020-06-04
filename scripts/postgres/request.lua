@@ -10,13 +10,13 @@ Request.QUERY_NUMERICAL_INDICES = 4
 Request.currentId = 0
 
 function Request.form(type, sql, parameters)
-  Request.currentId = Request.currentId + 1
-  return effil.table{
-    id = Request.currentId,
-    type = type,
-    sql = sql,
-    parameters = parameters
-  }
+    Request.currentId = Request.currentId + 1
+    return effil.table{
+        id = Request.currentId,
+        type = type,
+        sql = sql,
+        parameters = parameters
+    }
 end
 
 return Request
