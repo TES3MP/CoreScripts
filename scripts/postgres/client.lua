@@ -7,18 +7,15 @@ DB.threads = {}
 
 DB.currentJobs = {}
 
-function DB.ThreadWork(input, output)
+function DB.ThreadWork(input, output, ERROR)
     local status, err = pcall(function()
         require("postgres.thread")
         Run(input, output)
     end)
     if err then
-        print(err)
         output:push(effil.table{
-            id = 0,
-            message = effil.table{
-                error = err
-            }
+            id = ERROR,
+            message = err
         })
     end
 end
@@ -36,6 +33,9 @@ function DB.ProcessResponse(res)
         tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] [[" .. res.error .. "]]")
     elseif res.log then
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] [[" .. res.log .. "]]")
+    end
+    if res.id == -1 and res.error then
+        tes3mp.StopServer(1)
     end
 end
 

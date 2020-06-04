@@ -8,7 +8,8 @@ local threadHandler = {
     args = {},
     checkCoroutine = nil,
     timer = nil,
-    interval = config.threadHandlerInterval
+    interval = config.threadHandlerInterval,
+    ERROR = -1
 }
 
 function threadHandler.Async(func)
@@ -24,7 +25,7 @@ function threadHandler.CreateThread(body, args)
     local thread = {}
     thread.input = effil.channel()
     thread.output = effil.channel()
-    thread.worker = effil.thread(body)(thread.input, thread.output, args)
+    thread.worker = effil.thread(body)(thread.input, thread.output, threadHandler.ERROR, args)
     local id = threadHandler.GetThreadId()
     threadHandler.threads[id] = thread
     return id
@@ -81,6 +82,10 @@ function threadHandler.Check()
     for id, thread in pairs(threadHandler.threads) do
         local res = thread.output:pop(0)
         while res ~= nil do
+            if res.id == threadHandler.ERROR then
+                tes3mp.LogMessage(enumerations.log.ERROR, "[threadHandler] Error in thread: " .. res.message)
+                tes3mp.StopServer(1)
+            end
             if threadHandler.callbacks[res.id] ~= nil then
                 threadHandler.callbacks[res.id](res.message, threadHandler.args[res.id])
                 threadHandler.callbacks[res.id] = nil
