@@ -14,11 +14,11 @@ local threadHandler = {
 
 function threadHandler.Async(func)
     local co = coroutine.create(func)
-    local result, err = coroutine.resume(co)
-    if err then
-        error(err)
+    local status, res = coroutine.resume(co)
+    if not status then
+        error(res)
     end
-    return result
+    return res
 end
 
 function threadHandler.CreateThread(body, args)
