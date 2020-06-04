@@ -498,6 +498,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
             end
         end
     end
+    -- Save world because we changed mpNum
     WorldInstance:QuicksaveToDrive()
 
     if shouldSendPacket then

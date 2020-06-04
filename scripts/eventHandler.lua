@@ -326,7 +326,9 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid]:SaveCell()
                 Players[pid]:SaveStatsDynamic()
                 tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
-                Players[pid]:SaveToDrive()
+                threadHandler.CoroutineWrap(function()
+                    Players[pid]:SaveToDrive()
+                end)
 
                 -- Unload every cell for this player
                 for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do
@@ -1269,9 +1271,7 @@ eventHandler.OnContainer = function(pid, cellDescription)
 
 
                 if useTemporaryLoad then
-                    threadHandler.CoroutineWrap(function()
-                        logicHandler.UnloadCell(cellDescription)
-                    end)
+                    logicHandler.UnloadCell(cellDescription)
                 else
                     LoadedCells[cellDescription]:QuicksaveToDrive()
                 end
