@@ -372,7 +372,7 @@ config.threadHandlerInterval = 10
 -- The type of database or data format used by the server
 -- Valid values: json, sqlite3, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "json"
+config.databaseType = "postgres"
 
 -- The location of the database file
 -- Note: Not applicable when using json
@@ -383,7 +383,7 @@ config.postgresThreadCount = 5
 
 -- Parameters necessary to connect to postgres.
 -- Note: Only used if databaseType is "postgres"
-config.postgresConnectionString = "host=localhost port=5432 dbname=tes3mp user=postgres password=postgres connect_timeout=0"
+config.postgresConnectionString = "host=localhost port=5432 dbname=tes3mp071 user=postgres password=postgres connect_timeout=0"
 
 -- Disallow players from including the following in their own names or the names of their custom items
 -- Note: Unfortunately, these are based on real names that trolls have been using on servers

@@ -926,8 +926,9 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
                 {pid, cellDescription, actors})
 
             if eventStatus.validDefaultHandler then
-                LoadedCells[cellDescription]:SaveActorList(pid)
-                LoadedCells[cellDescription]:QuicksaveToDrive()
+                tes3mp.LogMessage(enumerations.log.INFO, "Saving Actor" .. packetType:capitalizeFirstLetter() ..
+                    " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription)
+                LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
             end
             customEventHooks.triggerHandlers("OnActor" .. packetType:capitalizeFirstLetter(), eventStatus,
                 {pid, cellDescription, actors})
@@ -945,21 +946,7 @@ eventHandler.OnActorList = function(pid, cellDescription)
 end
 
 eventHandler.OnActorEquipment = function(pid, cellDescription)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        if LoadedCells[cellDescription] ~= nil then
-            local eventStatus = customEventHooks.triggerValidators("OnActorEquipment", {pid, cellDescription})
-            if eventStatus.validDefaultHandler then
-                LoadedCells[cellDescription]:SaveActorEquipment(pid)
-                LoadedCells[cellDescription]:QuicksaveToDrive()
-            end
-            customEventHooks.triggerHandlers("OnActorEquipment", eventStatus, {pid, cellDescription})
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ActorEquipment for unloaded " .. cellDescription)
-        end
-    else
-        tes3mp.Kick(pid)
-    end
+    eventHandler.OnGenericActorEvent(pid, cellDescription, "equipment")
 end
 
 eventHandler.OnActorAI = function(pid, cellDescription)
