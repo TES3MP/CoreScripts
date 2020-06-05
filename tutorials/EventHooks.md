@@ -18,8 +18,7 @@ Validators can change the current eventStatus. If your validators returns nothin
 
 Examples:
 ---
-Imagine you want to taunt a player whenever they die.
-
+Imagine you want to taunt players whenever they die.
 ```Lua
 customEventHooks.registerHandler("OnPlayerDeath", function(eventStatus, pid)
     if eventStatus.validCustomHandlers then --check if some other script made this event obsolete
@@ -29,7 +28,6 @@ end)
 ```
 
 Now let's do something more practical: limiting players' level:
-
 ```Lua
 local maxLevel = 20
 customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
@@ -65,21 +63,10 @@ If you don't want other scripts replacing logic from yours, you can provide just
 customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {})
 ```
 
-Using the customCommandHooks API:
-===
-
-To add a command, simply run `customCommandHooks.registerCommand(cmd, callback)`. Here `cmd` is the word after `/` which you want to trigger your command (e.g. "help" for `/help`) and callback is a function which will be ran when someone sends a message starting with "/" and `cmd`.
-
-Callback will receive as its arguments a player's `pid` and an array of all command parts (their message is split into parts by spaces, after removing the leading '/', same as in the old `commandHandler.lua`).
-
-You can then perform staff rank checks by calling `Players[pid]:IsAdmin()` etc.
-
 Event table
 ===
-
-This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*
-
-Most of the events are the same as `eventHandler.lua` functions, with some extra arguments:
+This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*  
+Most of the events are the same as `eventHandler.lua` functions with some extra arguments:
 
 * OnPlayerConnect(pid)
 * OnPlayerDisconnect(pid)
