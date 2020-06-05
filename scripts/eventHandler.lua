@@ -326,9 +326,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid]:SaveCell()
                 Players[pid]:SaveStatsDynamic()
                 tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
-                threadHandler.Async(function()
-                    Players[pid]:SaveToDrive()
-                end)
+                threadHandler.Async(Players[pid].SaveToDrive, Players[pid])
 
                 -- Unload every cell for this player
                 for index, loadedCellDescription in pairs(Players[pid].cellsLoaded) do

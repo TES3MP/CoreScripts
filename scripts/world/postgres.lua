@@ -36,9 +36,7 @@ function World:SaveToDrive()
 end
 
 function World:QuicksaveToDrive()
-    threadHandler.Async(function()
-        self:SaveToDrive()
-    end)
+    threadHandler.Async(self.SaveToDrive, self)
 end
 
 function World:LoadFromDrive()

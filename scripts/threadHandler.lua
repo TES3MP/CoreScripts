@@ -12,20 +12,20 @@ local threadHandler = {
     ERROR = -1
 }
 
-function threadHandler.Async(func)
+function threadHandler.Async(func, ...)
     local co = coroutine.create(func)
-    local status, res = coroutine.resume(co)
+    local status, res = coroutine.resume(co, ...)
     if not status then
         error(res)
     end
     return res
 end
 
-function threadHandler.CreateThread(body, args)
+function threadHandler.CreateThread(body, ...)
     local thread = {}
     thread.input = effil.channel()
     thread.output = effil.channel()
-    thread.worker = effil.thread(body)(thread.input, thread.output, threadHandler.ERROR, args)
+    thread.worker = effil.thread(body)(thread.input, thread.output, threadHandler.ERROR, ...)
     local id = threadHandler.GetThreadId()
     threadHandler.threads[id] = thread
     return id
@@ -41,14 +41,14 @@ function threadHandler.GetMessageId()
     return threadHandler.messageId
 end
 
-function threadHandler.Send(id, message, callback, args)
+function threadHandler.Send(id, message, callback, ...)
     local thread = threadHandler.threads[id]
     if thread == nil then
         error("Thread " .. id .. " not found!")
     end
     local id = threadHandler.GetMessageId()
     threadHandler.callbacks[id] = callback
-    threadHandler.args[id] = args
+    threadHandler.args[id] = {...}
     thread.input:push(effil.table{
         id = id,
         message = message
@@ -87,7 +87,7 @@ function threadHandler.Check()
                 tes3mp.StopServer(1)
             end
             if threadHandler.callbacks[res.id] ~= nil then
-                threadHandler.callbacks[res.id](res.message, threadHandler.args[res.id])
+                threadHandler.callbacks[res.id](res.message, unpack(threadHandler.args[res.id]))
                 threadHandler.callbacks[res.id] = nil
             end
             threadHandler.args[res.id] = nil

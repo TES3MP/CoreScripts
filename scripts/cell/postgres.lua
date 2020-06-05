@@ -29,9 +29,7 @@ function Cell:SaveToDrive()
 end
 
 function Cell:QuicksaveToDrive()
-    threadHandler.Async(function()
-        self:SaveToDrive()
-    end)
+    threadHandler.Async(self.SaveToDrive, self)
 end
 
 function Cell:LoadFromDrive()
