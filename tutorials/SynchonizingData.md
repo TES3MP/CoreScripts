@@ -4,7 +4,7 @@ Data Storage
 ---
 The data is stored on the server using instance of classes [Player], [Cell], [RecordStore] and [WorldInstance]. Specifically, all of the long-term information which gets kept between server restarts is in the `data` field of each instance.  
 However, simply changing the `data` table of an object will only only alter that information on the server. To distribute it to the players' clients, you need to call a relevant `Load` function. There are too many to provide a compehensive list here, so I will provide a few examples and leave the reader to explore source code for the remaining options.  
-Altering `data` tables doesn't directly change the values stored on disk. For them to stay after server restart, you need to eventualy call either `SaveToDrive` or `QuickSaveToDrive` function (if you are not sure which one to choose, use `QuickSaveToDrive`). Keep in mind that file operations are much slower than almost anything else you could do, so do this as rarely as possible (e. g. to prevent data loss due to a crash, or when unloading data from memory).
+Altering `data` tables doesn't directly change the values stored on disk. For them to stay after server restart, you need to eventualy call either `SaveToDrive` or `QuicksaveToDrive` function (if you are not sure which one to choose, use `QuicksaveToDrive`). Keep in mind that file operations are much slower than almost anything else you could do, so perform them as rarely as possible (e. g. to prevent data loss due to a crash, or when unloading data from memory).
 
 Players
 ---
@@ -18,7 +18,7 @@ A simple example of altering a player's inventory:
   inventoryHelper.removeExactItem(inventory, "ingred_bread_01", 1, -1, -1, "")
   -- send updated data to the clients
   Players[pid]:LoadInventory()
-  Players[pid]:QuickSaveToDrive()
+  Players[pid]:QuicksaveToDrive()
 ```
 
 Increase a player's Speed attribute by one even while they are offline
@@ -30,7 +30,7 @@ Increase a player's Speed attribute by one even while they are offline
   if player.pid then
     player:LoadAttributes()
   end
-  player:QuickSaveToDrive()
+  player:QuicksaveToDrive()
 ```
 
 Some regularly changed data, such as players' current location, health, magicka and stamina are not passed to Lua every time they change.

@@ -2,8 +2,8 @@ Introduction
 ===
 Lua
 ---
-TES3MP scripts are written in Lua (specifically LuaJIT 5.1).
-If you are completely new to programming, I recommend you read through the entirety of [Programming in Lua](https://www.lua.org/pil/contents.html).
+TES3MP scripts are written in Lua (specifically LuaJIT 5.1).  
+If you are completely new to programming, I recommend you read through the entirety of [Programming in Lua](https://www.lua.org/pil/contents.html).  
 If you are an experienced programmer, but are not an expert in Lua, there a few peculiar parts of the language you should check out:
 * [Basic types](https://www.lua.org/pil/2.html) for example, there are no traditional arrays in Lua
 * [Coroutines](https://www.lua.org/pil/9.html) a very powerful way to implement generators and asynchronicity
@@ -12,9 +12,11 @@ If you are an experienced programmer, but are not an expert in Lua, there a few 
 
 API
 ---
-Integration with the TES3MP server itself happens mostly through calls to a lua binding available as a global table `tes3mp`. You can find the [current documentation here](http://docs.tes3mp.com/en/latest/). However for most of the use cases there are higher level functions available in CoreScripts, and you should strive to use those as much as possible.
-Additionally, the server calls Lua code directly through [Events](EventHooks.md) and [Timers](Timers.md).
+Integration with the TES3MP server itself happens mostly through calls to a lua binding available as a global table `tes3mp`. You can find the [current documentation here](http://docs.tes3mp.com/en/latest/). However for most of the use cases there are higher level functions available in CoreScripts, and you should strive to use those as much as possible.  
+Additionally, the server calls Lua code directly through [Events](EventHooks.md) and [Timers](Timers.md).  
 The main server applications only receives and sends packets. Most of the logic is performed by CoreScripts.
+
+Most of your scripts will only execute code inside [an event](EventHooks.md), [a timer](Timers.md), or [a chat command](ChatCommands.md), so regardless of your goals and experience, start with understanding how these work.
 
 Module format
 ---
@@ -24,4 +26,4 @@ It is generally a good practice to form each of your scripts as a single table, 
 
 Other resources
 ---
-As a quick introduction, [take a look at examples](Examples).
+As a quick introduction, [take a look at examples](Examples.md).
