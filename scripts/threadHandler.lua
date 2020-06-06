@@ -56,9 +56,9 @@ function threadHandler.Send(id, message, callback, ...)
 end
 
 function threadHandler.SendAwait(id, message, sync)
-    local co = coroutine.running()
+    local currentCoroutine = coroutine.running()
     local responseMessage = nil
-    if co == nil or sync then
+    if not currentCoroutine or sync then
         local flag = false
         threadHandler.Send(id, message, function(result)
             flag = true
@@ -71,7 +71,7 @@ function threadHandler.SendAwait(id, message, sync)
     else
         threadHandler.Send(id, message, function(result)
             responseMessage = result
-            coroutine.resume(co)
+            coroutine.resume(currentCoroutine)
         end)
         coroutine.yield()
     end

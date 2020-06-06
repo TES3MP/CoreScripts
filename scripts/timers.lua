@@ -43,12 +43,12 @@ function Timers.Stop(id)
 end
 
 function Timers.WaitAsync(delay)
-    local co = coroutine.running()
-    if not co then
+    local currentCoroutine = coroutine.running()
+    if not currentCoroutine then
         error('Must run inside a coroutine!')
     end
     Timers.Timeout(function(id)
-        coroutine.resume(co)
+        coroutine.resume(currentCoroutine)
     end, delay)
     coroutine.yield()
 end
