@@ -9,7 +9,7 @@ function async.Wrap(func, ...)
     return res
 end
 
-function async.GetCurrentCoroutine()
+function async.CurrentCoroutine()
     local currentCoroutine = coroutine.running()
     if not currentCoroutine then
         error("Must run inside a coroutine!\n" .. debug.traceback())
@@ -44,7 +44,7 @@ function async.WaitAll(funcs, timeout, callback)
 end
 
 function async.WaitAllAsync(funcs, timeout)
-    local currentCoroutine = async.GetCurrentCoroutine()
+    local currentCoroutine = async.CurrentCoroutine()
     async.WaitAll(funcs, timeout, function(results)
         coroutine.resume(currentCoroutine, results)
     end)

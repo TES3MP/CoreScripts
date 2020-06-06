@@ -110,7 +110,7 @@ function DB.Connect(connectString, callback)
 end
 
 function DB.ConnectAwait(connectString)
-    local currentCoroutine = async.GetCurrentCoroutine()
+    local currentCoroutine = async.CurrentCoroutine()
     DB.Connect(connectString, function(results)
         coroutine.resume(currentCoroutine, results)
     end)
@@ -128,7 +128,7 @@ function DB.Disconnect(callback)
 end
 
 function DB.DisconnectAwait()
-    local currentCoroutine = async.GetCurrentCoroutine()
+    local currentCoroutine = async.CurrentCoroutine()
     DB.Disconnect(function(results)
         coroutine.resume(currentCoroutine, results)
     end)
