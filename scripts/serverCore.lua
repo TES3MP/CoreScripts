@@ -27,6 +27,7 @@ guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
+timers = require('timers')
 require("defaultCommands")
 require("customScripts")
 
