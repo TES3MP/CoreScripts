@@ -12,13 +12,14 @@ else
 end
 
 require("color")
-require("config")
+config = require("config")
 class = require("classy")
 tableHelper = require("tableHelper")
 require("time")
 require("effil")
 
 async = require("async")
+storage = require("storage.base")
 threadHandler = require("threadHandler")
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
@@ -30,7 +31,6 @@ speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
 timers = require('timers')
 require("defaultCommands")
-require("customScripts")
 
 Database = nil
 Player = nil
@@ -58,11 +58,13 @@ if config.databaseType == "json" or config.databaseType == nil then
 elseif config.databaseType == "postgres" and doesModuleExist("luasql.postgres") then
     postgresClient = require("postgres.client")
     require("postgres.core")
-    
+    storage = require("storage.postgres")
+
     Player = require("player.postgres")
     Cell = require("cell.postgres")
     RecordStore = require("recordstore.postgres")
     World = require("world.postgres")
+-- currently not implemented
 elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") then
     Database = require("database")
     Database:LoadDriver(config.databaseType)
@@ -85,6 +87,8 @@ elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") the
 else
     
 end
+
+require("customScripts")
 
 function LoadBanList()
     tes3mp.LogMessage(enumerations.log.INFO, "Reading banlist.json")

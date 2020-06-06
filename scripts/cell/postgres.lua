@@ -37,7 +37,6 @@ function Cell:LoadFromDrive()
     if result.error then
         error("Failed to load the cell " .. self.description)
     end
-    
     if result.count > 1 then
         error("Duplicate records in the database for cell " .. self.description)
     end
