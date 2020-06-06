@@ -597,6 +597,12 @@ function OnDoorState(pid, cellDescription)
     eventHandler.OnDoorState(pid, cellDescription)
 end
 
+function OnConsoleCommand(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnConsoleCommand\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnConsoleCommand(pid, cellDescription)
+end
+
 function OnContainer(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnContainer\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)

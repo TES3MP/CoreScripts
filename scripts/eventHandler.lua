@@ -213,6 +213,46 @@ eventHandler.InitializeDefaultHandlers = function()
         end
     end)
 
+    -- Print object activations and send an ObjectActivate packet back to the player
+    customEventHooks.registerHandler("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            debugMessage = "- "
+            debugMessage = debugMessage .. uniqueIndex .. " has been activated by "
+
+            if object.activatingPid == nil then
+                debugMessage = debugMessage .. object.activatingRefId .. " " .. object.activatingUniqueIndex
+            else
+                debugMessage = debugMessage .. logicHandler.GetChatName(object.activatingPid)
+            end
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+        end
+
+        for targetPid, targetPlayer in pairs(targetPlayers) do
+            debugMessage = "- "
+            debugMessage = debugMessage .. logicHandler.GetChatName(targetPid) .. " has been activated by "
+
+            if targetPlayer.activatingPid == nil then
+                debugMessage = debugMessage .. targetPlayer.activatingRefId .. " " .. targetPlayer.activatingUniqueIndex
+            else
+                debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.activatingPid)
+            end
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+        end
+
+        tes3mp.CopyReceivedObjectListToStore()
+        -- Objects can't be activated clientside without the server's approval, so we send
+        -- the packet back to the player who sent it, but we avoid sending it to other
+        -- players because OpenMW barely has any code for handling activations not from
+        -- the local player
+        -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+        tes3mp.SendObjectActivate(false, false)
+    end)
+
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
@@ -1053,24 +1093,34 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
             return
         end
 
-        -- Iterate through the objects in the Object packet and only sync and save the
-        -- ones whose refIds are valid
-        local objects = packetReader.GetObjectPacketTables(packetType).objects
+        local packetTables = packetReader.GetObjectPacketTables(packetType)
+        local objects = packetTables.objects
+        local targetPlayers = packetTables.players
 
-        if not tableHelper.isEmpty(objects) then
+        if not tableHelper.isEmpty(objects) or not tableHelper.isEmpty(targetPlayers) then
 
             if not isCellLoaded then
                 logicHandler.LoadCell(cellDescription)
             end
 
             local eventStatus = customEventHooks.triggerValidators("OnObject" .. packetType:capitalizeFirstLetter(),
-                {pid, cellDescription, objects})
+                {pid, cellDescription, objects, targetPlayers})
 
             if eventStatus.validDefaultHandler then
 
-                tes3mp.LogMessage(enumerations.log.INFO, "Accepted Object" .. packetType:capitalizeFirstLetter() ..
-                    " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for objects:\n" ..
-                    tableHelper.getPrintableTable(objects))
+                local debugMessage = "Accepted Object" .. packetType:capitalizeFirstLetter() .. " from " ..
+                    logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for "
+
+                if not tableHelper.isEmpty(objects) then
+                    debugMessage = debugMessage .. "objects:\n" .. tableHelper.getPrintableTable(objects)
+                end
+
+                if not tableHelper.isEmpty(targetPlayers) then
+                    local chatNames = logicHandler.GetChatNames(tableHelper.getArrayFromIndexes(targetPlayers))
+                    debugMessage = debugMessage .. "players: " .. tableHelper.concatenateArrayValues(chatNames, 1, ", ")
+                end
+
+                tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
                 
                 LoadedCells[cellDescription]:SaveObjectsByPacketType(packetType, objects)
                 LoadedCells[cellDescription]:LoadObjectsByPacketType(packetType, pid, objects,
@@ -1078,7 +1128,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
             end
 
             customEventHooks.triggerHandlers("OnObject" .. packetType:capitalizeFirstLetter(), eventStatus,
-                {pid, cellDescription, objects})
+                {pid, cellDescription, objects, targetPlayers})
 
             if not isCellLoaded then
                 logicHandler.UnloadCell(cellDescription)
@@ -1087,6 +1137,10 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
     else
         tes3mp.Kick(pid)
     end
+end
+
+eventHandler.OnObjectActivate = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "activate")
 end
 
 eventHandler.OnObjectPlace = function(pid, cellDescription)
@@ -1121,70 +1175,39 @@ eventHandler.OnDoorState = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "doorState")
 end
 
-eventHandler.OnObjectActivate = function(pid, cellDescription)
+eventHandler.OnConsoleCommand = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        if LoadedCells[cellDescription] ~= nil then
+        tes3mp.ReadReceivedObjectList()
 
-            tes3mp.ReadReceivedObjectList()
+        local packetTables = packetReader.GetObjectPacketTables("consoleCommand")
+        local objects = packetTables.objects
+        local targetPlayers = packetTables.players
+        local consoleCommand = tes3mp.GetObjectListConsoleCommand()
 
-            local packetTables = packetReader.GetObjectPacketTables("activate")
-            local objects = packetTables.objects
-            local targetPlayers = packetTables.players
+        local eventStatus = customEventHooks.triggerValidators("OnConsoleCommand", {pid, cellDescription, consoleCommand,
+            objects, targetPlayers})
 
-            if not tableHelper.isEmpty(objects) or not tableHelper.isEmpty(targetPlayers) then
-                local eventStatus = customEventHooks.triggerValidators("OnObjectActivate", {pid, cellDescription,
-                    objects, targetPlayers})
+        if eventStatus.validDefaultHandler then
 
-                if eventStatus.validDefaultHandler then
+            local debugMessage = "Accepted ConsoleCommand from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription
 
-                    tes3mp.LogMessage(enumerations.log.INFO, "Accepted ObjectActivate from " .. logicHandler.GetChatName(pid) ..
-                        " about " .. cellDescription)
+            debugMessage = debugMessage .. "\n- consoleCommand: " .. consoleCommand
 
-                    local debugMessage = nil
-
-                    for uniqueIndex, object in pairs(objects) do
-                        debugMessage = "- "
-                        debugMessage = debugMessage .. uniqueIndex .. " has been activated by "
-
-                        if object.activatingPid == nil then
-                            debugMessage = debugMessage .. object.activatingRefId .. " " .. object.activatingUniqueIndex
-                        else
-                            debugMessage = debugMessage .. logicHandler.GetChatName(object.activatingPid)
-                        end
-
-                        tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
-                    end
-
-                    for pid, targetPlayer in pairs(targetPlayers) do
-                        debugMessage = "- "
-                        debugMessage = debugMessage .. logicHandler.GetChatName(pid) .. " has been activated by "
-
-                        if targetPlayer.activatingPid == nil then
-                            debugMessage = debugMessage .. targetPlayer.activatingRefId .. " " .. targetPlayer.activatingUniqueIndex
-                        else
-                            debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.activatingPid)
-                        end
-
-                        tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
-                    end
-
-                    -- TODO: Change this so only the accepted objects are activated
-                    tes3mp.CopyReceivedObjectListToStore()
-                    -- Objects can't be activated clientside without the server's approval, so we send
-                    -- the packet back to the player who sent it, but we avoid sending it to other
-                    -- players because OpenMW barely has any code for handling activations not from
-                    -- the local player
-                    -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-                    tes3mp.SendObjectActivate(false, false)
-                end
-                customEventHooks.triggerHandlers("OnObjectActivate", eventStatus, {pid, cellDescription,
-                    objects, targetPlayers})
+            for uniqueIndex, object in pairs(objects) do
+                debugMessage = debugMessage .. "\n- object target: " .. object.refId .. " " .. uniqueIndex
             end
-        else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
-                " sent ObjectActivate for unloaded " .. cellDescription)
+
+            for targetPid, targetPlayer in pairs(targetPlayers) do
+                debugMessage = debugMessage .. "\n- player target: " .. logicHandler.GetChatName(targetPid)
+            end
+
+            tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
         end
+
+        customEventHooks.triggerHandlers("OnConsoleCommand", eventStatus, {pid, cellDescription, consoleCommand,
+            objects, targetPlayers})
     else
         tes3mp.Kick(pid)
     end
