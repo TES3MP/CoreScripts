@@ -1,4 +1,4 @@
-local postgresClient = require("postgres.client")
+local postgresClient = require("drive.postgres.client")
 
 local sql =
 [[CREATE TABLE "migrations" (

@@ -1,4 +1,4 @@
-local postgresClient = require("postgres.client")
+local postgresClient = require("drive.postgres.client")
 
 -- generated from https://dbdiagram.io/d/5eb7f43539d18f5553fef7a2
 local sql =

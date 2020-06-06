@@ -56,8 +56,7 @@ if config.databaseType == "json" or config.databaseType == nil then
     RecordStore = require("recordstore.json")
     World = require("world.json")
 elseif config.databaseType == "postgres" and doesModuleExist("luasql.postgres") then
-    postgresClient = require("postgres.client")
-    require("postgres.core")
+    postgresClient = require("drive.postgres")
     storage = require("storage.postgres")
 
     Player = require("player.postgres")
