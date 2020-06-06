@@ -1,6 +1,6 @@
 postgresClient.Initiate()
 async.Wrap(function()
-    postgresClient.ConnectAwait(config.postgresConnectionString)
+    postgresClient.ConnectAsync(config.postgresConnectionString)
 
     local function ProcessMigration(id, path)
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)
@@ -13,7 +13,7 @@ async.Wrap(function()
 
     -- apply necessary migrations
     local migrations = require("postgres.migrations")
-    local doneMigrations = postgresClient.QueryAwait([[SELECT * FROM migrations]])
+    local doneMigrations = postgresClient.QueryAsync([[SELECT * FROM migrations]])
     local doneTable = {}
     if doneMigrations.error then
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Seeding database for the first time, ignore the SQL error above!")
@@ -32,5 +32,5 @@ async.Wrap(function()
     end
 end)
 customEventHooks.registerHandler("OnServerExit", function()
-    async.Wrap(function() postgresClient.DisconnectAwait() end)
+    async.Wrap(function() postgresClient.DisconnectAsync() end)
 end)

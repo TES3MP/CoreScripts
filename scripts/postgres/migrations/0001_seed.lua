@@ -63,7 +63,7 @@ ALTER TABLE "cell_links" ADD FOREIGN KEY ("record_refId") REFERENCES "records" (
 ALTER TABLE "records" ADD FOREIGN KEY ("store_type") REFERENCES "record_stores" ("type");
 ]]
 
-local result = postgresClient.QueryAwait(sql)
+local result = postgresClient.QueryAsync(sql)
 if result.error then
     return 1
 end

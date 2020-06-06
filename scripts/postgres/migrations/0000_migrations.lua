@@ -6,7 +6,7 @@ local sql =
     "processed_at" timestamp
 );]]
 
-local result = postgresClient.QueryAwait(sql)
+local result = postgresClient.QueryAsync(sql)
 if result.error then
     return 1
 end

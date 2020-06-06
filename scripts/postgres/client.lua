@@ -7,17 +7,9 @@ DB.threads = {}
 
 DB.currentJobs = {}
 
-function DB.ThreadWork(input, output, ERROR)
-    local status, err = pcall(function()
-        require("postgres.thread")
-        Run(input, output)
-    end)
-    if err then
-        output:push(effil.table{
-            id = ERROR,
-            message = err
-        })
-    end
+function DB.ThreadWork(input, output)
+    local Run = require("postgres.thread")
+    Run(input, output)
 end
 
 function DB.Initiate()
@@ -84,9 +76,9 @@ function DB.Send(thread, action, sql, parameters, callback)
     )
 end
 
-function DB.SendAwait(thread, action, sql, parameters)
+function DB.SendAsync(thread, action, sql, parameters)
     DB.StartJob(thread)
-    local res = threadHandler.SendAwait(
+    local res = threadHandler.SendAsync(
         thread,
         Request.form(
             action,
@@ -103,13 +95,13 @@ function DB.Connect(connectString, callback)
     local tasks = {}
     for _, thread in pairs(DB.threads) do
         table.insert(tasks, function()
-            return DB.SendAwait(thread, Request.CONNECT, connectString)
+            return DB.SendAsync(thread, Request.CONNECT, connectString)
         end)
     end
     async.WaitAll(tasks, nil, callback)
 end
 
-function DB.ConnectAwait(connectString)
+function DB.ConnectAsync(connectString)
     local currentCoroutine = async.CurrentCoroutine()
     DB.Connect(connectString, function(results)
         coroutine.resume(currentCoroutine, results)
@@ -121,13 +113,13 @@ function DB.Disconnect(callback)
     local tasks = {}
     for _, thread in pairs(DB.threads) do
         table.insert(tasks, function()
-            return DB.SendAwait(thread, Request.DISCONNECT)
+            return DB.SendAsync(thread, Request.DISCONNECT)
         end)
     end
     async.WaitAll(tasks, nil, callback)
 end
 
-function DB.DisconnectAwait()
+function DB.DisconnectAsync()
     local currentCoroutine = async.CurrentCoroutine()
     DB.Disconnect(function(results)
         coroutine.resume(currentCoroutine, results)
@@ -144,12 +136,12 @@ function DB.Query(sql, parameters, callback, numericalIndices)
     end
 end
 
-function DB.QueryAwait(sql, parameters, numericalIndices)
+function DB.QueryAsync(sql, parameters, numericalIndices)
     local thread = DB.ChooseThread()
     if numericalIndices then
-        return DB.SendAwait(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters)
+        return DB.SendAsync(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters)
     else
-        return DB.SendAwait(thread, Request.QUERY, sql, parameters)
+        return DB.SendAsync(thread, Request.QUERY, sql, parameters)
     end
 end
 
