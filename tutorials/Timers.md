@@ -18,7 +18,7 @@ WaitAsync
 ---
 You can also simply wait for a set amount of time, while not locking up the rest of the server:  
 * `timers.WaitAsync(delay)`  
-This function **must** be called from inside a [coroutine](Coroutines.md), and will throw an error otherwise. In the main thread this kind of operation is impossible, and you should use Timeout.
+This function **must** be called from inside [a coroutine](CoroutinesAndThreads.md), and will throw an error otherwise. In the main thread this kind of operation is impossible, and you should use Timeout.
 
 Examples
 ---
