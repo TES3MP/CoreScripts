@@ -590,6 +590,20 @@ function BaseCell:SaveDoorStates(objects)
     end
 end
 
+function BaseCell:SaveClientScriptLocals(objects)
+
+    for uniqueIndex, object in pairs(objects) do
+
+        local refId = object.refId
+        local variables = object.variables
+
+        self:InitializeObjectData(uniqueIndex, refId)
+        self.data.objectData[uniqueIndex].variables = variables
+
+        tableHelper.insertValueIfMissing(self.data.packets.clientScriptLocal, uniqueIndex)
+    end
+end
+
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -762,6 +776,8 @@ function BaseCell:SaveObjectsByPacketType(packetType, objects)
         self:SaveObjectStates(objects)
     elseif packetType == "DoorState" then
         self:SaveDoorStates(objects)
+    elseif packetType == "ClientScriptLocal" then
+        self:SaveClientScriptLocals(objects)
     end
 end
 
@@ -1329,6 +1345,24 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
+function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forEveryone)
+
+    local objectCount = 0
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+    tes3mp.SetObjectListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+        packetBuilder.AddClientScriptLocal(uniqueIndex, objectData[uniqueIndex])
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendClientScriptLocal(forEveryone)
+    end
+end
+
 function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1404,6 +1438,8 @@ function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueInd
         self:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryone)
     elseif packetType == "DoorState" then
         self:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
+    elseif packetType == "ClientScriptLocal" then
+        self:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
@@ -1892,6 +1928,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadObjectsMiscellaneous(pid, objectData, packets.miscellaneous)
     self:LoadObjectStates(pid, objectData, packets.state)
     self:LoadDoorStates(pid, objectData, packets.doorState)
+    self:LoadClientScriptLocals(pid, objectData, packets.clientScriptLocal)
 
     if self:HasContainerData() == true then
         tes3mp.LogAppend(enumerations.log.INFO, "- Had container data")

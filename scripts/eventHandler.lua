@@ -1322,6 +1322,10 @@ eventHandler.OnDoorState = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "DoorState")
 end
 
+eventHandler.OnClientScriptLocal = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ClientScriptLocal")
+end
+
 eventHandler.OnConsoleCommand = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 

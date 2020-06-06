@@ -151,6 +151,36 @@ packetBuilder.AddDoorState = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+
+    local variableCount = 0
+
+    for internalIndex, variableTable in pairs(objectData.variables) do
+
+        if type(variableTable) == "table" then
+
+            if variableTable.variableType == enumerations.variableType.SHORT then
+                tes3mp.AddClientLocalInteger(internalIndex, variableTable.intValue, enumerations.variableType.SHORT)
+            elseif variableTable.variableType == enumerations.variableType.LONG then
+                tes3mp.AddClientLocalInteger(internalIndex, variableTable.intValue, enumerations.variableType.LONG)
+            elseif variableTable.variableType == enumerations.variableType.FLOAT then
+                tes3mp.AddClientLocalFloat(internalIndex, variableTable.floatValue)
+            end
+
+            variableCount = variableCount + 1
+        end
+    end
+
+    if variableCount > 0 then
+        tes3mp.AddObject()
+    end
+end
+
 packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
 
     local splitIndex = actorUniqueIndex:split("-")

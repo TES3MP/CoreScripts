@@ -643,6 +643,12 @@ function OnWorldWeather(pid)
     eventHandler.OnWorldWeather(pid)
 end
 
+function OnClientScriptLocal(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnClientScriptLocal\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnClientScriptLocal(pid, cellDescription)
+end
+
 function OnClientScriptGlobal(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnClientScriptGlobal\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnClientScriptGlobal(pid)

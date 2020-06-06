@@ -215,6 +215,26 @@ packetReader.GetObjectPacketTables = function(packetType)
                 object.state = tes3mp.GetObjectState(packetIndex)
             elseif packetType == "DoorState" then
                 object.doorState = tes3mp.GetObjectDoorState(packetIndex)
+            elseif packetType =="ClientScriptLocal" then
+
+                local variables = {}
+                local variableCount = tes3mp.GetClientLocalsSize(packetIndex)
+
+                for variableIndex = 0, variableCount - 1 do
+                    local internalIndex = tes3mp.GetClientLocalInternalIndex(packetIndex, variableIndex)
+                    local variable = { variableType = tes3mp.GetClientLocalVariableType(packetIndex, variableIndex) }
+
+                    if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
+                        variable.variableType) then
+                        variable.intValue = tes3mp.GetClientLocalIntValue(packetIndex, variableIndex)
+                    elseif variable.variableType == enumerations.variableType.FLOAT then
+                        variable.floatValue = tes3mp.GetClientLocalFloatValue(packetIndex, variableIndex)
+                    end
+
+                    variables[internalIndex] = variable
+                end
+
+                object.variables = variables
             end
         end
 
