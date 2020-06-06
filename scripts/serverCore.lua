@@ -18,6 +18,7 @@ tableHelper = require("tableHelper")
 require("time")
 require("effil")
 
+async = require("async")
 threadHandler = require("threadHandler")
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")

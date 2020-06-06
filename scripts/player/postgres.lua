@@ -52,7 +52,7 @@ end
 
 function Player:QuicksaveToDrive()
     if self.hasAccount then
-        threadHandler.Async(function()
+        async.Wrap(function()
             local result = self:Upsert()
             if result.error then
                 error("Failed to save the player " .. self.accountName)

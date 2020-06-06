@@ -43,7 +43,7 @@ function Timers.Stop(id)
 end
 
 function Timers.WaitAsync(delay)
-    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    local currentCoroutine = async.GetCurrentCoroutine()
     Timers.Timeout(function(id)
         coroutine.resume(currentCoroutine)
     end, delay)

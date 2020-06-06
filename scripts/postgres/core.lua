@@ -1,5 +1,5 @@
 postgresClient.Initiate()
-threadHandler.Async(function()
+async.Wrap(function()
     postgresClient.ConnectAwait(config.postgresConnectionString)
 
     local function ProcessMigration(id, path)
@@ -32,5 +32,5 @@ threadHandler.Async(function()
     end
 end)
 customEventHooks.registerHandler("OnServerExit", function()
-    threadHandler.Async(function() postgresClient.DisconnectAwait() end)
+    async.Wrap(function() postgresClient.DisconnectAwait() end)
 end)

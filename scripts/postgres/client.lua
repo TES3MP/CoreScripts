@@ -106,11 +106,11 @@ function DB.Connect(connectString, callback)
             return DB.SendAwait(thread, Request.CONNECT, connectString)
         end)
     end
-    threadHandler.WaitAll(tasks, nil, callback)
+    async.WaitAll(tasks, nil, callback)
 end
 
 function DB.ConnectAwait(connectString)
-    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    local currentCoroutine = async.GetCurrentCoroutine()
     DB.Connect(connectString, function(results)
         coroutine.resume(currentCoroutine, results)
     end)
@@ -124,11 +124,11 @@ function DB.Disconnect(callback)
             return DB.SendAwait(thread, Request.DISCONNECT)
         end)
     end
-    threadHandler.WaitAll(tasks, nil, callback)
+    async.WaitAll(tasks, nil, callback)
 end
 
 function DB.DisconnectAwait()
-    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    local currentCoroutine = async.GetCurrentCoroutine()
     DB.Disconnect(function(results)
         coroutine.resume(currentCoroutine, results)
     end)
