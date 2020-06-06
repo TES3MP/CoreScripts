@@ -1,50 +1,50 @@
-local Timers = {}
+local timers = {}
 
-Timers.currentId = 0
-Timers.timer = nil
-Timers.expecting = nil
-Timers.callbacks = {}
+timers.currentId = 0
+timers.timer = nil
+timers.expecting = nil
+timers.callbacks = {}
 
 --
 -- public methods
 --
-function Timers.Timeout(func, delay)
-    local id = Timers.GetId()
+function timers.Timeout(func, delay)
+    local id = timers.GetId()
     local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
-    Timers.callbacks[id] = {
+    timers.callbacks[id] = {
         f = function(id)
-            Timers.callbacks[id] = nil
+            timers.callbacks[id] = nil
             func(id)
         end,
         timestamp = timestamp
     }
-    Timers.Expect(timestamp)
+    timers.Expect(timestamp)
     return id
 end
 
-function Timers.Interval(func, delay)
-    local id = Timers.GetId()
+function timers.Interval(func, delay)
+    local id = timers.GetId()
     local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
-    Timers.callbacks[id] = {
+    timers.callbacks[id] = {
         f = function(id)
             local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
-            Timers.callbacks[id].timestamp = timestamp
+            timers.callbacks[id].timestamp = timestamp
             func(id)
-            Timers.Expect(timestamp)
+            timers.Expect(timestamp)
         end,
         timestamp = timestamp
     }
-    Timers.Expect(timestamp)
+    timers.Expect(timestamp)
     return id
 end
 
-function Timers.Stop(id)
-    Timers.callbacks[id] = nil
+function timers.Stop(id)
+    timers.callbacks[id] = nil
 end
 
-function Timers.WaitAsync(delay)
+function timers.WaitAsync(delay)
     local currentCoroutine = async.GetCurrentCoroutine()
-    Timers.Timeout(function(id)
+    timers.Timeout(function(id)
         coroutine.resume(currentCoroutine)
     end, delay)
     coroutine.yield()
@@ -56,8 +56,8 @@ end
 function TIMERS_CALLBACK()
     local time = tes3mp.GetMillisecondsSinceServerStart()
     local minTimestamp = nil
-    Timers.expecting = nil
-    for id, v in pairs(Timers.callbacks) do
+    timers.expecting = nil
+    for id, v in pairs(timers.callbacks) do
         if v.timestamp <= time then
             v.f(id)
         elseif minTimestamp == nil or minTimestamp > v.timestamp then
@@ -65,26 +65,26 @@ function TIMERS_CALLBACK()
         end
     end
     if minTimestamp ~= nil then
-        Timers.Expect(minTimestamp)
+        timers.Expect(minTimestamp)
     end
 end
 
-function Timers.GetId()
-    Timers.currentId = Timers.currentId + 1
-    return Timers.currentId
+function timers.GetId()
+    timers.currentId = timers.currentId + 1
+    return timers.currentId
 end
 
-function Timers.Expect(timestamp)
+function timers.Expect(timestamp)
     local time = tes3mp.GetMillisecondsSinceServerStart()
     if timestamp <= time then
         TIMERS_CALLBACK()
-    elseif not Timers.expecting or timestamp < Timers.expecting then
-        Timers.expecting = timestamp
-        tes3mp.RestartTimer(Timers.timer, math.max(0, Timers.expecting - time))
+    elseif not timers.expecting or timestamp < timers.expecting then
+        timers.expecting = timestamp
+        tes3mp.RestartTimer(timers.timer, math.max(0, timers.expecting - time))
     end
 end
 
-Timers.timer = tes3mp.CreateTimer("TIMERS_CALLBACK", 0)
-tes3mp.StartTimer(Timers.timer)
+timers.timer = tes3mp.CreateTimer("TIMERS_CALLBACK", 0)
+tes3mp.StartTimer(timers.timer)
 
-return Timers
+return timers
