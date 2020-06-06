@@ -21,6 +21,48 @@ function threadHandler.Async(func, ...)
     return res
 end
 
+function threadHandler.GetCurrentCoroutine()
+    local currentCoroutine = coroutine.running()
+    if not currentCoroutine then
+        error("Must run inside a coroutine!\n" .. debug.traceback())
+    end
+    return currentCoroutine
+end
+
+function threadHandler.WaitAll(funcs, timeout, callback)
+    local total = #funcs
+    local counter = 0
+    local results = {}
+    local returned = false
+    if timeout then
+        timers.Timeout(function(id)
+            if counter < total then
+                callback(results)
+                returned = true
+            end
+        end, timeout)
+    end
+    for i, func in pairs(funcs) do
+        threadHandler.Async(function()
+            local result = func()
+            results[i] = result
+            counter = counter + 1
+            if not returned and counter == total then
+                callback(results)
+                returned = true
+            end
+        end)
+    end
+end
+
+function threadHandler.WaitAllAsync(funcs, timeout)
+    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    threadHandler.WaitAll(funcs, timeout, function(results)
+        coroutine.resume(currentCoroutine, results)
+    end)
+    return coroutine.yield()
+end
+
 function threadHandler.CreateThread(body, ...)
     local thread = {}
     thread.input = effil.channel()

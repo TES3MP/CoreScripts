@@ -100,27 +100,39 @@ function DB.SendAwait(thread, action, sql, parameters)
 end
 
 function DB.Connect(connectString, callback)
-    for i, thread in pairs(DB.threads) do
-        DB.Send(thread, Request.CONNECT, connectString, callback)
+    local tasks = {}
+    for _, thread in pairs(DB.threads) do
+        table.insert(tasks, function()
+            return DB.SendAwait(thread, Request.CONNECT, connectString)
+        end)
     end
+    threadHandler.WaitAll(tasks, nil, callback)
 end
 
 function DB.ConnectAwait(connectString)
-    for i, thread in pairs(DB.threads) do
-        DB.SendAwait(thread, Request.CONNECT, connectString)
-    end
+    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    DB.Connect(connectString, function(results)
+        coroutine.resume(currentCoroutine, results)
+    end)
+    return coroutine.yield()
 end
 
 function DB.Disconnect(callback)
-    for i, thread in pairs(DB.threads) do
-        DB.Send(Request.DISCONNECT, callback)
+    local tasks = {}
+    for _, thread in pairs(DB.threads) do
+        table.insert(tasks, function()
+            return DB.SendAwait(thread, Request.DISCONNECT)
+        end)
     end
+    threadHandler.WaitAll(tasks, nil, callback)
 end
 
 function DB.DisconnectAwait()
-    for i, thread in pairs(DB.threads) do
-        DB.SendAwait(thread, Request.DISCONNECT)
-    end
+    local currentCoroutine = threadHandler.GetCurrentCoroutine()
+    DB.Disconnect(function(results)
+        coroutine.resume(currentCoroutine, results)
+    end)
+    return coroutine.yield()
 end
 
 function DB.Query(sql, parameters, callback, numericalIndices)

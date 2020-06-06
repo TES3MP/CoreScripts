@@ -43,10 +43,7 @@ function Timers.Stop(id)
 end
 
 function Timers.WaitAsync(delay)
-    local currentCoroutine = coroutine.running()
-    if not currentCoroutine then
-        error('Must run inside a coroutine!')
-    end
+    local currentCoroutine = threadHandler.GetCurrentCoroutine()
     Timers.Timeout(function(id)
         coroutine.resume(currentCoroutine)
     end, delay)
