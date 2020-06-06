@@ -12,7 +12,10 @@ function Timers.Timeout(func, delay)
     local id = Timers.GetId()
     local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
     Timers.callbacks[id] = {
-        f = func,
+        f = function(id)
+            Timers.callbacks[id] = nil
+            func(id)
+        end,
         timestamp = timestamp
     }
     Timers.Expect(timestamp)
@@ -20,7 +23,19 @@ function Timers.Timeout(func, delay)
 end
 
 function Timers.Interval(func, delay)
-    return Timers.Timeout(Timers.MakeIntervalFunction(func, delay), delay)
+    local id = Timers.GetId()
+    local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
+    Timers.callbacks[id] = {
+        f = function(id)
+            local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
+            Timers.callbacks[id].timestamp = timestamp
+            func(id)
+            Timers.Expect(timestamp)
+        end,
+        timestamp = timestamp
+    }
+    Timers.Expect(timestamp)
+    return id
 end
 
 function Timers.Stop(id)
@@ -39,7 +54,7 @@ function Timers.WaitAsync(delay)
 end
 
 --
--- helper methods1
+-- helper methods
 --
 function TIMERS_CALLBACK()
     local time = tes3mp.GetMillisecondsSinceServerStart()
@@ -47,7 +62,6 @@ function TIMERS_CALLBACK()
     Timers.expecting = nil
     for id, v in pairs(Timers.callbacks) do
         if v.timestamp <= time then
-            Timers.callbacks[id] = nil
             v.f(id)
         elseif minTimestamp == nil or minTimestamp > v.timestamp then
             minTimestamp = v.timestamp
@@ -61,16 +75,6 @@ end
 function Timers.GetId()
     Timers.currentId = Timers.currentId + 1
     return Timers.currentId
-end
-
-function Timers.MakeIntervalFunction(func, delay)
-    return function(id)
-        Timers.callbacks[id] = {
-            f = Timers.MakeIntervalFunction(func, delay),
-            timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
-        }
-        func()
-    end
 end
 
 function Timers.Expect(timestamp)
