@@ -1,22 +1,38 @@
-local effil = require("effil")
-local Request = {}
+local request = {}
 
 -- Type enum
-Request.CONNECT = 1
-Request.DISCONNECT = 2
-Request.QUERY = 3
-Request.QUERY_NUMERICAL_INDICES = 4
+request.CONNECT = 1
+request.DISCONNECT = 2
+request.QUERY = 3
+request.QUERY_NUMERICAL_INDICES = 4
 
-Request.currentId = 0
-
-function Request.form(type, sql, parameters)
-    Request.currentId = Request.currentId + 1
-    return effil.table{
-        id = Request.currentId,
-        type = type,
-        sql = sql,
-        parameters = parameters
+function request.Connect(connectionString)
+    return {
+        type = request.CONNECT,
+        sql = connectionString
     }
 end
 
-return Request
+function request.Disconnect()
+    return {
+        type = request.DISCONNECT
+    }
+end
+
+function request.Query(sql, parameters)
+    return {
+        type = request.QUERY,
+        sql = sql or "",
+        parameters = parameters or {}
+    }
+end
+
+function request.QueryNumerical(sql, parameters)
+    return {
+        type = request.QUERY_NUMERICAL_INDICES,
+        sql = sql or "",
+        parameters = parameters or {}
+    }
+end
+
+return request

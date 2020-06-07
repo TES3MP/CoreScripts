@@ -1,14 +1,16 @@
-local effil = require("effil")
-local Request = require("drive.postgres.request")
+local effil = require('effil')
+local request = require("drive.postgres.request")
 local luasql = require("luasql.postgres").postgres()
 local threadHandler = require('threadHandler')
+
+local ESCAPE_LIMIT = 1000
+local RECONNECT_LIMIT = 5
+local RECONNECT_INTERVAL = 200 -- 200 milliseconds
 
 math.randomseed(os.time())
 
 local connection
 local connectionString
-
-local RECONNECT_LIMIT = 5
 local reconnectCounter = 0
 
 function Run(input, output)
@@ -16,19 +18,19 @@ function Run(input, output)
 end
 
 function ProcessRequest(req)
-    if req.type == Request.CONNECT then
+    if req.type == request.CONNECT then
         connectionString = req.sql
         reconnectCounter = 0
         connection = assert(luasql:connect(req.sql))
-        return effil.table{
+        return {
             log = "Successfully connected!"
         }
-    elseif req.type == Request.DISCONNECT then
+    elseif req.type == request.DISCONNECT then
         connection:close()
-        return effil.table{
+        return {
             log = "Disconnected!"
         }
-    elseif req.type == Request.QUERY or req.type == Request.QUERY_NUMERICAL_INDICES then
+    elseif req.type == request.QUERY or req.type == request.QUERY_NUMERICAL_INDICES then
         PrepareParameters(req.parameters)
         local query = PrepareQuery(req.sql, req.parameters)
         local cur, err = connection:execute(query)
@@ -36,41 +38,40 @@ function ProcessRequest(req)
             if Reconnect(err) then
                 cur, err = connection:execute(query)
             else
-                return effil.table{
+                return {
                     error = err
                 }
             end
         end
-        
         reconnectCounter = 0
         
         if type(cur) == "number" then
-            return effil.table{
+            return {
                 log = req.sql,
                 count = cur,
                 rows = {},
                 types = {}
             }
+        else
+            local types = cur:getcoltypes()
+            local count = cur:numrows()
+            local rows = {}
+            local modestring = "a"
+            if req.type == request.QUERY_NUMERICAL_INDICES then
+                modestring = "n"
+            end
+            for i = 1, count do
+                rows[i] = cur:fetch({}, modestring)
+            end
+            cur:close()
+            
+            return {
+                log = req.sql,
+                count = count,
+                rows = rows,
+                types = types
+            }
         end
-        
-        local types = cur:getcoltypes()
-        local count = cur:numrows()
-        local rows = effil.table()
-        local modestring = "a"
-        if req.type == Request.QUERY_NUMERICAL_INDICES then
-            modestring = "n"
-        end
-        for i = 1, count do
-            rows[i] = cur:fetch({}, modestring)
-        end
-        cur:close()
-        
-        return effil.table{
-            log = req.sql,
-            count = count,
-            rows = rows,
-            types = types
-        }
     end
 end
 
@@ -106,7 +107,7 @@ function PrepareParameters(parameters)
     local n = #parameters
     for i = 1, n do
         local p = tostring(parameters[i])
-        if #p > 100 then
+        if #p > ESCAPE_LIMIT then
             parameters[i] = Escape(p)
         else
             parameters[i] = "'" .. connection:escape(p) .. "'"
@@ -114,8 +115,6 @@ function PrepareParameters(parameters)
     end
     return parameters
 end
-
-
 
 function PrepareQuery(sql, parameters)
     if #parameters == 0 then
@@ -128,16 +127,22 @@ function PrepareQuery(sql, parameters)
     local pN = #parameters
     local result = {}
     local escaped = false
+    local hasParameters = false
     
     while sI <= sN and pI <= pN do
         local ch = sql:sub(sI, sI)
         if ch == '?' and not escaped then
+            hasParameters = true
             table.insert(result, sql:sub(sT, sI - 1))
             table.insert(result, parameters[pI])
             pI = pI + 1
             sT = sI + 1
         end
         if ch == '\\' then
+            if escaped then
+                table.insert(result, sql:sub(sT, sI - 1))
+                sT = sI + 1
+            end
             escaped = not escaped
         else
             escaped = false
@@ -146,7 +151,7 @@ function PrepareQuery(sql, parameters)
     end
     
     -- no ? in the query
-    if sT == 1 then
+    if not hasParameters then
         return sql
     end
     table.insert(result, sql:sub(sT))
@@ -156,11 +161,19 @@ end
 function Reconnect(err)
     local fl = err:find("PostgreSQL: no connection to the server") ~= nil
     if fl then
+        connection = luasql:connect(connectionString)
         reconnectCounter = reconnectCounter + 1
+        while not connection do
+            connection = luasql:connect(connectionString)
+            reconnectCounter = reconnectCounter + 1
+            if reconnectCounter >= RECONNECT_LIMIT then
+                break
+            end
+            effil.sleep(reconnectCounter * RECONNECT_INTERVAL) -- increase reconnect delays over time
+        end
         if reconnectCounter > RECONNECT_LIMIT then
             error("Failed to reconnect!")
         end
-        connection = luasql:connect(connectionString)
     end
     return fl
 end

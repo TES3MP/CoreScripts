@@ -1,4 +1,4 @@
-local Request = require("drive.postgres.request")
+local request = require("drive.postgres.request")
 
 local postgresClient = {}
 
@@ -12,13 +12,13 @@ function postgresClient.ThreadWork(input, output)
 end
 
 function postgresClient.Initiate()
-    for i = 1, config.postgresThreadCount do
+    for i = 1, config.postgres.threadCount do
         local threadId = threadHandler.CreateThread(postgresClient.ThreadWork)
         table.insert(postgresClient.threads, threadId)
         postgresClient.currentJobs[threadId] = 0
     end
 
-    postgresClient.ConnectAsync(config.postgresConnectionString)
+    postgresClient.ConnectAsync(config.postgres.connectionString)
 
     local function ProcessMigration(id, path)
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)
@@ -55,9 +55,6 @@ function postgresClient.ProcessResponse(res)
     elseif res.log then
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] [[" .. res.log .. "]]")
     end
-    if res.id == -1 and res.error then
-        tes3mp.StopServer(1)
-    end
 end
 
 function postgresClient.ChooseThread()
@@ -86,15 +83,11 @@ function postgresClient.FinishJob(thread)
     end
 end
 
-function postgresClient.Send(thread, action, sql, parameters, callback)
+function postgresClient.Send(thread, req, callback)
     postgresClient.StartJob(thread)
     threadHandler.Send(
         thread,
-        Request.form(
-            action,
-            sql or "",
-            parameters or {}
-        ),
+        req,
         function(res)
             postgresClient.FinishJob(thread)
             postgresClient.ProcessResponse(res)
@@ -105,15 +98,11 @@ function postgresClient.Send(thread, action, sql, parameters, callback)
     )
 end
 
-function postgresClient.SendAsync(thread, action, sql, parameters)
+function postgresClient.SendAsync(thread, req)
     postgresClient.StartJob(thread)
     local res = threadHandler.SendAsync(
         thread,
-        Request.form(
-            action,
-            sql or "",
-            parameters or {}
-        )
+        req
     )
     postgresClient.FinishJob(thread)
     postgresClient.ProcessResponse(res)
@@ -124,7 +113,7 @@ function postgresClient.Connect(connectString, callback)
     local tasks = {}
     for _, thread in pairs(postgresClient.threads) do
         table.insert(tasks, function()
-            return postgresClient.SendAsync(thread, Request.CONNECT, connectString)
+            return postgresClient.SendAsync(thread, request.Connect(connectString))
         end)
     end
     async.WaitAll(tasks, nil, callback)
@@ -142,7 +131,7 @@ function postgresClient.Disconnect(callback)
     local tasks = {}
     for _, thread in pairs(postgresClient.threads) do
         table.insert(tasks, function()
-            return postgresClient.SendAsync(thread, Request.DISCONNECT)
+            return postgresClient.SendAsync(thread, request.Disconnect())
         end)
     end
     async.WaitAll(tasks, nil, callback)
@@ -159,18 +148,18 @@ end
 function postgresClient.Query(sql, parameters, callback, numericalIndices)
     local thread = postgresClient.ChooseThread()
     if numericalIndices then
-        postgresClient.Send(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters, callback)
+        postgresClient.Send(thread, request.QueryNumerical(sql, parameters), callback)
     else
-        postgresClient.Send(thread, Request.QUERY, sql, parameters, callback)
+        postgresClient.Send(thread, request.Query(sql, parameters), callback)
     end
 end
 
 function postgresClient.QueryAsync(sql, parameters, numericalIndices)
     local thread = postgresClient.ChooseThread()
     if numericalIndices then
-        return postgresClient.SendAsync(thread, Request.QUERY_NUMERICAL_INDICES, sql, parameters)
+        return postgresClient.SendAsync(thread, request.QueryNumerical(sql, parameters))
     else
-        return postgresClient.SendAsync(thread, Request.QUERY, sql, parameters)
+        return postgresClient.SendAsync(thread, request.Query(sql, parameters))
     end
 end
 
