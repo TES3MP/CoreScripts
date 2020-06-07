@@ -547,6 +547,12 @@ function OnObjectActivate(pid, cellDescription)
     eventHandler.OnObjectActivate(pid, cellDescription)
 end
 
+function OnObjectHit(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectHit\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnObjectHit(pid, cellDescription)
+end
+
 function OnObjectPlace(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectPlace\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
