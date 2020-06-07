@@ -46,6 +46,8 @@ banList = {}
 postgresClient = nil
 
 if config.databaseType == "json" or config.databaseType == nil then
+    storage = require("storage.json")
+
     Player = require("player.json")
     Cell = require("cell.json")
     RecordStore = require("recordstore.json")

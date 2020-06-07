@@ -32,7 +32,7 @@ function ProcessRequest(req)
         else
             return {
                 content = false,
-                error = "Failed to load the file " .. req.path
+                error = "Failed to save the file " .. req.path
             }
         end
     elseif req.type == request.LOAD then
@@ -46,7 +46,7 @@ function ProcessRequest(req)
         else
             return {
                 content = nil,
-                error = "Failed to save the file " .. req.path
+                error = "Failed to load the file " .. req.path
             }
         end
     end
