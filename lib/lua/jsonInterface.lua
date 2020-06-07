@@ -14,12 +14,6 @@ end
 
 local jsonInterface = {}
 
-jsonInterface.libraryMissingMessage = "No input/output library selected for JSON interface!"
-
-function jsonInterface.setLibrary(ioLibrary)
-    jsonInterface.ioLibrary = ioLibrary
-end
-
 -- Remove all text from before the actual JSON content starts
 function jsonInterface.removeHeader(content)
 
@@ -38,43 +32,16 @@ function jsonInterface.removeHeader(content)
 end
 
 function jsonInterface.load(fileName)
-
-    if jsonInterface.ioLibrary == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
-        return nil
+    local res = fileClient.LoadAsync(fileName)
+    if not res then
+        error("Failed to load json file " .. fileName)
     end
-
-    local home = config.dataPath .. "/"
-    local file = jsonInterface.ioLibrary.open(home .. fileName, 'r')
-
-    if file ~= nil then
-        local content = file:read("*all")
-        file:close()
-
-        return jsonInterface.decode(content, fileName)
-    else
-        return nil
-    end
+    return jsonInterface.decode(res.content)
 end
 
 
 function jsonInterface.writeToFile(fileName, content)
-
-    if jsonInterface.ioLibrary == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
-        return false
-    end
-
-    local home = config.dataPath .. "/"
-    local file = jsonInterface.ioLibrary.open(home .. fileName, 'w+b')
-
-    if file ~= nil then
-        file:write(content)
-        file:close()
-        return true
-    else
-        return false
-    end
+    return fileClient.SaveAsync(fileName, content)
 end
 
 -- Save data to JSON in a slower but human-readable way, with identation and a specific order

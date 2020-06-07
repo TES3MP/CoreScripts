@@ -3,14 +3,6 @@ require("enumerations")
 
 jsonInterface = require("jsonInterface")
 
--- Lua's default io library for input/output can't open Unicode filenames on Windows,
--- which is why on Windows it's replaced by TES3MP's io2 (https://github.com/TES3MP/Lua-io2)
-if tes3mp.GetOperatingSystemType() == "Windows" then
-    jsonInterface.setLibrary(require("io2"))
-else
-    jsonInterface.setLibrary(io)
-end
-
 require("color")
 config = require("config")
 class = require("classy")
@@ -24,6 +16,7 @@ threadHandler = require("threadHandler")
 logicHandler = require("logicHandler")
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
+fileHelper = require("fileHelper")
 eventHandler = require("eventHandler")
 guiHelper = require("guiHelper")
 animHelper = require("animHelper")
@@ -31,6 +24,8 @@ speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
 timers = require('timers')
 require("defaultCommands")
+
+fileClient = require('drive.file')
 
 Database = nil
 Player = nil
