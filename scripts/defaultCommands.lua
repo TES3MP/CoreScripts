@@ -414,3 +414,58 @@ defaultCommands.overrideDestination = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
+
+function defaultCommands.exit(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if not admin then
+        invalidCommand(pid)
+        return
+    end
+
+    local delay = cmd[2] and tonumber(cmd[2]) or 0
+    delay = time.minutes(delay)
+    local exitWarning = function(delay)
+        local message = ""
+        if delay == 0 then
+            message = "Stopping the server!\n"
+        else
+            local hours = math.floor(time.toHours(delay))
+            local min = math.floor(time.toMinutes(delay % time.hours(1)))
+            local sec = math.floor(time.toSeconds(delay % time.minutes(1)))
+            message = table.concat({
+                "Stopping the server",
+                hours > 0 and string.format(" %s hours", hours) or "",
+                min > 0 and string.format(" %s minutes", min) or "",
+                sec > 0 and string.format(" %s seconds", sec) or "",
+                "!\n"
+            })
+        end
+        for pid in pairs(Players) do
+            tes3mp.SendMessage(pid, color.DarkRed .. message)
+        end
+    end
+    local minTime = time.seconds(30)
+    async.Wrap(function()
+        if delay > minTime then
+            exitWarning(delay)
+            timers.WaitAsync(delay * 0.5)
+            delay = delay - delay * 0.5
+        end
+        if delay > minTime then
+            exitWarning(delay)
+            timers.WaitAsync(delay * 0.25)
+            delay = delay - delay * 0.25
+        end
+        if delay > minTime then
+            exitWarning(delay)
+            timers.WaitAsync(delay - minTime)
+            delay = minTime
+            exitWarning(delay)
+        end
+        timers.WaitAsync(delay)
+        exitWarning(0)
+        tes3mp.StopServer(0)
+    end)
+end
+
+customCommandHooks.registerCommand("exit", defaultCommands.exit)
