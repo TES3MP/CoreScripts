@@ -25,25 +25,29 @@ Examples
 Display a notification two seconds after player joins the server:
 ```Lua
 customEventHooks.registerHandler('OnPlayerAuthentified', function(eventStatus, pid)
-  timers.Timeout(function(id)
-    tes3mp.SendMessage(pid, color.Cornsilk .. 'Greetings!\n')
-  end, time.seconds(2))
+  if eventStatus.validCustomHandlers then
+    timers.Timeout(function(id)
+      tes3mp.SendMessage(pid, color.Cornsilk .. 'Greetings!\n')
+    end, time.seconds(2))
+  end
 end)
 ```
 
 Display the amount of online players every five minutes:
 ```Lua
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
-  timers.Interval(function(id)
-    local count = 0
-    for pid in pairs(Players) do
-      count = count + 1
-    end
-    local message = string.format('%s%d players online!\n', color.Yellow, count)
-    for pid in pairs(Players) do
-      tes3mp.SendMessage(pid, message)
-    end
-  end, time.minutes(5))
+  if eventStatus.validCustomHandlers then
+    timers.Interval(function(id)
+      local count = 0
+      for pid in pairs(Players) do
+        count = count + 1
+      end
+      local message = string.format('%s%d players online!\n', color.Yellow, count)
+      for pid in pairs(Players) do
+        tes3mp.SendMessage(pid, message)
+      end
+    end, time.minutes(5))
+  end
 end)
 ```
 

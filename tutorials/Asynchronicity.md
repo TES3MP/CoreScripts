@@ -5,20 +5,24 @@
 ## Basics
 Some of the CoreScript functions require you to run them inside a coroutine. To be able to pause execution of the current function, and then return to it, there must be some overlaying thread, to which we can `yield` during the pause. Otherwise there would be nothing that could resume execution in any case.
 
-So if you are using functions such as `timers.WaitAsync`, `postgresClient.QueryAwait` or `async.SendAwait`, you have to wrap them in a coroutine:
+So if you are using functions such as `timers.WaitAsync`, `postgresClient.QueryAsync` or `threadHandler.SendAsync`, you have to wrap them in a coroutine:
 ```Lua
-customEventHooks.registerHandler("OnServerPostInit", function()
-  timers.WaitAsync(time.seconds(2))
-  print("2 seconds after server started!")
+customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
+  if eventStatus.validCustomHandlers then
+    timers.WaitAsync(time.seconds(2))
+    print("2 seconds after server started!")
+  end
 end)
 ```
 This code will throw an error! This is how you should do it instead:
 ```Lua
 customEventHooks.registerHandler("OnServerPostInit", function()
-  async.Wrap(function()
-    timers.WaitAsync(time.seconds(2))
-    print("2 seconds after server started!")
-  end)
+  if eventStatus.validCustomHandlers then
+    async.Wrap(function()
+      timers.WaitAsync(time.seconds(2))
+      print("2 seconds after server started!")
+    end)
+  end
 end)
 ```
 * `async.Wrap(func, ...)` is mostly identical to `coroutine.wrap(func)(...)`. You can use `coroutine.wrap` or `coroutine.create` functions instead, if you want more control over the specifics of implementation.

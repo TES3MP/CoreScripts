@@ -1,8 +1,6 @@
-Using the customEventHooks API:
-===
+# Using the customEventHooks API:
 
-Handling events:
----
+## Handling events:
 
 To handle various events you will need to use two functions: `customEventHooks.registerValidator` and `customEventHooks.registerHandler`.
 Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was peformed or not). 
@@ -16,8 +14,7 @@ However, their callbacks are still ran, and it is scripts' responsibility to han
 
 Validators can change the current eventStatus. If your validators returns nothing, it stays the same, however if you return a non-`nil` value for either of the two fields, it will override the previous one. You can use `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)` for this.
 
-Examples:
----
+## Examples:
 Imagine you want to taunt players whenever they die.
 ```Lua
 customEventHooks.registerHandler("OnPlayerDeath", function(eventStatus, pid)
@@ -31,20 +28,21 @@ Now let's do something more practical: limiting players' level:
 ```Lua
 local maxLevel = 20
 customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
-    local player = Players[pid]
-    if player.data.stats.level >= maxLevel then
-        player.data.stats.level = maxLevel
-        player.data.stats.levelProgress = 0
-        player:LoadLevel()
-        --cancel the level increase on the server side
-        --there have been no level up anymore, so don't run custom handlers for it either
-        return customEventHooks.makeEventStatus(false,false) 
+    if eventStatus.validCustomHandlers then
+        local player = Players[pid]
+        if player.data.stats.level >= maxLevel then
+            player.data.stats.level = maxLevel
+            player.data.stats.levelProgress = 0
+            player:LoadLevel()
+            --cancel the level increase on the server side
+            --there have been no level up anymore, so don't run custom handlers for it either
+            return customEventHooks.makeEventStatus(false,false) 
+        end
     end
 end)
 ```
 
-Custom events
----
+## Custom events
 
 You can also use this API to allow other scripts to interact with yours. For that you will need to add `customEventHooks.triggerValidators(event, args)` and `customEventHooks.triggerHandlers(event, eventStatus, args)` to your code. `event` is a string labeling the event, `eventStatus` should be whatever was returned by `triggerValidators` and `args` is a list or arguments relevant callbacks will receive.
 
@@ -63,8 +61,8 @@ If you don't want other scripts replacing logic from yours, you can provide just
 customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {})
 ```
 
-Event table
-===
+# Event table
+
 This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*  
 Most of the events are the same as `eventHandler.lua` functions with some extra arguments:
 
