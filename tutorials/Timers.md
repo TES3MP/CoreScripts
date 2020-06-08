@@ -1,10 +1,9 @@
-Timers
-===
+# Timers
 
 Timer functions are provided as a global `timers` table. All of them accept delay in milliseconds, but you can use [`time` functions](#time-unit-conversions) to convert diffirent units.
 
-Timeout and Interval
----
+## Timeout and Interval
+
 * `timers.Timeout(func, delay)` returns `id`  
   Calls the function `func` with `id` as an argument (the same as the returned `id`) after `delay` milliseconds
 * `timers.Interval(func, delay)` returns `id`  
@@ -14,14 +13,14 @@ Timeout and Interval
 
 If you want to pass any additional information to the callback `func`, either make use of closures, or keep track of it using timer `id`.
 
-WaitAsync
----
+## WaitAsync
+
 You can also simply wait for a set amount of time, while not locking up the rest of the server:  
 * `timers.WaitAsync(delay)`  
 This function **must** be called from inside [a coroutine](CoroutinesAndThreads.md), and will throw an error otherwise. In the main thread this kind of operation is impossible, and you should use Timeout.
 
-Examples
----
+## Examples
+
 Display a notification two seconds after player joins the server:
 ```Lua
 customEventHooks.registerHandler('OnPlayerAuthentified', function(eventStatus, pid)
@@ -100,8 +99,8 @@ end)
 customCommandHooks.setRankRequirement("exit", 2)
 ```
 
-Time unit conversion
----
+## Time unit conversion
+
 * `time.seconds(sec)`
 * `time.minutes(min)`
 * `time.hours(hours)`
