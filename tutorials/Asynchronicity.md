@@ -5,16 +5,7 @@
 ## Basics
 Some of the CoreScript functions require you to run them inside a coroutine. To be able to pause execution of the current function, and then return to it, there must be some overlaying thread, to which we can `yield` during the pause. Otherwise there would be nothing that could resume execution in any case.
 
-So if you are using functions such as `timers.WaitAsync`, `postgresClient.QueryAsync` or `threadHandler.SendAsync`, you have to wrap them in a coroutine:
-```Lua
-customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
-  if eventStatus.validCustomHandlers then
-    timers.WaitAsync(time.seconds(2))
-    print("2 seconds after server started!")
-  end
-end)
-```
-This code will throw an error! This is how you should do it instead:
+If you are using functions such as `fileClient.SaveAsync`, `timers.WaitAsync`, `postgresClient.QueryAsync` or `threadHandler.SendAsync`, you should wrap them in a coroutine:
 ```Lua
 customEventHooks.registerHandler("OnServerPostInit", function()
   if eventStatus.validCustomHandlers then
@@ -26,6 +17,23 @@ customEventHooks.registerHandler("OnServerPostInit", function()
 end)
 ```
 * `async.Wrap(func, ...)` is mostly identical to `coroutine.wrap(func)(...)`. You can use `coroutine.wrap` or `coroutine.create` functions instead, if you want more control over the specifics of implementation.
+
+They might even throw an error if you don't, e. g. `timers.WaitAsync`:
+```Lua
+customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
+  if eventStatus.validCustomHandlers then
+    timers.WaitAsync(time.seconds(2))
+    print("2 seconds after server started!")
+  end
+end)
+```
+
+You can also always use an `Async` function as a callback:
+```Lua
+async.Wrap(function()
+  callback(fileClient.LoadAsync(filename))
+end)
+```
 
 ## Running multiple asynchronous functions
 
