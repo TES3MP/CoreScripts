@@ -5,7 +5,7 @@ storage.data = {}
 -- public functions
 --
 
-function storage.Data(key, default)
+function storage.Load(key, default)
     if not storage.data[key] then
         local result =  postgresClient.QueryAsync([[SELECT data FROM data_storage WHERE key = ?;]], {key})
         if result.error then

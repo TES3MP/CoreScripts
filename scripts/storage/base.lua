@@ -1,6 +1,6 @@
 local storage = {}
 
-function storage.Data(key, default)
+function storage.Load(key, default)
     error('Not implemented!')
 end
 
@@ -15,5 +15,13 @@ end
 function storage.SaveAll()
     error('Not implemented!')
 end
+
+customEventHooks.registerHandler('OnServerExit', function(eventStatus)
+    if eventStatus.validDefaultHandler then
+        async.Wrap(function()
+            storage.SaveAllAsync()
+        end)
+    end
+end)
 
 return storage

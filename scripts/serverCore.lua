@@ -11,21 +11,25 @@ require("time")
 require("effil")
 
 async = require("async")
-storage = require("storage.base")
 threadHandler = require("threadHandler")
-logicHandler = require("logicHandler")
+
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
+timers = require('timers')
+
 fileHelper = require("fileHelper")
-eventHandler = require("eventHandler")
+fileClient = require('drive.file')
+storage = require("storage.base")
+jsonConfig = require("jsonConfig")
+
 guiHelper = require("guiHelper")
 animHelper = require("animHelper")
 speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
-timers = require('timers')
-require("defaultCommands")
 
-fileClient = require('drive.file')
+logicHandler = require("logicHandler")
+eventHandler = require("eventHandler")
+require("defaultCommands")
 
 Database = nil
 Player = nil

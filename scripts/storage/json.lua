@@ -5,7 +5,7 @@ storage.data = {}
 -- public functions
 --
 
-function storage.Data(key, default)
+function storage.Load(key, default)
     if not storage.data[key] then
         local result =  fileClient.LoadAsync(storage.GetFileName(key))
         if result.content then
