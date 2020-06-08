@@ -1,4 +1,5 @@
 local storage = {}
+storage.data = {}
 
 function storage.Load(key, default)
     error('Not implemented!')

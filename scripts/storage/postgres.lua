@@ -1,6 +1,3 @@
-local storage = {}
-storage.data = {}
-
 --
 -- public functions
 --
