@@ -177,8 +177,14 @@ end
 
 async.Wrap(function() postgresClient.Initiate() end)
 
-customEventHooks.registerHandler("OnServerExit", function()
-    async.Wrap(function() postgresClient.DisconnectAsync() end)
+customEventHooks.registerHandler("OnServerInit", function(eventStatus)
+    if eventStatus.validDefaultHandler then
+        customEventHooks.registerHandler("OnServerExit", function(eventStatus)
+            if eventStatus.validDefaultHandler then
+                async.Wrap(function() postgresClient.DisconnectAsync() end)
+            end
+        end)
+    end
 end)
 
 return postgresClient

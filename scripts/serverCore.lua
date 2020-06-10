@@ -49,7 +49,6 @@ banList = {}
 
 postgresClient = nil
 
-require('autoSave')
 
 if config.databaseType == "json" or config.databaseType == nil then
     storage = require("storage.json")
@@ -87,6 +86,8 @@ elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") the
     RecordStore = require("recordstore.sql")
     World = require("world.sql")
 end
+
+require('autoSave')
 
 require("customScripts")
 
@@ -312,7 +313,8 @@ end
 
 function OnServerScriptCrash(errorMessage)
     tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
-    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
+    OnServerExit(errorMessage)
+    --customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
 end
 
 function LoadDataFileList(filename)

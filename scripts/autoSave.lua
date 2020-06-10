@@ -158,6 +158,7 @@ end
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
     if eventStatus.validDefaultHandler then
         timers.Interval(function()
+            tes3mp.LogMessage(enumerations.log.VERBOSE, "[AutoSave] Interval")
             async.Wrap(function()
                 autoSave.Pop()
             end)
