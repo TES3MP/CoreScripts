@@ -4,14 +4,18 @@
 
 function storage.Load(key, default)
     if not storage.data[key] then
-        local result =  fileClient.LoadAsync(storage.GetFileName(key))
-        if result.content then
-            local data = jsonInterface.decode(result.content)
-            tableHelper.fixNumericalKeys(data)
-            storage.data[key] = data
-        else
-            storage.data[key] = default
+        local eventStatus = customEventHooks.triggerValidators('OnStorageLoad', {key})
+        if eventStatus.validDefaultHandler then
+            local result =  fileClient.LoadAsync(storage.GetFileName(key))
+            if result.content then
+                local data = jsonInterface.decode(result.content)
+                tableHelper.fixNumericalKeys(data)
+                storage.data[key] = data
+            else
+                storage.data[key] = default
+            end
         end
+        customEventHooks.triggerHandlers('OnStorageLoad', eventStatus, {key})
     end
     return storage.data[key]
 end

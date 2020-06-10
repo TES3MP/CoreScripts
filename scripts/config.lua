@@ -369,10 +369,13 @@ config.ignoreScriptErrors = false
 -- Interval (in miliseconds) at which to read responses from secondary threads
 config.threadHandlerInterval = 10
 
+-- Interval (in seconds) at which to save players, cells and storage records
+config.autoSaveInterval = 10
+
 -- The type of database or data format used by the server
--- Valid values: json, sqlite3, postgres
+-- Valid values: json, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "json"
+config.databaseType = "postgres"
 
 -- The location of the database file
 -- Note: Not applicable when using json

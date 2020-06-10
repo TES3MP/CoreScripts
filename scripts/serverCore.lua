@@ -88,6 +88,8 @@ else
     
 end
 
+require('autoSave')
+
 require("customScripts")
 
 function LoadBanList()

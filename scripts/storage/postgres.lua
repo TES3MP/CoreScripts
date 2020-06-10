@@ -4,20 +4,24 @@
 
 function storage.Load(key, default)
     if not storage.data[key] then
-        local result =  postgresClient.QueryAsync([[SELECT data FROM data_storage WHERE key = ?;]], {key})
-        if result.error then
-            error("Failed to load storage " .. key)
+        local eventStatus = customEventHooks.triggerValidators('OnStorageLoad', {key})
+        if eventStatus.validDefaultHandler then
+            local result =  postgresClient.QueryAsync([[SELECT data FROM data_storage WHERE key = ?;]], {key})
+            if result.error then
+                error("Failed to load storage " .. key)
+            end
+            if result.count > 1 then
+                error("Duplicate records in the database for storage " .. key)
+            end
+            if result.count == 1 then
+                local data = jsonInterface.decode(result.rows[1].data)
+                tableHelper.fixNumericalKeys(data)
+                storage.data[key] = data
+            else
+                storage.data[key] = default
+            end
         end
-        if result.count > 1 then
-            error("Duplicate records in the database for storage " .. key)
-        end
-        if result.count == 1 then
-            local data = jsonInterface.decode(result.rows[1].data)
-            tableHelper.fixNumericalKeys(data)
-            storage.data[key] = data
-        else
-            storage.data[key] = default
-        end
+        customEventHooks.triggerHandlers('OnStorageLoad', eventStatus, {key})
     end
     return storage.data[key]
 end
