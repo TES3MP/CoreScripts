@@ -21,9 +21,13 @@ Most of your scripts will only execute code inside [an event](EventHooks.md), [a
 ## Module format
 
 Currently, the process of installing a custom script by the end user consists of adding [require statements](https://www.lua.org/pil/8.1.html) to the `customScripts.lua` file.
-Thus you want to minimize the amount of files that must be required. For smaller scripts that can be achieved simply by putting all of your code in a single file, but for larger ones you might want to have a file that requires the others, assembling your script into a single module.
+Thus you want to minimize the amount of files that must be `require`d. For smaller scripts that can be achieved simply by putting all of your code in a single file, but for larger ones you might want to have a file that requires the others, assembling your script into a single module.  
 It is generally a good practice to form each of your scripts as a single table, and then `return` it. This way you don't pollute global variable space and make it easier for other scripts to reuse your code.
 
 ## Other resources
 
 As a quick introduction, [take a look at examples](Examples.md).
+
+Consider joning the [TES3MP Discord server](https://discord.gg/ECJk293). There you will find:
+* `#scripting_help` here you can ask questions about writing TES3MP server scripts
+* `#custom_scripts` a catalogue of existing scripts. Use them as advanced examples, or maybe add your own scripts to the list!

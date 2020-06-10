@@ -5,6 +5,8 @@
 ## Basics
 Some of the CoreScript functions require you to run them inside a coroutine. To be able to pause execution of the current function, and then return to it, there must be some overlaying thread, to which we can `yield` during the pause. Otherwise there would be nothing that could resume execution in any case.
 
+CoreScripts provides a global table `async' ([link to source](../scripts/async.lua)) to help with using asynchronous functions, which is described below.
+
 If you are using functions such as `fileClient.SaveAsync`, `timers.WaitAsync`, `postgresClient.QueryAsync` or `threadHandler.SendAsync`, you should wrap them in a coroutine:
 ```Lua
 customEventHooks.registerHandler("OnServerPostInit", function()
@@ -28,7 +30,7 @@ customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
 end)
 ```
 
-You can also always use an `Async` function as a callback:
+You can always use an `Async` function in callback style:
 ```Lua
 async.Wrap(function()
   callback(fileClient.LoadAsync(filename))
@@ -81,6 +83,7 @@ end)
 ```
 
 ## Refactoring your own callbacks into async functions
+
 Let's assume you already have a function such as
 ```Lua
 networkRequest(url, callback)
