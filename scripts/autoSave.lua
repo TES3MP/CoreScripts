@@ -185,6 +185,7 @@ end)
 
 customEventHooks.registerHandler('OnServerExit', function(eventStatus)
     if eventStatus.validDefaultHandler then
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
         local res = true
         repeat
             autoSave.Pop(true)

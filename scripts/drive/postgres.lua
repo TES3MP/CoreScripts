@@ -53,7 +53,7 @@ function postgresClient.ProcessResponse(res)
     if res.error then
         tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] [[" .. res.error .. "]]")
     elseif res.log then
-        tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] [[" .. res.log .. "]]")
+        tes3mp.LogMessage(enumerations.log.VERBOSE, "[Postgres] [[" .. res.log .. "]]")
     end
 end
 
