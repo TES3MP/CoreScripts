@@ -31,7 +31,12 @@ function ProcessRequest(req)
             log = "Disconnected!"
         }
     elseif req.type == request.QUERY or req.type == request.QUERY_NUMERICAL_INDICES then
-        PrepareParameters(req.parameters)
+        local status, err = pcall(function() PrepareParameters(req.parameters) end)
+        if not status then
+            return {
+                error = err
+            }
+        end
         local query = PrepareQuery(req.sql, req.parameters)
         local cur, err = connection:execute(query)
         while err do

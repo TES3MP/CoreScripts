@@ -14,7 +14,7 @@ local getRanks = function(pid)
     elseif Players[pid]:IsModerator() then
         moderator = true
     end
-    
+
     return moderator, admin, serverOwner
 end
 
@@ -50,7 +50,7 @@ defaultCommands.inviteAlly = function(pid, cmd)
 
         local targetPid = tonumber(cmd[2])
         local senderMessage
-        
+
         if Players[pid].allyInvitesSent == nil then Players[pid].allyInvitesSent = {} end
         if Players[targetPid].allyInvitesReceived == nil then Players[targetPid].allyInvitesReceived = {} end
 
@@ -415,35 +415,36 @@ end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
 
+local exitWarning = function(delay)
+    local message = ""
+    if delay == 0 then
+        message = "Stopping the server!\n"
+    else
+        local hours = math.floor(time.toHours(delay))
+        local min = math.floor(time.toMinutes(delay % time.hours(1)))
+        local sec = math.floor(time.toSeconds(delay % time.minutes(1)))
+        message = table.concat({
+            "Stopping the server",
+            hours > 0 and string.format(" %s hours", hours) or "",
+            min > 0 and string.format(" %s minutes", min) or "",
+            sec > 0 and string.format(" %s seconds", sec) or "",
+            "!\n"
+        })
+    end
+    for pid in pairs(Players) do
+        tes3mp.SendMessage(pid, color.DarkRed .. message)
+    end
+end
+
 function defaultCommands.exit(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
     if not admin then
         invalidCommand(pid)
         return
     end
-
     local delay = cmd[2] and tonumber(cmd[2]) or 0
     delay = time.minutes(delay)
-    local exitWarning = function(delay)
-        local message = ""
-        if delay == 0 then
-            message = "Stopping the server!\n"
-        else
-            local hours = math.floor(time.toHours(delay))
-            local min = math.floor(time.toMinutes(delay % time.hours(1)))
-            local sec = math.floor(time.toSeconds(delay % time.minutes(1)))
-            message = table.concat({
-                "Stopping the server",
-                hours > 0 and string.format(" %s hours", hours) or "",
-                min > 0 and string.format(" %s minutes", min) or "",
-                sec > 0 and string.format(" %s seconds", sec) or "",
-                "!\n"
-            })
-        end
-        for pid in pairs(Players) do
-            tes3mp.SendMessage(pid, color.DarkRed .. message)
-        end
-    end
+
     local minTime = time.seconds(30)
     async.Wrap(function()
         if delay > minTime then

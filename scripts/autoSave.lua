@@ -81,8 +81,8 @@ function autoSave.Pop(exit)
     local record = nil
     repeat
         record = queue.pop(recordQueue)
-    until autoSave.IsValid(record) or recordQueue.size == 0
-    if autoSave.IsValid(record) then
+    until record == nil or autoSave.IsValid(record)
+    if record ~= nil then
         if not exit then
             autoSave.QuicksaveToDrive(record)
             queue.push(recordQueue, record)
@@ -185,10 +185,18 @@ end)
 
 customEventHooks.registerHandler('OnServerExit', function(eventStatus)
     if eventStatus.validDefaultHandler then
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Clean up and kick players")
+        for pid, player in pairs(Players) do
+            player:SaveCell()
+            player:SaveStatsDynamic()
+            player:DeleteSummons()
+            tes3mp.Kick(pid)
+        end
+
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
         local res = true
         repeat
-            autoSave.Pop(true)
+            res = autoSave.Pop(true)
         until not res
         
         for storeType, recordStore in pairs(RecordStores) do

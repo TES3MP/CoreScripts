@@ -49,6 +49,8 @@ banList = {}
 
 postgresClient = nil
 
+require('autoSave')
+
 if config.databaseType == "json" or config.databaseType == nil then
     storage = require("storage.json")
 
@@ -84,11 +86,7 @@ elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") the
     Cell = require("cell.sql")
     RecordStore = require("recordstore.sql")
     World = require("world.sql")
-else
-    
 end
-
-require('autoSave')
 
 require("customScripts")
 
@@ -304,7 +302,12 @@ end
 function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
-    customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
+    local status, err = pcall(function()
+        customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
+    end)
+    if not status then
+        tes3mp.LogMessage(enumerations.log.FATAL, "Error while exiting the server: " .. tostring(err))
+    end
 end
 
 function OnServerScriptCrash(errorMessage)

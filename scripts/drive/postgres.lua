@@ -18,7 +18,19 @@ function postgresClient.Initiate()
         postgresClient.currentJobs[threadId] = 0
     end
 
-    postgresClient.ConnectAsync(config.postgres.connectionString)
+    local fl = true
+    local results = postgresClient.ConnectAsync(config.postgres.connectionString)
+    for thread, result in pairs(results) do
+        if not result then
+            error('[Postgres] Failed to connect in thread ' .. thread)
+        end
+        if result.error then
+            fl = false
+        end
+    end
+    if fl then
+        tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Successfully connected all threads!")
+    end
 
     local function ProcessMigration(id, path)
         tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Applying migration " .. path)
@@ -163,9 +175,7 @@ function postgresClient.QueryAsync(sql, parameters, numericalIndices)
     end
 end
 
-async.Wrap(function()
-    postgresClient.Initiate()
-end)
+async.Wrap(function() postgresClient.Initiate() end)
 
 customEventHooks.registerHandler("OnServerExit", function()
     async.Wrap(function() postgresClient.DisconnectAsync() end)

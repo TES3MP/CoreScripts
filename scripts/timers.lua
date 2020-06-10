@@ -44,6 +44,9 @@ end
 
 function timers.WaitAsync(delay)
     local currentCoroutine = async.CurrentCoroutine()
+    if delay <= 0 then
+        return
+    end
     timers.Timeout(function(id)
         coroutine.resume(currentCoroutine)
     end, delay)
@@ -76,9 +79,7 @@ end
 
 function timers.Expect(timestamp)
     local time = tes3mp.GetMillisecondsSinceServerStart()
-    if timestamp <= time then
-        TIMERS_CALLBACK()
-    elseif not timers.expecting or timestamp < timers.expecting then
+    if not timers.expecting or timestamp < timers.expecting then
         timers.expecting = timestamp
         tes3mp.RestartTimer(timers.timer, math.max(0, timers.expecting - time))
     end
