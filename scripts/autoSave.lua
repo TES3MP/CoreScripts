@@ -40,7 +40,8 @@ local types = {
     PLAYER = 1,
     CELL = 2,
     STORAGE = 3,
-    RECORD_STORE = 4 -- currently unused
+    WORLD = 4,
+    RECORD_STORE = 5 -- currently unused,
 }
 
 --
@@ -74,6 +75,14 @@ function autoSave.PushStorage(key)
     })
 end
 
+function autoSave.PushWorld(instance)
+    queue.push(recordQueue, {
+        type = types.WORLD,
+        id = instance
+    })
+end
+
+
 --
 -- private functions
 --
@@ -104,6 +113,8 @@ function autoSave.IsValid(record)
         return LoadedCells[record.id] ~= nil
     elseif record.type == types.STORAGE then
         return true
+    elseif record.type == types.WORLD then
+        return true
     elseif record.type == types.RECORD_STORE then
         return RecordStores[record.id] ~= nil
     end
@@ -117,6 +128,8 @@ function autoSave.QuicksaveToDrive(record)
         LoadedCells[record.id]:QuicksaveToDrive()
     elseif record.type == types.STORAGE then
         storage.Save(record.id)
+    elseif record.type == types.WORLD then
+        record.id:QuicksaveToDrive()
     elseif record.type == types.RECORD_STORE then
         RecordStores[record.id]:QuicksaveToDrive()
     else
@@ -127,36 +140,41 @@ function autoSave.QuicksaveToDrive(record)
 end
 
 function autoSave.SaveToDrive(record)
+    autoSave.Log(record)
     if record.type == types.PLAYER then
         Players[record.id]:SaveToDrive()
     elseif record.type == types.CELL then
         LoadedCells[record.id]:SaveToDrive()
     elseif record.type == types.STORAGE then
         storage.Save(record.id)
+    elseif record.type == types.WORLD then
+        record.id:SaveToDrive()
     elseif record.type == types.RECORD_STORE then
         RecordStores[record.id]:SaveToDrive()
     else
         return false
     end
-    autoSave.Log(record)
     return true
 end
 
 function autoSave.Log(record)
     if record.type == types.PLAYER then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saved player with pid " .. record.id)
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving player with pid " .. record.id)
     elseif record.type == types.CELL then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saved cell with description " .. record.id)
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving cell with description " .. record.id)
     elseif record.type == types.STORAGE then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saved storage with key " .. record.id)
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving storage with key " .. record.id)
+    elseif record.type == types.WORLD then
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving the world instance")
     elseif record.type == types.RECORD_STORE then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saved record store with type " .. record.id)
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving record store with type " .. record.id)
     end
     return false
 end
 
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
     if eventStatus.validDefaultHandler then
+        autoSave.PushWorld(WorldInstance)
         timers.Interval(function()
             tes3mp.LogMessage(enumerations.log.VERBOSE, "[AutoSave] Interval")
             async.Wrap(function()

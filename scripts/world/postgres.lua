@@ -36,7 +36,7 @@ function World:SaveToDrive()
 end
 
 function World:QuicksaveToDrive()
-    async.Wrap(function() self:SaveToDrive() end)
+    self:SaveToDrive()
 end
 
 function World:LoadFromDrive()
