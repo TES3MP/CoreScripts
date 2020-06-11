@@ -172,18 +172,22 @@ function autoSave.SaveAll(exit)
 end
 
 function autoSave.Log(record)
+    local log = nil
     if record.type == types.PLAYER then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving player with pid " .. record.id)
+       log = "Saving player with pid " .. record.id
     elseif record.type == types.CELL then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving cell with description " .. record.id)
+        log = "Saving cell with description " .. record.id
     elseif record.type == types.STORAGE then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving storage with key " .. record.id)
+        log = "Saving storage with key " .. record.id
     elseif record.type == types.WORLD then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving the world instance")
+        log = "Saving the world instance"
     elseif record.type == types.RECORD_STORE then
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving record store with type " .. record.id)
+        log = "Saving record store with type " .. record.id
     end
-    return false
+    if log then
+        tes3mp.LogMessage(enumerations.log.VERBOSE, "[AutoSave] " .. log)
+    end
+    return log
 end
 
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
