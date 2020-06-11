@@ -157,6 +157,20 @@ function autoSave.SaveToDrive(record)
     return true
 end
 
+function autoSave.SaveAll(exit)
+    local res = true
+    local i = 0
+    repeat
+        res = autoSave.Pop(exit)
+        i = i + 1
+    until not res or recordQueue.size > i
+    
+    for _, recordStore in pairs(RecordStores) do
+        recordStore:DeleteUnlinkedRecords()
+        recordStore:SaveToDrive()
+    end
+end
+
 function autoSave.Log(record)
     if record.type == types.PLAYER then
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving player with pid " .. record.id)
@@ -213,13 +227,15 @@ customEventHooks.registerHandler('OnServerExit', function(eventStatus)
         end
 
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
-        local res = true
-        repeat
-            res = autoSave.Pop(true)
-        until not res
-        
-        for storeType, recordStore in pairs(RecordStores) do
-            recordStore:SaveToDrive()
+        autoSave.SaveAll(true)
+    end
+end)
+
+customEventHooks.registerHandler('OnPlayerDisconnect', function(eventStatus)
+    if eventStatus.validDefaultHandler then
+        if tableHelper.isEmpty(Players) then
+            tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything because the server is empty")
+            autoSave.SaveAll(false)
         end
     end
 end)

@@ -384,19 +384,8 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid]:Destroy()
                 Players[pid] = nil
             end
-            
+
             customEventHooks.triggerHandlers("OnPlayerDisconnect", eventStatus, {pid})
-        end
-    end
-
-    -- If the server is now empty, quick saving of data isn't important anymore, so do a slower save of
-    -- the world and record store data to human-readable JSON
-    if tableHelper.isEmpty(Players) then
-        WorldInstance:SaveToDrive()
-
-        for _, recordStore in pairs(RecordStores) do
-            recordStore:DeleteUnlinkedRecords()
-            recordStore:SaveToDrive()
         end
     end
 end
