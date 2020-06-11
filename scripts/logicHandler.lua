@@ -511,8 +511,6 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
             end
         end
     end
-    -- Save world because we changed mpNum
-    WorldInstance:QuicksaveToDrive()
 
     if shouldSendPacket then
 
@@ -745,7 +743,6 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
 
             cell.data.objectData[actorUniqueIndex].ai = aiData
             tableHelper.insertValueIfMissing(cell.data.packets.ai, actorUniqueIndex)
-            cell:QuicksaveToDrive()
         end
 
         -- Initialize the packet for the current cell authority
@@ -859,7 +856,6 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
         LoadedCells[cellDescription]:RemoveVisitor(pid)
         LoadedCells[cellDescription]:SaveActorPositions()
         LoadedCells[cellDescription]:SaveActorStatsDynamic()
-        LoadedCells[cellDescription]:QuicksaveToDrive()
 
         -- If this player was the cell's authority, set another player
         -- as the authority

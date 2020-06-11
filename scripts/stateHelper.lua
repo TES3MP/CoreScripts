@@ -338,8 +338,6 @@ function StateHelper:SaveClientScriptGlobalShort(pid, stateObject)
         local variableValue = tes3mp.GetScriptVariableShortValue(index)
         stateObject.data.clientVariables.globals[variableName] = variableValue
     end
-
-    stateObject:QuicksaveToDrive()
 end
 
 function StateHelper:SaveMapExploration(pid, stateObject)

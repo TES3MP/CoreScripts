@@ -370,7 +370,7 @@ config.ignoreScriptErrors = false
 config.threadHandlerInterval = 10
 
 -- Interval (in seconds) at which to save players, cells and storage records
-config.autoSaveInterval = 10
+config.autoSaveInterval = 2
 
 -- The type of database or data format used by the server
 -- Valid values: json, postgres

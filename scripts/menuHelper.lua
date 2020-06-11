@@ -452,8 +452,6 @@ function menuHelper.ProcessEffects(pid, effects)
         end
     end
 
-    targetPlayer:QuicksaveToDrive()
-
     if shouldReloadInventory then
         targetPlayer:LoadInventory()
         targetPlayer:LoadEquipment()
