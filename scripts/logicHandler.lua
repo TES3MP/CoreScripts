@@ -8,6 +8,7 @@ packetBuilder = require("packetBuilder")
 packetReader = require("packetReader")
 
 local logicHandler = {}
+logicHandler.UnloadingCells = {}
 
 Players = {}
 LoadedCells = {}
@@ -793,6 +794,10 @@ end
 
 logicHandler.LoadCell = function(cellDescription)
 
+    -- cell is in the process of being unloaded, just grab it from memory
+    if logicHandler.UnloadingCells[cellDescription] ~= nil and LoadedCells[cellDescription] == nil then
+        LoadedCells[cellDescription] = logicHandler.UnloadingCells[cellDescription]
+    end
     -- If this cell isn't loaded at all, load it
     if LoadedCells[cellDescription] == nil then
 
@@ -837,10 +842,12 @@ end
 
 logicHandler.UnloadCell = function(cellDescription)
 
-    if LoadedCells[cellDescription] ~= nil then
-
-        LoadedCells[cellDescription]:SaveToDrive()
+    local cell = LoadedCells[cellDescription]
+    if cell ~= nil then
         LoadedCells[cellDescription] = nil
+        logicHandler.UnloadingCells[cellDescription] = cell
+        cell:SaveToDrive()
+        logicHandler.UnloadingCells[cellDescription] = nil
     end
 end
 
