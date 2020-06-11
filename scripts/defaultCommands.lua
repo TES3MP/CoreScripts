@@ -445,20 +445,20 @@ function defaultCommands.exit(pid, cmd)
     local delay = cmd[2] and tonumber(cmd[2]) or 0
     delay = time.minutes(delay)
 
-    local minTime = time.seconds(30)
+    local minTime = time.seconds(15)
     async.Wrap(function()
+        exitWarning(delay)
         if delay > minTime then
-            exitWarning(delay)
             timers.WaitAsync(delay * 0.5)
             delay = delay - delay * 0.5
+            exitWarning(delay)
         end
         if delay > minTime then
-            exitWarning(delay)
             timers.WaitAsync(delay * 0.25)
             delay = delay - delay * 0.25
+            exitWarning(delay)
         end
         if delay > minTime then
-            exitWarning(delay)
             timers.WaitAsync(delay - minTime)
             delay = minTime
             exitWarning(delay)
