@@ -34,7 +34,7 @@ local queue = {
     end
 }
 
-local recordQueue = queue.new()
+local savingQueue = queue.new()
 
 local types = {
     PLAYER = 1,
@@ -44,17 +44,14 @@ local types = {
     RECORD_STORE = 5 -- currently unused,
 }
 
---
--- public functions
---
 function autoSave.PushPlayer(pid)
     if not Players[pid] then
         return
     end
-    queue.push(recordQueue, {
+    queue.push(savingQueue, {
         type = types.PLAYER,
         id = pid,
-        name = Players[pid].accountName
+        accountName = Players[pid].accountName
     })
 end
 
@@ -62,39 +59,35 @@ function autoSave.PushCell(cellDescription)
     if not LoadedCells[cellDescription] then
         return
     end
-    queue.push(recordQueue, {
+    queue.push(savingQueue, {
         type = types.CELL,
         id = cellDescription
     })
 end
 
 function autoSave.PushStorage(key)
-    queue.push(recordQueue, {
+    queue.push(savingQueue, {
         type = types.STORAGE,
         id = key
     })
 end
 
 function autoSave.PushWorld(instance)
-    queue.push(recordQueue, {
+    queue.push(savingQueue, {
         type = types.WORLD,
         id = instance
     })
 end
 
-
---
--- private functions
---
 function autoSave.Pop(exit)
     local record = nil
     repeat
-        record = queue.pop(recordQueue)
+        record = queue.pop(savingQueue)
     until record == nil or autoSave.IsValid(record)
     if record ~= nil then
         if not exit then
             autoSave.QuicksaveToDrive(record)
-            queue.push(recordQueue, record)
+            queue.push(savingQueue, record)
         else
             autoSave.SaveToDrive(record)
         end
@@ -108,7 +101,7 @@ function autoSave.IsValid(record)
         return false
     end
     if record.type == types.PLAYER then
-        return Players[record.id] ~= nil and Players[record.id].accountName == record.name
+        return Players[record.id] ~= nil and Players[record.id].accountName == record.accountName
     elseif record.type == types.CELL then
         return LoadedCells[record.id] ~= nil
     elseif record.type == types.STORAGE then
@@ -117,8 +110,9 @@ function autoSave.IsValid(record)
         return true
     elseif record.type == types.RECORD_STORE then
         return RecordStores[record.id] ~= nil
+    else
+        return false
     end
-    return false
 end
 
 function autoSave.QuicksaveToDrive(record)
@@ -163,8 +157,8 @@ function autoSave.SaveAll(exit)
     repeat
         res = autoSave.Pop(exit)
         i = i + 1
-    until not res or recordQueue.size > i
-    
+    until not res or savingQueue.size > i
+
     for _, recordStore in pairs(RecordStores) do
         recordStore:DeleteUnlinkedRecords()
         recordStore:SaveToDrive()
@@ -194,7 +188,6 @@ customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
     if eventStatus.validDefaultHandler then
         autoSave.PushWorld(WorldInstance)
         timers.Interval(function()
-            tes3mp.LogMessage(enumerations.log.VERBOSE, "[AutoSave] Interval")
             async.Wrap(function()
                 autoSave.Pop()
             end)
