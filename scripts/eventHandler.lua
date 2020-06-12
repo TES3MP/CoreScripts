@@ -253,6 +253,38 @@ eventHandler.InitializeDefaultHandlers = function()
         tes3mp.SendObjectActivate(false, false)
     end)
 
+    -- Print object hits
+    customEventHooks.registerHandler("OnObjectHit", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            debugMessage = "- "
+            debugMessage = debugMessage .. uniqueIndex .. " has been hit by "
+
+            if object.hittingPid == nil then
+                debugMessage = debugMessage .. object.hittingRefId .. " " .. object.hittingUniqueIndex
+            else
+                debugMessage = debugMessage .. logicHandler.GetChatName(object.hittingPid)
+            end
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+        end
+
+        for targetPid, targetPlayer in pairs(targetPlayers) do
+            debugMessage = "- "
+            debugMessage = debugMessage .. logicHandler.GetChatName(targetPid) .. " has been hit by "
+
+            if targetPlayer.hittingPid == nil then
+                debugMessage = debugMessage .. targetPlayer.hittingRefId .. " " .. targetPlayer.hittingUniqueIndex
+            else
+                debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.hittingPid)
+            end
+
+            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+        end
+    end)
+
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)

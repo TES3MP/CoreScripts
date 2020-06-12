@@ -93,9 +93,17 @@ packetReader.GetObjectPacketTables = function(packetType)
                         object.activatingPid = activatingPid
                     end
                 else
-                    object.activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
-                    object.activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
+                    local activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
+                    local activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
                         "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
+
+                    if isObjectPlayer then
+                        player.activatingRefId = activatingRefId
+                        player.activatingUniqueIndex = activatingUniqueIndex
+                    else
+                        object.activatingRefId = activatingRefId
+                        object.activatingUniqueIndex = activatingUniqueIndex
+                    end
                 end
 
             elseif packetType == "hit" then
@@ -111,9 +119,17 @@ packetReader.GetObjectPacketTables = function(packetType)
                         object.hittingPid = hittingPid
                     end
                 else
-                    object.hittingRefId = tes3mp.GetObjectHittingRefId(packetIndex)
-                    object.hittingUniqueIndex = tes3mp.GetObjectHittingRefNum(packetIndex) ..
+                    local hittingRefId = tes3mp.GetObjectHittingRefId(packetIndex)
+                    local hittingUniqueIndex = tes3mp.GetObjectHittingRefNum(packetIndex) ..
                         "-" .. tes3mp.GetObjectHittingMpNum(packetIndex)
+
+                    if isObjectPlayer then
+                        player.hittingRefId = hittingRefId
+                        player.hittingUniqueIndex = hittingUniqueIndex
+                    else
+                        object.hittingRefId = hittingRefId
+                        object.hittingUniqueIndex = hittingUniqueIndex
+                    end
                 end
             end
         else
