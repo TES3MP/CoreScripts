@@ -76,14 +76,14 @@ end)
 
 ## Record format
 
-There are a lot of different record types, mirroring the ones you might be familiar with from TES Construction Set. I will not provide a full list here, instead I suggest you look at the relevant functions [in `packetBuilder.AddRecordByType`](../scripts/packetBuilder.lua#199).
+There are a lot of different record types, mirroring the ones you might be familiar with from TES Construction Set. I will not provide a full list here, instead I suggest you look at the relevant functions [in `packetBuilder.AddRecordByType`](../scripts/packetBuilder.lua#L199).
 
 ### Common important properties
 
 * `refId` if you aren't familiar with Morrowind modding, this is a string identifier of a record.
   Every object in the game has both a `refId` - linking it to a record - and a `uniqueIndex` - to differ it from other instances of the same `refId`.
 * `baseId` is a `refId` of another record (almost always of the same type), on which this record should be based. Some records (e. g. creatures) require one.
-* `effects` applies to spells, enchantments and potions, and contains effects. Check [in `packetBuilder.AddEffectToRecord`](../scripts/packetBuilder.lua#168).
+* `effects` applies to spells, enchantments and potions, and contains effects. Check [in `packetBuilder.AddEffectToRecord`](../scripts/packetBuilder.lua#L168).
   
 ### Magic related identifiers
 
