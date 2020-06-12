@@ -7,24 +7,11 @@ guiHelper.currentId = 0
 for _, id in pairs(guiHelper.ID) do
     guiHelper.currentId = math.max(guiHelper.currentId, id)
 end
-guiHelper.coroutines = {}   
+guiHelper.coroutines = {}
 
-function guiHelper.GetGuiId(name)
-    if not name then
-        guiHelper.currentId = guiHelper.currentId + 1
-        return guiHelper.currentId
-    elseif guiHelper.ID[name] then
-        return guiHelper.ID[name]
-    else
-        guiHelper.currentId = guiHelper.currentId + 1
-        guiHelper.ID[name] = guiHelper.currentId
-        return guiHelper.currentId
-    end
-end
-
-function guiHelper.SetCoroutine(id)
-    guiHelper.coroutines[id] = async.CurrentCoroutine()
-end
+--
+-- public functions
+--
 
 function guiHelper.MessageBox(pid, label)
     local id = guiHelper.GetGuiId("GUI_HELPER_MESSAGEBOX")
@@ -69,6 +56,27 @@ function guiHelper.ListBoxAsync(pid, rows, label)
         return nil
     end
     return result + 1 -- Lua tables are 1-numbered
+end
+
+function guiHelper.GetGuiId(name)
+    if not name then
+        guiHelper.currentId = guiHelper.currentId + 1
+        return guiHelper.currentId
+    elseif guiHelper.ID[name] then
+        return guiHelper.ID[name]
+    else
+        guiHelper.currentId = guiHelper.currentId + 1
+        guiHelper.ID[name] = guiHelper.currentId
+        return guiHelper.currentId
+    end
+end
+
+--
+-- private functions
+--
+
+function guiHelper.SetCoroutine(id)
+    guiHelper.coroutines[id] = async.CurrentCoroutine()
 end
 
 function guiHelper.OnGUIAction(evenStatus, pid, id, data)
