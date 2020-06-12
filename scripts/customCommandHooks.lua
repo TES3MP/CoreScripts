@@ -1,25 +1,3 @@
---[[
-    Example usage:
-
-    customCommandHooks.registerCommand("test", function(pid, cmd)
-        tes3mp.SendMessage(pid, "You can execute a normal command!\n", false)
-    end)
-
-
-    customCommandHooks.registerCommand("ranktest", function(pid, cmd)
-        tes3mp.SendMessage(pid, "You can execute a rank-checked command!\n", false)
-    end)
-    customCommandHooks.setRankRequirement("ranktest", 2) -- must be at least rank 2
-
-
-    customCommandHooks.registerCommand("nametest", function(pid, cmd)
-        tes3mp.SendMessage(pid, "You can execute a name-checked command!\n", false)
-    end)
-    customCommandHooks.setNameRequirement("nametest", {"Admin", "Kneg", "Jiub"}) -- must be one of these names
-
-]]
-
-
 local customCommandHooks = {}
 
 local specialCharacter = "/"

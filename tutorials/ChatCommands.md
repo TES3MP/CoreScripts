@@ -21,4 +21,19 @@ You can also perform more advanced checks inside the callback by calling `Player
 
 # Examples:
 
-> TODO
+```Lua
+    customCommandHooks.registerCommand("test", function(pid, cmd)
+        tes3mp.SendMessage(pid, "You can execute a normal command!\n", false)
+    end)
+
+    customCommandHooks.registerCommand("ranktest", function(pid, cmd)
+        tes3mp.SendMessage(pid, "You can execute a rankchecked command!\n", false)
+    end)
+    customCommandHooks.setRankRequirement("ranktest", 2) -- must be an Admin
+
+
+    customCommandHooks.registerCommand("nametest", function(pid, cmd)
+        tes3mp.SendMessage(pid, "You can execute a namechecked command!\n", false)
+    end)
+    customCommandHooks.setNameRequirement("nametest", {"Admin", "Kneg", "Jiub"})
+```
