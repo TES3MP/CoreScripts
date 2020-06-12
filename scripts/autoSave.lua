@@ -223,11 +223,9 @@ end)
 customEventHooks.registerHandler('OnServerExit', function(eventStatus)
     if eventStatus.validDefaultHandler then
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Clean up and kick players")
-        for pid, player in pairs(Players) do
-            player:SaveCell()
-            player:SaveStatsDynamic()
-            player:DeleteSummons()
+        for pid in pairs(Players) do
             tes3mp.Kick(pid)
+            eventHandler.OnPlayerDisconnect(pid)
         end
 
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
