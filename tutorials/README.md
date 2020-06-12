@@ -6,3 +6,4 @@
 4. [Chat commands](ChatCommands.md)
 5. [Synchronizing data](SynchonizingData.md)
 6. [Configuration and storage](ConfigurationAndStorage.md)
+7. [Custom records](CustomRecords.md)
