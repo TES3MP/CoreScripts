@@ -6,7 +6,7 @@ function storage.Load(key, default)
     if not storage.data[key] then
         local eventStatus = customEventHooks.triggerValidators('OnStorageLoad', {key})
         if eventStatus.validDefaultHandler then
-            local result =  fileClient.LoadAsync(storage.GetFileName(key))
+            local result =  fileDrive.LoadAsync(storage.GetFileName(key))
             if result.content then
                 local data = jsonInterface.decode(result.content)
                 tableHelper.fixNumericalKeys(data)
@@ -29,7 +29,7 @@ function storage.GetFileName(key)
 end
 
 function storage.Save(key)
-    local result = fileClient.SaveAsync(
+    local result = fileDrive.SaveAsync(
         storage.GetFileName(key),
         jsonInterface.encode(storage.data[key])
     )

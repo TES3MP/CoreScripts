@@ -32,7 +32,7 @@ function jsonInterface.removeHeader(content)
 end
 
 function jsonInterface.load(fileName)
-    local res = fileClient.LoadAsync(fileName)
+    local res = fileDrive.LoadAsync(fileName)
     if not res then
         error("Failed to load json file " .. fileName)
     end
@@ -41,7 +41,7 @@ end
 
 
 function jsonInterface.writeToFile(fileName, content)
-    return fileClient.SaveAsync(fileName, content)
+    return fileDrive.SaveAsync(fileName, content)
 end
 
 -- Save data to JSON in a slower but human-readable way, with identation and a specific order

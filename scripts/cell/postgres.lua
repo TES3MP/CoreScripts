@@ -16,7 +16,7 @@ end
 function Cell:SaveToDrive()
     if self.hasEntry then
         tableHelper.cleanNils(self.data.packets)
-        local result = postgresClient.QueryAsync(
+        local result = postgresDrive.QueryAsync(
             [[INSERT INTO cells (description, data) VALUES (?, ?)
             ON CONFLICT (description) DO
             UPDATE SET data = EXCLUDED.data;]],
@@ -33,7 +33,7 @@ function Cell:QuicksaveToDrive()
 end
 
 function Cell:LoadFromDrive()
-    local result = postgresClient.QueryAsync([[SELECT data FROM cells WHERE description = ?;]], {self.entryName})
+    local result = postgresDrive.QueryAsync([[SELECT data FROM cells WHERE description = ?;]], {self.entryName})
     if result.error then
         error("Failed to load the cell " .. self.description)
     end

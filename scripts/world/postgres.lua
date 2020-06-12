@@ -5,7 +5,7 @@ local World = class("World", BaseWorld)
 function World:__init()
     BaseWorld.__init(self)
     
-    local result = postgresClient.QueryAsync([[SELECT key FROM data_storage WHERE key = 'world']])
+    local result = postgresDrive.QueryAsync([[SELECT key FROM data_storage WHERE key = 'world']])
     if result.error then
         error("Failed to check if world instance record exists")
     end
@@ -17,7 +17,7 @@ function World:__init()
 end
 
 function World:Upsert(keyOrderArray)
-    return postgresClient.QueryAsync(
+    return postgresDrive.QueryAsync(
         [[INSERT INTO data_storage (key, data) VALUES ('world', ?)
         ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data;]],
         {jsonInterface.encode(self.data, keyOrderArray)}
@@ -40,7 +40,7 @@ function World:QuicksaveToDrive()
 end
 
 function World:LoadFromDrive()
-    local result = postgresClient.QueryAsync([[SELECT data FROM data_storage WHERE key = 'world';]])
+    local result = postgresDrive.QueryAsync([[SELECT data FROM data_storage WHERE key = 'world';]])
     if result.error then
         error("Failed to load the world instance")
     end

@@ -8,9 +8,9 @@ jsonConfig.data = {}
 
 function jsonConfig.Load(name, default, keyOrderArray)
     local filename = jsonConfig.GetFileName(name)
-    local result = fileClient.LoadAsync(filename)
+    local result = fileDrive.LoadAsync(filename)
     if not result.content then
-        fileClient.SaveAsync(filename, jsonInterface.encode(default, keyOrderArray))
+        fileDrive.SaveAsync(filename, jsonInterface.encode(default, keyOrderArray))
         jsonConfig.data[name] = default
     else
         jsonConfig.data[name] = jsonInterface.decode(result.content)

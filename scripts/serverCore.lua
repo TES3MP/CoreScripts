@@ -18,7 +18,7 @@ customCommandHooks = require("customCommandHooks")
 timers = require('timers')
 
 fileHelper = require("fileHelper")
-fileClient = require('drive.file')
+fileDrive = require('drive.file')
 storage = require("storage.base")
 jsonConfig = require("jsonConfig")
 
@@ -47,7 +47,7 @@ updateTimerId = nil
 
 banList = {}
 
-postgresClient = nil
+postgresDrive = nil
 
 
 if config.databaseType == "json" or config.databaseType == nil then
@@ -58,7 +58,7 @@ if config.databaseType == "json" or config.databaseType == nil then
     RecordStore = require("recordstore.json")
     World = require("world.json")
 elseif config.databaseType == "postgres" and doesModuleExist("luasql.postgres") then
-    postgresClient = require("drive.postgres")
+    postgresDrive = require("drive.postgres")
     storage = require("storage.postgres")
 
     Player = require("player.postgres")
