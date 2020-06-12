@@ -5,7 +5,7 @@
 TES3MP scripts are written in Lua (specifically LuaJIT 5.1).  
 If you are completely new to programming, I recommend you read through the entirety of [Programming in Lua](https://www.lua.org/pil/contents.html).  
 If you are an experienced programmer, but are not an expert in Lua, there a few peculiar parts of the language you should check out:
-* [Basic types](https://www.lua.org/pil/2.html) for example, there are no traditional arrays in Lua
+* [Basic types](https://www.lua.org/pil/2.html) for example, there are no traditional arrays in Lua, instead there is a set of conventions for tables (referred to as "array" in the following chapters)
 * [Coroutines](https://www.lua.org/pil/9.html) a very powerful way to implement generators and asynchronicity
 * [OOP](https://www.lua.org/pil/16.html) object-oriented programming approach similar to JavaScript prototypes
 * [Closures](https://www.lua.org/pil/6.1.html) a very useful detail of variable scopes in Lua

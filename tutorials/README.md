@@ -7,3 +7,4 @@
 5. [Synchronizing data](SynchonizingData.md)
 6. [Configuration and storage](ConfigurationAndStorage.md)
 7. [Custom records](CustomRecords.md)
+8. [GUI](GUI.md)
