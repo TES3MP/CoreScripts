@@ -5,5 +5,3 @@
 -- Refer to the Tutorial.md file for information on how to use various event and command hooks in your scripts.
 
 
-require('custom/testGuiHelper')
-require('custom/testStorage')
