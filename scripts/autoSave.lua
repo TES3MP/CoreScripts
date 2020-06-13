@@ -213,8 +213,11 @@ customEventHooks.registerHandler('OnStorageLoad', function(eventStatus, key)
     end
 end)
 
+local exiting = false
+
 customEventHooks.registerHandler('OnServerExit', function(eventStatus)
     if eventStatus.validDefaultHandler then
+        exiting = true
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Clean up and kick players")
         for pid in pairs(Players) do
             tes3mp.Kick(pid)
@@ -227,7 +230,7 @@ customEventHooks.registerHandler('OnServerExit', function(eventStatus)
 end)
 
 customEventHooks.registerHandler('OnPlayerDisconnect', function(eventStatus)
-    if eventStatus.validDefaultHandler then
+    if eventStatus.validDefaultHandler and not exiting then
         if tableHelper.isEmpty(Players) then
             tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything because the server is empty")
             autoSave.SaveAll(false)

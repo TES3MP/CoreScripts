@@ -375,7 +375,7 @@ config.autoSaveInterval = 2
 -- The type of database or data format used by the server
 -- Valid values: json, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "json"
+config.databaseType = "postgres"
 
 -- The location of the database file
 -- Note: Not applicable when using json
