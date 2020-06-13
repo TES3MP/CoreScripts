@@ -1,51 +1,36 @@
--- Helper functions
-local getRanks = function(pid)
-    local serverOwner = false
-    local admin = false
-    local moderator = false
+local defaultCommands = {}
 
-    if Players[pid]:IsServerOwner() then
-        serverOwner = true
-        admin = true
-        moderator = true
-    elseif Players[pid]:IsAdmin() then
-        admin = true
-        moderator = true
-    elseif Players[pid]:IsModerator() then
-        moderator = true
-    end
+local ranks = {
+    MODERATOR = 1,
+    ADMIN = 2,
+    OWNER = 3
+}
 
-    return moderator, admin, serverOwner
+local function commandError(pid, text)
+    tes3mp.SendMessage(pid, color.Error .. message .. color.Default .. "\n")
 end
-
-local invalidCommand = function(pid)
-    local message = "Not a valid command. Type /help for more info.\n"
-    tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
-end
-
-defaultCommands = {}
 
 -- Commands
-defaultCommands.msg = function(pid, cmd)
-    if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't message yourself.\n")
-    elseif cmd[3] == nil then
-        tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
-    elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
-        local targetPid = tonumber(cmd[2])
+defaultCommands.msg = function(pid, cmd, rawCmd)
+    if pid == tonumber(rawCmd[2]) then
+       commandError(pid, "You can't message yourself.")
+    elseif rawCmd[3] == nil then
+        commandError(pid, "You cannot send a blank message.")
+    elseif logicHandler.CheckPlayerValidity(pid, rawCmd[2]) then
+        local targetPid = tonumber(rawCmd[2])
         message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
-        message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
+        message = message .. tableHelper.concatenateFromIndex(rawCmd, 3) .. "\n"
         tes3mp.SendMessage(pid, message, false)
         tes3mp.SendMessage(targetPid, message, false)
     end
 end
 
-customCommandHooks.registerCommand("msg", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
+customCommandHooks.registerAlias("msg", "message")
 
 defaultCommands.inviteAlly = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't invite yourself to be your own ally.\n")
+        commandError(pid, "You can't invite yourself to be your own ally.")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
@@ -76,9 +61,8 @@ customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't join yourself as your own ally.\n")
+        commandError(pid, "You can't join yourself as your own ally.")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
-
         local targetPid = tonumber(cmd[2])
         local senderMessage
 
@@ -106,12 +90,11 @@ defaultCommands.joinTeam = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-
 customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
 
 defaultCommands.leaveTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't leave an alliance with yourself.\n")
+        commandError(pid, "You can't leave an alliance with yourself.")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
@@ -137,50 +120,38 @@ defaultCommands.leaveTeam = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-
 customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-
 customCommandHooks.registerCommand("me", defaultCommands.me)
 
-defaultCommands.localMessage = function(pid, cmd)
+defaultCommands.localMessage = function(pid, cmd, rawCmd)
     local cellDescription = Players[pid].data.location.cell
 
     if logicHandler.IsCellLoaded(cellDescription) == true then
         for index, visitorPid in pairs(LoadedCells[cellDescription].visitors) do
 
             local message = logicHandler.GetChatName(pid) .. " to local area: "
-            message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            message = message .. tableHelper.concatenateFromIndex(rawCmd, 2) .. "\n"
             tes3mp.SendMessage(visitorPid, message, false)
         end
     end
 end
-
 customCommandHooks.registerCommand("local", defaultCommands.localMessage)
-customCommandHooks.registerCommand("l", defaultCommands.localMessage)
+customCommandHooks.registerAlias("l", "local")
 
-defaultCommands.greentext = function(pid, cmd)
+defaultCommands.greentext = function(pid, cmd, rawCmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
-            ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
+            ">" .. tableHelper.concatenateFromIndex(rawCmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-
 customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
-customCommandHooks.registerCommand("gt", defaultCommands.greentext)
+customCommandHooks.registerAlias("gt", "greentext")
 
 defaultCommands.ban = function(pid, cmd)
-
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if not moderator then
-        invalidCommand(pid)
-        return
-    end
-
     if cmd[2] == "ip" and cmd[3] ~= nil then
         local ipAddress = cmd[3]
 
@@ -191,7 +162,7 @@ defaultCommands.ban = function(pid, cmd)
             tes3mp.SendMessage(pid, ipAddress .. " is now banned.\n", false)
             tes3mp.BanAddress(ipAddress)
         else
-            tes3mp.SendMessage(pid, ipAddress .. " was already banned.\n", false)
+            commandError(pid, ipAddress .. " was already banned.")
         end
     elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
@@ -202,20 +173,13 @@ defaultCommands.ban = function(pid, cmd)
         local targetName = Players[targetPid].name
         logicHandler.BanPlayer(pid, targetName)
     else
-        tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
+        commandError(pid, "Invalid input for ban.")
     end
 end
-
 customCommandHooks.registerCommand("ban", defaultCommands.ban)
+customCommandHooks.setRankRequirement("ban", ranks.MODERATOR)
 
 defaultCommands.unban = function(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if moderator == false or cmd[3] == nil then
-        invalidCommand(pid)
-        return
-    end
-
     if cmd[2] == "ip" then
         local ipAddress = cmd[3]
 
@@ -226,26 +190,19 @@ defaultCommands.unban = function(pid, cmd)
             tes3mp.SendMessage(pid, ipAddress .. " is now unbanned.\n", false)
             tes3mp.UnbanAddress(ipAddress)
         else
-            tes3mp.SendMessage(pid, ipAddress .. " is not banned.\n", false)
+            commandError(pid, ipAddress .. " is not banned.")
         end
     elseif cmd[2] == "name" or cmd[2] == "player" then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
         logicHandler.UnbanPlayer(pid, targetName)
     else
-        tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
+        commandError(pid, "Invalid input for unban.")
     end
 end
-
 customCommandHooks.registerCommand("unban", defaultCommands.unban)
+customCommandHooks.setRankRequirement("unban", ranks.MODERATOR)
 
 defaultCommands.banlist = function(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if not moderator then
-        invalidCommand(pid)
-        return
-    end
-
     local message
 
     if cmd[2] == "names" or cmd[2] == "name" or cmd[2] == "players" then
@@ -288,22 +245,15 @@ defaultCommands.banlist = function(pid, cmd)
 
     tes3mp.SendMessage(pid, message, false)
 end
-
 customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
+customCommandHooks.setRankRequirement("banlist", ranks.MODERATOR)
 
 defaultCommands.ipaddresses = function(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if moderator == false or cmd[2] == nil then
-        invalidCommand(pid)
-        return
-    end
-
     local targetName = tableHelper.concatenateFromIndex(cmd, 2)
     local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
     if targetPlayer == nil then
-        tes3mp.SendMessage(pid, "Player " .. targetName .. " does not exist.\n", false)
+        commandError(pid, "Player " .. targetName .. " does not exist/")
     elseif targetPlayer.data.ipAddresses ~= nil then
         local message = "Player " .. targetPlayer.accountName .. " has used the following IP addresses:\n"
 
@@ -319,53 +269,31 @@ defaultCommands.ipaddresses = function(pid, cmd)
         tes3mp.SendMessage(pid, message, false)
     end
 end
-
 customCommandHooks.registerCommand("ipaddresses", defaultCommands.ipaddresses)
-customCommandHooks.registerCommand("ips", defaultCommands.ipaddresses)
+customCommandHooks.registerAlias("ips", "ipaddresses")
+customCommandHooks.setRankRequirement("ipaddress", ranks.MODERATOR)
 
 defaultCommands.players = function(pid, cmd)
     guiHelper.ShowPlayerList(pid)
 end
-
 customCommandHooks.registerCommand("players", defaultCommands.players)
-customCommandHooks.registerCommand("list", defaultCommands.players)
+customCommandHooks.registerAlias("list", "players")
 
 defaultCommands.cells = function(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if moderator == false then
-        invalidCommand(pid)
-        return
-    end
-
     guiHelper.ShowCellList(pid)
 end
-
 customCommandHooks.registerCommand("cells", defaultCommands.cells)
+customCommandHooks.setRankRequirement("cells", ranks.MODERATOR)
 
 defaultCommands.regions = function(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-
-    if moderator == false then
-        invalidCommand(pid)
-        return
-    end
-
     guiHelper.ShowRegionList(pid)
 end
-
 customCommandHooks.registerCommand("regions", defaultCommands.regions)
+customCommandHooks.setRankRequirement("regions", ranks.MODERATOR)
 
 defaultCommands.overrideDestination = function(pid, cmd)
-    local isModerator, isAdmin, isServerOwner = getRanks(pid)
-
-    if isModerator == false then
-        invalidCommand(pid)
-        return
-    end
-
-    if cmd[2] == nil or cmd[3] == nil then
-        tes3mp.SendMessage(pid, 'Invalid inputs! Use /overridedestination all/<pid> "Old Cell Name" "New Cell Name"\n')
+    if #cmd < 4 then
+        commandError(pid, 'Invalid inputs! Use /overridedestination all/<pid> "Old Cell Name" "New Cell Name"')
         return
     end
 
@@ -373,13 +301,7 @@ defaultCommands.overrideDestination = function(pid, cmd)
         return
     end
 
-    local inputConcatenation = tableHelper.concatenateFromIndex(cmd, 3)
-    local cellDescriptions = tableHelper.getTableFromSplit(inputConcatenation, patterns.quoteSplit)
-
-    if tableHelper.getCount(cellDescriptions) ~= 2 then
-        tes3mp.SendMessage(pid, "Invalid inputs! Please specify two different cells with their names between quotation marks.\n")
-        return
-    end
+    local cellDescriptions = { cmd[3], cmd[4] }
 
     local stateObject
     local targetPid
@@ -389,11 +311,6 @@ defaultCommands.overrideDestination = function(pid, cmd)
     else
         targetPid = tonumber(cmd[2])
         stateObject = Players[targetPid]
-    end
-
-    -- Get rid of quotation marks
-    for currentIndex, cellDescription in pairs(cellDescriptions) do
-        cellDescriptions[currentIndex] = string.gsub(cellDescription, '"', '')
     end
 
     stateObject.data.destinationOverrides[cellDescriptions[1]] = cellDescriptions[2]
@@ -412,8 +329,8 @@ defaultCommands.overrideDestination = function(pid, cmd)
     tes3mp.SendMessage(pid, "Doors and clientside commands leading to " .. cellDescriptions[1] .. " now lead to " ..
         cellDescriptions[2] .. " instead.\n")
 end
-
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
+customCommandHooks.setRankRequirement("overridedestination", ranks.MODERATOR)
 
 local exitWarning = function(delay)
     local message = ""
@@ -437,11 +354,6 @@ local exitWarning = function(delay)
 end
 
 function defaultCommands.exit(pid, cmd)
-    local moderator, admin, serverOwner = getRanks(pid)
-    if not admin then
-        invalidCommand(pid)
-        return
-    end
     local delay = cmd[2] and tonumber(cmd[2]) or time.minutes(1)
     delay = time.minutes(delay)
 
@@ -470,5 +382,126 @@ function defaultCommands.exit(pid, cmd)
         tes3mp.StopServer(0)
     end)
 end
-
 customCommandHooks.registerCommand("exit", defaultCommands.exit)
+customCommandHooks.setRankRequirement("exit", ranks.ADMIN)
+
+function defaultCommands.teleport(pid, cmd)
+    if cmd[2] ~= "all" then
+        logicHandler.TeleportToPlayer(pid, cmd[2], pid)
+    else
+        for iteratorPid, player in pairs(Players) do
+            if iteratorPid ~= pid then
+                if player:IsLoggedIn() then
+                    logicHandler.TeleportToPlayer(pid, iteratorPid, pid)
+                end
+            end
+        end
+    end
+end
+customCommandHooks.registerCommand("teleport", defaultCommands.teleport)
+customCommandHooks.registerAlias("tp", "teleport")
+customCommandHooks.registerAlias("tpto", "teleport")
+customCommandHooks.registerAlias("teleportto", "teleport")
+customCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
+
+function defaultCommands.setAuthority(pid, cmd)
+    if #cmd ~= 3 then
+        commandError(pid, "/setauthority <pid> \"cellDescription\"")
+    end
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local cellDescription = cmd[3]
+        if logicHandler.IsCellLoaded(cellDescription) == true then
+            local targetPid = tonumber(cmd[2])
+            logicHandler.SetCellAuthority(targetPid, cellDescription)
+        else
+            commandError(pid,  "Cell \"" .. cellDescription .. "\" isn't loaded!")
+        end
+    end
+end
+customCommandHooks.registerCommand("setauthority", defaultCommands.teleport)
+customCommandHooks.registerAlias("setauth", "setauthority")
+customCommandHooks.setRankRequirement("setauthority", ranks.MODERATOR)
+
+function defaultCommands.kick(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+
+        if Players[targetPid]:IsAdmin() then
+            commandError(pid, "You cannot kick an Admin from the server.")
+        elseif Players[targetPid]:IsModerator() and not Players[targetPid]:IsAdmin() then
+            commandError(pid, "You cannot kick a fellow Moderator from the server.")
+        else
+            local message = logicHandler.GetChatName(targetPid) .. " was kicked from the server by " ..
+                logicHandler.GetChatName(pid) .. ".\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid]:Kick()
+        end
+    end
+end
+customCommandHooks.registerCommand("kick", defaultCommands.teleport)
+customCommandHooks.setRankRequirement("kick", ranks.MODERATOR)
+
+function defaultCommands.addAdmin(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local targetName = Players[targetPid].name
+        if Players[targetPid]:IsAdmin() then
+            commandError(pid, targetName .. " is already an Admin.")
+        else
+            local message = targetName .. " was promoted to Admin!\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid].data.settings.staffRank = 2
+            Players[targetPid]:QuicksaveToDrive()
+        end
+    end
+end
+customCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
+customCommandHooks.setRankRequirement("addadmin", ranks.OWNER)
+
+function defaultCommands.removeAdmin(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local targetName = Players[targetPid].name
+        local message
+
+        if Players[targetPid]:IsServerOwner() then
+            message = "Cannot demote " .. targetName .. " because they are a Server Owner."
+            commandError(pid, message)
+        elseif Players[targetPid]:IsAdmin() then
+            message = targetName .. " was demoted from Admin to Moderator!\n"
+            tes3mp.SendMessage(pid, message)
+            Players[targetPid].data.settings.staffRank = 1
+            Players[targetPid]:QuicksaveToDrive()
+        else
+            message = targetName .. " is not an Admin."
+            commandError(pid, message)
+        end
+    end
+end
+customCommandHooks.registerCommand("removeadmin", defaultCommands.addAdmin)
+customCommandHooks.setRankRequirement("removeadmin", ranks.OWNER)
+
+function defaultCommands.addModerator(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local targetName = Players[targetPid].name
+        local message
+
+        if Players[targetPid]:IsAdmin() then
+            message = targetName .. " is already an Admin."
+            commandError(pid, message)
+        elseif Players[targetPid]:IsModerator() then
+            message = targetName .. " is already a Moderator."
+            commandError(pid, message)
+        else
+            message = targetName .. " was promoted to Moderator!\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid].data.settings.staffRank = 1
+            Players[targetPid]:QuicksaveToDrive()
+        end
+    end
+end
+customCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
+customCommandHooks.setRankRequirement("addmoderator", ranks.ADMIN)
+
+return defaultCommands
