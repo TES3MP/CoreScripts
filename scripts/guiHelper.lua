@@ -122,29 +122,6 @@ local GetConnectedPlayerList = function()
     return list
 end
 
-local GetLoadedCellList = function()
-    local list = ""
-    local divider = ""
-
-    local cellCount = logicHandler.GetLoadedCellCount()
-    local cellIndex = 0
-
-    for key, value in pairs(LoadedCells) do
-        cellIndex = cellIndex + 1
-
-        if cellIndex == cellCount then
-            divider = ""
-        else
-            divider = "\n"
-        end
-
-        list = list .. key .. " (auth: " .. LoadedCells[key]:GetAuthority() .. ", loaded by " ..
-            LoadedCells[key]:GetVisitorCount() .. ")" .. divider
-    end
-
-    return list
-end
-
 local GetLoadedRegionList = function()
     local list = ""
     local divider = ""
@@ -206,14 +183,7 @@ end
 
 guiHelper.ShowCellList = function(pid)
 
-    local cellCount = logicHandler.GetLoadedCellCount()
-    local label = cellCount .. " loaded cell"
-
-    if cellCount ~= 1 then
-        label = label .. "s"
-    end
-
-    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedCellList())
+    
 end
 
 guiHelper.ShowRegionList = function(pid)
