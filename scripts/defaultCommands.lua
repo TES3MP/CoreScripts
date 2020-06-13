@@ -10,6 +10,13 @@ local function commandError(pid, text)
     tes3mp.SendMessage(pid, color.Error .. message .. color.Default .. "\n")
 end
 
+defaultCommands.help = function(pid)
+    -- Check "scripts/menu/help.lua" if you want to change the contents of the help menus
+    Players[pid].currentCustomMenu = "help player"
+    menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
+end
+customCommandHooks.registerCommand("help", defaultCommands.help)
+
 --
 -- Chat
 --
@@ -161,6 +168,31 @@ customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 --
 -- Server status
 --
+
+function defaultCommands.setLogLevel(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local logLevel = cmd[3]
+
+        if type(tonumber(logLevel)) == "number" then
+            logLevel = tonumber(logLevel)
+        end
+
+        if logLevel == "default" or type(logLevel) == "number" then
+            Players[targetPid]:SetEnforcedLogLevel(logLevel)
+            Players[targetPid]:LoadSettings()
+            tes3mp.SendMessage(pid, "Enforced log level for " .. Players[targetPid].name
+                                   .. " is now " .. logLevel .. "\n", true)
+        else
+            tes3mp.SendMessage(pid, "Not a valid argument. Use /setloglevel <pid> <value>\n", false)
+            return false
+        end
+    end
+end
+customCommandHooks.registerCommand("setloglevel", defaultCommands.setLogLevel)
+customCommandHooks.registerAlias("setenforcedloglevel", "setloglevel")
+customCommandHooks.setRankRequirement("setloglevel", ranks.ADMIN)
 
 defaultCommands.players = function(pid, cmd)
     guiHelper.ShowPlayerList(pid)
@@ -537,6 +569,28 @@ customCommandHooks.registerAlias("tpto", "teleport")
 customCommandHooks.registerAlias("teleportto", "teleport")
 customCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
 
+function defaultCommands.confiscate(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+
+        if targetPid == pid then
+            tes3mp.SendMessage(pid, "You can't confiscate from yourself!\n", false)
+        elseif Players[targetPid].data.customVariables.isConfiscationTarget then
+            tes3mp.SendMessage(pid, "Someone is already confiscating from that player\n", false)
+        else
+            Players[pid].confiscationTargetName = Players[targetPid].accountName
+
+            Players[targetPid]:SetConfiscationState(true)
+
+            tableHelper.cleanNils(Players[targetPid].data.inventory)
+            guiHelper.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
+        end
+    end
+end
+customCommandHooks.registerCommand("confiscate", defaultCommands.confiscate)
+customCommandHooks.setRankRequirement("confiscate", ranks.MODERATOR)
+
 --
 -- Player editing
 --
@@ -600,6 +654,106 @@ function defaultCommands.setSkill(pid, cmd)
 end
 customCommandHooks.registerCommand("setskill", defaultCommands.setSkill)
 customCommandHooks.setRankRequirement("setskill", ranks.MODERATOR)
+
+function defaultCommands.setScale(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local targetName = ""
+        local scale = cmd[3]
+
+        if type(tonumber(scale)) == "number" then
+            scale = tonumber(scale)
+        else
+            tes3mp.SendMessage(pid, "Not a valid argument. Use /setscale <pid> <value>.\n", false)
+            return false
+        end
+
+        Players[targetPid]:SetScale(scale)
+        Players[targetPid]:LoadShapeshift()
+        tes3mp.SendMessage(pid, "Scale for " .. Players[targetPid].name .. " is now " .. scale .. "\n", false)
+        if targetPid ~= pid then
+            tes3mp.SendMessage(targetPid, "Your scale is now " .. scale .. "\n", false)
+        end
+    end
+end
+customCommandHooks.setRankRequirement("setscale", defaultCommands.setScale)
+customCommandHooks.setRankRequirement("setscale", ranks.ADMIN)
+
+function defaultCommands.setWerewolf(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local targetName = ""
+        local state = ""
+
+        if cmd[3] == "on" then
+            Players[targetPid]:SetWerewolfState(true)
+            state = " enabled.\n"
+        elseif cmd[3] == "off" then
+            Players[targetPid]:SetWerewolfState(false)
+            state = " disabled.\n"
+        else
+            tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> on/off.\n", false)
+            return false
+        end
+
+        Players[targetPid]:LoadShapeshift()
+        tes3mp.SendMessage(pid, "Werewolf state for " .. Players[targetPid].name .. state, false)
+        if targetPid ~= pid then
+            tes3mp.SendMessage(targetPid, "Werewolf state" .. state, false)
+        end
+    end
+end
+customCommandHooks.setRankRequirement("setwerewolf", defaultCommands.setWerewolf)
+customCommandHooks.setRankRequirement("setwerewolf", ranks.ADMIN)
+
+function defaultCommands.setDisguise(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local creatureRefId = tableHelper.concatenateFromIndex(cmd, 3)
+
+        Players[targetPid].data.shapeshift.creatureRefId = creatureRefId
+        tes3mp.SetCreatureRefId(targetPid, creatureRefId)
+        tes3mp.SendShapeshift(targetPid)
+
+        if creatureRefId == "" then
+            creatureRefId = "nothing"
+        end
+
+        tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " ..
+                               creatureRefId .. "\n", false)
+        if targetPid ~= pid then
+            tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId .. "\n", false)
+        end
+    end
+end
+customCommandHooks.setRankRequirement("setdisguise", defaultCommands.setDisguise)
+customCommandHooks.setRankRequirement("setdisguise", ranks.ADMIN)
+
+function defaultCommands.setUseCreatureName(pid, cmd)
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local nameState
+
+        if cmd[3] == "on" then
+            nameState = true
+        elseif cmd[3] == "off" then
+            nameState = false
+        else
+            tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> on/off\n", false)
+            return false
+        end
+
+        Players[targetPid].data.shapeshift.displayCreatureName = nameState
+        tes3mp.SetCreatureNameDisplayState(targetPid, nameState)
+        tes3mp.SendShapeshift(targetPid)
+    end
+end
+customCommandHooks.setRankRequirement("usecreaturename", defaultCommands.setDisguise)
+customCommandHooks.setRankRequirement("usecreaturename", ranks.ADMIN)
 
 function defaultCommands.setMomentum(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -793,6 +947,319 @@ customCommandHooks.registerCommand("setphysicsfps", defaultCommands.setWait)
 customCommandHooks.registerAlias("setphysicsframerate", "setphysicsfps")
 customCommandHooks.setRankRequirement("setphysicsfps", ranks.ADMIN)
 
+function defaultCommands.setCollision(pid, cmd)
+    local collisionState
+
+    if cmd[2] ~= nil and cmd[3] == "on" then
+        collisionState = true
+    elseif cmd[2] ~= nil and cmd[3] == "off" then
+        collisionState = false
+    else
+        tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off\n", false)
+        return false
+    end
+
+    local categoryInput = string.upper(cmd[2])
+    local categoryValue = enumerations.objectCategories[categoryInput]
+
+    if categoryValue == enumerations.objectCategories.PLAYER then
+        tes3mp.SetPlayerCollisionState(collisionState)
+    elseif categoryValue == enumerations.objectCategories.ACTOR then
+        tes3mp.SetActorCollisionState(collisionState)
+    elseif categoryValue == enumerations.objectCategories.PLACED_OBJECT then
+        tes3mp.SetPlacedObjectCollisionState(collisionState)
+
+        if cmd[4] == "on" then
+            tes3mp.UseActorCollisionForPlacedObjects(true)
+        elseif cmd[4] == "off" then
+            tes3mp.UseActorCollisionForPlacedObjects(false)
+        end
+    else
+        tes3mp.SendMessage(pid, categoryInput .. " is not a valid object category. Valid choices are " ..
+                               tableHelper.concatenateTableIndexes(enumerations.objectCategories, ", ") .. "\n", false)
+        return false
+    end
+
+    tes3mp.SendWorldCollisionOverride(pid, true)
+    tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
+                       " for all newly loaded cells.\n", false)
+end
+customCommandHooks.registerCommand("setcollision", defaultCommands.setCollision)
+customCommandHooks.setRankRequirement("setcollision", ranks.ADMIN)
+
+function defaultCommands.overrideCollision(pid, cmd)
+    local collisionState
+    local refId = cmd[2]
+
+    if refId ~= nil and cmd[3] == "on" then
+        collisionState = true
+    elseif refId ~= nil and cmd[3] == "off" then
+        collisionState = false
+    else
+        Players[pid]:Message("Use /addcollision <refId> on/off\n")
+        return false
+    end
+
+    local message = "A collision-enabling override "
+
+    if tableHelper.containsValue(config.enforcedCollisionRefIds, refId) then
+        if collisionState then
+            message = message .. "is already on"
+        else
+            tableHelper.removeValue(config.enforcedCollisionRefIds, refId)
+            message = message .. "is now off"
+        end
+    else
+        if collisionState then
+            table.insert(config.enforcedCollisionRefIds, refId)
+            message = message .. "is now on"
+        else
+            message = message .. "is already off"
+        end
+    end
+
+    logicHandler.SendConfigCollisionOverrides(pid, true)
+    Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
+end
+customCommandHooks.registerCommand("overridecollision", defaultCommands.overrideCollision)
+customCommandHooks.setRankRequirement("overridecollision", ranks.ADMIN)
+
+
+function defaultCommands.load(pid, cmd)
+    local scriptName = cmd[2]
+
+    if scriptName == nil then
+        Players[pid]:Message("Use /load <scriptName>\n")
+    else
+        local wasLoaded = false
+
+        if package.loaded[scriptName] then
+            Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
+            wasLoaded = true
+        end
+
+        local result
+
+        if wasLoaded then
+
+            -- Local objects that use functions from the script we are reloading
+            -- will keep their references to the old versions of those functions if
+            -- we do this:
+            --
+            -- package.loaded[scriptName] = nil
+            -- require(scriptName)
+            --
+            -- To get around that, we load up the script with dofile() instead and
+            -- then update the function references in package.loaded[scriptName], which
+            -- in turn also changes them in the local objects
+            --
+            local scriptPath = package.searchpath(scriptName, package.path)
+            result = dofile(scriptPath)
+
+            for key, value in pairs(package.loaded[scriptName]) do
+                if result[key] == nil then
+                    package.loaded[scriptName][key] = nil
+                end
+            end
+
+            for key, value in pairs(result) do
+                package.loaded[scriptName][key] = value
+            end
+        else
+            result = prequire(scriptName)
+        end
+
+        if result then
+            Players[pid]:Message(scriptName .. " was successfully loaded.\n")
+        else
+            Players[pid]:Message(scriptName .. " could not be found.\n")
+        end
+    end
+end
+customCommandHooks.registerCommand("load", defaultCommands.load)
+customCommandHooks.setRankRequirement("load", ranks.ADMIN)
+
+function defaultCommands.resetKills(pid, cmd)
+    -- Set all currently recorded kills to 0 for connected players
+    for refId, killCount in pairs(WorldInstance.data.kills) do
+        WorldInstance.data.kills[refId] = 0
+    end
+
+    WorldInstance:QuicksaveToDrive()
+    WorldInstance:LoadKills(pid, true)
+    tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
+end
+customCommandHooks.registerCommand("resetkills", defaultCommands.resetKills)
+customCommandHooks.setRankRequirement("resetkills", ranks.MODERATOR)
+
+function defaultCommands.suicide(pid, cmd)
+    if config.allowSuicideCommand == true then
+        tes3mp.SetHealthCurrent(pid, 0)
+        tes3mp.SendStatsDynamic(pid)
+    else
+        tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+    end
+end
+customCommandHooks.registerCommand("suicide", defaultCommands.suicide)
+
+function defaultCommands.fixme(pid, cmd)
+    if config.allowFixmeCommand == true then
+        local currentTime = os.time()
+
+        if not tes3mp.IsInExterior(pid) then
+            local message = "Sorry! You can only use " .. color.Yellow .. "/fixme" ..
+                color.White .. " in exteriors.\n"
+            tes3mp.SendMessage(pid, message, false)
+        elseif Players[pid].data.customVariables.lastFixMe == nil or
+        currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
+
+            logicHandler.RunConsoleCommandOnPlayer(pid, "fixme")
+            Players[pid].data.customVariables.lastFixMe = currentTime
+            tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
+        else
+            local remainingSeconds = Players[pid].data.customVariables.lastFixMe +
+                config.fixmeInterval - currentTime
+            local message = "Sorry! You can't use " .. color.Yellow .. "/fixme" ..
+            color.White .. " for another "
+
+            if remainingSeconds > 1 then
+                message = message .. color.Yellow .. remainingSeconds .. color.White .. " seconds"
+            else
+                message = message .. " second"
+            end
+
+            message = message .. "\n"
+            tes3mp.SendMessage(pid, message, false)
+        end
+    else
+        tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+    end
+end
+customCommandHooks.registerCommand("fixme", defaultCommands.fixme)
+
+function defaultCommands.storeConsole(pid, cmd)
+    if #cmd < 3 then
+        commandError(pid, "/storeconsole <pid> \"cmdName\"")
+        return
+    end
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
+
+        tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid .. "\n", false)
+    end
+end
+customCommandHooks.registerCommand("storeconsole", defaultCommands.storeConsole)
+customCommandHooks.setRankRequirement("storeconsole", ranks.ADMIN)
+
+function defaultCommands.runConsole(pid, cmd)
+    if #cmd < 4 then
+        commandError(pid, "/runconsole <pid> \"cmdName\" <interval>")
+        return
+    end
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+
+        if Players[targetPid].storedConsoleCommand == nil then
+            tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid ..
+                                   ". Please run /storeconsole on them first.\n", false)
+        else
+            local consoleCommand = Players[targetPid].storedConsoleCommand
+            logicHandler.RunConsoleCommandOnPlayer(targetPid, consoleCommand)
+
+            local count = tonumber(cmd[3])
+
+            if count ~= nil and count > 1 then
+
+                count = count - 1
+                local interval = 1
+
+                if tonumber(cmd[4]) ~= nil and tonumber(cmd[4]) > 1 then
+                    interval = tonumber(cmd[4])
+                end
+
+                local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
+                local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
+
+                ObjectLoops[loopIndex] = {
+                    packetType = "console",
+                    timerId = timerId,
+                    interval = interval,
+                    count = count,
+                    targetPid = targetPid,
+                    targetName = Players[targetPid].accountName,
+                    consoleCommand = consoleCommand
+                }
+
+                tes3mp.StartTimer(timerId)
+            end
+        end
+    end
+end
+customCommandHooks.registerCommand("runconsole", defaultCommands.runConsole)
+customCommandHooks.setRankRequirement("runconsole", ranks.ADMIN)
+
+function defaultCommands.placeAt(pid, cmd)
+    if #cmd < 2 then
+        commandError(pid, "/placeat <pid> \"refId\"")
+        return
+    end
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+
+        local targetPid = tonumber(cmd[2])
+        local refId = tableHelper.concatenateFromIndex(cmd, 3)
+        local packetType
+
+        if cmd[1] == "placeat" then
+            packetType = "place"
+        elseif cmd[1] == "spawnat" then
+            packetType = "spawn"
+        end
+
+        logicHandler.CreateObjectAtPlayer(targetPid, refId, packetType)
+    end
+end
+customCommandHooks.registerCommand("placeat", defaultCommands.placeAt)
+customCommandHooks.registerAlias("spawnat", "placeat")
+customCommandHooks.setRankRequirement("placeat", ranks.ADMIN)
+
+function defaultCommands.anim(pid, cmd)
+    local isValid = animHelper.PlayAnimation(pid, cmd[2])
+
+    if not isValid then
+        local validList = animHelper.GetValidList(pid)
+        tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
+                               validList .. "\n", false)
+    end
+end
+customCommandHooks.registerCommand("anim", defaultCommands.anim)
+customCommandHooks.registerAlias("a", "anim")
+
+function defaultCommands.speech(pid, cmd)
+    local isValid = false
+
+    if cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+        isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+    end
+
+    if not isValid then
+        local validList = speechHelper.GetPrintableValidListForPid(pid)
+        tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
+                               .. validList .. "\n", false)
+    end
+end
+customCommandHooks.registerCommand("speech", defaultCommands.speech)
+customCommandHooks.registerAlias("s", "speech")
+
+function defaultCommands.craft(pid, cmd)
+    -- Check "scripts/menu/defaultCrafting.lua" if you want to change the example craft menu
+    Players[pid].currentCustomMenu = "default crafting origin"
+    menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
+end
+customCommandHooks.registerCommand("craft", defaultCommands.craft)
+
 --
 -- World editing
 --
@@ -842,6 +1309,7 @@ customCommandHooks.setRankRequirement("overridedestination", ranks.MODERATOR)
 function defaultCommands.setAuthority(pid, cmd)
     if #cmd ~= 3 then
         commandError(pid, "/setauthority <pid> \"cellDescription\"")
+        return
     end
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local cellDescription = cmd[3]
@@ -856,6 +1324,216 @@ end
 customCommandHooks.registerCommand("setauthority", defaultCommands.setAuthority)
 customCommandHooks.registerAlias("setauth", "setauthority")
 customCommandHooks.setRankRequirement("setauthority", ranks.MODERATOR)
+
+function defaultCommands.setHour(pid, cmd)
+    local inputValue = tonumber(cmd[2])
+
+    if type(inputValue) == "number" then
+
+        if inputValue == 24 then
+            inputValue = 0
+        end
+
+        if inputValue >= 0 and inputValue < 24 then
+            WorldInstance.data.time.hour = inputValue
+            WorldInstance:QuicksaveToDrive()
+            WorldInstance:LoadTime(pid, true)
+            hourCounter = inputValue
+        else
+            tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
+        end
+    end
+end
+customCommandHooks.registerCommand("sethour", defaultCommands.setHour)
+customCommandHooks.setRankRequirement("sethour", ranks.MODERATOR)
+
+function defaultCommands.setDay(pid, cmd)
+    local inputValue = tonumber(cmd[2])
+
+    if type(inputValue) == "number" then
+
+        local daysInMonth = WorldInstance.monthLengths[WorldInstance.data.time.month]
+
+        if inputValue <= daysInMonth then
+            WorldInstance.data.time.day = inputValue
+            WorldInstance:QuicksaveToDrive()
+            WorldInstance:LoadTime(pid, true)
+        else
+            tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
+        end
+    end
+end
+customCommandHooks.registerCommand("setday", defaultCommands.setDay)
+customCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
+
+function defaultCommands.setDay(pid, cmd)
+    local inputValue = tonumber(cmd[2])
+
+    if type(inputValue) == "number" then
+
+        local daysInMonth = WorldInstance.monthLengths[WorldInstance.data.time.month]
+
+        if inputValue <= daysInMonth then
+            WorldInstance.data.time.day = inputValue
+            WorldInstance:QuicksaveToDrive()
+            WorldInstance:LoadTime(pid, true)
+        else
+            tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
+        end
+    end
+end
+customCommandHooks.registerCommand("setday", defaultCommands.setDay)
+customCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
+
+function defaultCommands.setMonth(pid, cmd)
+    local inputValue = tonumber(cmd[2])
+
+    if type(inputValue) == "number" then
+        WorldInstance.data.time.month = inputValue
+        WorldInstance:QuicksaveToDrive()
+        WorldInstance:LoadTime(pid, true)
+    end
+end
+customCommandHooks.registerCommand("setmonth", defaultCommands.setMonth)
+customCommandHooks.setRankRequirement("setmonth", ranks.MODERATOR)
+
+function defaultCommands.setTimeScale(pid, cmd)
+    local inputPeriod = string.lower(tostring(cmd[2]))
+    local inputValue = tonumber(cmd[3])
+
+    if tableHelper.containsValue({"day", "night", "both"}, inputPeriod) and type(inputValue) == "number" then
+
+        if inputPeriod == "day" or inputPeriod == "both" then
+            WorldInstance.data.time.dayTimeScale = inputValue
+        end
+
+        if inputPeriod == "night" or inputPeriod == "both" then
+            WorldInstance.data.time.nightTimeScale = inputValue
+        end
+
+        WorldInstance:QuicksaveToDrive()
+        WorldInstance:UpdateFrametimeMultiplier()
+        WorldInstance:LoadTime(pid, true)
+    else
+        tes3mp.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
+    end
+end
+customCommandHooks.registerCommand("settimescale", defaultCommands.setMonth)
+customCommandHooks.setRankRequirement("settimescale", ranks.MODERATOR)
+
+function defaultCommands.setAi(pid, cmd)
+    if #cmd ~= 6 then
+        commandError(pid, "/setai <uniqueIndex> <actionInput> <posX> <posY> <posZ>")
+        return
+    end
+    local actionInput = cmd[3]
+    local actionNumericalId
+
+    -- Allow both numerical and string input for actions (i.e. 1 or COMBAT), but
+    -- convert the latter into the former
+    if type(tonumber(actionInput)) == "number" then
+        actionNumericalId = tonumber(actionInput)
+    else
+        actionNumericalId = enumerations.ai[string.upper(actionInput)]
+    end
+
+    if actionNumericalId == nil then
+
+        Players[pid]:Message(actionInput .. " is not a valid AI action. Valid choices are " ..
+                                 tableHelper.concatenateTableIndexes(enumerations.ai, ", ") .. "\n")
+    else
+
+        local uniqueIndex = cmd[2]
+        local cell = logicHandler.GetCellContainingActor(uniqueIndex)
+
+        if cell == nil then
+
+            Players[pid]:Message("Could not find actor " .. uniqueIndex .. " in any loaded cell\n")
+        else
+
+            local actionName = tableHelper.getIndexByValue(enumerations.ai, actionNumericalId)
+            local messageAction = enumerations.aiPrintableAction[actionName]
+            local message = uniqueIndex .. " is now " .. messageAction
+
+            if actionNumericalId == enumerations.ai.CANCEL then
+
+                logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId)
+                Players[pid]:Message(message .. "\n")
+
+            elseif actionNumericalId == enumerations.ai.TRAVEL then
+
+                local posX, posY, posZ = tonumber(cmd[4]), tonumber(cmd[5]), tonumber(cmd[6])
+
+                if type(posX) == "number" and type(posY) == "number" and type(posZ) == "number" then
+
+                    logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, nil, posX, posY, posZ)
+                    Players[pid]:Message(message .. " " .. posX .. " " .. posY .. " " .. posZ .. "\n")
+                else
+                    Players[pid]:Message("Invalid travel coordinates! " ..
+                                             "Use /setai <uniqueIndex> travel <x> <y> <z>\n")
+                end
+
+            elseif actionNumericalId == enumerations.ai.WANDER then
+
+                local distance, duration = tonumber(cmd[4]), tonumber(cmd[5])
+
+                if type(distance) == "number" and type(duration) == "number" then
+
+                    if cmd[6] == "true" then
+                        shouldRepeat = true
+                    else
+                        shouldRepeat = false
+                    end
+
+                    logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, nil, nil, nil, nil,
+                                               distance, duration, shouldRepeat)
+                    Players[pid]:Message(message .. " a distance of " .. distance .. " for a duration of " ..
+                                             duration .. "\n")
+                else
+                    Players[pid]:Message("Invalid wander parameters! " ..
+                                             "Use /setai <uniqueIndex> wander <distance> <duration> true/false\n")
+                end
+
+            elseif cmd[4] ~= nil then
+
+                local target = cmd[4]
+                local hasPlayerTarget = false
+
+                if type(tonumber(target)) == "number" and logicHandler.CheckPlayerValidity(pid, target) then
+                    target = tonumber(target)
+                    hasPlayerTarget = true
+                end
+
+                if hasPlayerTarget then
+                    logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, target)
+                    message = message .. " player " .. Players[target].name
+                else
+                    logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, target)
+                    message = message .. " actor " .. target
+                end
+
+                Players[pid]:Message(message .. "\n")
+            else
+
+                Players[pid]:Message("Invalid AI action!\n")
+            end
+        end
+    end
+end
+customCommandHooks.registerCommand("setai", defaultCommands.setAi)
+customCommandHooks.setRankRequirement("setai", ranks.ADMIN)
+
+function defaultCommands.storeRecord(pid, cmd)
+    commandHandler.StoreRecord(pid, cmd)
+end
+customCommandHooks.registerCommand("storerecord", defaultCommands.storeRecord)
+customCommandHooks.setRankRequirement("storerecord", ranks.ADMIN)
+
+function defaultCommands.createRecord(pid, cmd)
+    commandHandler.StoreRecord(pid, cmd)
+end
+customCommandHooks.registerCommand("createrecord", defaultCommands.createRecord)
+customCommandHooks.setRankRequirement("createrecord", ranks.ADMIN)
 
 --
 -- Testing
@@ -909,7 +1587,16 @@ customCommandHooks.setRankRequirement("sethair", ranks.ADMIN)
 function defaultCommands.getPos(pid, cmd)
     logicHandler.PrintPlayerPosition(pid, cmd[2])
 end
-customCommandHooks.registerCommand("getpos", defaultCommands.setHair)
+customCommandHooks.registerCommand("getpos", defaultCommands.getPos)
 customCommandHooks.setRankRequirement("getpos", ranks.ADMIN)
+
+function defaultCommands.advancedExample(pid)
+    -- Check "scripts/menu/advancedExample.lua" if you want to change the advanced menu example
+    Players[pid].currentCustomMenu = "advanced example origin"
+    menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
+end
+customCommandHooks.registerCommand("advancedexample", defaultCommands.advancedExample)
+customCommandHooks.registerAlias("advex", "advancedexample")
+customCommandHooks.setRankRequirement("advancedexample", ranks.MODERATOR)
 
 return defaultCommands
