@@ -369,13 +369,15 @@ config.ignoreScriptErrors = false
 -- Interval (in miliseconds) at which to read responses from secondary threads
 config.threadHandlerInterval = 10
 
--- Interval (in seconds) at which to save players, cells and storage records
-config.autoSaveInterval = 2
+-- Interval (in seconds) at which to complete the full saving cycle
+config.autoSaveCompleteInterval = 300
+-- Minimal interval (in seconds) between each auto save call
+config.autoSaveMinimalInterval = 1
 
 -- The type of database or data format used by the server
 -- Valid values: json, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "postgres"
+config.databaseType = "json"
 
 -- The location of the database file
 -- Note: Not applicable when using json

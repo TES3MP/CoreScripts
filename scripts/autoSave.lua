@@ -117,6 +117,8 @@ end
 
 function autoSave.QuicksaveToDrive(record)
     if record.type == types.PLAYER then
+        Players[record.id]:SaveStatsDynamic()
+        Players[record.id]:SaveCell()
         Players[record.id]:QuicksaveToDrive()
     elseif record.type == types.CELL then
         LoadedCells[record.id]:QuicksaveToDrive()
@@ -136,6 +138,8 @@ end
 function autoSave.SaveToDrive(record)
     autoSave.Log(record)
     if record.type == types.PLAYER then
+        Players[record.id]:SaveStatsDynamic()
+        Players[record.id]:SaveCell()
         Players[record.id]:SaveToDrive()
     elseif record.type == types.CELL then
         LoadedCells[record.id]:SaveToDrive()
@@ -157,7 +161,7 @@ function autoSave.SaveAll(exit)
     repeat
         res = autoSave.Pop(exit)
         i = i + 1
-    until not res or savingQueue.size > i
+    until not res or savingQueue.size == 0
 
     for _, recordStore in pairs(RecordStores) do
         recordStore:DeleteUnlinkedRecords()
@@ -168,7 +172,7 @@ end
 function autoSave.Log(record)
     local log = nil
     if record.type == types.PLAYER then
-       log = "Saving player with pid " .. record.id
+       log = "Saving player with pid " .. record.id .. " and name " .. record.accountName
     elseif record.type == types.CELL then
         log = "Saving cell with description " .. record.id
     elseif record.type == types.STORAGE then
@@ -184,14 +188,33 @@ function autoSave.Log(record)
     return log
 end
 
+local exiting = false
+local intervalAverage = time.seconds(config.autoSaveCompleteInterval)
+local intervalWeight = 0.05 -- exponential moving average coefficient
+
+function autoSave.Interval()
+    async.Wrap(function()
+        while not exiting do
+            local timestamp = tes3mp.GetMillisecondsSinceServerStart()
+            if not tableHelper.isEmpty(Players) then
+                autoSave.Pop()
+            end
+            local delta = tes3mp.GetMillisecondsSinceServerStart() - timestamp
+            intervalAverage = intervalWeight * delta + (1 - intervalWeight) * intervalAverage
+            local delay = math.ceil(math.max(
+                time.seconds(config.autoSaveCompleteInterval) / math.max(savingQueue.size, 1) - intervalAverage,
+                time.seconds(config.autoSaveMinimalInterval)
+            ))
+            tes3mp.LogMessage(enumerations.log.VERBOSE, string.format("[AutoSave] Save interval of %s seconds", time.toSeconds(delay)))
+            timers.WaitAsync(delay)
+        end
+    end)
+end
+
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
     if eventStatus.validDefaultHandler then
         autoSave.PushWorld(WorldInstance)
-        timers.Interval(function()
-            async.Wrap(function()
-                autoSave.Pop()
-            end)
-        end, time.seconds(config.autoSaveInterval))
+        autoSave.Interval()
     end
 end)
 
@@ -213,15 +236,13 @@ customEventHooks.registerHandler('OnStorageLoad', function(eventStatus, key)
     end
 end)
 
-local exiting = false
-
 customEventHooks.registerHandler('OnServerExit', function(eventStatus)
     if eventStatus.validDefaultHandler then
         exiting = true
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Clean up and kick players")
+
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Kicking all players")
         for pid in pairs(Players) do
             tes3mp.Kick(pid)
-            eventHandler.OnPlayerDisconnect(pid)
         end
 
         tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
