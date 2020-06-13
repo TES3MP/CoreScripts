@@ -1128,7 +1128,14 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
                     logicHandler.GetChatName(pid) .. " about " .. cellDescription .. " for "
 
                 if not tableHelper.isEmpty(objects) then
-                    debugMessage = debugMessage .. "objects:\n" .. tableHelper.getPrintableTable(objects)
+                    debugMessage = debugMessage .. "objects: "
+                    local includeComma = false
+
+                    for uniqueIndex, object in pairs(objects) do
+                        if includeComma then debugMessage = debugMessage .. ", " end
+                        debugMessage = debugMessage .. object.refId .. " " .. uniqueIndex
+                        includeComma = true
+                    end
                 end
 
                 if not tableHelper.isEmpty(targetPlayers) then

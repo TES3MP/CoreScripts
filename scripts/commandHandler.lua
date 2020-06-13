@@ -578,7 +578,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                         message = message .. " player " .. Players[target].name
                     else
                         logicHandler.SetAIForActor(cell, uniqueIndex, actionNumericalId, nil, target)
-                        message = message .. " actor " .. target
+                        message = message .. " object " .. target
                     end
 
                     Players[pid]:Message(message .. "\n")
