@@ -260,7 +260,6 @@ eventHandler.InitializeDefaultHandlers = function()
 
         for uniqueIndex, object in pairs(objects) do
             debugMessage = "- "
-            debugMessage = debugMessage .. uniqueIndex .. " has been hit by "
 
             if object.hittingPid == nil then
                 debugMessage = debugMessage .. object.hittingRefId .. " " .. object.hittingUniqueIndex
@@ -268,12 +267,19 @@ eventHandler.InitializeDefaultHandlers = function()
                 debugMessage = debugMessage .. logicHandler.GetChatName(object.hittingPid)
             end
 
+            if object.hit.success == true then
+                debugMessage = debugMessage .. " has successfully hit "
+            else
+                debugMessage = debugMessage .. " has missed hitting "
+            end
+
+            debugMessage = debugMessage .. object.refId .. " " .. uniqueIndex
+
             tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
         end
 
         for targetPid, targetPlayer in pairs(targetPlayers) do
             debugMessage = "- "
-            debugMessage = debugMessage .. logicHandler.GetChatName(targetPid) .. " has been hit by "
 
             if targetPlayer.hittingPid == nil then
                 debugMessage = debugMessage .. targetPlayer.hittingRefId .. " " .. targetPlayer.hittingUniqueIndex
@@ -281,7 +287,15 @@ eventHandler.InitializeDefaultHandlers = function()
                 debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.hittingPid)
             end
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+            if targetPlayer.hit.success == true then
+                debugMessage = debugMessage .. " has successfully hit "
+            else
+                debugMessage = debugMessage .. " has missed hitting "
+            end
+
+            debugMessage = debugMessage .. logicHandler.GetChatName(targetPid)
+
+            tes3mp.LogAppend(enumerations.log.VERBOSE, debugMessage)
         end
     end)
 
