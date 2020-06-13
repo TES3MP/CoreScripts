@@ -17,7 +17,7 @@ If you want to pass any additional information to the callback `func`, either ma
 
 You can also simply wait for a set amount of time, while not locking up the rest of the server:  
 * `timers.WaitAsync(delay)`  
-This function **must** be called from inside [a coroutine](CoroutinesAndThreads.md), and will throw an error otherwise. In the main thread this kind of operation is impossible, and you should use Timeout.
+This function **must** be called from inside [a coroutine](Asynchronicity.md), and will throw an error otherwise. In the main thread this kind of operation is impossible, and you should use Timeout.
 
 ## Examples
 
@@ -42,14 +42,13 @@ customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
         count = count + 1
       end
       local message = string.format('%s%d players online!\n', color.Yellow, count)
-      for pid in pairs(Players) do
-        tes3mp.SendMessage(pid, message)
-      end
+      tes3mp.SendMessage(pid, message, true)
     end, time.minutes(5))
   end
 end)
 ```
 
+>TODO: replace with a new example
 What if you want to wait for many different durations in a row?
 Exit the server with multiple warnings:
 ```Lua
@@ -58,9 +57,7 @@ customCommandHooks.registerCommand("exit", function(pid, delayMinutes)
     local minutes = math.floor(time.toMinutes(delay))
     local seconds = time.toSeconds(delay % time.minute(1))
     local message = string.format('%sServer shutting down in %d minutes %d seconds!\n', color.DarkRed, minutes, seconds)
-    for pid in pairs(Players) do
-      tes3mp.SendMessage(pid, message)
-    end
+    tes3mp.SendMessage(pid, message, true)
   end
   -- we will be using WaitAsync, so wrap everything in a coroutine
   threadHandler.Async(function()

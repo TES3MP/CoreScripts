@@ -30,7 +30,7 @@ where the `scripts/custom/MyScript/thread.lua` file can look something like:
 local threadHandler = require('threadHandler')
 local function Run(input, output)
   threadHandler.ReceiveMessages(input, output, function(message)
-    return message
+    return "echo of " .. message
   end)
 end
 
