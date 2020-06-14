@@ -139,22 +139,25 @@ function postgresDrive.ConnectAsync(connectString, timeout)
     return async.WaitAll(tasks, timeout)
 end
 
-function postgresDrive.Disconnect(callback)
+function postgresDrive.Disconnect()
+    local results = {}
+    for _, thread in pairs(postgresDrive.threads) do
+        table.insert(
+            results,
+            postgresDrive.SendAsync(thread, request.Disconnect())
+        )
+    end
+    return results
+end
+
+function postgresDrive.DisconnectAsync()
     local tasks = {}
     for _, thread in pairs(postgresDrive.threads) do
         table.insert(tasks, function()
             return postgresDrive.SendAsync(thread, request.Disconnect())
         end)
     end
-    async.WaitAll(tasks, nil, callback)
-end
-
-function postgresDrive.DisconnectAsync()
-    local currentCoroutine = async.CurrentCoroutine()
-    postgresDrive.Disconnect(function(results)
-        coroutine.resume(currentCoroutine, results)
-    end)
-    return coroutine.yield()
+    return async.WaitAll(tasks)
 end
 
 function postgresDrive.Query(sql, parameters, callback, numericalIndices)
@@ -177,9 +180,14 @@ end
 
 postgresDrive.Initiate()
 
-customEventHooks.registerHandler("OnServerExit", function(eventStatus)
+-- make sure the disconnect handler is the every last
+customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
     if eventStatus.validDefaultHandler then
-        async.Wrap(function() postgresDrive.DisconnectAsync() end)
+        customEventHooks.registerHandler("OnServerExit", function(eventStatus)
+            if eventStatus.validDefaultHandler then
+                async.Wrap(function() postgresDrive.DisconnectAsync() end)
+            end
+        end)
     end
 end)
 
