@@ -41,7 +41,7 @@ local types = {
     CELL = 2,
     STORAGE = 3,
     WORLD = 4,
-    RECORD_STORE = 5 -- currently unused,
+    RECORD_STORE = 5 -- currently unused
 }
 
 function autoSave.PushPlayer(pid)
@@ -161,7 +161,7 @@ function autoSave.SaveAll(exit)
     repeat
         res = autoSave.Pop(exit)
         i = i + 1
-    until not res or savingQueue.size == 0
+    until not res or savingQueue.size == 0 or i > savingQueue.size
 
     for _, recordStore in pairs(RecordStores) do
         recordStore:DeleteUnlinkedRecords()
@@ -190,7 +190,7 @@ end
 
 local exiting = false
 local intervalAverage = time.seconds(config.autoSaveCompleteInterval)
-local intervalWeight = 0.05 -- exponential moving average coefficient
+local intervalWeight = 0.1 -- exponential moving average coefficient
 
 function autoSave.Interval()
     async.Wrap(function()
@@ -205,7 +205,7 @@ function autoSave.Interval()
                 time.seconds(config.autoSaveCompleteInterval) / math.max(savingQueue.size, 1) - intervalAverage,
                 time.seconds(config.autoSaveMinimalInterval)
             ))
-            tes3mp.LogMessage(enumerations.log.VERBOSE, string.format("[AutoSave] Save interval of %s seconds", time.toSeconds(delay)))
+            tes3mp.LogMessage(enumerations.log.VERBOSE, string.format("[AutoSave] Save interval of %ss", time.toSeconds(delay)))
             timers.WaitAsync(delay)
         end
     end)
