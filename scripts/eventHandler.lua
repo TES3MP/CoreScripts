@@ -556,28 +556,21 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSendMessage", {pid, message})
             
         if eventStatus.validDefaultHandler then
-            -- Is this a chat command? If so, pass it over to the commandHandler
-            if message:sub(1, 1) == '/' then
+            local message = color.White .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
 
-                local command = (message:sub(2, #message)):split(" ")
-                commandHandler.ProcessCommand(pid, command)
-            else
-                local message = color.White .. logicHandler.GetChatName(pid) .. ": " .. message .. "\n"
+            -- Check for chat overrides that add extra text
+            if Players[pid]:IsServerStaff() then
 
-                -- Check for chat overrides that add extra text
-                if Players[pid]:IsServerStaff() then
-
-                    if Players[pid]:IsServerOwner() then
-                        message = config.rankColors.serverOwner .. "[Owner] " .. message
-                    elseif Players[pid]:IsAdmin() then
-                        message = config.rankColors.admin .. "[Admin] " .. message
-                    elseif Players[pid]:IsModerator() then
-                        message = config.rankColors.moderator .. "[Mod] " .. message
-                    end
+                if Players[pid]:IsServerOwner() then
+                    message = config.rankColors.serverOwner .. "[Owner] " .. message
+                elseif Players[pid]:IsAdmin() then
+                    message = config.rankColors.admin .. "[Admin] " .. message
+                elseif Players[pid]:IsModerator() then
+                    message = config.rankColors.moderator .. "[Mod] " .. message
                 end
-
-                tes3mp.SendMessage(pid, message, true)
             end
+
+            tes3mp.SendMessage(pid, message, true)
         end
         
         customEventHooks.triggerHandlers("OnPlayerSendMessage", eventStatus, {pid, message})
