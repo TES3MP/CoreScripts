@@ -218,10 +218,13 @@ local exitWarning = function(delay)
         local min = math.floor(time.toMinutes(delay % time.hours(1)))
         local sec = math.floor(time.toSeconds(delay % time.minutes(1)))
         message = table.concat({
-            "Stopping the server",
-            hours > 0 and string.format(" %s hours", hours) or "",
-            min > 0 and string.format(" %s minutes", min) or "",
-            sec > 0 and string.format(" %s seconds", sec) or "",
+            "Stopping the server in ",
+            hours > 0 and string.format(" %s hour", hours) or "",
+            hours > 1 and "s" or "",
+            min > 0 and string.format(" %s minute", min) or "",
+            min > 1 and "s" or "",
+            sec > 0 and string.format(" %s second", sec) or "",
+            sec > 1 and "s" or "",
             "!\n"
         })
     end
