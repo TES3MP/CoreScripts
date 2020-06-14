@@ -10,7 +10,7 @@ Altering `data` tables doesn't directly change the values stored on disk either.
 
 ## Players
 
-All player instances are stored in the `Players` global table. Each player has a numeric `pid` assigned to them when they connect, and is reserved for them until they disconnect. If you want to identify them between sessions, use `Players[pid].accountName`.
+All player instances are stored in the `Players` global table. Each player has a numeric `pid` assigned when they connect, and is reserved for them until they disconnect. If you want to identify players between sessions, use `Players[pid].accountName`.
 
 Make players "eat" every time they log in:
 ```Lua
@@ -32,20 +32,28 @@ timers.Interval(function()
   if player ~= nil then
     local speed = player.data.attributes.Speed
     speed.base = speed.base + 1
-    -- if a player doesn't have a pid, they are offline, and we don't need to send any packets
     if player.pid then
       tes3mp.SendMessage(pid, "Your speed increased!\n")
       player:LoadAttributes()
-    -- however since they are offline, their data won't be saved automatically on a disconnect, and we need to do it manually
-    else
+    else -- if a player doesn't have a pid, they are offline, and we don't need to send any packets
+      -- however since they are offline, their data won't be saved automatically, and we need to do it manually
       player:QuicksaveToDrive()
     end
   end
 end, time.hours(24))
 ```
 
-Some regularly changed data, such as players' current location, health, magicka and stamina are not passed to Lua every time they change.
-> No code example, because current implementation uses `tes3mp` methods
+Some regularly updated data is not passed to Lua scripts each time it changes.  
+You have to call `Players[pid]:SaveCell` for current cell and location, and `Players[pid]:SaveStatsDynamic`for curent and total health, magicka and stamina.
+```Lua
+customEventHooks.registerHandler('OnCellLoad', function(eventStatus, pid)
+    if eventStatus.validCustomHandlers then
+        tableHelper.print(Players[pid].data.location) -- might be outdated or even nonsensical
+        Players[pid]:SaveCell()
+        tableHelper.print(Players[pid].data.location)
+    end
+end)
+```
 
 ## Cells
 
