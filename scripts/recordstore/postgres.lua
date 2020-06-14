@@ -11,7 +11,7 @@ function RecordStore:__init(storeType)
     BaseRecordStore.__init(self, storeType)
     
     local result = postgresDrive.QueryAsync(
-        [[SELECT type FROM record_stores WHERE type = ?]],
+        [[SELECT type FROM record_store WHERE type = ?]],
         {self.storeType}
     )
     if result.error then
@@ -38,7 +38,7 @@ end
 
 function RecordStore:Upsert(keyOrderArray)
     return postgresDrive.QueryAsync(
-        [[INSERT INTO record_stores (type, data) VALUES (?, ?)
+        [[INSERT INTO record_store (type, data) VALUES (?, ?)
         ON CONFLICT (type) DO UPDATE SET data = EXCLUDED.data;]],
         {self.storeType, jsonInterface.encode(self.data, keyOrderArray)}
     )
@@ -55,7 +55,7 @@ function RecordStore:QuicksaveToDrive()
 end
 
 function RecordStore:LoadFromDrive()
-    local result = postgresDrive.QueryAsync([[SELECT data FROM record_stores WHERE type = ?;]], {self.storeType})
+    local result = postgresDrive.QueryAsync([[SELECT data FROM record_store WHERE type = ?;]], {self.storeType})
     if result.error then
         error("Failed to load the record store " .. self.storeType)
     end

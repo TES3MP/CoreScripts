@@ -377,7 +377,7 @@ config.autoSaveMinimalInterval = 1
 -- The type of database or data format used by the server
 -- Valid values: json, postgres
 -- Note: The latter is only partially implemented as of now
-config.databaseType = "json"
+config.databaseType = "postgres"
 
 -- The location of the database file
 -- Note: Not applicable when using json
@@ -388,7 +388,7 @@ config.databasePath = config.dataPath .. "/database.db" -- Path where database i
 config.postgres = {
     -- Amount of threads to use for postgres communication
     threadCount = 5,
-    connectionString = "host=localhost port=5432 dbname=tes3mp071 user=postgres password=postgres connect_timeout=0"
+    connectionString = "host=localhost port=5432 dbname=tes3mp user=postgres password=postgres connect_timeout=0"
 }
 
 -- Disallow players from including the following in their own names or the names of their custom items

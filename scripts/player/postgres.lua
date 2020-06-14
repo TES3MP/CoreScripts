@@ -8,7 +8,7 @@ function Player:__init(pid, playerName)
     -- Ensure filename is valid
     self.accountName = playerName:trim()
     
-    local result = postgresDrive.QueryAsync([[SELECT id FROM players WHERE name = ?]], {self.accountName})
+    local result = postgresDrive.QueryAsync([[SELECT name FROM player WHERE name = ?]], {self.accountName})
     if result.error then
         error("Failed to check if account " .. self.accountName .. " exists")
     end
@@ -21,7 +21,7 @@ end
 
 function Player:Upsert(keyOrderArray)
     return postgresDrive.QueryAsync(
-        [[INSERT INTO players (name, data) VALUES (?, ?)
+        [[INSERT INTO player (name, data) VALUES (?, ?)
         ON CONFLICT (name) DO UPDATE SET data = EXCLUDED.data;]],
         {self.accountName, jsonInterface.encode(self.data, keyOrderArray)}
     )
@@ -63,7 +63,7 @@ end
 
 function Player:LoadFromDrive()
     local result = postgresDrive.QueryAsync(
-        'SELECT data FROM players WHERE name = ?;',
+        'SELECT data FROM player WHERE name = ?;',
         {self.accountName}
     )
     if result.error then

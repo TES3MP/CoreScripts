@@ -1,13 +1,15 @@
-local postgresClient = require("drive.postgres.client")
-
+return function(postgresDrive)
 local sql =
-[[CREATE TABLE "migrations" (
-    "id" serial,
-    "processed_at" timestamp
-);]]
+[[
+CREATE TABLE "migrations" (
+    "id" bigserial,
+    "processed" timestamp default timezone('utc', now())
+);
+]]
 
-local result = postgresClient.QueryAsync(sql)
+local result = postgresDrive.QueryAsync(sql)
 if result.error then
     return 1
 end
 return 0
+end

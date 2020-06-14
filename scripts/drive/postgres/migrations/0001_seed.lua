@@ -1,70 +1,71 @@
-local postgresClient = require("drive.postgres.client")
-
--- generated from https://dbdiagram.io/d/5eb7f43539d18f5553fef7a2
+return function(postgresDrive)
 local sql =
 [[
-CREATE TYPE "record_type" AS ENUM (
-    'permanent',
-    'generated'
+CREATE FUNCTION update_timestamp() RETURNS trigger AS $update_timestamp$
+BEGIN
+    NEW.updated = timezone('utc', now());
+    return NEW;
+END;
+$update_timestamp$ LANGUAGE plpgsql;
+
+CREATE TABLE "player" (
+    "name" varchar PRIMARY KEY,
+    "data" jsonb,
+    "updated" timestamp DEFAULT timezone('utc', now())
 );
 
-CREATE TABLE "players" (
-    "id" serial PRIMARY KEY,
-    "name" varchar UNIQUE,
-    "data" jsonb
+CREATE TRIGGER player_timestamp
+BEFORE UPDATE ON player
+FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+CREATE TABLE "cell" (
+    "description" varchar PRIMARY KEY,
+    "data" jsonb,
+    "updated" timestamp DEFAULT timezone('utc', now())
 );
 
-CREATE TABLE "player_links" (
-    "id" bigserial PRIMARY KEY,
-    "player_name" varchar,
-    "record_refId" varchar
+CREATE TRIGGER cell_timestamp
+BEFORE UPDATE ON cell
+FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+CREATE TABLE "record_store" (
+    "type" varchar PRIMARY KEY,
+    "data" jsonb,
+    "updated" timestamp DEFAULT timezone('utc', now())
 );
 
-CREATE TABLE "cells" (
-    "id" serial PRIMARY KEY,
-    "description" varchar UNIQUE,
-    "data" jsonb
+CREATE TRIGGER record_store_timestamp
+BEFORE UPDATE ON record_store
+FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+CREATE TABLE "cell_per_player" (
+    "description" varchar,
+    "name" varchar,
+    "updated" timestamp DEFAULT timezone('utc', now()),
+    PRIMARY KEY ("description", "name")
 );
 
-CREATE TABLE "cell_links" (
-    "id" bigserial PRIMARY KEY,
-    "cell_description" varchar,
-    "record_refId" varchar
+ALTER TABLE "cell_per_player" ADD FOREIGN KEY ("description") REFERENCES "cell" ("description");
+ALTER TABLE "cell_per_player" ADD FOREIGN KEY ("name") REFERENCES "player" ("name");
+
+CREATE TRIGGER cell_per_player_timestamp
+BEFORE UPDATE ON cell_per_player
+FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
+
+CREATE TABLE "storage" (
+    "key" varchar PRIMARY KEY,
+    "data" jsonb,
+    "updated" timestamp DEFAULT timezone('utc', now())
 );
 
-CREATE TABLE "record_stores" (
-    "id" serial PRIMARY KEY,
-    "type" varchar UNIQUE,
-    "data" jsonb
-);
-
-CREATE TABLE "records" (
-    "id" bigserial PRIMARY KEY,
-    "refId" varchar UNIQUE,
-    "type" record_type,
-    "store_type" varchar,
-    "data" jsonb
-);
-
-CREATE TABLE "data_storage" (
-    "id" bigserial PRIMARY KEY,
-    "key" varchar UNIQUE,
-    "data" jsonb
-);
-
-ALTER TABLE "player_links" ADD FOREIGN KEY ("player_name") REFERENCES "players" ("name");
-
-ALTER TABLE "player_links" ADD FOREIGN KEY ("record_refId") REFERENCES "records" ("refId");
-
-ALTER TABLE "cell_links" ADD FOREIGN KEY ("cell_description") REFERENCES "cells" ("description");
-
-ALTER TABLE "cell_links" ADD FOREIGN KEY ("record_refId") REFERENCES "records" ("refId");
-
-ALTER TABLE "records" ADD FOREIGN KEY ("store_type") REFERENCES "record_stores" ("type");
+CREATE TRIGGER storage_timestamp
+BEFORE UPDATE ON storage
+FOR EACH ROW EXECUTE PROCEDURE update_timestamp();
 ]]
 
-local result = postgresClient.QueryAsync(sql)
+local result = postgresDrive.QueryAsync(sql)
 if result.error then
     return 1
 end
 return 0
+end

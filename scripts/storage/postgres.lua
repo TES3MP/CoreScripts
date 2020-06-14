@@ -6,7 +6,7 @@ function storage.Load(key, default)
     if not storage.data[key] then
         local eventStatus = customEventHooks.triggerValidators('OnStorageLoad', {key})
         if eventStatus.validDefaultHandler then
-            local result =  postgresDrive.QueryAsync([[SELECT data FROM data_storage WHERE key = ?;]], {key})
+            local result =  postgresDrive.QueryAsync([[SELECT data FROM storage WHERE key = ?;]], {key})
             if result.error then
                 error("Failed to load storage " .. key)
             end
@@ -32,7 +32,7 @@ end
 
 function storage.Save(key)
     local result = postgresDrive.QueryAsync(
-        [[INSERT INTO data_storage (key, data) VALUES (?, ?)
+        [[INSERT INTO storage (key, data) VALUES (?, ?)
         ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data;]],
         {key, jsonInterface.encode(storage.data[key])}
     )
