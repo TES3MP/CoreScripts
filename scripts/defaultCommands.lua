@@ -194,8 +194,37 @@ customCommandHooks.registerCommand("setloglevel", defaultCommands.setLogLevel)
 customCommandHooks.registerAlias("setenforcedloglevel", "setloglevel")
 customCommandHooks.setRankRequirement("setloglevel", ranks.ADMIN)
 
+local GetConnectedPlayerList = function()
+
+    local lastPid = tes3mp.GetLastPlayerId()
+    local list = ""
+    local divider = ""
+
+    for playerIndex = 0, lastPid do
+        if playerIndex == lastPid then
+            divider = ""
+        else
+            divider = "\n"
+        end
+        if Players[playerIndex] ~= nil and Players[playerIndex]:IsLoggedIn() then
+
+            list = list .. tostring(Players[playerIndex].name) .. " (pid: " .. tostring(Players[playerIndex].pid) ..
+                ", ping: " .. tostring(tes3mp.GetAvgPing(Players[playerIndex].pid)) .. ")" .. divider
+        end
+    end
+
+    return list
+end
+
 defaultCommands.players = function(pid, cmd)
-    guiHelper.ShowPlayerList(pid)
+    local playerCount = logicHandler.GetConnectedPlayerCount()
+    local label = playerCount .. " connected player"
+
+    if playerCount ~= 1 then
+        label = label .. "s"
+    end
+
+    tes3mp.ListBox(pid, guiHelper.ID.PLAYERSLIST, label, GetConnectedPlayerList())
 end
 customCommandHooks.registerCommand("players", defaultCommands.players)
 customCommandHooks.registerAlias("list", "players")
@@ -235,8 +264,42 @@ end
 customCommandHooks.registerCommand("cells", defaultCommands.cells)
 customCommandHooks.setRankRequirement("cells", ranks.MODERATOR)
 
+local GetLoadedRegionList = function()
+    local list = ""
+    local divider = ""
+
+    local regionCount = logicHandler.GetLoadedRegionCount()
+    local regionIndex = 0
+
+    for key, value in pairs(WorldInstance.storedRegions) do
+        local visitorCount = WorldInstance:GetRegionVisitorCount(key)
+
+        if visitorCount > 0 then
+            regionIndex = regionIndex + 1
+
+            if regionIndex == regionCount then
+                divider = ""
+            else
+                divider = "\n"
+            end
+
+            list = list .. key .. " (auth: " .. WorldInstance:GetRegionAuthority(key) .. ", loaded by " ..
+                visitorCount .. ")" .. divider
+        end
+    end
+
+    return list
+end
+
 defaultCommands.regions = function(pid, cmd)
-    guiHelper.ShowRegionList(pid)
+    local regionCount = logicHandler.GetLoadedRegionCount()
+    local label = regionCount .. " loaded region"
+
+    if regionCount ~= 1 then
+        label = label .. "s"
+    end
+
+    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedRegionList())
 end
 customCommandHooks.registerCommand("regions", defaultCommands.regions)
 customCommandHooks.setRankRequirement("regions", ranks.MODERATOR)
@@ -569,6 +632,26 @@ customCommandHooks.registerAlias("tpto", "teleport")
 customCommandHooks.registerAlias("teleportto", "teleport")
 customCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
 
+local GetPlayerInventoryList = function(pid)
+
+    local list = ""
+    local divider = ""
+    local lastItemIndex = tableHelper.getCount(Players[pid].data.inventory)
+
+    for index, currentItem in ipairs(Players[pid].data.inventory) do
+
+        if index == lastItemIndex then
+            divider = ""
+        else
+            divider = "\n"
+        end
+
+        list = list .. index .. ": " .. currentItem.refId .. " (count: " .. currentItem.count .. ")" .. divider
+    end
+
+    return list
+end
+
 function defaultCommands.confiscate(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
@@ -584,7 +667,14 @@ function defaultCommands.confiscate(pid, cmd)
             Players[targetPid]:SetConfiscationState(true)
 
             tableHelper.cleanNils(Players[targetPid].data.inventory)
-            guiHelper.ShowInventoryList(config.customMenuIds.confiscate, pid, targetPid)
+            local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
+            local label = inventoryCount .. " item"
+
+            if inventoryCount ~= 1 then
+                label = label .. "s"
+            end
+
+            tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
         end
     end
 end
