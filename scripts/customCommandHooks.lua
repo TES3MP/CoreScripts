@@ -108,11 +108,11 @@ function customCommandHooks.validator(eventStatus, pid, message)
                 return customEventHooks.makeEventStatus(false, nil)
             else
                 cmd[1] = string.lower(cmd[1])
-                local callback = customCommandHooks.getCallback(cmd[1])
                 local alias = customCommandHooks.aliases[cmd[1]]
-                if callback == nil and alias ~= nil then
-                    callback = customCommandHooks.getCallback(alias)
+                if alias ~= nil then
+                    cmd[1] = alias
                 end
+                local callback = customCommandHooks.getCallback(cmd[1])
                 if callback ~= nil then
                     local passedRequirements = customCommandHooks.checkName(cmd[1], pid) and
                         customCommandHooks.checkRank(cmd[1], pid)
