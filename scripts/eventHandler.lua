@@ -1,7 +1,5 @@
 local eventHandler = {}
 
-commandHandler = require("commandHandler")
-
 local consoleKickMessage = " has been kicked for using the console despite not having the permission to do so.\n"
 
 eventHandler.InitializeDefaultValidators = function()

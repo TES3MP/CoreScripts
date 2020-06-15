@@ -122,6 +122,8 @@ function customCommandHooks.validator(eventStatus, pid, message)
                         customCommandHooks.invalidCommand(pid)
                     end
                     return customEventHooks.makeEventStatus(false, nil)
+                else
+                    customCommandHooks.invalidCommand(pid)
                 end
             end
         end

@@ -7,7 +7,7 @@ local ranks = {
 }
 
 local function commandError(pid, text)
-    tes3mp.SendMessage(pid, color.Error .. message .. color.Default .. "\n")
+    tes3mp.SendMessage(pid, color.Error .. text .. color.Default .. "\n")
 end
 
 defaultCommands.help = function(pid)
@@ -34,7 +34,6 @@ defaultCommands.msg = function(pid, cmd, rawCmd)
         tes3mp.SendMessage(targetPid, message, false)
     end
 end
-
 customCommandHooks.registerCommand("message", defaultCommands.msg)
 customCommandHooks.registerAlias("msg", "message")
 
@@ -99,7 +98,6 @@ defaultCommands.inviteAlly = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-
 customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
 defaultCommands.joinTeam = function(pid, cmd)
@@ -195,7 +193,6 @@ customCommandHooks.registerAlias("setenforcedloglevel", "setloglevel")
 customCommandHooks.setRankRequirement("setloglevel", ranks.ADMIN)
 
 local GetConnectedPlayerList = function()
-
     local lastPid = tes3mp.GetLastPlayerId()
     local list = ""
     local divider = ""
@@ -215,7 +212,6 @@ local GetConnectedPlayerList = function()
 
     return list
 end
-
 defaultCommands.players = function(pid, cmd)
     local playerCount = logicHandler.GetConnectedPlayerCount()
     local label = playerCount .. " connected player"
@@ -290,7 +286,6 @@ local GetLoadedRegionList = function()
 
     return list
 end
-
 defaultCommands.regions = function(pid, cmd)
     local regionCount = logicHandler.GetLoadedRegionCount()
     local label = regionCount .. " loaded region"
@@ -632,26 +627,6 @@ customCommandHooks.registerAlias("tpto", "teleport")
 customCommandHooks.registerAlias("teleportto", "teleport")
 customCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
 
-local GetPlayerInventoryList = function(pid)
-
-    local list = ""
-    local divider = ""
-    local lastItemIndex = tableHelper.getCount(Players[pid].data.inventory)
-
-    for index, currentItem in ipairs(Players[pid].data.inventory) do
-
-        if index == lastItemIndex then
-            divider = ""
-        else
-            divider = "\n"
-        end
-
-        list = list .. index .. ": " .. currentItem.refId .. " (count: " .. currentItem.count .. ")" .. divider
-    end
-
-    return list
-end
-
 function defaultCommands.confiscate(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
@@ -667,14 +642,19 @@ function defaultCommands.confiscate(pid, cmd)
             Players[targetPid]:SetConfiscationState(true)
 
             tableHelper.cleanNils(Players[targetPid].data.inventory)
-            local inventoryCount = tableHelper.getCount(Players[pid].data.inventory)
+            local inventoryCount = tableHelper.getCount(Players[targetPid].data.inventory)
             local label = inventoryCount .. " item"
 
             if inventoryCount ~= 1 then
                 label = label .. "s"
             end
 
-            tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
+            local itemList = {}
+            for index, item in ipairs(Players[targetPid].data.inventory) do
+                table.insert(itemList, index .. ": " .. item.refId .. " (count: " .. item.count .. ")")
+            end
+
+            tes3mp.ListBox(pid, config.customMenuIds.confiscate, label, table.concat(itemList, "\n"))
         end
     end
 end
@@ -767,7 +747,7 @@ function defaultCommands.setScale(pid, cmd)
         end
     end
 end
-customCommandHooks.setRankRequirement("setscale", defaultCommands.setScale)
+customCommandHooks.registerCommand("setscale", defaultCommands.setScale)
 customCommandHooks.setRankRequirement("setscale", ranks.ADMIN)
 
 function defaultCommands.setWerewolf(pid, cmd)
@@ -795,7 +775,7 @@ function defaultCommands.setWerewolf(pid, cmd)
         end
     end
 end
-customCommandHooks.setRankRequirement("setwerewolf", defaultCommands.setWerewolf)
+customCommandHooks.registerCommand("setwerewolf", defaultCommands.setWerewolf)
 customCommandHooks.setRankRequirement("setwerewolf", ranks.ADMIN)
 
 function defaultCommands.setDisguise(pid, cmd)
@@ -819,7 +799,7 @@ function defaultCommands.setDisguise(pid, cmd)
         end
     end
 end
-customCommandHooks.setRankRequirement("setdisguise", defaultCommands.setDisguise)
+customCommandHooks.registerCommand("setdisguise", defaultCommands.setDisguise)
 customCommandHooks.setRankRequirement("setdisguise", ranks.ADMIN)
 
 function defaultCommands.setUseCreatureName(pid, cmd)
@@ -842,7 +822,7 @@ function defaultCommands.setUseCreatureName(pid, cmd)
         tes3mp.SendShapeshift(targetPid)
     end
 end
-customCommandHooks.setRankRequirement("usecreaturename", defaultCommands.setDisguise)
+customCommandHooks.registerCommand("usecreaturename", defaultCommands.setDisguise)
 customCommandHooks.setRankRequirement("usecreaturename", ranks.ADMIN)
 
 function defaultCommands.setMomentum(pid, cmd)
