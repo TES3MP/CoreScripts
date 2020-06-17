@@ -20,7 +20,6 @@ function postgresDrive.Initiate()
     local fl = true
     local results = postgresDrive.Connect(config.postgres.connectionString)
     for _, res in pairs(results) do
-        print(res)
         if not res then
             fl = false
         end
