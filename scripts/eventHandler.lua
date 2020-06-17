@@ -17,9 +17,7 @@ eventHandler.InitializeDefaultValidators = function()
 
             if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
                 return customEventHooks.makeEventStatus(false, false)
-            end
-
-            if tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
+            elseif tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
                 tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at deleting " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
@@ -109,14 +107,32 @@ eventHandler.InitializeDefaultValidators = function()
         end
     end)
 
-    -- Don't activate objects mentioned in config.disallowedActivateRefIds
+    -- Don't activate objects that are supposed to already be deleted according to the
+    -- server, preventing item duping
+    --
+    -- Additionally, don't activate objects mentioned in config.disallowedActivateRefIds
     customEventHooks.registerValidator("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
         for uniqueIndex, object in pairs(objects) do
 
-            if tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at activating " .. object.refId .. 
-                    " " .. object.uniqueIndex .. " because it is disallowed in the server config")
+            local debugMessage = "- Rejected attempt at activating " .. object.refId .. " " ..
+                object.uniqueIndex .. " because it"
+            local splitIndex = uniqueIndex:split("-")
+            local refNum = tonumber(splitIndex[1])
+            local mpNum = tonumber(splitIndex[2])
+
+            -- If this is a preexisting object from the data files, make sure it doesn't
+            -- have a Delete packet recorded for it
+            if refNum ~= 0 and tableHelper.containsValue(LoadedCells[cellDescription].data.packets.delete, uniqueIndex) then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a preexisting object that is already "
+                    .. "tracked as being deleted")
+                return customEventHooks.makeEventStatus(false, false)
+            elseif mpNum ~= 0 and LoadedCells[cellDescription].data.objectData[uniqueIndex] == nil then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a server-created object that is "
+                    .. "no longer supposed to exist")
+                return customEventHooks.makeEventStatus(false, false)
+            elseif tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
+                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
         end
@@ -214,6 +230,8 @@ eventHandler.InitializeDefaultHandlers = function()
     -- Print object activations and send an ObjectActivate packet back to the player
     customEventHooks.registerHandler("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
 
+        if eventStatus.validDefaultHandler == false then return end
+
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
@@ -253,6 +271,8 @@ eventHandler.InitializeDefaultHandlers = function()
 
     -- Print object hits
     customEventHooks.registerHandler("OnObjectHit", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        if eventStatus.validDefaultHandler == false then return end
 
         local debugMessage = nil
 
@@ -295,6 +315,26 @@ eventHandler.InitializeDefaultHandlers = function()
 
             tes3mp.LogAppend(enumerations.log.VERBOSE, debugMessage)
         end
+    end)
+
+    -- Print object restocking and send an ObjectRestock packet back to the player
+    customEventHooks.registerHandler("OnObjectRestock", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+
+        if eventStatus.validDefaultHandler == false then return end
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting restock request for " .. object.refId .. " " .. uniqueIndex)
+        end
+
+        tes3mp.CopyReceivedObjectListToStore()
+        -- Objects can't be restocked clientside without the server's approval, so we send
+        -- the packet back to the player who sent it, but we avoid sending it to other
+        -- players because the Container packet resulting from the restocking will get
+        -- sent to them instead
+        -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+        tes3mp.SendObjectRestock(false, false)
     end)
 
 end
@@ -1177,6 +1217,10 @@ eventHandler.OnObjectLock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "lock")
 end
 
+eventHandler.OnObjectRestock = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "restock")
+end
+
 eventHandler.OnObjectTrap = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "trap")
 end
@@ -1572,19 +1616,10 @@ eventHandler.OnWorldWeather = function(pid)
     end
 end
 
-eventHandler.OnScriptGlobalShort = function(pid)
+eventHandler.OnClientScriptGlobal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
-            tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
-
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
-            return
-        end
+        tes3mp.ReadReceivedWorldstate()
 
         -- Iterate through the global IDs in the ScriptGlobalShort packet and only sync and save them
         -- if all their ids are valid
@@ -1592,9 +1627,16 @@ eventHandler.OnScriptGlobalShort = function(pid)
         local rejectedIds = {}
         local globalIds = {}
 
-        for index = 0, tes3mp.GetObjectListSize() - 1 do
-            local globalId = tes3mp.GetScriptVariableName(index)
-            local value = tes3mp.GetScriptVariableShortValue(index)
+        for index = 0, tes3mp.GetClientGlobalsSize() - 1 do
+            local globalId = tes3mp.GetClientGlobalId(index)
+            local variableType = tes3mp.GetClientGlobalVariableType(index)
+            local value
+
+            if variableType == enumerations.variableType.INTEGER then
+                value = tes3mp.GetClientGlobalIntValue(index)
+            elseif variableType == enumerations.variableType.FLOAT then
+                value = tes3mp.GetClientGlobalFloatValue(index)
+            end
 
             tes3mp.LogAppend(enumerations.log.INFO, "- global " .. globalId .. " is being set to value " .. value)
 
@@ -1607,7 +1649,7 @@ eventHandler.OnScriptGlobalShort = function(pid)
         end
         
         if isAllowed then
-            local eventStatus = customEventHooks.triggerValidators("OnScriptGlobalShort", {pid, globalIds})
+            local eventStatus = customEventHooks.triggerValidators("OnClientScriptGlobal", {pid, globalIds})
             
             if eventStatus.validDefaultHandler then
 
@@ -1634,27 +1676,27 @@ eventHandler.OnScriptGlobalShort = function(pid)
                     end
 
                     if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
-                        WorldInstance:SaveClientScriptGlobalShort(pid)
+                        WorldInstance:SaveClientScriptGlobal(pid)
                         shouldSync = true
                     else
-                        Players[pid]:SaveClientScriptGlobalShort()
+                        Players[pid]:SaveClientScriptGlobal()
                     end
                 end
 
                 if shouldSync then
-                    tes3mp.CopyReceivedObjectListToStore()
+                    tes3mp.CopyReceivedWorldstateToStore()
                     -- The client already has this global value on their client, so we
                     -- only send it to other players
                     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
-                    tes3mp.SendScriptGlobalShort(true, true)
-                    tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ScriptGlobalShort from " ..
+                    tes3mp.SendClientScriptGlobal(pid, true, true)
+                    tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ClientScriptGlobal from " ..
                         logicHandler.GetChatName(pid) .. " about " .. tableHelper.concatenateArrayValues(globalIds, 1, ", "))
                 end
             end
             
-            customEventHooks.triggerHandlers("OnScriptGlobalShort", eventStatus, {pid, globalIds})
+            customEventHooks.triggerHandlers("OnClientScriptGlobal", eventStatus, {pid, globalIds})
         else
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ScriptGlobalShort from " .. logicHandler.GetChatName(pid) ..
+            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ClientScriptGlobal from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedIds, 1, ", "))
         end
     else

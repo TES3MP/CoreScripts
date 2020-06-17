@@ -590,6 +590,12 @@ function OnObjectLock(pid, cellDescription)
     eventHandler.OnObjectLock(pid, cellDescription)
 end
 
+function OnObjectRestock(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectRestock\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnObjectRestock(pid, cellDescription)
+end
+
 function OnObjectTrap(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectTrap\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
@@ -651,9 +657,9 @@ function OnWorldWeather(pid)
     eventHandler.OnWorldWeather(pid)
 end
 
-function OnScriptGlobalShort(pid)
-    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnScriptGlobalShort\" for " .. logicHandler.GetChatName(pid))
-    eventHandler.OnScriptGlobalShort(pid)
+function OnClientScriptGlobal(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnClientScriptGlobal\" for " .. logicHandler.GetChatName(pid))
+    eventHandler.OnClientScriptGlobal(pid)
 end
 
 function OnGUIAction(pid, idGui, data)
