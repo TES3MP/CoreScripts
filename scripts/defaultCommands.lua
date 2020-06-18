@@ -55,7 +55,7 @@ defaultCommands.inviteAlly = function(pid, cmd)
         if Players[targetPid].allyInvitesReceived == nil then Players[targetPid].allyInvitesReceived = {} end
 
         if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
-            senderMessage = "You already have " .. logicHandler.GetChatName(targetPid) .. "as your ally\n"
+            senderMessage = "You already have " .. logicHandler.GetChatName(targetPid) .. " as your ally\n"
         elseif tableHelper.containsValue(Players[pid].allyInvitesSent, Players[targetPid].accountName) then
             senderMessage = "You have already invited " .. logicHandler.GetChatName(targetPid) .. " to be your ally.\n"
         else
@@ -85,7 +85,7 @@ defaultCommands.joinTeam = function(pid, cmd)
         if Players[pid].allyInvitesReceived == nil then Players[pid].allyInvitesReceived = {} end
 
         if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
-            senderMessage = "You are already have " .. logicHandler.GetChatName(targetPid) .. "as an ally\n"
+            senderMessage = "You already have " .. logicHandler.GetChatName(targetPid) .. " as an ally\n"
         elseif tableHelper.containsValue(Players[pid].allyInvitesReceived, Players[targetPid].accountName) then
             senderMessage = "You now have " .. logicHandler.GetChatName(targetPid) .. " as an ally. Write " ..
                 color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave " ..
@@ -118,7 +118,7 @@ defaultCommands.leaveTeam = function(pid, cmd)
         local senderMessage
 
         if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
-            senderMessage = "You have stopped having " .. logicHandler.GetChatName(targetPid) .. "as your ally \n"
+            senderMessage = "You have stopped having " .. logicHandler.GetChatName(targetPid) .. " as your ally \n"
             local receiverMessage = logicHandler.GetChatName(pid) .. " has stopped having you as an ally.\n"
             tes3mp.SendMessage(targetPid, receiverMessage, false)
 
