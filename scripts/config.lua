@@ -367,7 +367,9 @@ config.enforceDataFiles = true
 config.ignoreScriptErrors = false
 
 -- Interval (in miliseconds) at which to read responses from secondary threads
-config.threadHandlerInterval = 10
+config.threadHandlerInterval = 5
+
+config.threadHandlerDebug = true
 
 -- Interval (in seconds) at which to complete the full saving cycle
 config.autoSaveCompleteInterval = 300

@@ -35,6 +35,16 @@ function threadHandler.Send(id, message, callback)
         error("Thread " .. id .. " not found!")
     end
     local id = threadHandler.GetMessageId()
+    if config.threadHandlerDebug then
+        local checkpoint = tes3mp.GetMillisecondsSinceServerStart()
+        local originalCallback = callback
+        callback = function(...)
+            local delta = tes3mp.GetMillisecondsSinceServerStart() - checkpoint
+            
+            tes3mp.LogMessage(enumerations.log.INFO, string.format("[ThreadHandler] Request took %s",delta))
+            return originalCallback(...)
+        end
+    end
     threadHandler.callbacks[id] = callback
     thread.input:push(effil.table{
         id = id,
