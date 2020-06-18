@@ -2,19 +2,23 @@
 
 ## Handling events:
 
-To handle various events you will need to use two functions: `customEventHooks.registerValidator` and `customEventHooks.registerHandler`.
-Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was peformed or not). 
+To handle various events you will need to use two functions:
+* `customEventHooks.registerValidator(event, callback)`
+* `customEventHooks.registerHandler(event, callback)`
 
-Both of these functions accept an event string (you can find a table below) and a callback function as their arguments.
-The callback function will be called with a guaranteed argument of eventStatus and a few arguments (potentially none) depending on the particular event.
+Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was performed or not). 
 
-eventStatus is a table that defines the way handlers should behave. It has two fields: `validDefaultHandler` and `validCustomHandlers`. By default both of these are `true`.
-First defines if default behaviour should be performed, the second signals custom handlers that they should not run.
-However, their callbacks are still ran, and it is scripts' responsibility to handle `eventStatus.validCustomHandlers` being `false`.
+Both of these functions accept an `event` string (you can find a table below) and a `callback` function as their arguments.  
+The callback function will be called with a guaranteed argument of `eventStatus` and a few arguments (potentially none) depending on the particular event.
 
-Validators can change the current eventStatus. If your validators returns nothing, it stays the same, however if you return a non-`nil` value for either of the two fields, it will override the previous one. You can use `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)` for this.
+`eventStatus` is a table that defines the way handlers should behave. It has two fields: `validDefaultHandler` and `validCustomHandlers`. By default both of these are `true`.  
+The former defines if default behaviour should be performed, the latter signals custom handlers that they should not run.  
+However, their callbacks still run, and it is scripts' responsibility to handle `eventStatus.validCustomHandlers` being `false`.
 
-## Examples:
+Validators can change the current `eventStatus`. If your validator returns nothing, it stays the same. However if you return a non-`nil` value for either of the two fields, it will override the previous one. 
+* `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)`
+
+### Examples:
 Imagine you want to taunt players whenever they die.
 ```Lua
 customEventHooks.registerHandler("OnPlayerDeath", function(eventStatus, pid)
@@ -44,7 +48,14 @@ end)
 
 ## Custom events
 
-You can also use this API to allow other scripts to interact with yours. For that you will need to add `customEventHooks.triggerValidators(event, args)` and `customEventHooks.triggerHandlers(event, eventStatus, args)` to your code. `event` is a string labeling the event, `eventStatus` should be whatever was returned by `triggerValidators` and `args` is a list or arguments relevant callbacks will receive.
+You can also use this API to allow other scripts to interact with yours. For that you will need
+* `customEventHooks.triggerValidators(event, args)`
+  * `event` is the event name which will be used for `registerHandler` and `registerValidator`
+  * `args` is a table of arguments which will be passed to the event callbacks (do not include eventStatus)
+* `customEventHooks.triggerHandlers(event, eventStatus, args)`
+  * `eventStatus` here should be whatever was returned by `triggerValidators` or `customEventHooks.makeEventStatus(true, true)`
+
+### Examples
 
 Here's an example from `eventHandler.lua`:
 ```Lua
@@ -63,8 +74,9 @@ customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatu
 
 # Event table
 
-This table will follow this format: `event(args)`, where `event` and `args` are as described in *Using the customEventHooks API:*  
-Most of the events are the same as `eventHandler.lua` functions with some extra arguments:
+This table will follow this format: `event(args)`, where `event` and `args` are as described in [Custom events](#custom-events)  
+It is recommended to check the source code instead of relying on this table, however. Don't forget that each event has a corresponding `triggerHandlers` call, so it should be very easy to find them all by searching for `customEventHooks.triggerHandlers(`. Similarly you can search for a specific event.  
+Most (but not all) of them will be in [eventHandler.lua](../scripts/eventHandler.lua) or [serverCore.lua](../scripts/serverCore.lua).
 
 * OnPlayerConnect(pid)
 * OnPlayerDisconnect(pid)
@@ -83,8 +95,8 @@ Most of the events are the same as `eventHandler.lua` functions with some extra 
 * OnPlayerSpellbook(pid)
 * OnPlayerQuickKeys(pid)
 * OnPlayerJournal(pid)
-* OnPlayerFaction(pid, action)
-    `action` is the result of `tes3mp.GetFactionChangesAction(pid)` (0 for RANK, 1 for EXPULSION, 2 for REPUTATION)
+* OnPlayerFaction(pid, action)  
+  `action` is the result of `tes3mp.GetFactionChangesAction(pid)` (0 for RANK, 1 for EXPULSION, 2 for REPUTATION)
 * OnPlayerTopic(pid)
 * OnPlayerBounty(pid)
 * OnPlayerReputation(pid)
@@ -99,63 +111,58 @@ Most of the events are the same as `eventHandler.lua` functions with some extra 
 * OnActorAI(pid, cellDescription)
 * OnActorDeath(pid, cellDescription)
 * OnActorCellChange(pid, cellDescription)
-* OnObjectActivate(pid, cellDescription, objects, players)
-    `objects` and `players` container lists of activated objects and players respectively.
-    
-    `objects` elements have form
-    `
-    {
-        uniqueIndex = ...,
-        refId = ...
-    }
-    `
-    
-    `players` elements have form
-    `
-    {
-        pid = ...
-    }
-    `
-* OnObjectPlace(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectSpawn(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectDelete(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectLock(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectTrap(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectScale(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnObjectState(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnDoorState(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnContainer(pid, cellDescription, objects)
-    `objects` has the same structure as in `OnObjectActivate`
-* OnVideoPlay(pid, videos)
-    `videos` is a list of video filenames 
+* OnObjectActivate(pid, cellDescription, objects, players)  
+  `objects` and `players` contain lists of activated objects and players respectively.  
+  elements of `objects`:
+  ```Lua
+  {
+      uniqueIndex = ...,
+      refId = ...
+  }
+  ```
+  elements of `players`:
+  ```Lua
+  {
+      pid = ...
+  }
+    ```
+* OnObjectPlace(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectSpawn(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectDelete(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectLock(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectTrap(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectScale(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnObjectState(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnDoorState(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnContainer(pid, cellDescription, objects)  
+  `objects` has the same structure as in `OnObjectActivate`
+* OnVideoPlay(pid, videos)  
+  `videos` is a list of video filenames 
 * OnRecordDynamic(pid)
 * OnWorldKillCount(pid)
 * OnWorldMap(pid)
 * OnWorldWeather(pid)
-* OnObjectLoopTimeExpiration(pid, loopIndex)
-    `pid` is the loop's `targetPid`
-
-There are also some events not present in `eventHandler` before:
-
+* OnObjectLoopTimeExpiration(pid, loopIndex)  
+  `pid` is the loop's `targetPid`
 * OnServerInit()
 * OnServerPostInit()
-* OnServerExit()
-   Only has a handler trigger and no default behaviour to cancel.
+* OnServerExit()  
+  Only has a handler trigger and no default behaviour to cancel.
 * OnLoginTimeExpiration(pid)
-* OnPlayerResurrect(pid)
-    Only has a handler trigger and no default behaviour to cancel.
-* OnPlayerFinishLogin(pid)
-    Only has a handler trigger and no default behaviour to cancel.
-* OnPlayerAuthentified(pid)
-    Only has a handler trigger and no default behaviour to cancel.
-    
-    Is triggered after a player has finished login it, whether it was by making a new character (`OnPlayerEndCharGen`) or by logging in (`OnPlayerFinishLogin`)
+* OnPlayerResurrect(pid)  
+  Only has a handler trigger and no default behaviour to cancel.
+* OnPlayerFinishLogin(pid)  
+  Only has a handler trigger and no default behaviour to cancel.
+* OnPlayerAuthentified(pid)  
+  Only has a handler trigger and no default behaviour to cancel.  
+  Is triggered after a player has finished joining the server, whether it was by making a new character (`OnPlayerEndCharGen`) or by logging in (`OnPlayerFinishLogin`)
 
+>TODO: add new events
