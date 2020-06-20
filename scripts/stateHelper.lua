@@ -151,8 +151,10 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
 
         if type(variableTable) == "table" then
 
-            if variableTable.variableType == enumerations.variableType.INTEGER then
-                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue)
+            if variableTable.variableType == enumerations.variableType.SHORT then
+                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.SHORT)
+            elseif variableTable.variableType == enumerations.variableType.LONG then
+                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.LONG)
             elseif variableTable.variableType == enumerations.variableType.FLOAT then
                 tes3mp.AddClientGlobalFloat(variableId, variableTable.floatValue)
             end
@@ -219,7 +221,7 @@ function StateHelper:LoadMap(pid, stateObject)
     end
 end
 
-function StateHelper:SaveJournal(pid, stateObject)
+function StateHelper:SaveJournal(stateObject, journalItemArray)
 
     if stateObject.data.journal == nil then
         stateObject.data.journal = {}
@@ -229,22 +231,7 @@ function StateHelper:SaveJournal(pid, stateObject)
         stateObject.data.customVariables = {}
     end
 
-    for i = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
-
-        local journalItem = {
-            type = tes3mp.GetJournalItemType(pid, i),
-            index = tes3mp.GetJournalItemIndex(pid, i),
-            quest = tes3mp.GetJournalItemQuest(pid, i),
-            timestamp = {
-                daysPassed = WorldInstance.data.time.daysPassed,
-                month = WorldInstance.data.time.month,
-                day = WorldInstance.data.time.day
-            }
-        }
-
-        if journalItem.type == enumerations.journal.ENTRY then
-            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, i)
-        end
+    for _, journalItem in ipairs(journalItemArray) do
 
         table.insert(stateObject.data.journal, journalItem)
 
@@ -327,7 +314,7 @@ function StateHelper:SaveReputation(pid, stateObject)
     stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
 end
 
-function StateHelper:SaveClientScriptGlobal(pid, stateObject)
+function StateHelper:SaveClientScriptGlobal(stateObject, variables)
 
     if stateObject.data.clientVariables == nil then
         stateObject.data.clientVariables = {}
@@ -337,17 +324,8 @@ function StateHelper:SaveClientScriptGlobal(pid, stateObject)
         stateObject.data.clientVariables.globals = {}
     end
 
-    for index = 0, tes3mp.GetClientGlobalsSize() - 1 do
-        local variableId = tes3mp.GetClientGlobalId(index)
-        local variableTable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
-
-        if variableTable.variableType == enumerations.variableType.INTEGER then
-            variableTable.intValue = tes3mp.GetClientGlobalIntValue(index)
-        elseif variableTable.variableType == enumerations.variableType.FLOAT then
-            variableTable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
-        end
-
-        stateObject.data.clientVariables.globals[variableId] = variableTable
+    for id, variable in pairs (variables) do
+        stateObject.data.clientVariables.globals[id] = variable
     end
 end
 

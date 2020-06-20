@@ -1260,8 +1260,8 @@ function BasePlayer:LoadJournal()
     stateHelper:LoadJournal(self.pid, self)
 end
 
-function BasePlayer:SaveJournal()
-    stateHelper:SaveJournal(self.pid, self)
+function BasePlayer:SaveJournal(journalItemArray)
+    stateHelper:SaveJournal(self, journalItemArray)
 end
 
 function BasePlayer:LoadFactionRanks()
@@ -1316,8 +1316,8 @@ function BasePlayer:LoadClientScriptVariables()
     stateHelper:LoadClientScriptVariables(self.pid, self)
 end
 
-function BasePlayer:SaveClientScriptGlobal()
-    stateHelper:SaveClientScriptGlobal(self.pid, self)
+function BasePlayer:SaveClientScriptGlobal(variables)
+    stateHelper:SaveClientScriptGlobal(self, variables)
 end
 
 function BasePlayer:LoadDestinationOverrides(pid)

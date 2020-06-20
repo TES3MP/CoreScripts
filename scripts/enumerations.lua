@@ -7,7 +7,7 @@ enumerations.aiPrintableAction = { CANCEL = "cancelling current AI", ACTIVATE = 
     COMBAT = "initiating combat with", ESCORT = "escorting", FOLLOW = "following", TRAVEL = "travelling to",
     WANDER = "wandering" }
 enumerations.container = { SET = 0, ADD = 1, REMOVE = 2 }
-enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4 }
+enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4, RESTOCK_RESULT = 5 }
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 enumerations.inventory = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.journal = { ENTRY = 0, INDEX = 1 }
@@ -22,6 +22,6 @@ enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 
     SPELL = 20, STATIC = 21, WEAPON = 22 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
-enumerations.variableType = { INTEGER = 0, FLOAT = 1 }
+enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2 }
 
 return enumerations

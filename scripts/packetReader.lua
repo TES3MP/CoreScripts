@@ -213,7 +213,134 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
-packetReader.GetRecordEffects = function(recordIndex)
+packetReader.GetPlayerJournalItemArray = function(pid)
+
+    local journalItemArray = {}
+    local journalChangesCount = tes3mp.GetJournalChangesSize(pid)
+
+    for index = 0, journalChangesCount - 1 do
+        local journalItem = {
+            type = tes3mp.GetJournalItemType(pid, index),
+            index = tes3mp.GetJournalItemIndex(pid, index),
+            quest = tes3mp.GetJournalItemQuest(pid, index),
+            timestamp = {
+                daysPassed = WorldInstance.data.time.daysPassed,
+                month = WorldInstance.data.time.month,
+                day = WorldInstance.data.time.day
+            }
+        }
+
+        if journalItem.type == enumerations.journal.ENTRY then
+            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, index)
+        end
+
+        table.insert(journalItemArray, journalItem)
+    end
+
+    return journalItemArray
+end
+
+packetReader.GetWorldMapTileArray = function()
+
+    local mapTileArray = {}
+    local mapTileCount = tes3mp.GetMapChangesSize()
+
+    for index = 0, mapTileCount - 1 do
+        mapTile = {
+            cellX = tes3mp.GetMapTileCellX(index),
+            cellY = tes3mp.GetMapTileCellY(index),
+        }
+
+        mapTile.filename = mapTile.cellX .. ", " .. mapTile.cellY .. ".png"
+
+        table.insert(mapTileArray, mapTile)
+    end
+
+    return mapTileArray
+end
+
+packetReader.GetClientScriptGlobalPacketTable = function()
+
+    local variables = {}
+    local variableCount = tes3mp.GetClientGlobalsSize()
+
+    for index = 0, variableCount - 1 do
+        local id = tes3mp.GetClientGlobalId(index)
+        local variable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
+
+        if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
+            variable.variableType) then
+            variable.intValue = tes3mp.GetClientGlobalIntValue(index)
+        elseif variable.variableType == enumerations.variableType.FLOAT then
+            variable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
+        end
+
+        variables[id] = variable
+    end
+
+    return variables
+end
+
+packetReader.GetRecordDynamicArray = function(pid)
+
+    local recordArray = {}
+    local recordCount = tes3mp.GetRecordCount(pid)
+    local recordNumericalType = tes3mp.GetRecordType(pid)
+
+    for recordIndex = 0, recordCount - 1 do
+        local record = {}
+
+        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
+            record.name = tes3mp.GetRecordName(recordIndex)
+        end
+
+        if recordNumericalType == enumerations.recordType.SPELL then
+            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
+            record.cost = tes3mp.GetRecordCost(recordIndex)
+            record.flags = tes3mp.GetRecordFlags(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+        elseif recordNumericalType == enumerations.recordType.POTION then
+            record.weight = tes3mp.GetRecordWeight(recordIndex)
+            record.value = tes3mp.GetRecordValue(recordIndex)
+            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
+            record.icon = tes3mp.GetRecordIcon(recordIndex)
+            record.model = tes3mp.GetRecordModel(recordIndex)
+            record.script = tes3mp.GetRecordScript(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+        elseif recordNumericalType == enumerations.recordType.ENCHANTMENT then
+            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
+            record.cost = tes3mp.GetRecordCost(recordIndex)
+            record.charge = tes3mp.GetRecordCharge(recordIndex)
+            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
+            record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+            record.clientsideEnchantmentId = tes3mp.GetRecordId(recordIndex)
+
+        else
+            record.baseId = tes3mp.GetRecordBaseId(recordIndex)
+            record.enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
+
+            -- Enchanted item records always have client-set ids for their enchantments
+            -- when received by us, so we need to check for the server-set ids matching
+            -- them in the player's unresolved enchantments
+            local clientEnchantmentId = tes3mp.GetRecordEnchantmentId(recordIndex)
+            record.enchantmentId = Players[pid].unresolvedEnchantments[clientEnchantmentId]
+
+            -- Stop tracking this as an unresolved enchantment, assuming the enchantment
+            -- itself wasn't previously denied
+            if record.enchantmentId ~= nil and Players[pid] ~= nil then
+                Players[pid].unresolvedEnchantments[clientEnchantmentId] = nil
+            end
+        end
+
+        table.insert(recordArray, record)
+    end
+
+    return recordArray
+end
+
+packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}
     local effectCount = tes3mp.GetRecordEffectCount(recordIndex)

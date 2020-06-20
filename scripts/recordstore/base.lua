@@ -238,7 +238,7 @@ function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEvery
     end
 
     for _, recordId in pairs(idArray) do
-        if not tableHelper.containsValue(Players[pid].generatedRecordsReceived, recordId) then
+        if recordList[recordId] ~= nil and not tableHelper.containsValue(Players[pid].generatedRecordsReceived, recordId) then
 
             table.insert(Players[pid].generatedRecordsReceived, recordId)
             table.insert(validIdArray, recordId)
@@ -331,142 +331,10 @@ function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray
     return nil
 end
 
-function BaseRecordStore:SaveGeneratedEnchantedItems(pid)
-
-    if self.storeType ~= "armor" and self.storeType ~= "book" and
-        self.storeType ~= "clothing" and self.storeType ~= "weapon" then
-        return
-    end
-
-    local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
-
-    for recordIndex = 0, recordCount - 1 do
-
-        -- Enchanted item records always have client-set ids for their enchantments
-        -- when received by us, so we need to check for the server-set ids matching
-        -- them in the player's unresolved enchantments
-        local clientEnchantmentId = tes3mp.GetRecordEnchantmentId(recordIndex)
-        local serverEnchantmentId = Players[pid].unresolvedEnchantments[clientEnchantmentId]
-
-        if serverEnchantmentId ~= nil then
-
-            -- Stop tracking this as an unresolved enchantment
-            Players[pid].unresolvedEnchantments[clientEnchantmentId] = nil
-
-            local recordId = self:GenerateRecordId()
-
-            -- We don't need to track all the details of the enchanted items, just their base
-            -- id and their enchantment information
-            local record = {
-                baseId = tes3mp.GetRecordBaseId(recordIndex),
-                name = tes3mp.GetRecordName(recordIndex),
-                enchantmentId = serverEnchantmentId,
-                enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
-            }
-
-            self.data.generatedRecords[recordId] = record
-            table.insert(recordAdditions, { index = recordIndex, id = recordId,
-                enchantmentId = serverEnchantmentId })
-        end
-    end
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedEnchantments(pid)
-
-    if self.storeType ~= "enchantment" then return end
-
-    local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
-
-    for recordIndex = 0, recordCount - 1 do
-
-        local recordId = self:GenerateRecordId()
-
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            subtype = tes3mp.GetRecordSubtype(recordIndex),
-            cost = tes3mp.GetRecordCost(recordIndex),
-            charge = tes3mp.GetRecordCharge(recordIndex),
-            autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
-        }
-
+function BaseRecordStore:SaveGeneratedRecords(recordTable)
+    for recordId, record in pairs(recordTable) do
         self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { index = recordIndex, id = recordId,
-            clientsideId = tes3mp.GetRecordId(recordIndex) })
     end
-
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedPotions(pid)
-
-    if self.storeType ~= "potion" then return end
-
-    local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
-
-    for recordIndex = 0, recordCount - 1 do
-
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            name = tes3mp.GetRecordName(recordIndex),
-            weight = tes3mp.GetRecordWeight(recordIndex),
-            value = tes3mp.GetRecordValue(recordIndex),
-            autoCalc = tes3mp.GetRecordAutoCalc(recordIndex),
-            icon = tes3mp.GetRecordIcon(recordIndex),
-            model = tes3mp.GetRecordModel(recordIndex),
-            script = tes3mp.GetRecordScript(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
-        }
-
-        -- Is there already a record exactly like this one, icon and model aside?
-        -- If so, we'll just reuse it the way OpenMW would
-        local recordId = self:GetMatchingRecordId(record, self.data.generatedRecords,
-            Players[pid].data.recordLinks.potion, {"icon", "model"}, true, 25)
-
-        if recordId == nil then
-            recordId = self:GenerateRecordId()
-            self.data.generatedRecords[recordId] = record
-        end
-
-        table.insert(recordAdditions, { index = recordIndex, id = recordId })
-    end
-    return recordAdditions
-end
-
-function BaseRecordStore:SaveGeneratedSpells(pid)
-
-    if self.storeType ~= "spell" then return end
-
-    local recordAdditions = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
-
-    for recordIndex = 0, recordCount - 1 do
-
-        local recordId = self:GenerateRecordId()
-
-        local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
-        tes3mp.LogAppend(enumerations.log.ERROR, "- Effects have count " .. effectCount)
-
-        local record = {
-            name = tes3mp.GetRecordName(recordIndex),
-            subtype = tes3mp.GetRecordSubtype(recordIndex),
-            cost = tes3mp.GetRecordCost(recordIndex),
-            flags = tes3mp.GetRecordFlags(recordIndex),
-            effects = packetReader.GetRecordEffects(recordIndex)
-        }
-
-        self.data.generatedRecords[recordId] = record
-        table.insert(recordAdditions, { index = recordIndex, id = recordId })
-    end
-    return recordAdditions
 end
 
 return BaseRecordStore

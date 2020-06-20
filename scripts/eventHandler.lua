@@ -137,6 +137,19 @@ eventHandler.InitializeDefaultValidators = function()
             end
         end
     end)
+
+    -- Ignore packets with global variables that are listed under clientVariableScopes.globals.ignored
+    customEventHooks.registerValidator("OnClientScriptGlobal", function(eventStatus, pid, variables)
+
+        for id, variable in pairs(variables) do
+            if tableHelper.containsValue(clientVariableScopes.globals.ignored, id) then
+                tes3mp.LogAppend(enumerations.log.INFO, "- Ignoring attempt at setting global variable " .. id ..
+                    " because it is listed as an ignored variable in clientVariableScopes")
+                return customEventHooks.makeEventStatus(false, false)
+            end
+        end
+    end)
+
 end
 
 eventHandler.InitializeDefaultHandlers = function()
@@ -794,19 +807,22 @@ end
 
 eventHandler.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid})
+
+        local journalItemArray = packetReader.GetPlayerJournalItemArray(pid)
+
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid, journalItemArray})
         if eventStatus.validDefaultHandler then
             if config.shareJournal == true then
-                WorldInstance:SaveJournal(pid)
+                WorldInstance:SaveJournal(journalItemArray)
 
                 -- Send this PlayerJournal packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
                 tes3mp.SendJournalChanges(pid, true, true)
             else
-                Players[pid]:SaveJournal()
+                Players[pid]:SaveJournal(journalItemArray)
             end
         end
-        customEventHooks.triggerHandlers("OnPlayerJournal", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerJournal", eventStatus, {pid, journalItemArray})
     end
 end
 
@@ -1414,19 +1430,15 @@ eventHandler.OnRecordDynamic = function(pid)
         local isAllowed = true
         local rejectedRecords = {}
 
-        local records = {}
+        local recordArray = packetReader.GetRecordDynamicArray(pid)
+        local recordTable = {}
         
-        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
-            local recordCount = tes3mp.GetRecordCount(pid)
-            
-            for recordIndex = 0, recordCount - 1 do
-                local record = {}
-                recordName = tes3mp.GetRecordName(recordIndex)
-
-                if not logicHandler.IsNameAllowed(recordName) then
+        if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then            
+            for _, record in pairs(recordArray) do
+                if not logicHandler.IsNameAllowed(record.name) then
                     isAllowed = false
 
-                    Players[pid]:Message("You are not allowed to create a record called " .. recordName .. "\n")
+                    Players[pid]:Message("You are not allowed to create a record called " .. record.name .. "\n")
                 end
             end
         end
@@ -1439,7 +1451,7 @@ eventHandler.OnRecordDynamic = function(pid)
 
         local storeType = string.lower(tableHelper.getIndexByValue(enumerations.recordType, recordNumericalType))
         local recordStore = RecordStores[storeType]
-        local isEnchantable, recordAdditions
+        local isEnchantable
 
         if recordStore == nil then
             tes3mp.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " ..
@@ -1449,50 +1461,46 @@ eventHandler.OnRecordDynamic = function(pid)
             isEnchantable = tableHelper.containsValue(config.enchantableRecordTypes, storeType)
         end
         
-        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid})
+        local eventStatus = customEventHooks.triggerValidators("OnRecordDynamic", {pid, recordArray})
         
         if eventStatus.validDefaultHandler then
-        
-            if storeType == "spell" then
-                recordAdditions = recordStore:SaveGeneratedSpells(pid)
-            elseif storeType == "potion" then
-                recordAdditions = recordStore:SaveGeneratedPotions(pid)
-            elseif storeType == "enchantment" then
-                recordAdditions = recordStore:SaveGeneratedEnchantments(pid)
-            elseif isEnchantable then
-                recordAdditions = recordStore:SaveGeneratedEnchantedItems(pid)
-            end
 
-            tes3mp.CopyReceivedWorldstateToStore()
+            for _, record in ipairs(recordArray) do
 
-            -- Iterate through the record additions and make any necessary adjustments
-            for _, recordAddition in pairs(recordAdditions) do
+                local recordId
 
-                -- Set the server-generated ids of the records in our stored copy of the
-                -- RecordsDynamic packet before we send it to the players
-                tes3mp.SetRecordIdByIndex(recordAddition.index, recordAddition.id)
+                -- Is there already a record exactly like this one, icon and model aside?
+                -- If so, we'll just reuse it the way OpenMW would
+                if storeType == "potion" then
+
+                    recordId = recordStore:GetMatchingRecordId(record, recordStore.data.generatedRecords,
+                        Players[pid].data.recordLinks[storeType], {"icon", "model"}, true, 25)
+                end
+
+                if recordId == nil then
+                    recordId = recordStore:GenerateRecordId()
+                end
 
                 if storeType == "enchantment" then
                     -- We need to store this enchantment's original client-generated id
                     -- on this player so we can match it with its server-generated correct
                     -- id once the player sends the record of the enchanted item they've
                     -- used it on
-                    Players[pid].unresolvedEnchantments[recordAddition.clientsideId] = recordAddition.id
-                elseif isEnchantable then
-                    -- Set the server-generated id for this enchanted item's enchantment
-                    tes3mp.SetRecordEnchantmentIdByIndex(recordAddition.index, recordAddition.enchantmentId)
+                    Players[pid].unresolvedEnchantments[record.clientsideEnchantmentId] = recordId
+                    record.clientsideEnchantmentId = nil
                 end
 
-                -- This record will be sent to everyone on the server just after this loop,
-                -- so track it as having already been received by players
-                for _, player in pairs(Players) do
-                    table.insert(player.generatedRecordsReceived, recordAddition.id)
-                end
+                recordTable[recordId] = record
             end
 
-            -- Send this RecordDynamic packet to other players (sendToOthersPlayers is true),
-            -- and also send it to the player we got it from (skipAttachedPlayer is false)
-            tes3mp.SendRecordDynamic(pid, true, false)
+            recordStore:SaveGeneratedRecords(recordTable)
+            recordStore:LoadGeneratedRecords(pid, recordTable, tableHelper.getArrayFromIndexes(recordTable), true)
+
+            for _, player in pairs(Players) do
+                for recordId, record in pairs(recordTable) do
+                    table.insert(player.generatedRecordsReceived, recordId)
+                end
+            end
 
             -- Add the final spell to the player's spellbook
             if storeType == "spell" then
@@ -1500,11 +1508,11 @@ eventHandler.OnRecordDynamic = function(pid)
                 tes3mp.ClearSpellbookChanges(pid)
                 tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
 
-                for _, recordAddition in pairs(recordAdditions) do
-                    table.insert(Players[pid].data.spellbook, recordAddition.id)
-                    tes3mp.AddSpell(pid, recordAddition.id)
+                for recordId, record in pairs(recordTable) do
+                    table.insert(Players[pid].data.spellbook, recordId)
+                    tes3mp.AddSpell(pid, recordId)
 
-                    Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
+                    Players[pid]:AddLinkToRecord(storeType, recordId)
                 end
                 
                 tes3mp.SendSpellbookChanges(pid)
@@ -1518,20 +1526,20 @@ eventHandler.OnRecordDynamic = function(pid)
 
                 local itemArray = {}
 
-                for _, recordAddition in pairs(recordAdditions) do
+                for recordId, record in pairs(recordTable) do
 
-                    local item = { refId = recordAddition.id, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
+                    local item = { refId = recordId, count = 1, charge = -1, enchantmentCharge = -1, soul = "" }
                     inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
                         item.enchantmentCharge, item.soul)
                     table.insert(itemArray, item)
 
-                    Players[pid]:AddLinkToRecord(storeType, recordAddition.id)
+                    Players[pid]:AddLinkToRecord(storeType, recordId)
 
                     -- If this is an enchantable item record, add a link to it from its associated
                     -- enchantment record
                     if isEnchantable then
-                        enchantmentStore:AddLinkToRecord(recordAddition.enchantmentId,
-                            recordAddition.id, storeType)
+                        enchantmentStore:AddLinkToRecord(record.enchantmentId,
+                            recordId, storeType)
                     end
                 end
 
@@ -1542,7 +1550,7 @@ eventHandler.OnRecordDynamic = function(pid)
                 recordStore:QuicksaveToDrive()
             end)
         end
-        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnRecordDynamic", eventStatus, {pid, recordTable})
     end
 end
 
@@ -1564,9 +1572,13 @@ end
 
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid})
+
+        tes3mp.ReadReceivedWorldstate()
+        local mapTileArray = packetReader.GetWorldMapTileArray()
+
+        local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid, mapTileArray})
         if eventStatus.validDefaultHandler then
-            WorldInstance:SaveMapTiles(pid)
+            WorldInstance:SaveMapTiles(mapTileArray)
 
             if config.shareMapExploration == true then
                 tes3mp.CopyReceivedWorldstateToStore()
@@ -1576,7 +1588,7 @@ eventHandler.OnWorldMap = function(pid)
                 tes3mp.SendWorldMap(pid, true, true)
             end
         end
-        customEventHooks.triggerHandlers("OnWorldMap", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnWorldMap", eventStatus, {pid, mapTileArray})
     end
 end
 
@@ -1621,84 +1633,55 @@ eventHandler.OnClientScriptGlobal = function(pid)
 
         tes3mp.ReadReceivedWorldstate()
 
-        -- Iterate through the global IDs in the ScriptGlobalShort packet and only sync and save them
-        -- if all their ids are valid
-        local isAllowed = true
-        local rejectedIds = {}
-        local globalIds = {}
+        local variables = packetReader.GetClientScriptGlobalPacketTable()
+        local eventStatus = customEventHooks.triggerValidators("OnClientScriptGlobal", {pid, variables})
+        
+        if eventStatus.validDefaultHandler then
 
-        for index = 0, tes3mp.GetClientGlobalsSize() - 1 do
-            local globalId = tes3mp.GetClientGlobalId(index)
-            local variableType = tes3mp.GetClientGlobalVariableType(index)
-            local value
+            local shouldSync = false
 
-            if variableType == enumerations.variableType.INTEGER then
-                value = tes3mp.GetClientGlobalIntValue(index)
-            elseif variableType == enumerations.variableType.FLOAT then
-                value = tes3mp.GetClientGlobalFloatValue(index)
+            -- Iterate through the global IDs in the ClientScriptGlobal packet and only sync and save them
+            -- when applicable
+            for id, variable in pairs(variables) do
+
+                local isKillSync, isQuestSync, isFactionSync, isWorldwideSync = false, false, false, false
+
+                isKillSync = tableHelper.containsValue(clientVariableScopes.globals.kills, id)
+
+                if not isKillSync then
+                    isQuestSync = config.shareJournal == true and
+                        tableHelper.containsValue(clientVariableScopes.globals.quest, id)
+                end
+
+                if not isQuestSync then
+                    isFactionSync = config.shareFactionRanks == true and
+                        tableHelper.containsValue(clientVariableScopes.globals.faction, id)
+                end
+
+                if not isFactionSync then
+                    isWorldwideSync = tableHelper.containsValue(clientVariableScopes.globals.worldwide, id)
+                end
+
+                if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
+                    WorldInstance:SaveClientScriptGlobal(variables)
+                    shouldSync = true
+                else
+                    Players[pid]:SaveClientScriptGlobal(variables)
+                end
             end
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- global " .. globalId .. " is being set to value " .. value)
-
-            if tableHelper.containsValue(clientVariableScopes.globals.ignored, globalId) then
-                table.insert(rejectedIds, globalId)
-                isAllowed = false
-            else
-                table.insert(globalIds, globalId)
+            if shouldSync then
+                tes3mp.CopyReceivedWorldstateToStore()
+                -- The client already has this global value on their client, so we
+                -- only send it to other players
+                -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
+                tes3mp.SendClientScriptGlobal(pid, true, true)
+                tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ClientScriptGlobal from " ..
+                    logicHandler.GetChatName(pid) .. " about " .. tableHelper.concatenateTableIndexes(variables, ", "))
             end
         end
         
-        if isAllowed then
-            local eventStatus = customEventHooks.triggerValidators("OnClientScriptGlobal", {pid, globalIds})
-            
-            if eventStatus.validDefaultHandler then
-
-                local shouldSync = false
-
-                for _, globalId in pairs(globalIds) do
-
-                    local isKillSync, isQuestSync, isFactionSync, isWorldwideSync = false, false, false, false
-
-                    isKillSync = tableHelper.containsValue(clientVariableScopes.globals.kills, globalId)
-
-                    if not isKillSync then
-                        isQuestSync = config.shareJournal == true and
-                            tableHelper.containsValue(clientVariableScopes.globals.quest, globalId)
-                    end
-
-                    if not isQuestSync then
-                        isFactionSync = config.shareFactionRanks == true and
-                            tableHelper.containsValue(clientVariableScopes.globals.faction, globalId)
-                    end
-
-                    if not isFactionSync then
-                        isWorldwideSync = tableHelper.containsValue(clientVariableScopes.globals.worldwide, globalId)
-                    end
-
-                    if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
-                        WorldInstance:SaveClientScriptGlobal(pid)
-                        shouldSync = true
-                    else
-                        Players[pid]:SaveClientScriptGlobal()
-                    end
-                end
-
-                if shouldSync then
-                    tes3mp.CopyReceivedWorldstateToStore()
-                    -- The client already has this global value on their client, so we
-                    -- only send it to other players
-                    -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
-                    tes3mp.SendClientScriptGlobal(pid, true, true)
-                    tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ClientScriptGlobal from " ..
-                        logicHandler.GetChatName(pid) .. " about " .. tableHelper.concatenateArrayValues(globalIds, 1, ", "))
-                end
-            end
-            
-            customEventHooks.triggerHandlers("OnClientScriptGlobal", eventStatus, {pid, globalIds})
-        else
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected ClientScriptGlobal from " .. logicHandler.GetChatName(pid) ..
-                " about " .. tableHelper.concatenateArrayValues(rejectedIds, 1, ", "))
-        end
+        customEventHooks.triggerHandlers("OnClientScriptGlobal", eventStatus, {pid, variables})
     else
         tes3mp.Kick(pid)
     end

@@ -267,8 +267,8 @@ function BaseWorld:LoadTime(pid, forEveryone)
     tes3mp.SendWorldTime(pid, forEveryone)
 end
 
-function BaseWorld:SaveJournal(pid)
-    stateHelper:SaveJournal(pid, self)
+function BaseWorld:SaveJournal(journalItemArray)
+    stateHelper:SaveJournal(self, journalItemArray)
 end
 
 function BaseWorld:SaveFactionRanks(pid)
@@ -295,8 +295,8 @@ function BaseWorld:SaveReputation(pid)
     stateHelper:SaveReputation(pid, self)
 end
 
-function BaseWorld:SaveClientScriptGlobal(pid)
-    stateHelper:SaveClientScriptGlobal(pid, self)
+function BaseWorld:SaveClientScriptGlobal(variables)
+    stateHelper:SaveClientScriptGlobal(self, variables)
 end
 
 function BaseWorld:SaveKills(pid)
@@ -324,17 +324,11 @@ function BaseWorld:SaveMapExploration(pid)
     stateHelper:SaveMapExploration(pid, self)
 end
 
-function BaseWorld:SaveMapTiles(pid)
+function BaseWorld:SaveMapTiles(mapTiles)
 
-    tes3mp.ReadReceivedWorldstate()
-
-    for index = 0, tes3mp.GetMapChangesSize() - 1 do
-
-        local cellX = tes3mp.GetMapTileCellX(index)
-        local cellY = tes3mp.GetMapTileCellY(index)
-        local filename = cellX .. ", " .. cellY .. ".png"
-
-        tes3mp.SaveMapTileImageFile(index, config.dataPath .. "/map/" .. filename)
+    for index, mapTile in ipairs(mapTiles) do
+        -- We need to save the image file using the original index in the packet
+        tes3mp.SaveMapTileImageFile(index - 1, config.dataPath .. "/map/" .. mapTile.filename)
     end
 end
 
