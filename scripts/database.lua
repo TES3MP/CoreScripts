@@ -147,7 +147,7 @@ function Database:SavePlayer(dbPid, data)
             self:DeleteRows(tableName, string.format("WHERE dbPid = '%s'", dbPid))
 
             for slot, slotObject in pairs(categoryTable) do
-                local tempTable = tableHelper.shallowCopy(slotObject)
+                local tempTable = tableHelper.deepCopy(slotObject)
                 tempTable.dbPid = dbPid
                 tempTable.slot = slot
                 self:InsertRow(tableName, tempTable)
@@ -156,7 +156,7 @@ function Database:SavePlayer(dbPid, data)
 
             local tableName = "player_" .. category
             tes3mp.LogMessage(enumerations.log.INFO, "Saving category " .. category)
-            local tempTable = tableHelper.shallowCopy(categoryTable)
+            local tempTable = tableHelper.deepCopy(categoryTable)
             tempTable.dbPid = dbPid
             self:InsertRow(tableName, tempTable)
         end
@@ -207,7 +207,7 @@ function Database:SaveWorld(data)
     for category, categoryTable in pairs(data) do
 
         local tableName = "world_" .. category
-        local tempTable = tableHelper.shallowCopy(categoryTable)
+        local tempTable = tableHelper.deepCopy(categoryTable)
         tempTable.rowid = 0
         self:InsertRow(tableName, tempTable)
     end

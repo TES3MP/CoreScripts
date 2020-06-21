@@ -301,7 +301,7 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
         elseif recordNumericalType == enumerations.recordType.POTION then
-            record.weight = tes3mp.GetRecordWeight(recordIndex)
+            record.weight = math.floor(tes3mp.GetRecordWeight(recordIndex) * 100) / 100
             record.value = tes3mp.GetRecordValue(recordIndex)
             record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
             record.icon = tes3mp.GetRecordIcon(recordIndex)
@@ -309,12 +309,17 @@ packetReader.GetRecordDynamicArray = function(pid)
             record.script = tes3mp.GetRecordScript(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
+            -- Temporary data that should be discarded afterwards
+            record.quantity = tes3mp.GetRecordQuantity(recordIndex)
+
         elseif recordNumericalType == enumerations.recordType.ENCHANTMENT then
             record.subtype = tes3mp.GetRecordSubtype(recordIndex)
             record.cost = tes3mp.GetRecordCost(recordIndex)
             record.charge = tes3mp.GetRecordCharge(recordIndex)
             record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
+
+            -- Temporary data that should be discarded afterwards
             record.clientsideEnchantmentId = tes3mp.GetRecordId(recordIndex)
 
         else

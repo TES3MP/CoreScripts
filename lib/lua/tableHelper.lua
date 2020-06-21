@@ -445,8 +445,12 @@ function tableHelper.isEqualTo(firstTable, secondTable, ignoredKeys)
     return true
 end
 
--- Copy the value of a variable, useful for copying a table's top level values and direct
--- children to another table
+-- Copy the value of a variable in a naive and simple way, useful for copying a table's top
+-- level values and direct children to another table, but still assigning references
+-- for deeper children which can cause unexpected behavior
+--
+-- Note: This is only kept here for the sake of backwards compatibility, with use of the
+--       deepCopy() method from below being preferable in any new scripts.
 --
 -- Based on http://lua-users.org/wiki/CopyTable
 function tableHelper.shallowCopy(inputValue)
@@ -460,6 +464,29 @@ function tableHelper.shallowCopy(inputValue)
         for innerKey, innerValue in pairs(inputValue) do
             newValue[innerKey] = innerValue
         end
+    else -- number, string, boolean, etc
+        newValue = inputValue
+    end
+
+    return newValue
+end
+
+-- Copy the value of a variable in a deep way, useful for copying a table's top level values
+-- and direct children to another table safely, also handling metatables
+--
+-- Based on http://lua-users.org/wiki/CopyTable
+function tableHelper.deepCopy(inputValue)
+
+    local inputType = type(inputValue)
+
+    local newValue
+
+    if inputType == "table" then
+        newValue = {}
+        for innerKey, innerValue in next, inputValue, nil do
+            newValue[tableHelper.deepCopy(innerKey)] = tableHelper.deepCopy(innerValue)
+        end
+        setmetatable(newValue, tableHelper.deepCopy(getmetatable(inputValue)))
     else -- number, string, boolean, etc
         newValue = inputValue
     end
