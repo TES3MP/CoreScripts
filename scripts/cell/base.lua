@@ -569,6 +569,17 @@ function BaseCell:SaveDoorStates(objects)
     end
 end
 
+function BaseCell:SaveDoorDestinations(objects)
+
+    for uniqueIndex, object in pairs(objects) do
+
+        self:InitializeObjectData(uniqueIndex, object.refId)
+        self.data.objectData[uniqueIndex].doorDestination = object.doorDestination
+
+        tableHelper.insertValueIfMissing(self.data.packets.doorDestination, uniqueIndex)
+    end
+end
+
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -1259,6 +1270,23 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
+function BaseCell:LoadDoorDestinations(pid, objectData, uniqueIndexArray, forEveryone)
+    local objectCount = 0
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+    tes3mp.SetObjectListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+        packetBuilder.AddDoorDestination(uniqueIndex, objectData[uniqueIndex])
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendDoorDestination(forEveryone)
+    end
+end
+
 function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1819,6 +1847,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadObjectsScaled(pid, objectData, packets.scale)
     self:LoadObjectStates(pid, objectData, packets.state)
     self:LoadDoorStates(pid, objectData, packets.doorState)
+    self:LoadDoorDestinations(pid, objectData, packets.doorDestination)
 
     if self:HasContainerData() == true then
         tes3mp.LogAppend(enumerations.log.INFO, "- Had container data")
