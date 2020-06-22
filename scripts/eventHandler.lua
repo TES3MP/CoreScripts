@@ -361,6 +361,10 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     tes3mp.SetWaitAllowed(pid, config.allowWait)
     tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
     tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
+    tes3mp.ClearGameSettingValues(pid);
+    for setting, value in pairs(config.gameSettings) do
+        tes3mp.SetGameSettingValue(pid, setting, value)
+    end
     tes3mp.SendSettings(pid)
 
     logicHandler.SendClientScriptDisables(pid, false)

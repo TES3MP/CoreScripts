@@ -17,6 +17,10 @@ config.maxClientsPerIP = 3
 --       though you can use any integer value here
 config.difficulty = 0
 
+config.gameSettings = {
+    ["barter disposition change is permanent"] = "false"
+}
+
 -- The world time used for a newly created world
 config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
     daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }
