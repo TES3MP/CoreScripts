@@ -765,6 +765,9 @@ function BaseCell:SaveActorList(actors)
 end
 
 function BaseCell:SaveActorPositions()
+    if tableHelper.getCount(self.visitors) == 0 then
+        return
+    end
 
     tes3mp.ReadCellActorList(self.description)
     local actorListSize = tes3mp.GetActorListSize()
@@ -794,6 +797,9 @@ function BaseCell:SaveActorPositions()
 end
 
 function BaseCell:SaveActorStatsDynamic()
+    if tableHelper.getCount(self.visitors) == 0 then
+        return
+    end
 
     tes3mp.ReadCellActorList(self.description)
     local actorListSize = tes3mp.GetActorListSize()
