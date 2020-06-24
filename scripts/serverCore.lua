@@ -87,7 +87,7 @@ elseif config.databaseType == "sqlite" and doesModuleExist("luasql.sqlite3") the
     World = require("world.sql")
 end
 
-require('autoSave')
+autoSave = require('autoSave')
 
 require("customScripts")
 

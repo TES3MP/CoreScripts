@@ -121,6 +121,8 @@ function autoSave.QuicksaveToDrive(record)
         Players[record.id]:SaveCell()
         Players[record.id]:QuicksaveToDrive()
     elseif record.type == types.CELL then
+        LoadedCells[record.id]:SaveActorPositions()
+        LoadedCells[record.id]:SaveActorStatsDynamic()
         LoadedCells[record.id]:QuicksaveToDrive()
     elseif record.type == types.STORAGE then
         storage.Save(record.id)
@@ -142,6 +144,8 @@ function autoSave.SaveToDrive(record)
         Players[record.id]:SaveCell()
         Players[record.id]:SaveToDrive()
     elseif record.type == types.CELL then
+        LoadedCells[record.id]:SaveActorPositions()
+        LoadedCells[record.id]:SaveActorStatsDynamic()
         LoadedCells[record.id]:SaveToDrive()
     elseif record.type == types.STORAGE then
         storage.Save(record.id)
