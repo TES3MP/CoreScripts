@@ -65,7 +65,7 @@ packetReader.GetObjectPacketTables = function(packetType)
     for packetIndex = 0, objectListSize - 1 do
         local object, uniqueIndex, player, pid = nil, nil, nil, nil
         
-        if tableHelper.containsValue({"activate", "hit", "consoleCommand"}, packetType) then
+        if tableHelper.containsValue({"activate", "hit", "sound", "consoleCommand"}, packetType) then
 
             local isObjectPlayer = tes3mp.IsObjectPlayer(packetIndex)
 
@@ -79,7 +79,17 @@ packetReader.GetObjectPacketTables = function(packetType)
                 object.uniqueIndex = uniqueIndex
             end
 
-            if packetType == "activate" then
+            if packetType == "sound" then
+
+                local soundId = tes3mp.GetObjectSoundId(packetIndex)
+
+                if isObjectPlayer then
+                    player.soundId = soundId
+                else
+                    object.soundId = soundId
+                end
+
+            elseif packetType == "activate" then
 
                 local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(packetIndex)
 

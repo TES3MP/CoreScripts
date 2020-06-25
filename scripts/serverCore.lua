@@ -608,6 +608,12 @@ function OnObjectScale(pid, cellDescription)
     eventHandler.OnObjectScale(pid, cellDescription)
 end
 
+function OnObjectSound(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectSound\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnObjectSound(pid, cellDescription)
+end
+
 function OnObjectState(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectState\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
