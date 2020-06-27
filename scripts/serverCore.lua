@@ -15,7 +15,7 @@ threadHandler = require("threadHandler")
 
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
-require("serverCommandHooks")
+serverCommandHooks = require("serverCommandHooks")
 timers = require('timers')
 
 fileHelper = require("fileHelper")
@@ -301,7 +301,10 @@ function OnServerPostInit()
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 
+local exited = false
 function OnServerExit(errorState)
+    if exited then return end
+    exited = true
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
     local status, err = pcall(function()
@@ -692,6 +695,7 @@ function OnObjectLoopTimeExpiration(loopIndex)
 end
 
 function OnServerWindowInput(line)
+    line = line or ""
     tes3mp.LogMessage(enumerations.log.INFO, "[Server commmand] " .. line)
     eventHandler.OnServerWindowInput(line)
 end

@@ -6,9 +6,26 @@ local ranks = {
     OWNER = 3
 }
 
-local function commandError(pid, text)
-    tes3mp.SendMessage(pid, color.Error .. text .. color.Default .. "\n")
+local function commandInfo(pid, text, toEveryone, chatMessage)
+    chatMessage = chatMessage or text
+    chatMessage = chatMessage .. "\n"
+    if pid == serverCommandHooks.pid then
+        tes3mp.LogMessage(enumerations.log.INFO, text)
+        if toEveryone and next(Players) then
+            tes3mp.SendMessage(next(Players), chatMessage, true)
+        end
+    else
+        tes3mp.SendMessage(pid, chatMessage, toEveryone or false)
+    end
 end
+defaultCommands.info = commandInfo
+
+local function commandError(pid, text, toEveryone, chatMessage)
+    chatMessage = chatMessage or color.Error .. text .. color.Default
+    chatMessage = chatMessage .. "\n"
+    commandInfo(pid, text, toEveryone, chatMessage)
+end
+defaultCommands.error = commandError
 
 defaultCommands.help = function(pid)
     -- Check "scripts/menu/help.lua" if you want to change the contents of the help menus
@@ -30,10 +47,11 @@ defaultCommands.msg = function(pid, cmd, rawCmd)
         local targetPid = tonumber(rawCmd[2])
         message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
         message = message .. tableHelper.concatenateFromIndex(rawCmd, 3) .. "\n"
-        tes3mp.SendMessage(pid, message, false)
+        commandInfo(pid, message)
         tes3mp.SendMessage(targetPid, message, false)
     end
 end
+serverCommandHooks.registerCommand("message", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
 customCommandHooks.registerAlias("msg", "message")
 
@@ -315,12 +333,10 @@ local exitWarning = function(delay)
             min > 1 and "s" or "",
             sec > 0 and string.format(" %s second", sec) or "",
             sec > 1 and "s" or "",
-            "!\n"
+            "!"
         })
     end
-    for pid in pairs(Players) do
-        tes3mp.SendMessage(pid, color.DarkRed .. message)
-    end
+    commandInfo(serverCommandHooks.pid, message, true, color.DarkRed .. message .. color.Default)
 end
 function defaultCommands.exit(pid, cmd)
     local delay = cmd[2] and tonumber(cmd[2]) or time.minutes(1)
@@ -351,6 +367,7 @@ function defaultCommands.exit(pid, cmd)
         tes3mp.StopServer(0)
     end)
 end
+serverCommandHooks.registerCommand("exit", defaultCommands.exit)
 customCommandHooks.registerCommand("exit", defaultCommands.exit)
 customCommandHooks.setRankRequirement("exit", ranks.ADMIN)
 
@@ -491,15 +508,17 @@ function defaultCommands.kick(pid, cmd)
         else
             local message = logicHandler.GetChatName(targetPid) .. " was kicked from the server by " ..
                 logicHandler.GetChatName(pid) .. ".\n"
-            tes3mp.SendMessage(pid, message, true)
+            commandInfo(pid, message, true)
             Players[targetPid]:Kick()
         end
     end
 end
-customCommandHooks.registerCommand("kick", defaultCommands.teleport)
+serverCommandHooks.registerCommand("kick", defaultCommands.kick)
+customCommandHooks.registerCommand("kick", defaultCommands.kick)
 customCommandHooks.setRankRequirement("kick", ranks.MODERATOR)
 
 function defaultCommands.addAdmin(pid, cmd)
+    tableHelper.print(cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local targetPid = tonumber(cmd[2])
         local targetName = Players[targetPid].name
@@ -507,12 +526,15 @@ function defaultCommands.addAdmin(pid, cmd)
             commandError(pid, targetName .. " is already an Admin.")
         else
             local message = targetName .. " was promoted to Admin!\n"
-            tes3mp.SendMessage(pid, message, true)
+            commandInfo(pid, message, true)
             Players[targetPid].data.settings.staffRank = 2
             Players[targetPid]:QuicksaveToDrive()
         end
+    else
+        commandError(pid, "Player with pid " .. cmd[2] .. " not found!")
     end
 end
+serverCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
 customCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
 customCommandHooks.setRankRequirement("addadmin", ranks.OWNER)
 
@@ -527,7 +549,7 @@ function defaultCommands.removeAdmin(pid, cmd)
             commandError(pid, message)
         elseif Players[targetPid]:IsAdmin() then
             message = targetName .. " was demoted from Admin to Moderator!\n"
-            tes3mp.SendMessage(pid, message)
+            commandInfo(pid, message, true)
             Players[targetPid].data.settings.staffRank = 1
             Players[targetPid]:QuicksaveToDrive()
         else
@@ -536,7 +558,8 @@ function defaultCommands.removeAdmin(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("removeadmin", defaultCommands.addAdmin)
+serverCommandHooks.registerCommand("removeadmin", defaultCommands.removeAdmin)
+customCommandHooks.registerCommand("removeadmin", defaultCommands.removeAdmin)
 customCommandHooks.setRankRequirement("removeadmin", ranks.OWNER)
 
 function defaultCommands.addModerator(pid, cmd)
@@ -553,12 +576,13 @@ function defaultCommands.addModerator(pid, cmd)
             commandError(pid, message)
         else
             message = targetName .. " was promoted to Moderator!\n"
-            tes3mp.SendMessage(pid, message, true)
+            commandInfo(pid, message, true)
             Players[targetPid].data.settings.staffRank = 1
             Players[targetPid]:QuicksaveToDrive()
         end
     end
 end
+serverCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
 customCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
 customCommandHooks.setRankRequirement("addmoderator", ranks.ADMIN)
 
@@ -573,7 +597,7 @@ function defaultCommands.removeModerator(pid, cmd)
             commandError(pid, message)
         elseif Players[targetPid]:IsModerator() then
             message = targetName .. " was demoted from Moderator!\n"
-            tes3mp.SendMessage(pid, message, true)
+            commandInfo(pid, message, true)
             Players[targetPid].data.settings.staffRank = 0
             Players[targetPid]:QuicksaveToDrive()
         else
@@ -582,6 +606,7 @@ function defaultCommands.removeModerator(pid, cmd)
         end
     end
 end
+serverCommandHooks.registerCommand("removemoderator", defaultCommands.removeModerator)
 customCommandHooks.registerCommand("removemoderator", defaultCommands.removeModerator)
 customCommandHooks.setRankRequirement("removemoderator", ranks.ADMIN)
 
@@ -605,8 +630,8 @@ function defaultCommands.setRace(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("removemoderator", defaultCommands.addModerator)
-customCommandHooks.setRankRequirement("removemoderator", ranks.ADMIN)
+customCommandHooks.registerCommand("setRace", defaultCommands.setRace)
+customCommandHooks.setRankRequirement("setRace", ranks.ADMIN)
 
 function defaultCommands.teleport(pid, cmd)
     if cmd[2] ~= "all" then
@@ -822,7 +847,7 @@ function defaultCommands.setUseCreatureName(pid, cmd)
         tes3mp.SendShapeshift(targetPid)
     end
 end
-customCommandHooks.registerCommand("usecreaturename", defaultCommands.setDisguise)
+customCommandHooks.registerCommand("usecreaturename", defaultCommands.setUseCreatureName)
 customCommandHooks.setRankRequirement("usecreaturename", ranks.ADMIN)
 
 function defaultCommands.setMomentum(pid, cmd)
@@ -898,7 +923,7 @@ function defaultCommands.setConsole(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setconsole", defaultCommands.setDifficulty)
+customCommandHooks.registerCommand("setconsole", defaultCommands.setConsole)
 customCommandHooks.setRankRequirement("setconsole", ranks.ADMIN)
 
 function defaultCommands.setBedRest(pid, cmd)
@@ -1436,25 +1461,6 @@ end
 customCommandHooks.registerCommand("setday", defaultCommands.setDay)
 customCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
 
-function defaultCommands.setDay(pid, cmd)
-    local inputValue = tonumber(cmd[2])
-
-    if type(inputValue) == "number" then
-
-        local daysInMonth = WorldInstance.monthLengths[WorldInstance.data.time.month]
-
-        if inputValue <= daysInMonth then
-            WorldInstance.data.time.day = inputValue
-            WorldInstance:QuicksaveToDrive()
-            WorldInstance:LoadTime(pid, true)
-        else
-            tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
-        end
-    end
-end
-customCommandHooks.registerCommand("setday", defaultCommands.setDay)
-customCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
-
 function defaultCommands.setMonth(pid, cmd)
     local inputValue = tonumber(cmd[2])
 
@@ -1488,7 +1494,7 @@ function defaultCommands.setTimeScale(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
     end
 end
-customCommandHooks.registerCommand("settimescale", defaultCommands.setMonth)
+customCommandHooks.registerCommand("settimescale", defaultCommands.setTimeScale)
 customCommandHooks.setRankRequirement("settimescale", ranks.MODERATOR)
 
 function defaultCommands.setAi(pid, cmd)

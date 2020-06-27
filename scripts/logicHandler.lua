@@ -43,7 +43,7 @@ logicHandler.CheckPlayerValidity = function(pid, targetPid)
     local valid = false
     local sendMessage = true
 
-    if pid == nil then
+    if pid == nil or pid == serverCommandHooks.pid then
         sendMessage = false
     end
 
@@ -77,6 +77,10 @@ end
 logicHandler.GetChatName = function(pid)
     if pid == nil then
         return "Unlogged player (nil)"
+    end
+
+    if pid == serverCommandHooks.pid then
+        return "Server"
     end
 
     if Players[pid] ~= nil then

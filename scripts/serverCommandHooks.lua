@@ -2,9 +2,11 @@ local serverCommandHooks = {}
 serverCommandHooks.commands = {}
 serverCommandHooks.aliases = {}
 
-function serverCommandHooks.registerCommand(pattern, callback)
+serverCommandHooks.pid = -1
+
+function serverCommandHooks.registerCommand(cmd, callback)
     cmd = string.lower(cmd)
-    serverCommandHooks.commands[pattern] = callback
+    serverCommandHooks.commands[cmd] = callback
 end
 
 function serverCommandHooks.registerAlias(alias, cmd)
@@ -15,6 +17,7 @@ end
 function serverCommandHooks.validator(eventStatus, line)
     if eventStatus.validDefaultHandler then
         local cmd = (line:split(" "))
+        if not cmd[1] then return nil end
         cmd[1] = string.lower(cmd[1])
         local alias = serverCommandHooks.aliases[cmd[1]]
         if alias ~= nil then
@@ -22,10 +25,16 @@ function serverCommandHooks.validator(eventStatus, line)
         end
         local callback = serverCommandHooks.commands[cmd[1]]
         if callback ~= nil then
-            callback(-1, customCommandHooks.mergeQuotedArguments(cmd), cmd) -- match the chat command arguments
+            callback(
+                serverCommandHooks.pid, -- match the chat command arguments
+                customCommandHooks.mergeQuotedArguments(cmd),
+                cmd
+            )
             return customEventHooks.makeEventStatus(false, nil)
         end
     end
 end
 
 customEventHooks.registerValidator("OnServerWindowInput", serverCommandHooks.validator)
+
+return serverCommandHooks
