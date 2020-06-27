@@ -32,7 +32,7 @@ defaultCommands.help = function(pid)
     Players[pid].currentCustomMenu = "help player"
     menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 end
-customCommandHooks.registerCommand("help", defaultCommands.help)
+chatCommandHooks.registerCommand("help", defaultCommands.help)
 
 --
 -- Chat
@@ -52,14 +52,14 @@ defaultCommands.msg = function(pid, cmd, rawCmd)
     end
 end
 serverCommandHooks.registerCommand("message", defaultCommands.msg)
-customCommandHooks.registerCommand("message", defaultCommands.msg)
-customCommandHooks.registerAlias("msg", "message")
+chatCommandHooks.registerCommand("message", defaultCommands.msg)
+chatCommandHooks.registerAlias("msg", "message")
 
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-customCommandHooks.registerCommand("me", defaultCommands.me)
+chatCommandHooks.registerCommand("me", defaultCommands.me)
 
 defaultCommands.localMessage = function(pid, cmd, rawCmd)
     local cellDescription = Players[pid].data.location.cell
@@ -73,16 +73,16 @@ defaultCommands.localMessage = function(pid, cmd, rawCmd)
         end
     end
 end
-customCommandHooks.registerCommand("local", defaultCommands.localMessage)
-customCommandHooks.registerAlias("l", "local")
+chatCommandHooks.registerCommand("local", defaultCommands.localMessage)
+chatCommandHooks.registerAlias("l", "local")
 
 defaultCommands.greentext = function(pid, cmd, rawCmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
             ">" .. tableHelper.concatenateFromIndex(rawCmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
 end
-customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
-customCommandHooks.registerAlias("gt", "greentext")
+chatCommandHooks.registerCommand("greentext", defaultCommands.greentext)
+chatCommandHooks.registerAlias("gt", "greentext")
 
 --
 -- Party
@@ -116,7 +116,7 @@ defaultCommands.inviteAlly = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
+chatCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
@@ -149,7 +149,7 @@ defaultCommands.joinTeam = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
+chatCommandHooks.registerCommand("join", defaultCommands.joinTeam)
 
 defaultCommands.leaveTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
@@ -179,7 +179,7 @@ defaultCommands.leaveTeam = function(pid, cmd)
         tes3mp.SendMessage(pid, senderMessage, false)
     end
 end
-customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
+chatCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 
 --
 -- Server status
@@ -206,9 +206,9 @@ function defaultCommands.setLogLevel(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setloglevel", defaultCommands.setLogLevel)
-customCommandHooks.registerAlias("setenforcedloglevel", "setloglevel")
-customCommandHooks.setRankRequirement("setloglevel", ranks.ADMIN)
+chatCommandHooks.registerCommand("setloglevel", defaultCommands.setLogLevel)
+chatCommandHooks.registerAlias("setenforcedloglevel", "setloglevel")
+chatCommandHooks.setRankRequirement("setloglevel", ranks.ADMIN)
 
 local GetConnectedPlayerList = function()
     local lastPid = tes3mp.GetLastPlayerId()
@@ -240,8 +240,8 @@ defaultCommands.players = function(pid, cmd)
 
     tes3mp.ListBox(pid, guiHelper.ID.PLAYERSLIST, label, GetConnectedPlayerList())
 end
-customCommandHooks.registerCommand("players", defaultCommands.players)
-customCommandHooks.registerAlias("list", "players")
+chatCommandHooks.registerCommand("players", defaultCommands.players)
+chatCommandHooks.registerAlias("list", "players")
 
 local GetLoadedCellList = function()
     local list = ""
@@ -275,8 +275,8 @@ defaultCommands.cells = function(pid, cmd)
 
     tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedCellList())
 end
-customCommandHooks.registerCommand("cells", defaultCommands.cells)
-customCommandHooks.setRankRequirement("cells", ranks.MODERATOR)
+chatCommandHooks.registerCommand("cells", defaultCommands.cells)
+chatCommandHooks.setRankRequirement("cells", ranks.MODERATOR)
 
 local GetLoadedRegionList = function()
     local list = ""
@@ -314,8 +314,8 @@ defaultCommands.regions = function(pid, cmd)
 
     tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedRegionList())
 end
-customCommandHooks.registerCommand("regions", defaultCommands.regions)
-customCommandHooks.setRankRequirement("regions", ranks.MODERATOR)
+chatCommandHooks.registerCommand("regions", defaultCommands.regions)
+chatCommandHooks.setRankRequirement("regions", ranks.MODERATOR)
 
 local exitWarning = function(delay)
     local message = ""
@@ -368,8 +368,8 @@ function defaultCommands.exit(pid, cmd)
     end)
 end
 serverCommandHooks.registerCommand("exit", defaultCommands.exit)
-customCommandHooks.registerCommand("exit", defaultCommands.exit)
-customCommandHooks.setRankRequirement("exit", ranks.ADMIN)
+chatCommandHooks.registerCommand("exit", defaultCommands.exit)
+chatCommandHooks.setRankRequirement("exit", ranks.ADMIN)
 
 --
 -- Moderation
@@ -400,8 +400,8 @@ defaultCommands.ban = function(pid, cmd)
         commandError(pid, "Invalid input for ban.")
     end
 end
-customCommandHooks.registerCommand("ban", defaultCommands.ban)
-customCommandHooks.setRankRequirement("ban", ranks.MODERATOR)
+chatCommandHooks.registerCommand("ban", defaultCommands.ban)
+chatCommandHooks.setRankRequirement("ban", ranks.MODERATOR)
 
 defaultCommands.unban = function(pid, cmd)
     if cmd[2] == "ip" then
@@ -423,8 +423,8 @@ defaultCommands.unban = function(pid, cmd)
         commandError(pid, "Invalid input for unban.")
     end
 end
-customCommandHooks.registerCommand("unban", defaultCommands.unban)
-customCommandHooks.setRankRequirement("unban", ranks.MODERATOR)
+chatCommandHooks.registerCommand("unban", defaultCommands.unban)
+chatCommandHooks.setRankRequirement("unban", ranks.MODERATOR)
 
 defaultCommands.banlist = function(pid, cmd)
     local message
@@ -469,8 +469,8 @@ defaultCommands.banlist = function(pid, cmd)
 
     tes3mp.SendMessage(pid, message, false)
 end
-customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
-customCommandHooks.setRankRequirement("banlist", ranks.MODERATOR)
+chatCommandHooks.registerCommand("banlist", defaultCommands.banlist)
+chatCommandHooks.setRankRequirement("banlist", ranks.MODERATOR)
 
 defaultCommands.ipAddresses = function(pid, cmd)
     local targetName = tableHelper.concatenateFromIndex(cmd, 2)
@@ -493,9 +493,9 @@ defaultCommands.ipAddresses = function(pid, cmd)
         tes3mp.SendMessage(pid, message, false)
     end
 end
-customCommandHooks.registerCommand("ipaddresses", defaultCommands.ipAddresses)
-customCommandHooks.registerAlias("ips", "ipaddresses")
-customCommandHooks.setRankRequirement("ipaddress", ranks.MODERATOR)
+chatCommandHooks.registerCommand("ipaddresses", defaultCommands.ipAddresses)
+chatCommandHooks.registerAlias("ips", "ipaddresses")
+chatCommandHooks.setRankRequirement("ipaddress", ranks.MODERATOR)
 
 function defaultCommands.kick(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -514,8 +514,8 @@ function defaultCommands.kick(pid, cmd)
     end
 end
 serverCommandHooks.registerCommand("kick", defaultCommands.kick)
-customCommandHooks.registerCommand("kick", defaultCommands.kick)
-customCommandHooks.setRankRequirement("kick", ranks.MODERATOR)
+chatCommandHooks.registerCommand("kick", defaultCommands.kick)
+chatCommandHooks.setRankRequirement("kick", ranks.MODERATOR)
 
 function defaultCommands.addAdmin(pid, cmd)
     tableHelper.print(cmd)
@@ -535,8 +535,8 @@ function defaultCommands.addAdmin(pid, cmd)
     end
 end
 serverCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
-customCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
-customCommandHooks.setRankRequirement("addadmin", ranks.OWNER)
+chatCommandHooks.registerCommand("addadmin", defaultCommands.addAdmin)
+chatCommandHooks.setRankRequirement("addadmin", ranks.OWNER)
 
 function defaultCommands.removeAdmin(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -559,8 +559,8 @@ function defaultCommands.removeAdmin(pid, cmd)
     end
 end
 serverCommandHooks.registerCommand("removeadmin", defaultCommands.removeAdmin)
-customCommandHooks.registerCommand("removeadmin", defaultCommands.removeAdmin)
-customCommandHooks.setRankRequirement("removeadmin", ranks.OWNER)
+chatCommandHooks.registerCommand("removeadmin", defaultCommands.removeAdmin)
+chatCommandHooks.setRankRequirement("removeadmin", ranks.OWNER)
 
 function defaultCommands.addModerator(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -583,8 +583,8 @@ function defaultCommands.addModerator(pid, cmd)
     end
 end
 serverCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
-customCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
-customCommandHooks.setRankRequirement("addmoderator", ranks.ADMIN)
+chatCommandHooks.registerCommand("addmoderator", defaultCommands.addModerator)
+chatCommandHooks.setRankRequirement("addmoderator", ranks.ADMIN)
 
 function defaultCommands.removeModerator(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -607,8 +607,8 @@ function defaultCommands.removeModerator(pid, cmd)
     end
 end
 serverCommandHooks.registerCommand("removemoderator", defaultCommands.removeModerator)
-customCommandHooks.registerCommand("removemoderator", defaultCommands.removeModerator)
-customCommandHooks.setRankRequirement("removemoderator", ranks.ADMIN)
+chatCommandHooks.registerCommand("removemoderator", defaultCommands.removeModerator)
+chatCommandHooks.setRankRequirement("removemoderator", ranks.ADMIN)
 
 function defaultCommands.setRace(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -630,8 +630,8 @@ function defaultCommands.setRace(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setRace", defaultCommands.setRace)
-customCommandHooks.setRankRequirement("setRace", ranks.ADMIN)
+chatCommandHooks.registerCommand("setRace", defaultCommands.setRace)
+chatCommandHooks.setRankRequirement("setRace", ranks.ADMIN)
 
 function defaultCommands.teleport(pid, cmd)
     if cmd[2] ~= "all" then
@@ -646,11 +646,11 @@ function defaultCommands.teleport(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("teleport", defaultCommands.teleport)
-customCommandHooks.registerAlias("tp", "teleport")
-customCommandHooks.registerAlias("tpto", "teleport")
-customCommandHooks.registerAlias("teleportto", "teleport")
-customCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
+chatCommandHooks.registerCommand("teleport", defaultCommands.teleport)
+chatCommandHooks.registerAlias("tp", "teleport")
+chatCommandHooks.registerAlias("tpto", "teleport")
+chatCommandHooks.registerAlias("teleportto", "teleport")
+chatCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
 
 function defaultCommands.confiscate(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -683,8 +683,8 @@ function defaultCommands.confiscate(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("confiscate", defaultCommands.confiscate)
-customCommandHooks.setRankRequirement("confiscate", ranks.MODERATOR)
+chatCommandHooks.registerCommand("confiscate", defaultCommands.confiscate)
+chatCommandHooks.setRankRequirement("confiscate", ranks.MODERATOR)
 
 --
 -- Player editing
@@ -717,8 +717,8 @@ function defaultCommands.setAttr(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setattr", defaultCommands.setAttr)
-customCommandHooks.setRankRequirement("setattr", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setattr", defaultCommands.setAttr)
+chatCommandHooks.setRankRequirement("setattr", ranks.MODERATOR)
 
 function defaultCommands.setSkill(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -747,8 +747,8 @@ function defaultCommands.setSkill(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setskill", defaultCommands.setSkill)
-customCommandHooks.setRankRequirement("setskill", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setskill", defaultCommands.setSkill)
+chatCommandHooks.setRankRequirement("setskill", ranks.MODERATOR)
 
 function defaultCommands.setScale(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -772,8 +772,8 @@ function defaultCommands.setScale(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setscale", defaultCommands.setScale)
-customCommandHooks.setRankRequirement("setscale", ranks.ADMIN)
+chatCommandHooks.registerCommand("setscale", defaultCommands.setScale)
+chatCommandHooks.setRankRequirement("setscale", ranks.ADMIN)
 
 function defaultCommands.setWerewolf(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -800,8 +800,8 @@ function defaultCommands.setWerewolf(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setwerewolf", defaultCommands.setWerewolf)
-customCommandHooks.setRankRequirement("setwerewolf", ranks.ADMIN)
+chatCommandHooks.registerCommand("setwerewolf", defaultCommands.setWerewolf)
+chatCommandHooks.setRankRequirement("setwerewolf", ranks.ADMIN)
 
 function defaultCommands.setDisguise(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -824,8 +824,8 @@ function defaultCommands.setDisguise(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setdisguise", defaultCommands.setDisguise)
-customCommandHooks.setRankRequirement("setdisguise", ranks.ADMIN)
+chatCommandHooks.registerCommand("setdisguise", defaultCommands.setDisguise)
+chatCommandHooks.setRankRequirement("setdisguise", ranks.ADMIN)
 
 function defaultCommands.setUseCreatureName(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -847,8 +847,8 @@ function defaultCommands.setUseCreatureName(pid, cmd)
         tes3mp.SendShapeshift(targetPid)
     end
 end
-customCommandHooks.registerCommand("usecreaturename", defaultCommands.setUseCreatureName)
-customCommandHooks.setRankRequirement("usecreaturename", ranks.ADMIN)
+chatCommandHooks.registerCommand("usecreaturename", defaultCommands.setUseCreatureName)
+chatCommandHooks.setRankRequirement("usecreaturename", ranks.ADMIN)
 
 function defaultCommands.setMomentum(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -868,8 +868,8 @@ function defaultCommands.setMomentum(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setmomentum", defaultCommands.setMomentum)
-customCommandHooks.setRankRequirement("setmomentum", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setmomentum", defaultCommands.setMomentum)
+chatCommandHooks.setRankRequirement("setmomentum", ranks.MODERATOR)
 
 function defaultCommands.setDifficulty(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -892,8 +892,8 @@ function defaultCommands.setDifficulty(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setdifficulty", defaultCommands.setDifficulty)
-customCommandHooks.setRankRequirement("setdifficulty", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setdifficulty", defaultCommands.setDifficulty)
+chatCommandHooks.setRankRequirement("setdifficulty", ranks.MODERATOR)
 
 function defaultCommands.setConsole(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -923,8 +923,8 @@ function defaultCommands.setConsole(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setconsole", defaultCommands.setConsole)
-customCommandHooks.setRankRequirement("setconsole", ranks.ADMIN)
+chatCommandHooks.registerCommand("setconsole", defaultCommands.setConsole)
+chatCommandHooks.setRankRequirement("setconsole", ranks.ADMIN)
 
 function defaultCommands.setBedRest(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -954,8 +954,8 @@ function defaultCommands.setBedRest(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setbedrest", defaultCommands.setBedRest)
-customCommandHooks.setRankRequirement("setbedrest", ranks.ADMIN)
+chatCommandHooks.registerCommand("setbedrest", defaultCommands.setBedRest)
+chatCommandHooks.setRankRequirement("setbedrest", ranks.ADMIN)
 
 function defaultCommands.setWildernessRest(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -984,8 +984,8 @@ function defaultCommands.setWildernessRest(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setwildernessrest", defaultCommands.setWildernessRest)
-customCommandHooks.setRankRequirement("setwildernessrest", ranks.ADMIN)
+chatCommandHooks.registerCommand("setwildernessrest", defaultCommands.setWildernessRest)
+chatCommandHooks.setRankRequirement("setwildernessrest", ranks.ADMIN)
 
 function defaultCommands.setWait(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -1014,8 +1014,8 @@ function defaultCommands.setWait(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setwait", defaultCommands.setWait)
-customCommandHooks.setRankRequirement("setwait", ranks.ADMIN)
+chatCommandHooks.registerCommand("setwait", defaultCommands.setWait)
+chatCommandHooks.setRankRequirement("setwait", ranks.ADMIN)
 
 function defaultCommands.setWait(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -1038,9 +1038,9 @@ function defaultCommands.setWait(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setphysicsfps", defaultCommands.setWait)
-customCommandHooks.registerAlias("setphysicsframerate", "setphysicsfps")
-customCommandHooks.setRankRequirement("setphysicsfps", ranks.ADMIN)
+chatCommandHooks.registerCommand("setphysicsfps", defaultCommands.setWait)
+chatCommandHooks.registerAlias("setphysicsframerate", "setphysicsfps")
+chatCommandHooks.setRankRequirement("setphysicsfps", ranks.ADMIN)
 
 function defaultCommands.setCollision(pid, cmd)
     local collisionState
@@ -1079,8 +1079,8 @@ function defaultCommands.setCollision(pid, cmd)
     tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
                        " for all newly loaded cells.\n", false)
 end
-customCommandHooks.registerCommand("setcollision", defaultCommands.setCollision)
-customCommandHooks.setRankRequirement("setcollision", ranks.ADMIN)
+chatCommandHooks.registerCommand("setcollision", defaultCommands.setCollision)
+chatCommandHooks.setRankRequirement("setcollision", ranks.ADMIN)
 
 function defaultCommands.overrideCollision(pid, cmd)
     local collisionState
@@ -1116,8 +1116,8 @@ function defaultCommands.overrideCollision(pid, cmd)
     logicHandler.SendConfigCollisionOverrides(pid, true)
     Players[pid]:Message(message .. " for " .. refId .. " in newly loaded cells\n")
 end
-customCommandHooks.registerCommand("overridecollision", defaultCommands.overrideCollision)
-customCommandHooks.setRankRequirement("overridecollision", ranks.ADMIN)
+chatCommandHooks.registerCommand("overridecollision", defaultCommands.overrideCollision)
+chatCommandHooks.setRankRequirement("overridecollision", ranks.ADMIN)
 
 
 function defaultCommands.load(pid, cmd)
@@ -1171,8 +1171,8 @@ function defaultCommands.load(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("load", defaultCommands.load)
-customCommandHooks.setRankRequirement("load", ranks.ADMIN)
+chatCommandHooks.registerCommand("load", defaultCommands.load)
+chatCommandHooks.setRankRequirement("load", ranks.ADMIN)
 
 function defaultCommands.resetKills(pid, cmd)
     -- Set all currently recorded kills to 0 for connected players
@@ -1184,8 +1184,8 @@ function defaultCommands.resetKills(pid, cmd)
     WorldInstance:LoadKills(pid, true)
     tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
 end
-customCommandHooks.registerCommand("resetkills", defaultCommands.resetKills)
-customCommandHooks.setRankRequirement("resetkills", ranks.MODERATOR)
+chatCommandHooks.registerCommand("resetkills", defaultCommands.resetKills)
+chatCommandHooks.setRankRequirement("resetkills", ranks.MODERATOR)
 
 function defaultCommands.suicide(pid, cmd)
     if config.allowSuicideCommand == true then
@@ -1195,7 +1195,7 @@ function defaultCommands.suicide(pid, cmd)
         tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
     end
 end
-customCommandHooks.registerCommand("suicide", defaultCommands.suicide)
+chatCommandHooks.registerCommand("suicide", defaultCommands.suicide)
 
 function defaultCommands.fixme(pid, cmd)
     if config.allowFixmeCommand == true then
@@ -1230,7 +1230,7 @@ function defaultCommands.fixme(pid, cmd)
         tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
     end
 end
-customCommandHooks.registerCommand("fixme", defaultCommands.fixme)
+chatCommandHooks.registerCommand("fixme", defaultCommands.fixme)
 
 function defaultCommands.storeConsole(pid, cmd)
     if #cmd < 3 then
@@ -1245,8 +1245,8 @@ function defaultCommands.storeConsole(pid, cmd)
         tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid .. "\n", false)
     end
 end
-customCommandHooks.registerCommand("storeconsole", defaultCommands.storeConsole)
-customCommandHooks.setRankRequirement("storeconsole", ranks.ADMIN)
+chatCommandHooks.registerCommand("storeconsole", defaultCommands.storeConsole)
+chatCommandHooks.setRankRequirement("storeconsole", ranks.ADMIN)
 
 function defaultCommands.runConsole(pid, cmd)
     if #cmd < 4 then
@@ -1293,8 +1293,8 @@ function defaultCommands.runConsole(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("runconsole", defaultCommands.runConsole)
-customCommandHooks.setRankRequirement("runconsole", ranks.ADMIN)
+chatCommandHooks.registerCommand("runconsole", defaultCommands.runConsole)
+chatCommandHooks.setRankRequirement("runconsole", ranks.ADMIN)
 
 function defaultCommands.placeAt(pid, cmd)
     if #cmd < 2 then
@@ -1316,9 +1316,9 @@ function defaultCommands.placeAt(pid, cmd)
         logicHandler.CreateObjectAtPlayer(targetPid, refId, packetType)
     end
 end
-customCommandHooks.registerCommand("placeat", defaultCommands.placeAt)
-customCommandHooks.registerAlias("spawnat", "placeat")
-customCommandHooks.setRankRequirement("placeat", ranks.ADMIN)
+chatCommandHooks.registerCommand("placeat", defaultCommands.placeAt)
+chatCommandHooks.registerAlias("spawnat", "placeat")
+chatCommandHooks.setRankRequirement("placeat", ranks.ADMIN)
 
 function defaultCommands.anim(pid, cmd)
     local isValid = animHelper.PlayAnimation(pid, cmd[2])
@@ -1329,8 +1329,8 @@ function defaultCommands.anim(pid, cmd)
                                validList .. "\n", false)
     end
 end
-customCommandHooks.registerCommand("anim", defaultCommands.anim)
-customCommandHooks.registerAlias("a", "anim")
+chatCommandHooks.registerCommand("anim", defaultCommands.anim)
+chatCommandHooks.registerAlias("a", "anim")
 
 function defaultCommands.speech(pid, cmd)
     local isValid = false
@@ -1345,15 +1345,15 @@ function defaultCommands.speech(pid, cmd)
                                .. validList .. "\n", false)
     end
 end
-customCommandHooks.registerCommand("speech", defaultCommands.speech)
-customCommandHooks.registerAlias("s", "speech")
+chatCommandHooks.registerCommand("speech", defaultCommands.speech)
+chatCommandHooks.registerAlias("s", "speech")
 
 function defaultCommands.craft(pid, cmd)
     -- Check "scripts/menu/defaultCrafting.lua" if you want to change the example craft menu
     Players[pid].currentCustomMenu = "default crafting origin"
     menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 end
-customCommandHooks.registerCommand("craft", defaultCommands.craft)
+chatCommandHooks.registerCommand("craft", defaultCommands.craft)
 
 --
 -- World editing
@@ -1397,8 +1397,8 @@ defaultCommands.overrideDestination = function(pid, cmd)
     tes3mp.SendMessage(pid, "Doors and clientside commands leading to " .. cellDescriptions[1] .. " now lead to " ..
         cellDescriptions[2] .. " instead.\n")
 end
-customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
-customCommandHooks.setRankRequirement("overridedestination", ranks.MODERATOR)
+chatCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
+chatCommandHooks.setRankRequirement("overridedestination", ranks.MODERATOR)
 
 
 function defaultCommands.setAuthority(pid, cmd)
@@ -1416,9 +1416,9 @@ function defaultCommands.setAuthority(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setauthority", defaultCommands.setAuthority)
-customCommandHooks.registerAlias("setauth", "setauthority")
-customCommandHooks.setRankRequirement("setauthority", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setauthority", defaultCommands.setAuthority)
+chatCommandHooks.registerAlias("setauth", "setauthority")
+chatCommandHooks.setRankRequirement("setauthority", ranks.MODERATOR)
 
 function defaultCommands.setHour(pid, cmd)
     local inputValue = tonumber(cmd[2])
@@ -1439,8 +1439,8 @@ function defaultCommands.setHour(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("sethour", defaultCommands.setHour)
-customCommandHooks.setRankRequirement("sethour", ranks.MODERATOR)
+chatCommandHooks.registerCommand("sethour", defaultCommands.setHour)
+chatCommandHooks.setRankRequirement("sethour", ranks.MODERATOR)
 
 function defaultCommands.setDay(pid, cmd)
     local inputValue = tonumber(cmd[2])
@@ -1458,8 +1458,8 @@ function defaultCommands.setDay(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setday", defaultCommands.setDay)
-customCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setday", defaultCommands.setDay)
+chatCommandHooks.setRankRequirement("setday", ranks.MODERATOR)
 
 function defaultCommands.setMonth(pid, cmd)
     local inputValue = tonumber(cmd[2])
@@ -1470,8 +1470,8 @@ function defaultCommands.setMonth(pid, cmd)
         WorldInstance:LoadTime(pid, true)
     end
 end
-customCommandHooks.registerCommand("setmonth", defaultCommands.setMonth)
-customCommandHooks.setRankRequirement("setmonth", ranks.MODERATOR)
+chatCommandHooks.registerCommand("setmonth", defaultCommands.setMonth)
+chatCommandHooks.setRankRequirement("setmonth", ranks.MODERATOR)
 
 function defaultCommands.setTimeScale(pid, cmd)
     local inputPeriod = string.lower(tostring(cmd[2]))
@@ -1494,8 +1494,8 @@ function defaultCommands.setTimeScale(pid, cmd)
         tes3mp.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
     end
 end
-customCommandHooks.registerCommand("settimescale", defaultCommands.setTimeScale)
-customCommandHooks.setRankRequirement("settimescale", ranks.MODERATOR)
+chatCommandHooks.registerCommand("settimescale", defaultCommands.setTimeScale)
+chatCommandHooks.setRankRequirement("settimescale", ranks.MODERATOR)
 
 function defaultCommands.setAi(pid, cmd)
     if #cmd ~= 6 then
@@ -1596,8 +1596,8 @@ function defaultCommands.setAi(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("setai", defaultCommands.setAi)
-customCommandHooks.setRankRequirement("setai", ranks.ADMIN)
+chatCommandHooks.registerCommand("setai", defaultCommands.setAi)
+chatCommandHooks.setRankRequirement("setai", ranks.ADMIN)
 
 --
 -- Testing
@@ -1615,8 +1615,8 @@ function defaultCommands.setRace(pid, cmd)
         tes3mp.SendBaseInfo(targetPid)
     end
 end
-customCommandHooks.registerCommand("setrace", defaultCommands.setRace)
-customCommandHooks.setRankRequirement("setrace", ranks.ADMIN)
+chatCommandHooks.registerCommand("setrace", defaultCommands.setRace)
+chatCommandHooks.setRankRequirement("setrace", ranks.ADMIN)
 
 function defaultCommands.setHead(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -1630,8 +1630,8 @@ function defaultCommands.setHead(pid, cmd)
         tes3mp.SendBaseInfo(targetPid)
     end
 end
-customCommandHooks.registerCommand("sethead", defaultCommands.setHead)
-customCommandHooks.setRankRequirement("sethead", ranks.ADMIN)
+chatCommandHooks.registerCommand("sethead", defaultCommands.setHead)
+chatCommandHooks.setRankRequirement("sethead", ranks.ADMIN)
 
 function defaultCommands.setHair(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
@@ -1645,23 +1645,23 @@ function defaultCommands.setHair(pid, cmd)
         tes3mp.SendBaseInfo(targetPid)
     end
 end
-customCommandHooks.registerCommand("sethair", defaultCommands.setHair)
-customCommandHooks.setRankRequirement("sethair", ranks.ADMIN)
+chatCommandHooks.registerCommand("sethair", defaultCommands.setHair)
+chatCommandHooks.setRankRequirement("sethair", ranks.ADMIN)
 
 function defaultCommands.getPos(pid, cmd)
     logicHandler.PrintPlayerPosition(pid, cmd[2])
 end
-customCommandHooks.registerCommand("getpos", defaultCommands.getPos)
-customCommandHooks.setRankRequirement("getpos", ranks.ADMIN)
+chatCommandHooks.registerCommand("getpos", defaultCommands.getPos)
+chatCommandHooks.setRankRequirement("getpos", ranks.ADMIN)
 
 function defaultCommands.advancedExample(pid)
     -- Check "scripts/menu/advancedExample.lua" if you want to change the advanced menu example
     Players[pid].currentCustomMenu = "advanced example origin"
     menuHelper.DisplayMenu(pid, Players[pid].currentCustomMenu)
 end
-customCommandHooks.registerCommand("advancedexample", defaultCommands.advancedExample)
-customCommandHooks.registerAlias("advex", "advancedexample")
-customCommandHooks.setRankRequirement("advancedexample", ranks.MODERATOR)
+chatCommandHooks.registerCommand("advancedexample", defaultCommands.advancedExample)
+chatCommandHooks.registerAlias("advex", "advancedexample")
+chatCommandHooks.setRankRequirement("advancedexample", ranks.MODERATOR)
 
 --
 -- Helpers
@@ -1876,8 +1876,8 @@ function defaultCommands.storeRecord(pid, cmd)
         end
     end
 end
-customCommandHooks.registerCommand("storerecord", defaultCommands.storeRecord)
-customCommandHooks.setRankRequirement("storerecord", ranks.ADMIN)
+chatCommandHooks.registerCommand("storerecord", defaultCommands.storeRecord)
+chatCommandHooks.setRankRequirement("storerecord", ranks.ADMIN)
 
 function defaultCommands.createRecord(pid, cmd)
     if Players[pid].data.customVariables == nil then
@@ -2064,7 +2064,7 @@ function defaultCommands.createRecord(pid, cmd)
 
     Players[pid]:Message(message)
 end
-customCommandHooks.registerCommand("createrecord", defaultCommands.createRecord)
-customCommandHooks.setRankRequirement("createrecord", ranks.ADMIN)
+chatCommandHooks.registerCommand("createrecord", defaultCommands.createRecord)
+chatCommandHooks.setRankRequirement("createrecord", ranks.ADMIN)
 
 return defaultCommands

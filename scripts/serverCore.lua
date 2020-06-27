@@ -14,7 +14,7 @@ async = require("async")
 threadHandler = require("threadHandler")
 
 customEventHooks = require("customEventHooks")
-customCommandHooks = require("customCommandHooks")
+chatCommandHooks = require("chatCommandHooks")
 serverCommandHooks = require("serverCommandHooks")
 timers = require('timers')
 

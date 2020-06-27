@@ -27,7 +27,7 @@ function serverCommandHooks.validator(eventStatus, line)
         if callback ~= nil then
             callback(
                 serverCommandHooks.pid, -- match the chat command arguments
-                customCommandHooks.mergeQuotedArguments(cmd),
+                chatCommandHooks.mergeQuotedArguments(cmd),
                 cmd
             )
             return customEventHooks.makeEventStatus(false, nil)
