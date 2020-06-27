@@ -242,6 +242,19 @@ defaultCommands.players = function(pid, cmd)
 end
 chatCommandHooks.registerCommand("players", defaultCommands.players)
 chatCommandHooks.registerAlias("list", "players")
+defaultCommands.serverPlayers = function(pid, cmd)
+    local playerCount = logicHandler.GetConnectedPlayerCount()
+    local label = playerCount .. " connected player"
+
+    if playerCount ~= 1 then
+        label = label .. "s"
+    end
+
+    commandInfo(pid, label)
+    commandInfo(pid, "\n" .. GetConnectedPlayerList())
+end
+serverCommandHooks.registerCommand("players", defaultCommands.serverPlayers)
+serverCommandHooks.registerAlias("list", "players")
 
 local GetLoadedCellList = function()
     local list = ""
