@@ -15,6 +15,7 @@ threadHandler = require("threadHandler")
 
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
+require("serverCommandHooks")
 timers = require('timers')
 
 fileHelper = require("fileHelper")
@@ -688,4 +689,9 @@ end
 
 function OnObjectLoopTimeExpiration(loopIndex)
     eventHandler.OnObjectLoopTimeExpiration(loopIndex)
+end
+
+function OnServerWindowInput(line)
+    tes3mp.LogMessage(enumerations.log.INFO, "[Server commmand] " .. line)
+    eventHandler.OnServerWindowInput(line)
 end

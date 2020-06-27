@@ -1784,4 +1784,9 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
     end
 end
 
+function eventHandler.OnServerWindowInput(line)
+    local eventStatus = customEventHooks.triggerValidators("OnServerWindowInput", {line})
+    customEventHooks.triggerHandlers("OnServerWindowInput", eventStatus, {line})
+end
+
 return eventHandler
