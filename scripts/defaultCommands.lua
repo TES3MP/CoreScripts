@@ -375,6 +375,17 @@ chatCommandHooks.setRankRequirement("exit", ranks.ADMIN)
 -- Moderation
 --
 
+local function banPlayerByName(pid, targetName)
+    if logicHandler.IsBanned(targetName) then
+        commandError(pid, targetName .. " was already banned.")
+        return
+    end
+    if logicHandler.BanPlayer(targetName) then
+        commandInfo(pid, "All IP addresses stored for " .. targetName .. " are now banned.")
+    else
+        commandError(pid, targetName .. " does not have an account on this server.")
+    end
+end
 defaultCommands.ban = function(pid, cmd)
     if cmd[2] == "ip" and cmd[3] ~= nil then
         local ipAddress = cmd[3]
@@ -383,26 +394,39 @@ defaultCommands.ban = function(pid, cmd)
             table.insert(banList.ipAddresses, ipAddress)
             SaveBanList()
 
-            tes3mp.SendMessage(pid, ipAddress .. " is now banned.\n", false)
+            commandInfo(pid, ipAddress .. " is now banned.\n")
             tes3mp.BanAddress(ipAddress)
         else
             commandError(pid, ipAddress .. " was already banned.")
         end
     elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-        logicHandler.BanPlayer(pid, targetName)
+        banPlayerByName(pid, targetName)
 
     elseif type(tonumber(cmd[2])) == "number" and logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local targetPid = tonumber(cmd[2])
         local targetName = Players[targetPid].name
-        logicHandler.BanPlayer(pid, targetName)
+        banPlayerByName(pid, targetName)
     else
         commandError(pid, "Invalid input for ban.")
     end
 end
+serverCommandHooks.registerCommand("ban", defaultCommands.ban)
 chatCommandHooks.registerCommand("ban", defaultCommands.ban)
 chatCommandHooks.setRankRequirement("ban", ranks.MODERATOR)
 
+local function unbanPlayerByName(pid, targetName)
+    if not logicHandler.IsBanned(targetName) then
+        commandError(pid, targetName .. " is not banned.")
+        return
+    end
+    if logicHandler.UnbanPlayer(targetName) then
+        commandInfo(pid, "All IP addresses stored for " .. targetName .. " are now unbanned.")
+    else
+        commandError(pid, targetName .. " does not have an account on this server, " ..
+            "but has been removed from the ban list.")
+    end
+end
 defaultCommands.unban = function(pid, cmd)
     if cmd[2] == "ip" then
         local ipAddress = cmd[3]
@@ -418,11 +442,12 @@ defaultCommands.unban = function(pid, cmd)
         end
     elseif cmd[2] == "name" or cmd[2] == "player" then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
-        logicHandler.UnbanPlayer(pid, targetName)
+        unbanPlayerByName(pid, targetName)
     else
         commandError(pid, "Invalid input for unban.")
     end
 end
+serverCommandHooks.registerCommand("unban", defaultCommands.unban)
 chatCommandHooks.registerCommand("unban", defaultCommands.unban)
 chatCommandHooks.setRankRequirement("unban", ranks.MODERATOR)
 

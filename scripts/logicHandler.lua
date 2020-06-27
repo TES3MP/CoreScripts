@@ -193,54 +193,50 @@ logicHandler.GetPlayerByName = function(targetName)
     end
 end
 
-logicHandler.BanPlayer = function(pid, targetName)
+logicHandler.IsBanned = function(targetName)
+    local accountName = fileHelper.fixFilename(targetName)
+    return tableHelper.containsValue(banList.playerNames, string.lower(accountName))
+end
+
+logicHandler.BanPlayer = function(targetName)
 
     -- Ban players based on their account names, i.e. based on the filenames used for their JSON files that
     -- have had invalid characters replaced
     local accountName = fileHelper.fixFilename(targetName)
 
-    if not tableHelper.containsValue(banList.playerNames, string.lower(accountName)) then
+    if not logicHandler.IsBanned(targetName) then
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
             table.insert(banList.playerNames, string.lower(accountName))
             SaveBanList()
 
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
-                " are now banned.\n", false)
-
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                 tes3mp.BanAddress(ipAddress)
             end
-        else
-            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server.\n", false)
+
+            return true
         end
-    else
-        tes3mp.SendMessage(pid, targetName .. " was already banned.\n", false)
     end
+    return false
 end
 
-logicHandler.UnbanPlayer = function(pid, targetName)
-    if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
+logicHandler.UnbanPlayer = function(targetName)
+    if logicHandler.IsBanned(targetName) then
         tableHelper.removeValue(banList.playerNames, string.lower(targetName))
         SaveBanList()
 
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
-                " are now unbanned.\n", false)
-
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
                 tes3mp.UnbanAddress(ipAddress)
             end
-        else
-            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server, " ..
-                "but has been removed from the ban list.\n", false)
+
+            return true
         end
-    else
-        tes3mp.SendMessage(pid, targetName .. " is not banned.\n", false)
     end
+    return true
 end
 
 logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
