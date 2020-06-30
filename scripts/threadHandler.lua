@@ -40,7 +40,6 @@ function threadHandler.Send(id, message, callback)
         local originalCallback = callback
         callback = function(...)
             local delta = tes3mp.GetMillisecondsSinceServerStart() - checkpoint
-            
             tes3mp.LogMessage(enumerations.log.INFO, string.format("[ThreadHandler] Request took %s",delta))
             return originalCallback(...)
         end
@@ -68,7 +67,7 @@ function threadHandler.SendAsync(id, message, sync)
     else
         threadHandler.Send(id, message, function(result)
             responseMessage = result
-            coroutine.resume(currentCoroutine)
+            async.Resume(currentCoroutine)
         end)
         coroutine.yield()
     end
@@ -117,7 +116,7 @@ function threadHandler.Check()
         local res = thread.output:pop(0)
         while res ~= nil do
             if res.id == threadHandler.ERROR then
-                tes3mp.LogMessage(enumerations.log.ERROR, "[threadHandler] Error in thread: " .. res.message)
+                tes3mp.LogMessage(enumerations.log.ERROR, "[ThreadHandler] Error in thread: " .. res.message)
                 tes3mp.StopServer(1)
             end
             if threadHandler.callbacks[res.id] ~= nil then

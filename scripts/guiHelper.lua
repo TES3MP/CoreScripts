@@ -84,7 +84,7 @@ function guiHelper.OnGUIAction(evenStatus, pid, id, data)
         local co = guiHelper.coroutines[id]
         if co then
             guiHelper.coroutines[id] = nil
-            coroutine.resume(co, data)
+            async.Resume(co, data)
         end
     end
 end

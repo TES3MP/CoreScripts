@@ -1,7 +1,25 @@
 local async = {}
 
+local function throw(err)
+    error(err)
+end
+
 function async.Wrap(func, ...)
     local co = coroutine.create(func)
+    --[[function(...)
+        local args = {...}
+        local status, res = pcall(function()
+            return func(unpack(args))
+        end)
+        if not status then
+            error(res)
+        end
+        return res
+    end)]]
+    return async.Resume(co, ...)
+end
+
+function async.Resume(co, ...)
     local status, res = coroutine.resume(co, ...)
     if not status then
         error(res)
@@ -46,7 +64,7 @@ end
 function async.WaitAllAsync(funcs, timeout)
     local currentCoroutine = async.CurrentCoroutine()
     async.WaitAll(funcs, timeout, function(results)
-        coroutine.resume(currentCoroutine, results)
+        async.Resume(currentCoroutine, results)
     end)
     return coroutine.yield()
 end

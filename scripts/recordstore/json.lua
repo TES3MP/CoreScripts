@@ -6,7 +6,7 @@ local BaseRecordStore = require("recordstore.base")
 local RecordStore = class("RecordStore", BaseRecordStore)
 
 function RecordStoreSaveTimer(storeType)
-    coroutine.resume(RecordStores[storeType].saveCoroutine)
+    async.Resume(RecordStores[storeType].saveCoroutine)
 end
 
 function RecordStore:__init(storeType)

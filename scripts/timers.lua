@@ -48,7 +48,7 @@ function timers.WaitAsync(delay)
         return
     end
     timers.Timeout(function(id)
-        coroutine.resume(currentCoroutine)
+        async.Resume(currentCoroutine)
     end, delay)
     coroutine.yield()
 end
