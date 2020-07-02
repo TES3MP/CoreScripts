@@ -161,7 +161,7 @@ eventHandler.InitializeDefaultHandlers = function()
     -- Note: points 2 and 3 are temporary and will be handled better when
     --       servers load up .esm data by default.
     customEventHooks.registerHandler("OnActorDeath", function(eventStatus, pid, cellDescription, actors)
-
+        if not eventStatus.validDefaultHandler then return end
         local cell = LoadedCells[cellDescription]
 
         tes3mp.ClearKillChanges()
@@ -184,7 +184,7 @@ eventHandler.InitializeDefaultHandlers = function()
 
     -- Upon accepting an object placement, request its container if it has one
     customEventHooks.registerHandler("OnObjectPlace", function(eventStatus, pid, cellDescription, objects)
-
+        if not eventStatus.validDefaultHandler then return end
         local containerUniqueIndexesRequested = {}
         local cell = LoadedCells[cellDescription]
 
@@ -201,14 +201,14 @@ eventHandler.InitializeDefaultHandlers = function()
 
     -- Upon accepting an object spawn, request its container
     customEventHooks.registerHandler("OnObjectSpawn", function(eventStatus, pid, cellDescription, objects)
-
+        if not eventStatus.validDefaultHandler then return end
         local cell = LoadedCells[cellDescription]
         cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(objects))
     end)
 
     -- Don't allow state spam from clients
     customEventHooks.registerHandler("OnObjectState", function(eventStatus, pid, cellDescription, objects)
-
+        if not eventStatus.validDefaultHandler then return end
         local cell = LoadedCells[cellDescription]
 
         for uniqueIndex, object in pairs(objects) do
@@ -242,7 +242,6 @@ eventHandler.InitializeDefaultHandlers = function()
 
     -- Print object activations and send an ObjectActivate packet back to the player
     customEventHooks.registerHandler("OnObjectActivate", function(eventStatus, pid, cellDescription, objects, targetPlayers)
-
         if eventStatus.validDefaultHandler == false then return end
 
         local debugMessage = nil
