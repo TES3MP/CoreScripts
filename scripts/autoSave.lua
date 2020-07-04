@@ -240,19 +240,23 @@ customEventHooks.registerHandler('OnStorageLoad', function(eventStatus, key)
     end
 end)
 
-customEventHooks.registerHandler('OnServerExit', function(eventStatus)
-    if eventStatus.validDefaultHandler then
-        exiting = true
+-- force the OnServerExit handler to be the last
+customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
+    customEventHooks.registerHandler('OnServerExit', function(eventStatus)
+        if eventStatus.validDefaultHandler then
+            exiting = true
 
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Kicking all players")
-        for pid in pairs(Players) do
-            tes3mp.Kick(pid)
+            tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Kicking all players")
+            for pid in pairs(Players) do
+                tes3mp.Kick(pid)
+            end
+
+            tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
+            autoSave.SaveAll(true)
         end
-
-        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
-        autoSave.SaveAll(true)
-    end
+    end)
 end)
+
 
 customEventHooks.registerHandler('OnPlayerDisconnect', function(eventStatus)
     if eventStatus.validDefaultHandler and not exiting then
