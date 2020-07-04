@@ -123,11 +123,11 @@ function chatCommandHooks.validator(eventStatus, pid, message)
                     else
                         chatCommandHooks.invalidCommand(pid)
                     end
-                    return customEventHooks.makeEventStatus(false, nil)
                 else
                     chatCommandHooks.invalidCommand(pid)
                 end
             end
+            return customEventHooks.makeEventStatus(false, false)
         end
     end
 end
