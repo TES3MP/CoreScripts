@@ -1,21 +1,7 @@
 local async = {}
 
-local function throw(err)
-    error(err)
-end
-
 function async.Wrap(func, ...)
     local co = coroutine.create(func)
-    --[[function(...)
-        local args = {...}
-        local status, res = pcall(function()
-            return func(unpack(args))
-        end)
-        if not status then
-            error(res)
-        end
-        return res
-    end)]]
     return async.Resume(co, ...)
 end
 

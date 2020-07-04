@@ -4,7 +4,7 @@ local Cell = class("Cell", BaseCell)
 
 function Cell:__init(cellDescription)
     BaseCell.__init(self, cellDescription)
-    
+
     self.hasEntry = true
     self.entryName = cellDescription:trim()
 end
@@ -40,11 +40,11 @@ function Cell:LoadFromDrive()
     if result.count > 1 then
         error("Duplicate records in the database for cell " .. self.description)
     end
-    
+
     -- if no data is present, just keep the default
     if result.count == 1 then
         self.data = jsonInterface.decode(result.rows[1].data)
-        
+
         -- JSON doesn't allow numerical keys, but we use them, so convert
         -- all string number keys into numerical keys
         tableHelper.fixNumericalKeys(self.data)
