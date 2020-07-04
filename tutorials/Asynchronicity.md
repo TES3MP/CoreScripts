@@ -20,7 +20,7 @@ end)
 ```
 * `async.Wrap(func, ...)` is mostly identical to `coroutine.wrap(func)(...)`. You can use `coroutine.wrap` or `coroutine.create` functions instead, if you want more control over the specifics of implementation.
 
-They might even throw an error if you don't, e. g. `timers.WaitAsync`:
+Some of the `Async` functions listed above can also run synchronously outside a coroutine, but others will throw an error, e. g. `timers.WaitAsync`:
 ```Lua
 customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
   if eventStatus.validCustomHandlers then
@@ -36,6 +36,13 @@ async.Wrap(function()
   callback(fileClient.LoadAsync(filename))
 end)
 ```
+
+## Handling coroutine errors
+
+Normally, if you simply run `coroutine.resume(co)`, any errors inside the coroutine will be ignored.  
+Built-in `coroutine.wrap(co)` returns a function which resumes the coroutine and also handles any errors. However it is convenient to do the same for any coroutine.
+* `async.Resume(co, ...)` resumes the coroutine with given arguments, handlers errors and returns the result
+You should probably use this instead of `coroutine.resume` at all times, and use `pcall` inside the coroutine to deliberately ignore errors. This will make your code easier to debug and maintain.
 
 ## Running multiple asynchronous functions
 
@@ -98,14 +105,14 @@ Regardless of what `networkRequest` actually does, you could implement the follo
 function networkRequestAsync(url)
   local currentCoroutine = async.CurrentCoroutine()
   networkRequest(url, function(response)
-    coroutine.resume(currentCoroutine, response)
+    async.Resume(currentCoroutine, response)
   end)
   return coroutine.yield()
 end
 ```
 * `async.CurrentCoroutine()` simply returns the result of `coroutine.running()` or throws an error if it dosen't exist
 
-Now use can use your new function in a procedural way:
+Now use can use your new function in procedural style:
 ```Lua
 async.Wrap(function()
   print(networkRequestAsync(url))
