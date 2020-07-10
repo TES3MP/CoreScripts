@@ -854,6 +854,16 @@ eventHandler.OnPlayerSpellbook = function(pid)
     end
 end
 
+eventHandler.OnPlayerSpellsActive = function(pid)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellsActive", {pid})
+        if eventStatus.validDefaultHandler then
+            Players[pid]:SaveSpellsActive()
+        end
+        customEventHooks.triggerHandlers("OnPlayerSpellsActive", eventStatus, {pid})
+    end
+end
+
 eventHandler.OnPlayerQuickKeys = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerQuickKeys", {pid})

@@ -72,6 +72,7 @@ function BasePlayer:__init(pid, playerName)
         equipment = {},
         inventory = {},
         spellbook = {},
+        spellsActive = {},
         quickKeys = {},
         shapeshift = {},
         journal = {},
@@ -207,6 +208,7 @@ function BasePlayer:FinishLogin()
         self:LoadEquipment()
         self:CleanSpellbook()
         self:LoadSpellbook()
+        self:LoadSpellsActive()
         self:LoadQuickKeys()
         self:LoadBooks()
         self:LoadShapeshift()
@@ -1213,6 +1215,26 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpellbookChanges(self.pid)
 end
 
+function BasePlayer:LoadSpellsActive()
+
+    if self.data.spellsActive == nil then self.data.spellsActive = {} end
+
+    tes3mp.ClearSpellsActiveChanges(self.pid)
+    tes3mp.SetSpellsActiveChangesAction(self.pid, enumerations.spellbook.SET)
+
+    for spellId, spellTable in pairs(self.data.spellsActive) do
+
+        for effectIndex, effectTable in pairs(spellTable.effects) do
+            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.arg, effectTable.magnitude,
+                effectTable.duration, effectTable.timeLeft)
+        end
+
+        tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
+    end
+
+    tes3mp.SendSpellsActiveChanges(self.pid)
+end
+
 function BasePlayer:SaveSpellbook()
 
     local action = tes3mp.GetSpellbookChangesAction(self.pid)
@@ -1227,14 +1249,14 @@ function BasePlayer:SaveSpellbook()
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if not tableHelper.containsValue(self.data.spellbook, spellId) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Adding spell " .. spellId .. " to " ..
+                tes3mp.LogMessage(enumerations.log.INFO, "Adding spellbook spell " .. spellId .. " to " ..
                     logicHandler.GetChatName(self.pid))
                 table.insert(self.data.spellbook, spellId)
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if tableHelper.containsValue(self.data.spellbook, spellId) == true then
-                tes3mp.LogMessage(enumerations.log.INFO, "Removing spell " .. spellId .. " from " ..
+                tes3mp.LogMessage(enumerations.log.INFO, "Removing spellbook spell " .. spellId .. " from " ..
                     logicHandler.GetChatName(self.pid))
                 local foundIndex = tableHelper.getIndexByValue(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
@@ -1252,6 +1274,56 @@ function BasePlayer:SaveSpellbook()
 
     if action == enumerations.spellbook.REMOVE then
         tableHelper.cleanNils(self.data.spellbook)
+    end
+end
+
+function BasePlayer:SaveSpellsActive()
+
+    local action = tes3mp.GetSpellsActiveChangesAction(self.pid)
+
+    if action == enumerations.spellbook.SET or self.data.spellsActive == nil then
+        self.data.spellsActive = {}
+    end
+
+    for spellIndex = 0, tes3mp.GetSpellsActiveChangesSize(self.pid) - 1 do
+        local spellId = tes3mp.GetSpellsActiveId(self.pid, spellIndex)
+
+        if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+            -- Only add new spell if we don't already have it
+            if not tableHelper.containsValue(self.data.spellsActive, spellId) then
+                tes3mp.LogMessage(enumerations.log.INFO, "Adding active spell " .. spellId .. " to " ..
+                    logicHandler.GetChatName(self.pid))
+
+                self.data.spellsActive[spellId] = {
+                    effects = {},
+                    displayName = tes3mp.GetSpellsActiveDisplayName(self.pid, spellIndex),
+                    startTime = os.time()
+                }
+
+                for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(self.pid, spellIndex) - 1 do
+                    local effect = {
+                        id = tes3mp.GetSpellsActiveEffectId(self.pid, spellIndex, effectIndex),
+                        arg = tes3mp.GetSpellsActiveEffectArg(self.pid, spellIndex, effectIndex),
+                        magnitude = tes3mp.GetSpellsActiveEffectMagnitude(self.pid, spellIndex, effectIndex),
+                        duration = tes3mp.GetSpellsActiveEffectDuration(self.pid, spellIndex, effectIndex),
+                        timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(self.pid, spellIndex, effectIndex)
+                    }
+
+                    table.insert(self.data.spellsActive[spellId].effects, effect)
+                end
+            end
+        elseif action == enumerations.spellbook.REMOVE then
+            -- Only print spell removal if the spell actually exists
+            if self.data.spellsActive[spellId] ~= nil then
+                tes3mp.LogMessage(enumerations.log.INFO, "Removing active spell " .. spellId .. " from " ..
+                    logicHandler.GetChatName(self.pid))
+                self.data.spellsActive[spellId] = nil
+            end
+        end
+    end
+
+    if action == enumerations.spellbook.REMOVE then
+        tableHelper.cleanNils(self.data.spellsActive)
     end
 end
 

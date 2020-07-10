@@ -431,6 +431,11 @@ function OnPlayerSpellbook(pid)
     eventHandler.OnPlayerSpellbook(pid)
 end
 
+function OnPlayerSpellsActive(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerSpellsActive\" for " .. logicHandler.GetChatName(pid))
+    eventHandler.OnPlayerSpellsActive(pid)
+end
+
 function OnPlayerQuickKeys(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerQuickKeys\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerQuickKeys(pid)
