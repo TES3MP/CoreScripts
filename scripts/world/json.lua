@@ -7,6 +7,7 @@ local World = class("World", BaseWorld)
 function World:__init()
     BaseWorld.__init(self)
 
+    self.coreVariablesFile = "coreVariables.json"
     self.worldFile = "world.json"
 
     if self.hasEntry == nil then
@@ -22,23 +23,33 @@ function World:__init()
 end
 
 function World:CreateEntry()
+    jsonInterface.save("world/" .. self.coreVariablesFile, self.coreVariables)
     jsonInterface.save("world/" .. self.worldFile, self.data)
     self.hasEntry = true
 end
 
 function World:SaveToDrive()
     if self.hasEntry then
+        jsonInterface.save("world/" .. self.coreVariablesFile, self.coreVariables)
         jsonInterface.save("world/" .. self.worldFile, self.data, config.worldKeyOrder)
     end
 end
 
 function World:QuicksaveToDrive()
     if self.hasEntry then
+        jsonInterface.quicksave("world/" .. self.coreVariablesFile, self.coreVariables)
         jsonInterface.quicksave("world/" .. self.worldFile, self.data)
     end
 end
 
+function World:QuicksaveCoreVariablesToDrive()
+    if self.hasEntry then
+        jsonInterface.quicksave("world/" .. self.coreVariablesFile, self.coreVariables)
+    end
+end
+
 function World:LoadFromDrive()
+    self.coreVariables = jsonInterface.load("world/" .. self.coreVariablesFile)
     self.data = jsonInterface.load("world/" .. self.worldFile)
 
     -- JSON doesn't allow numerical keys, but we use them, so convert

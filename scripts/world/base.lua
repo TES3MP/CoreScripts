@@ -10,11 +10,13 @@ BaseWorld.storedRegions = {}
 
 function BaseWorld:__init()
 
+    self.coreVariables =
+    {
+        currentMpNum = 0
+    }
+
     self.data =
     {
-        general = {
-            currentMpNum = 0
-        },
         fame = {
             bounty = 0,
             reputation = 0
@@ -34,6 +36,22 @@ end
 
 function BaseWorld:HasEntry()
     return self.hasEntry
+end
+
+function BaseWorld:EnsureCoreVariablesExist()
+
+    if self.coreVariables == nil then
+        self.coreVariables = {}
+    end
+
+    if self.coreVariables.currentMpNum == nil then
+        if self.data.general.currentMpNum ~= nil then
+            self.coreVariables.currentMpNum = self.data.general.currentMpNum
+            self.data.general.currentMpNum = nil
+        end
+    else
+        self.coreVariables.currentMpNum = 0
+    end
 end
 
 function BaseWorld:EnsureTimeDataExists()
@@ -160,12 +178,12 @@ function BaseWorld:UpdateFrametimeMultiplier()
 end
 
 function BaseWorld:GetCurrentMpNum()
-    return self.data.general.currentMpNum
+    return self.coreVariables.currentMpNum
 end
 
 function BaseWorld:SetCurrentMpNum(currentMpNum)
-    self.data.general.currentMpNum = currentMpNum
-    self:QuicksaveToDrive()
+    self.coreVariables.currentMpNum = currentMpNum
+    self:QuicksaveCoreVariablesToDrive()
 end
 
 function BaseWorld:LoadJournal(pid)

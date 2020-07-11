@@ -26,6 +26,7 @@ logicHandler.InitializeWorld = function()
     -- If the world has a data entry, load it
     if WorldInstance:HasEntry() then
         WorldInstance:LoadFromDrive()
+        WorldInstance:EnsureCoreVariablesExist()
         WorldInstance:EnsureTimeDataExists()
 
         -- Get the current mpNum from the loaded world
