@@ -630,6 +630,10 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     else
                         Players[pid]:FinishLogin()
                         Players[pid]:Message("You have successfully logged in.\n" .. config.chatWindowInstructions)
+
+                        if WorldInstance:HasRunStartupScripts() == false then
+                            Players[pid]:Message(config.startupScriptsInstructions)
+                        end
                     end
                 elseif idGui == guiHelper.ID.REGISTER then
                     if data == nil then
@@ -639,6 +643,10 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     end
                     Players[pid]:Register(data)
                     Players[pid]:Message("You have successfully registered.\n" .. config.chatWindowInstructions)
+
+                    if WorldInstance:HasRunStartupScripts() == false then
+                        Players[pid]:Message(config.startupScriptsInstructions)
+                    end
                 end
             end
         end

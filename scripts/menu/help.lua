@@ -172,6 +172,8 @@ Menus["help moderator page 2"] = {
 
 Menus["help admin page 1"] = {
     text = color.Orange .. "Admin command list page 1:\n" ..
+        color.Yellow .. "/runstartup\n" ..
+            color.White .. "Run the ingame startup scripts that set the correct states for some quest-related actors and objects\n" ..
         color.Yellow .. "/load <scriptName>\n" ..
             color.White .. "Load or reload a script file on the fly\n" ..
         color.Yellow .. "/setai <uniqueIndex> activate/combat/follow <pid>/<uniqueIndex>\n" ..

@@ -22,10 +22,17 @@ config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
     daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }
 
 -- The chat window instructions that show up when players join the server
-config.chatWindowInstructions = "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
+config.chatWindowInstructions = color.White .. "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
     " from your client config. Type in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
     " available to you. Type in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to become " ..
     "your ally. Use " .. color.Yellow .. "F2" .. color.White .. " by default to hide the chat window.\n"
+
+-- The startup scripts instructions that show up when the startup scripts have not been run yet
+config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. " For some actors and objects to have their correct" ..
+    "initial states, an admin needs to run the " .. color.Yellow .. "/runstartup" .. color.White .. " command.\n"
+
+-- Which startup scripts should be run via the /runstartup command
+config.startupScripts = {"Startup", "BMStartUpScript"}
 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false

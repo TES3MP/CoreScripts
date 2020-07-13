@@ -12,7 +12,8 @@ function BaseWorld:__init()
 
     self.coreVariables =
     {
-        currentMpNum = 0
+        currentMpNum = 0,
+        hasRunStartupScripts = false
     }
 
     self.data =
@@ -52,6 +53,10 @@ function BaseWorld:EnsureCoreVariablesExist()
     else
         self.coreVariables.currentMpNum = 0
     end
+
+    if self.coreVariables.hasRunStartupScripts == nil then
+        self.coreVariables.hasRunStartupScripts = false
+    end
 end
 
 function BaseWorld:EnsureTimeDataExists()
@@ -59,6 +64,10 @@ function BaseWorld:EnsureTimeDataExists()
     if self.data.time == nil then
         self.data.time = config.defaultTimeTable
     end
+end
+
+function BaseWorld:HasRunStartupScripts()
+    return self.coreVariables.hasRunStartupScripts
 end
 
 function BaseWorld:GetRegionVisitorCount(regionName)

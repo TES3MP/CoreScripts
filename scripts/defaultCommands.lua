@@ -414,3 +414,24 @@ defaultCommands.overrideDestination = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
+
+defaultCommands.runStartup = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if isAdmin == false then
+        tes3mp.SendMessage(pid, "You need to be an admin to run this command\n")
+        return
+    end
+
+    for _, scriptName in pairs(config.startupScripts) do
+        tes3mp.SendMessage(pid, "Running " .. color.Yellow .. scriptName .. color.White .. " script.\n")
+        logicHandler.RunConsoleCommandOnPlayer(pid, "startscript " .. scriptName, false)
+    end
+
+    tes3mp.SendMessage(pid, color.Red .. "Warning: " .. color.White .. "Make sure to run this command again later if you " ..
+        "reset the cells on this server.\n")
+
+    WorldInstance.coreVariables.hasRunStartupScripts = true
+end
+
+customCommandHooks.registerCommand("runstartup", defaultCommands.runStartup)
