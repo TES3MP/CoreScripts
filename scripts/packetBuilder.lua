@@ -255,6 +255,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddRepairRecord(id, record)
     elseif storeType == "script" then
         packetBuilder.AddScriptRecord(id, record)
+    elseif storeType == "sound" then
+        packetBuilder.AddSoundRecord(id, record)
     elseif storeType == "spell" then
         packetBuilder.AddSpellRecord(id, record)
     elseif storeType == "static" then
@@ -625,6 +627,18 @@ packetBuilder.AddScriptRecord = function(id, record)
     tes3mp.SetRecordId(id)
     if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
     if record.scriptText ~= nil then tes3mp.SetRecordScriptText(record.scriptText) end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddSoundRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.sound ~= nil then tes3mp.SetRecordSound(record.sound) end
+    if record.volume ~= nil then tes3mp.SetRecordVolume(record.volume) end
+    if record.minRange ~= nil then tes3mp.SetRecordMinRange(record.minRange) end
+    if record.maxRange ~= nil then tes3mp.SetRecordMaxRange(record.maxRange) end
 
     tes3mp.AddRecord()
 end
