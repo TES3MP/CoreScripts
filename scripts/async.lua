@@ -27,12 +27,12 @@ function async.WaitAll(funcs, timeout, callback)
     local results = {}
     local returned = false
     if timeout then
-        timers.Timeout(function(id)
+        timers.Timeout(timeout, function(id)
             if counter < total then
                 callback(results)
                 returned = true
             end
-        end, timeout)
+        end)
     end
     for i, func in pairs(funcs) do
         async.Wrap(function()

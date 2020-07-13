@@ -27,7 +27,7 @@ end)
 
 Increase a player's Speed attribute by one every day, even while they are offline
 ```Lua
-timers.Interval(function()
+timers.Interval(time.hours(24), function()
   local player = logicHandler.GetPlayerByName("account_name")
   if player ~= nil then
     local speed = player.data.attributes.Speed
@@ -40,7 +40,7 @@ timers.Interval(function()
       player:QuicksaveToDrive()
     end
   end
-end, time.hours(24))
+end)
 ```
 
 Some regularly updated data is not passed to Lua scripts each time it changes.  

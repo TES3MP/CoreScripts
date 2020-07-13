@@ -8,7 +8,7 @@ timers.callbacks = {}
 --
 -- public methods
 --
-function timers.Timeout(func, delay)
+function timers.Timeout(delay, func)
     local id = timers.GetId()
     local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
     timers.callbacks[id] = {
@@ -22,7 +22,7 @@ function timers.Timeout(func, delay)
     return id
 end
 
-function timers.Interval(func, delay)
+function timers.Interval(delay, func)
     local id = timers.GetId()
     local timestamp = tes3mp.GetMillisecondsSinceServerStart() + delay
     timers.callbacks[id] = {
@@ -47,9 +47,9 @@ function timers.WaitAsync(delay)
     if delay <= 0 then
         return
     end
-    timers.Timeout(function(id)
+    timers.Timeout(delay, function(id)
         async.Resume(currentCoroutine)
-    end, delay)
+    end)
     coroutine.yield()
 end
 

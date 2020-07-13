@@ -4,9 +4,9 @@ Timer functions are provided as a global `timers` table. All of them accept dela
 
 ## Timeout and Interval
 
-* `timers.Timeout(func, delay)` returns `id`  
+* `timers.Timeout(delay, func)` returns `id`  
   Calls the function `func` with `id` as an argument (the same as the returned `id`) after `delay` milliseconds
-* `timers.Interval(func, delay)` returns `id`  
+* `timers.Interval(delay, func)` returns `id`  
   Same as Timeout, but continues calling `func` every `delay` milliseconds.
 * `timers.Stop(id)`  
   Completely stops a Timeout or an Interval with the provided `id`.
@@ -25,9 +25,9 @@ Display a notification two seconds after player joins the server:
 ```Lua
 customEventHooks.registerHandler('OnPlayerAuthentified', function(eventStatus, pid)
   if eventStatus.validCustomHandlers then
-    timers.Timeout(function(id)
+    timers.Timeout(time.seconds(2), function(id)
       tes3mp.SendMessage(pid, color.Cornsilk .. 'Greetings!\n')
-    end, time.seconds(2))
+    end)
   end
 end)
 ```
@@ -36,14 +36,14 @@ Display the amount of online players every five minutes:
 ```Lua
 customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
   if eventStatus.validCustomHandlers then
-    timers.Interval(function(id)
+    timers.Interval(time.minutes(5), function(id)
       local count = 0
       for pid in pairs(Players) do
         count = count + 1
       end
       local message = string.format('%s%d players online!\n', color.Yellow, count)
       tes3mp.SendMessage(pid, message, true)
-    end, time.minutes(5))
+    end)
   end
 end)
 ```
