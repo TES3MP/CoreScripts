@@ -423,7 +423,7 @@ defaultCommands.runStartup = function(pid, cmd)
         return
     end
 
-    for _, scriptName in pairs(config.startupScripts) do
+    for _, scriptName in pairs(config.worldStartupScripts) do
         tes3mp.SendMessage(pid, "Running " .. color.Yellow .. scriptName .. color.White .. " script.\n")
         logicHandler.RunConsoleCommandOnPlayer(pid, "startscript " .. scriptName, false)
     end

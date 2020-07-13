@@ -32,7 +32,12 @@ config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. "
     "initial states, an admin needs to run the " .. color.Yellow .. "/runstartup" .. color.White .. " command.\n"
 
 -- Which startup scripts should be run via the /runstartup command
-config.startupScripts = {"Startup", "BMStartUpScript"}
+-- Note: These affect the world and must not be run for every player who joins.
+config.worldStartupScripts = {"Startup", "BMStartUpScript"}
+
+-- Which startup scripts should be run on every player who joins
+-- Note: These pertain to game mechanics that wouldn't work otherwise, such as vampirism checks
+config.playerStartupScripts = {"VampireCheck", "WereCheckScript"}
 
 -- Whether the world time should continue passing when there are no players on the server
 config.passTimeWhenEmpty = false

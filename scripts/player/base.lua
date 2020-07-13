@@ -287,6 +287,8 @@ function BasePlayer:FinishLogin()
                 otherPlayer:LoadAllies()
             end
         end
+
+        self:RunPlayerSpecificStartupScripts()
         
         customEventHooks.triggerHandlers("OnPlayerFinishLogin", customEventHooks.makeEventStatus(true, true), {self.pid})
         customEventHooks.triggerHandlers("OnPlayerAuthentified", customEventHooks.makeEventStatus(true, true), {self.pid})
@@ -359,6 +361,8 @@ function BasePlayer:EndCharGen()
                 "\n\nAs a result, you start out with Caius Cosades' package.")
         end
     end
+
+    self:RunPlayerSpecificStartupScripts()
 end
 
 function BasePlayer:IsLoggedIn()
@@ -1700,6 +1704,16 @@ end
 function BasePlayer:RemoveCellLoaded(cellDescription)
 
     tableHelper.removeValue(self.cellsLoaded, cellDescription)
+end
+
+function BasePlayer:RunPlayerSpecificStartupScripts()
+    tes3mp.LogMessage(enumerations.log.INFO, "Running player-specific startup scripts for " ..
+        logicHandler.GetChatName(self.pid) .. ":")
+
+    for _, scriptName in pairs(config.playerStartupScripts) do
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. scriptName)
+        logicHandler.RunConsoleCommandOnPlayer(self.pid, "startscript " .. scriptName, false)
+    end
 end
 
 return BasePlayer
