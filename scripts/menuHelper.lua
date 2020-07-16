@@ -554,4 +554,24 @@ function menuHelper.DisplayMenu(pid, menuIndex)
     tes3mp.CustomMessageBox(pid, config.customMenuIds.menuHelper, text, buttonList)
 end
 
+customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui, data)
+    if not eventStatus.validDefaultHandler then return end
+    if not Players[pid]:IsLoggedIn() then return end
+    if idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
+
+        local buttonIndex = tonumber(data) + 1
+        local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
+
+        local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
+
+        Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
+        menuHelper.ProcessEffects(pid, destination.effects)
+
+        if destination.targetMenu ~= nil then
+            menuHelper.DisplayMenu(pid, destination.targetMenu)
+            Players[pid].currentCustomMenu = destination.targetMenu
+        end
+    end
+end)
+
 return menuHelper

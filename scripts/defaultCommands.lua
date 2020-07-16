@@ -690,6 +690,51 @@ chatCommandHooks.registerAlias("tpto", "teleport")
 chatCommandHooks.registerAlias("teleportto", "teleport")
 chatCommandHooks.setRankRequirement("teleport", ranks.MODERATOR)
 
+customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui, data)
+    if not eventStatus.validDefaultHandler then return end
+    if not Players[pid]:IsLoggedIn() then return end
+    if idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
+
+        local targetName = Players[pid].confiscationTargetName
+        local targetPlayer = logicHandler.GetPlayerByName(targetName)
+
+        -- Because the window's item index starts from 0 while the Lua table for
+        -- inventories starts from 1, adjust the former here
+        local inventoryItemIndex = data + 1
+        local item = targetPlayer.data.inventory[inventoryItemIndex]
+
+        if item ~= nil then
+
+            inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
+                item.enchantmentCharge, item.soul)
+            Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
+
+            -- If the item is equipped by the target, unequip it first
+            if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
+                local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment,
+                    item.refId, item.charge)
+                targetPlayer.data.equipment[equipmentItemIndex] = nil
+            end
+
+            targetPlayer.data.inventory[inventoryItemIndex] = nil
+            tableHelper.cleanNils(targetPlayer.data.inventory)
+
+            Players[pid]:Message("You've confiscated " .. item.refId .. " from " ..
+                targetName .. "\n")
+
+            if targetPlayer:IsLoggedIn() then
+                targetPlayer:LoadItemChanges({item}, enumerations.inventory.REMOVE)
+            end
+        else
+            Players[pid]:Message("Invalid item index\n")
+        end
+
+        targetPlayer:SetConfiscationState(false)
+
+        Players[pid].confiscationTargetName = nil
+
+    end
+end)
 function defaultCommands.confiscate(pid, cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 

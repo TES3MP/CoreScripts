@@ -375,6 +375,51 @@ eventHandler.InitializeDefaultHandlers = function()
         tes3mp.SendObjectRestock(false, false)
     end)
 
+    -- Login GUI
+    customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui, data)
+        if not eventStatus.validDefaultHandler then return end
+        if idGui == guiHelper.ID.LOGIN and not Players[pid]:IsLoggedIn() then
+            if data == nil then
+                Players[pid]:Message("Incorrect password!\n")
+                guiHelper.ShowLogin(pid)
+                return
+            end
+
+            Players[pid]:LoadFromDrive()
+            local passwordSalt = Players[pid].data.login.passwordSalt
+
+            if Players[pid].data.login.passwordHash ~= tes3mp.GetSHA256Hash(data .. passwordSalt) then
+                Players[pid]:Message("Incorrect password!\n")
+                guiHelper.ShowLogin(pid)
+                return
+            end
+
+            -- Is this player on the banlist? If so, store their new IP and ban them
+            if tableHelper.containsValue(banList.playerNames, string.lower(Players[pid].accountName)) == true then
+                Players[pid]:SaveIpAddress()
+
+                Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
+                tes3mp.BanAddress(tes3mp.GetIP(pid))
+            else
+                Players[pid]:FinishLogin()
+                Players[pid]:Message("You have successfully logged in.\n" .. config.chatWindowInstructions)
+            end
+        end
+    end)
+
+    -- Registration GUI
+    customEventHooks.registerHandler("OnGUIAction", function(eventStatus, pid, idGui, data)
+        if not eventStatus.validDefaultHandler then return end
+        if idGui == guiHelper.ID.REGISTER and not Players[pid]:IsLoggedIn() then
+            if data == nil then
+                Players[pid]:Message("Password can not be empty\n")
+                guiHelper.ShowRegister(pid)
+            else
+                Players[pid]:Register(data)
+                Players[pid]:Message("You have successfully registered.\n" .. config.chatWindowInstructions)
+            end
+        end
+    end)
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
@@ -517,114 +562,11 @@ eventHandler.OnPlayerDisconnect = function(pid)
 end
 
 eventHandler.OnGUIAction = function(pid, idGui, data)
-
     if Players[pid] ~= nil then
-        
         data = tostring(data) -- data can be numeric, but we should convert it to a string
-        
         local eventStatus = customEventHooks.triggerValidators("OnGUIAction", {pid, idGui, data})
-        
-        if eventStatus.validDefaultHandler then
-        
-            if Players[pid]:IsLoggedIn() then
-
-                if idGui == config.customMenuIds.confiscate and Players[pid].confiscationTargetName ~= nil then
-
-                    local targetName = Players[pid].confiscationTargetName
-                    local targetPlayer = logicHandler.GetPlayerByName(targetName)
-
-                    -- Because the window's item index starts from 0 while the Lua table for
-                    -- inventories starts from 1, adjust the former here
-                    local inventoryItemIndex = data + 1
-                    local item = targetPlayer.data.inventory[inventoryItemIndex]
-
-                    if item ~= nil then
-
-                        inventoryHelper.addItem(Players[pid].data.inventory, item.refId, item.count, item.charge,
-                            item.enchantmentCharge, item.soul)
-                        Players[pid]:LoadItemChanges({item}, enumerations.inventory.ADD)
-
-                        -- If the item is equipped by the target, unequip it first
-                        if inventoryHelper.containsItem(targetPlayer.data.equipment, item.refId, item.charge) then
-                            local equipmentItemIndex = inventoryHelper.getItemIndex(targetPlayer.data.equipment,
-                                item.refId, item.charge)
-                            targetPlayer.data.equipment[equipmentItemIndex] = nil
-                        end
-
-                        targetPlayer.data.inventory[inventoryItemIndex] = nil
-                        tableHelper.cleanNils(targetPlayer.data.inventory)
-
-                        Players[pid]:Message("You've confiscated " .. item.refId .. " from " ..
-                            targetName .. "\n")
-
-                        if targetPlayer:IsLoggedIn() then
-                            targetPlayer:LoadItemChanges({item}, enumerations.inventory.REMOVE)
-                        end
-                    else
-                        Players[pid]:Message("Invalid item index\n")
-                    end
-
-                    targetPlayer:SetConfiscationState(false)
-
-                    Players[pid].confiscationTargetName = nil
-
-                elseif idGui == config.customMenuIds.menuHelper and Players[pid].currentCustomMenu ~= nil then
-
-                    local buttonIndex = tonumber(data) + 1
-                    local buttonPressed = Players[pid].displayedMenuButtons[buttonIndex]
-
-                    local destination = menuHelper.GetButtonDestination(pid, buttonPressed)
-
-                    Players[pid].previousCustomMenu = Players[pid].currentCustomMenu
-                    menuHelper.ProcessEffects(pid, destination.effects)
-
-                    if destination.targetMenu ~= nil then
-                        menuHelper.DisplayMenu(pid, destination.targetMenu)
-                        Players[pid].currentCustomMenu = destination.targetMenu
-                    end
-                end
-            else
-                if idGui == guiHelper.ID.LOGIN then
-                    if data == nil then
-                        Players[pid]:Message("Incorrect password!\n")
-                        guiHelper.ShowLogin(pid)
-                        return true
-                    end
-
-                    Players[pid]:LoadFromDrive()
-                    local passwordSalt = Players[pid].data.login.passwordSalt
-
-                    if Players[pid].data.login.passwordHash ~= tes3mp.GetSHA256Hash(data .. passwordSalt) then
-                        Players[pid]:Message("Incorrect password!\n")
-                        guiHelper.ShowLogin(pid)
-                        return true
-                    end
-
-                    -- Is this player on the banlist? If so, store their new IP and ban them
-                    if tableHelper.containsValue(banList.playerNames, string.lower(Players[pid].accountName)) == true then
-                        Players[pid]:SaveIpAddress()
-
-                        Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
-                        tes3mp.BanAddress(tes3mp.GetIP(pid))
-                    else
-                        Players[pid]:FinishLogin()
-                        Players[pid]:Message("You have successfully logged in.\n" .. config.chatWindowInstructions)
-                    end
-                elseif idGui == guiHelper.ID.REGISTER then
-                    if data == nil then
-                        Players[pid]:Message("Password can not be empty\n")
-                        guiHelper.ShowRegister(pid)
-                        return true
-                    end
-                    Players[pid]:Register(data)
-                    Players[pid]:Message("You have successfully registered.\n" .. config.chatWindowInstructions)
-                end
-            end
-        end
-        
         customEventHooks.triggerHandlers("OnGUIAction", eventStatus, {pid, idGui, data})
     end
-
     return false
 end
 
