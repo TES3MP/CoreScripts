@@ -47,6 +47,17 @@ packetReader.GetActorPacketTables = function(packetType)
                 actor.killerUniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
                     "-" .. tes3mp.GetActorKillerMpNum(packetIndex)
             end
+        elseif packetType == "cellChange" then
+
+            actor.cellDescription = tes3mp.GetActorCell(packetIndex)
+            actor.location = {
+                posX = tes3mp.GetActorPosX(packetIndex),
+                posY = tes3mp.GetActorPosY(packetIndex),
+                posZ = tes3mp.GetActorPosZ(packetIndex),
+                rotX = tes3mp.GetActorRotX(packetIndex),
+                rotY = tes3mp.GetActorRotY(packetIndex),
+                rotZ = tes3mp.GetActorRotZ(packetIndex)
+            }
         end
 
         packetTables.actors[uniqueIndex] = actor

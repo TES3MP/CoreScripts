@@ -727,7 +727,9 @@ function BaseCell:SaveActorsByPacketType(packetType, actors)
         self:SaveActorEquipment(actors)
     elseif packetType == "death" then
         self:SaveActorDeath(actors)
-    end    
+    elseif packetType == "cellchange" then
+        self:SaveActorCellChanges(actors)
+    end
 end
 
 function BaseCell:SaveObjectsByPacketType(packetType, objects)
@@ -877,18 +879,13 @@ function BaseCell:SaveActorDeath(actors)
     end
 end
 
-function BaseCell:SaveActorCellChanges(pid)
+function BaseCell:SaveActorCellChanges(actors)
 
     local temporaryLoadedCells = {}
+    for actorIndex, actor in pairs(actors) do
 
-    tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
-        " about " .. self.description)
-
-    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
-
-        local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        local newCellDescription = tes3mp.GetActorCell(actorIndex)
+        local uniqueIndex = actor.uniqueIndex
+        local newCellDescription = actor.cellDescription
 
         if newCellDescription == self.description then
             tes3mp.LogAppend(enumerations.log.INFO, "- Ignored invalid cell change that was moving " .. uniqueIndex .. " to " ..
@@ -927,16 +924,14 @@ function BaseCell:SaveActorCellChanges(pid)
 
                         -- Send this generated record to every visitor in the new cell
                         for _, visitorPid in pairs(newCell.visitors) do
-                            if pid ~= visitorPid then
-                                recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
-                            end
+                            recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, { refId })
                         end
                     end
 
                     -- This actor won't exist at all for players who have not loaded the actor's original
                     -- cell and were not online when it was first spawned, so send all of its details to them
                     for _, player in pairs(Players) do
-                        if pid ~= player.pid and not tableHelper.containsValue(self.visitors, player.pid) then
+                        if not tableHelper.containsValue(self.visitors, player.pid) then
                             self:LoadActorPackets(player.pid, self.data.objectData, { uniqueIndex })
                         end
                     end
@@ -1004,14 +999,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 end
 
                 if newCell.data.objectData[uniqueIndex] ~= nil then
-                    newCell.data.objectData[uniqueIndex].location = {
-                        posX = tes3mp.GetActorPosX(actorIndex),
-                        posY = tes3mp.GetActorPosY(actorIndex),
-                        posZ = tes3mp.GetActorPosZ(actorIndex),
-                        rotX = tes3mp.GetActorRotX(actorIndex),
-                        rotY = tes3mp.GetActorRotY(actorIndex),
-                        rotZ = tes3mp.GetActorRotZ(actorIndex)
-                    }
+                    newCell.data.objectData[uniqueIndex].location = tableHelper.deepCopy(actor.location)
                 end
             else
                 tes3mp.LogAppend(enumerations.log.ERROR, "-- Invalid cell change was attempted! Please report " ..
