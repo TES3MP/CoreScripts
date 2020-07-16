@@ -477,19 +477,15 @@ function BasePlayer:SaveIpAddress()
     end
 end
 
-function BasePlayer:ProcessDeath()
+function BasePlayer:ProcessDeath(killerPid, killerName)
 
     local deathReason = "committed suicide"
 
-    if tes3mp.DoesPlayerHavePlayerKiller(self.pid) then
-        local killerPid = tes3mp.GetPlayerKillerPid(self.pid)
-
+    if killerPid then
         if self.pid ~= killerPid then
-            deathReason = "was killed by player " .. logicHandler.GetChatName(killerPid)
+            deathReason = "was killed by player " .. killerName
         end
     else
-        local killerName = tes3mp.GetPlayerKillerName(self.pid)
-
         if killerName ~= "" then
             deathReason = "was killed by " .. killerName
         end

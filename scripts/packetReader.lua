@@ -391,4 +391,17 @@ packetReader.GetRecordPacketEffectArray = function(recordIndex)
     return effectArray
 end
 
+packetReader.GetPlayerPacket = {
+    death = function(pid)
+        local packet = {}
+        if tes3mp.DoesPlayerHavePlayerKiller(pid) then
+            packet.killerPid = tes3mp.GetPlayerKillerPid(pid)
+            packet.killerName = logicHandler.GetChatName(packet.killerPid)
+        else
+            packet.killerName = tes3mp.GetPlayerKillerName(pid)
+        end
+        return packet
+    end
+}
+
 return packetReader

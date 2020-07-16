@@ -601,11 +601,18 @@ end
 
 eventHandler.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerDeath", {pid})
+        local packet = packetReader.GetPlayerPacket.death(pid)
+        local eventStatus = customEventHooks.triggerValidators(
+            "OnPlayerDeath",
+            {pid, packet.killerPid, packet.killerName}
+        )
         if eventStatus.validDefaultHandler then
-            Players[pid]:ProcessDeath()
+            Players[pid]:ProcessDeath(packet.killerPid, packet.killerName)
         end
-        customEventHooks.triggerHandlers("OnPlayerDeath", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerDeath",
+            eventStatus,
+            {pid, packet.killerPid, packet.killerName}
+        )
     end
 end
 
