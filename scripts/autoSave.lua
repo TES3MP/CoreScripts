@@ -241,7 +241,7 @@ customEventHooks.registerHandler('OnStorageLoad', function(eventStatus, key)
 end)
 
 -- force the OnServerExit handler to be the last
-customEventHooks.registerHandler('OnServerPostInit', function(eventStatus)
+customEventHooks.registerHandler('OnServerInit', function(eventStatus)
     customEventHooks.registerHandler('OnServerExit', function(eventStatus)
         if eventStatus.validDefaultHandler then
             exiting = true
