@@ -29,7 +29,7 @@ function async.WaitAll(funcs, timeout, callback)
     if timeout then
         timers.Timeout(timeout, function(id)
             if counter < total then
-                callback(results)
+                if callback then callback(results) end
                 returned = true
             end
         end)
@@ -40,7 +40,7 @@ function async.WaitAll(funcs, timeout, callback)
             results[i] = result
             counter = counter + 1
             if not returned and counter == total then
-                callback(results)
+                if callback then callback(results) end
                 returned = true
             end
         end)
