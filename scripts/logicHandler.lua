@@ -371,6 +371,16 @@ logicHandler.IsPacketFromConsole = function(packetOrigin)
     return false
 end
 
+logicHandler.IsPacketFromClientScript = function(packetOrigin)
+
+    if packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL or
+        packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_GLOBAL then
+        return true
+    end
+
+    return false
+end
+
 logicHandler.SendClientScriptDisables = function(pid, forEveryone)
 
     tes3mp.ClearRecords()

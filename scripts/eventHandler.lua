@@ -1218,6 +1218,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
 
         tes3mp.ReadReceivedObjectList()
         local packetOrigin = tes3mp.GetObjectListOrigin()
+        local clientScript
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
@@ -1225,6 +1226,9 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
+        elseif logicHandler.IsPacketFromClientScript(packetOrigin) then
+            clientScript = tes3mp.GetObjectListClientScript()
+            tes3mp.LogAppend(enumerations.log.INFO, "- clientScript was " .. clientScript)
         end
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
