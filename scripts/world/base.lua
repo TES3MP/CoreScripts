@@ -49,9 +49,9 @@ function BaseWorld:EnsureCoreVariablesExist()
         if self.data.general.currentMpNum ~= nil then
             self.coreVariables.currentMpNum = self.data.general.currentMpNum
             self.data.general.currentMpNum = nil
+        else
+            self.coreVariables.currentMpNum = 0
         end
-    else
-        self.coreVariables.currentMpNum = 0
     end
 
     if self.coreVariables.hasRunStartupScripts == nil then
