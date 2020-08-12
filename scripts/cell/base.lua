@@ -1769,7 +1769,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
                 -- Ensure data integrity before proceeeding
                 if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
-                    self:ContainsPosition(location.posX, location.posY) then
+                    LoadedCells[newCellDescription]:ContainsPosition(location.posX, location.posY) then
 
                     tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
                     tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
