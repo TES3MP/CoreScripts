@@ -15,6 +15,10 @@ function BaseCell:__init(cellDescription)
             description = cellDescription,
             creationTime = os.time()
         },
+        loadState = {
+            hasFullActorList = false,
+            hasFullContainerData = false
+        },
         lastVisit = {},
         objectData = {},
         packets = {},
@@ -27,7 +31,7 @@ function BaseCell:__init(cellDescription)
     self.visitors = {}
     self.authority = nil
 
-    self.isRequestingContainers = false
+    self.isRequestingContainerData = false
     self.containerRequestPid = nil
 
     self.isRequestingActorList = false
@@ -180,6 +184,16 @@ function BaseCell:AddVisitor(pid)
         end
 
         self:LoadMomentaryCellData(pid)
+
+        if not self:HasFullContainerData() and not self.isRequestingContainerData then
+            tes3mp.LogAppend(enumerations.log.INFO, "- Requesting containers")
+            self:RequestContainers(pid)
+        end
+
+        if not self:HasFullActorList() and not self.isRequestingActorList then
+            tes3mp.LogAppend(enumerations.log.INFO, "- Requesting actor list")
+            self:RequestActorList(pid)
+        end
     end
 end
 
@@ -197,8 +211,8 @@ function BaseCell:RemoveVisitor(pid)
         self:SaveLastVisit(Players[pid].accountName)
 
         -- Were we waiting on a container request from this pid?
-        if self.isRequestingContainers == true and self.containerRequestPid == pid then
-            self.isRequestingContainers = false
+        if self.isRequestingContainerData == true and self.containerRequestPid == pid then
+            self.isRequestingContainerData = false
             self.containerRequestPid = nil
         end
 
@@ -231,22 +245,22 @@ function BaseCell:ContainsObject(uniqueIndex)
     return false
 end
 
-function BaseCell:HasContainerData()
+function BaseCell:HasFullContainerData()
 
-    if tableHelper.isEmpty(self.data.packets.container) == true then
-        return false
+    if self.data.loadState.hasFullContainerData == true then
+        return true
     end
 
-    return true
+    return false
 end
 
-function BaseCell:HasActorData()
+function BaseCell:HasFullActorList()
 
-    if tableHelper.isEmpty(self.data.packets.actorList) == true then
-        return false
+    if self.data.loadState.hasFullActorList == true then
+        return true
     end
 
-    return true
+    return false
 end
 
 function BaseCell:InitializeObjectData(uniqueIndex, refId)
@@ -740,8 +754,14 @@ function BaseCell:SaveContainers(pid)
 
     self:QuicksaveToDrive()
 
-    if action == enumerations.container.SET then
-        self.isRequestingContainers = false
+    -- Were we waiting on a full container data request from this pid?
+    if self.isRequestingContainerData == true and self.containerRequestPid == pid and
+        subAction == enumerations.containerSub.REPLY_TO_REQUEST then
+        self.isRequestingContainerData = false
+        self.data.loadState.hasFullContainerData = true
+
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. self.description ..
+            " is now recorded as having full container data")
     end
 end
 
@@ -793,7 +813,14 @@ function BaseCell:SaveActorList(actors)
 
     self:QuicksaveToDrive()
 
-    self.isRequestingActorList = false
+    -- Were we waiting on an actor list request from this pid?
+    if self.isRequestingActorList == true then
+        self.isRequestingActorList = false
+        self.data.loadState.hasFullActorList = true
+
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. self.description ..
+            " is now recorded as having a full actor list")
+    end
 end
 
 function BaseCell:SaveActorPositions()
@@ -1066,17 +1093,13 @@ function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
     self:LoadObjectsSpawned(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.spawn))
     self:LoadObjectsScaled(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.scale))
 
-    if self:HasContainerData() == true then
-        self:LoadContainers(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.container))
-    end
+    self:LoadContainers(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.container))
 
-    if self:HasActorData() == true then
-        self:LoadActorPositions(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.position))
-        self:LoadActorDeath(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
-        self:LoadActorStatsDynamic(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
-        self:LoadActorEquipment(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.equipment))
-        self:LoadActorAI(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.ai))
-    end
+    self:LoadActorPositions(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.position))
+    self:LoadActorDeath(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
+    self:LoadActorStatsDynamic(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.statsDynamic))
+    self:LoadActorEquipment(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.equipment))
+    self:LoadActorAI(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.ai))
 end
 
 function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEveryone)
@@ -1861,7 +1884,7 @@ end
 
 function BaseCell:RequestContainers(pid, requestUniqueIndexes)
 
-    self.isRequestingContainers = true
+    self.isRequestingContainerData = true
     self.containerRequestPid = pid
 
     tes3mp.ClearObjectList()
@@ -1930,35 +1953,21 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadDoorStates(pid, objectData, packets.doorState)
     self:LoadClientScriptLocals(pid, objectData, packets.clientScriptLocal)
 
-    if self:HasContainerData() == true then
-        tes3mp.LogAppend(enumerations.log.INFO, "- Had container data")
-        self:LoadContainers(pid, objectData, packets.container)
-    elseif not self.isRequestingContainers then
-        tes3mp.LogAppend(enumerations.log.INFO, "- Requesting containers")
-        self:RequestContainers(pid)
-    end
+    self:LoadContainers(pid, objectData, packets.container)
 
-    if self:HasActorData() == true then
-        tes3mp.LogAppend(enumerations.log.INFO, "- Had actor data")
-        self:LoadActorCellChanges(pid, objectData)
-        self:LoadActorDeath(pid, objectData, packets.death)
-        self:LoadActorEquipment(pid, objectData, packets.equipment)
-        self:LoadActorAI(pid, objectData, packets.ai)
-    elseif not self.isRequestingActorList then
-        tes3mp.LogAppend(enumerations.log.INFO, "- Requesting actor list")
-        self:RequestActorList(pid)
-    end
+    self:LoadActorCellChanges(pid, objectData)
+    self:LoadActorDeath(pid, objectData, packets.death)
+    self:LoadActorEquipment(pid, objectData, packets.equipment)
+    self:LoadActorAI(pid, objectData, packets.ai)
 end
 
 function BaseCell:LoadMomentaryCellData(pid)
 
-    if self:HasActorData() == true then
-        local objectData = self.data.objectData
-        local packets = self.data.packets
+    local objectData = self.data.objectData
+    local packets = self.data.packets
 
-        self:LoadActorPositions(pid, objectData, packets.position)
-        self:LoadActorStatsDynamic(pid, objectData, packets.statsDynamic)
-    end
+    self:LoadActorPositions(pid, objectData, packets.position)
+    self:LoadActorStatsDynamic(pid, objectData, packets.statsDynamic)
 end
 
 function BaseCell:LoadGeneratedRecords(pid)
