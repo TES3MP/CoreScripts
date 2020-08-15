@@ -31,11 +31,11 @@ config.chatWindowInstructions = color.White .. "Use " .. color.Yellow .. "Y" .. 
 config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. " For some actors and objects to have their correct" ..
     "initial states, an admin needs to run the " .. color.Yellow .. "/runstartup" .. color.White .. " command.\n"
 
--- Which startup scripts should be run via the /runstartup command
+-- Which ingame startup scripts should be run via the /runstartup command
 -- Note: These affect the world and must not be run for every player who joins.
 config.worldStartupScripts = {"Startup", "BMStartUpScript"}
 
--- Which startup scripts should be run on every player who joins
+-- Which ingame startup scripts should be run on every player who joins
 -- Note: These pertain to game mechanics that wouldn't work otherwise, such as vampirism checks
 config.playerStartupScripts = {"VampireCheck", "WereCheckScript"}
 
