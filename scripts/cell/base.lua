@@ -148,6 +148,25 @@ function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
     end
 end
 
+function BaseCell:ClearRecordLinks()
+
+    for storeType, storeLinksTable in pairs(self.data.recordLinks) do
+        
+        local recordStore = RecordStores[storeType]
+
+        if recordStore ~= nil then
+
+            for recordId, uniqueIndexes in pairs(storeLinksTable) do
+
+                for _, uniqueIndex in pairs(uniqueIndexes) do
+
+                    self:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
+                end
+            end
+        end
+    end
+end
+
 function BaseCell:GetVisitorCount()
     return tableHelper.getCount(self.visitors)
 end
