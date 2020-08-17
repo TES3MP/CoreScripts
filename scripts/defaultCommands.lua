@@ -435,3 +435,24 @@ defaultCommands.runStartup = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("runstartup", defaultCommands.runStartup)
+
+defaultCommands.resetCell = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if isModerator == false then
+        tes3mp.SendMessage(pid, "You need to be a moderator to run this command\n")
+        return
+    end
+
+    if cmd[2] == nil then
+        tes3mp.SendMessage(pid, 'Invalid inputs! Use /resetcell "Cell Name"\n')
+        return
+    end
+
+    local inputConcatenation = tableHelper.concatenateFromIndex(cmd, 2)
+    local cellDescription = string.gsub(inputConcatenation, '"', '')
+
+    logicHandler.ResetCell(pid, cellDescription)
+end
+
+customCommandHooks.registerCommand("resetcell", defaultCommands.resetCell)

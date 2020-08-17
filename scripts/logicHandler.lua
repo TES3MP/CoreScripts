@@ -831,9 +831,15 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
 
     local authPid = LoadedCells[cellDescription]:GetAuthority()
 
-    -- If the cell's authority is nil, set this player as the authority
+    -- If the cell's authority is nil, set this player as the authority, as long as the cell
+    -- isn't currently resetting and moving all players out
     if authPid == nil then
-        LoadedCells[cellDescription]:SetAuthority(pid)
+        if LoadedCells[cellDescription].isResetting == false then
+            LoadedCells[cellDescription]:SetAuthority(pid)
+        else
+            tes3mp.LogAppend(enumerations.log.WARN, "- Ignoring setting of authority to " .. pid ..
+                " because of ongoing cell reset")
+        end
     -- Otherwise, only set this new visitor as the authority if their ping is noticeably lower
     -- than that of the current authority
     elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
@@ -863,15 +869,19 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
         LoadedCells[cellDescription]:SaveActorStatsDynamic()
         LoadedCells[cellDescription]:QuicksaveToDrive()
 
-        -- If this player was the cell's authority, set another player
-        -- as the authority
-        if LoadedCells[cellDescription]:GetAuthority() == pid then
+        -- Only set a new authority if the cell isn't currently resetting and
+        -- moving all players out
+        if LoadedCells[cellDescription].isResetting == false then
+            -- If the departing player was the cell's authority, set another
+            -- player as the authority
+            if LoadedCells[cellDescription]:GetAuthority() == pid then
 
-            local visitors = LoadedCells[cellDescription].visitors
+                local visitors = LoadedCells[cellDescription].visitors
 
-            if tableHelper.getCount(visitors) > 0 then
-                local newAuthorityPid = logicHandler.GetLowestPingPid(visitors)
-                LoadedCells[cellDescription]:SetAuthority(newAuthorityPid)
+                if tableHelper.getCount(visitors) > 0 then
+                    local newAuthorityPid = logicHandler.GetLowestPingPid(visitors)
+                    LoadedCells[cellDescription]:SetAuthority(newAuthorityPid)
+                end
             end
         end
     end
@@ -940,6 +950,34 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
             end
         end
     end
+end
+
+logicHandler.ResetCell = function(pid, cellDescription)
+
+    tes3mp.SendMessage(pid, "Resetting cell " .. cellDescription .. "\n")
+
+    -- If the desired cell is not loaded, load it temporarily
+    if LoadedCells[cellDescription] == nil then
+        logicHandler.LoadCell(cellDescription)
+        unloadCellAtEnd = true
+    end
+
+    LoadedCells[cellDescription].isResetting = true
+    LoadedCells[cellDescription].data.objectData = {}
+    LoadedCells[cellDescription].data.packets = {}
+    LoadedCells[cellDescription]:EnsurePacketTables()
+    LoadedCells[cellDescription].data.loadState.hasFullActorList = false
+    LoadedCells[cellDescription].data.loadState.hasFullContainerData = false
+    LoadedCells[cellDescription]:ClearRecordLinks()
+
+    -- Unload a temporarily loaded cell
+    if unloadCellAtEnd then
+        logicHandler.UnloadCell(cellDescription)
+    end
+
+    tes3mp.ClearCellsToReset()
+    tes3mp.AddCellToReset(cellDescription)
+    tes3mp.SendCellReset(pid, true)
 end
 
 return logicHandler

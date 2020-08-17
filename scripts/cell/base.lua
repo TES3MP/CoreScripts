@@ -37,6 +37,8 @@ function BaseCell:__init(cellDescription)
     self.isRequestingActorList = false
     self.actorListRequestPid = nil
 
+    self.isResetting = false
+
     self.unusableContainerUniqueIndexes = {}
 
     self.isExterior = false
