@@ -32,7 +32,8 @@ function guiHelper.CustomMessageBoxAsync(pid, buttons, label)
     SetCoroutine(id)
     label = label or ''
     tes3mp.CustomMessageBox(pid, id, label, table.concat(buttons, ";"))
-    return coroutine.yield() + 1 -- Lua tables are 1-numbered
+    local result = tonumber(coroutine.yield())
+    return result + 1 -- Lua tables are 1-numbered
 end
 
 function guiHelper.InputDialogAsync(pid, label, note)
