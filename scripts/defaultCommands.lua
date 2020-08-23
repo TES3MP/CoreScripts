@@ -352,7 +352,7 @@ local exitWarning = function(delay)
     commandInfo(serverCommandHooks.pid, message, true, color.DarkRed .. message .. color.Default)
 end
 function defaultCommands.exit(pid, cmd)
-    local delay = cmd[2] and tonumber(cmd[2]) or time.minutes(1)
+    local delay = cmd[2] and tonumber(cmd[2]) or 1
     delay = time.minutes(delay)
 
     local minTime = time.seconds(15)
