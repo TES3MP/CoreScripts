@@ -28,6 +28,6 @@ It is generally a good practice to form each of your scripts as a single table, 
 
 As a quick introduction, [take a look at examples](Examples.md).
 
-Consider joning the [TES3MP Discord server](https://discord.gg/ECJk293). There you will find:
+Consider joining the [TES3MP Discord server](https://discord.gg/ECJk293). There you will find:
 * `#scripting_help` here you can ask questions about writing TES3MP server scripts
 * `#custom_scripts` a catalogue of existing scripts. Use them as advanced examples, or maybe add your own scripts to the list!

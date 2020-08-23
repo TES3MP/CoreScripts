@@ -52,7 +52,7 @@ These are the main features differentiating generated records from permanent one
   If a generated record is not linked to anything, it is removed.
 * Generated records are only sent to players when necessary (inside a linked cell, a linked player is in the same cell, ...)
 * Generated records `refId` must follow a specific pattern `$custom_<storeType>_<number>`, e.g. `$custom_potion_2`.  
-  This allows other parts of CoreScripts to easily recognize that a particlar object is a generated record, and of what type it is.
+  This allows other parts of CoreScripts to easily recognize that a particular object is a generated record, and of what type it is.
 
 Give every player a note with their name in it:
 ```Lua

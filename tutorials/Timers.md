@@ -1,6 +1,6 @@
 # Timers
 
-Timer functions are provided as a global `timers` table. All of them accept delay in milliseconds, but you can use [`time` functions](#time-unit-conversions) to convert diffirent units.
+Timer functions are provided as a global `timers` table. All of them accept delay in milliseconds, but you can use [`time` functions](#time-unit-conversions) to convert different units.
 
 ## Timeout and Interval
 
@@ -88,7 +88,7 @@ customCommandHooks.registerCommand("exit", function(pid, delayMinutes)
     end
 
     timers.WaitAsync(delay)
-    printRemaingingDelay(0)
+    printRemainingDelay(0)
     tes3mp.StopServer(0)
   end)
 end)
