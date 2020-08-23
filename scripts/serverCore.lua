@@ -202,7 +202,7 @@ function OnServerInit()
             expectedVersionPrefix)
         tes3mp.StopServer(1)
     end
-    
+
     local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
 
     if eventStatus.validDefaultHandler then
@@ -309,7 +309,7 @@ function OnServerExit(errorState)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerExit\"")
     tes3mp.LogMessage(enumerations.log.ERROR, "Error state: " .. tostring(errorState))
     local status, err = pcall(function()
-        customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true) , {errorState})
+        customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorState})
     end)
     if not status then
         tes3mp.LogMessage(enumerations.log.FATAL, "Error while exiting the server: " .. tostring(err))
@@ -319,7 +319,6 @@ end
 function OnServerScriptCrash(errorMessage)
     tes3mp.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
     OnServerExit(errorMessage)
-    --customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
 end
 
 function LoadDataFileList(filename)

@@ -556,7 +556,6 @@ chatCommandHooks.registerCommand("kick", defaultCommands.kick)
 chatCommandHooks.setRankRequirement("kick", ranks.MODERATOR)
 
 function defaultCommands.addAdmin(pid, cmd)
-    tableHelper.print(cmd)
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local targetPid = tonumber(cmd[2])
         local targetName = Players[targetPid].name

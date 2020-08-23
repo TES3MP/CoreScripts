@@ -49,7 +49,7 @@ function ProcessRequest(req)
             end
         end
         reconnectCounter = 0
-        
+
         if type(cur) == "number" then
             return {
                 log = req.sql,
@@ -69,7 +69,7 @@ function ProcessRequest(req)
                 rows[i] = cur:fetch({}, modestring)
             end
             cur:close()
-            
+
             return {
                 log = req.sql,
                 count = count,
@@ -133,7 +133,7 @@ function PrepareQuery(sql, parameters)
     local result = {}
     local escaped = false
     local hasParameters = false
-    
+
     while sI <= sN and pI <= pN do
         local ch = sql:sub(sI, sI)
         if ch == '?' and not escaped then
@@ -154,7 +154,7 @@ function PrepareQuery(sql, parameters)
         end
         sI = sI + 1
     end
-    
+
     -- no ? in the query
     if not hasParameters then
         return sql

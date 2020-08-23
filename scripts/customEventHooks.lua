@@ -20,13 +20,13 @@ function customEventHooks.updateEventStatus(oldStatus, newStatus)
     else
         result.validDefaultHandler = oldStatus.validDefaultHandler
     end
-    
+
     if newStatus.validCustomHandlers ~= nil then
         result.validCustomHandlers = newStatus.validCustomHandlers
     else
         result.validCustomHandlers = oldStatus.validCustomHandlers
     end
-    
+
     return result
 end
 
