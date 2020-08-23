@@ -249,20 +249,20 @@ end)
 
 -- force the OnServerExit handler to be the last
 customEventHooks.registerHandler('OnServerInit', function(eventStatus)
+    if not eventStatus.validDefaultHandler then return end
     customEventHooks.registerHandler('OnServerExit', function(eventStatus)
-        if eventStatus.validDefaultHandler then
-            exiting = true
+        if not eventStatus.validDefaultHandler then return end
+        exiting = true
 
-            tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Kicking all players")
-            for pid in pairs(Players) do
-                tes3mp.Kick(pid)
-            end
-
-            tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
-            async.RunBlocking(function()
-                autoSave.SaveAll(true)
-            end)
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Kicking all players")
+        for pid in pairs(Players) do
+            tes3mp.Kick(pid)
         end
+
+        tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
+        async.RunBlocking(function()
+            autoSave.SaveAll(true)
+        end)
     end)
 end)
 
@@ -271,7 +271,9 @@ customEventHooks.registerHandler('OnPlayerDisconnect', function(eventStatus)
     if eventStatus.validDefaultHandler and not exiting then
         if tableHelper.isEmpty(Players) then
             tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything because the server is empty")
-            autoSave.SaveAll(false)
+            async.RunBlocking(function()
+                autoSave.SaveAll(false)
+            end)
         end
     end
 end)
