@@ -5,18 +5,42 @@ local threadHandler = {
     threadId = 0,
     messageId = 0,
     callbacks = {},
-    checkCoroutine = nil,
-    timer = nil,
-    interval = nil,
     ERROR = -1
 }
 
-if config then
-    threadHandler.interval = config.threadHandlerInterval
+--
+-- private
+--
+
+local function GetThreadId()
+    threadHandler.threadId = threadHandler.threadId + 1
+    return threadHandler.threadId
+end
+
+local function GetMessageId()
+    threadHandler.messageId = threadHandler.messageId + 1
+    return threadHandler.messageId
+end
+
+local function Check()
+    for _, thread in pairs(threadHandler.threads) do
+        local res = thread.output:pop(0)
+        while res ~= nil do
+            if res.id == threadHandler.ERROR then
+                tes3mp.LogMessage(enumerations.log.ERROR, "[ThreadHandler] Error in thread: " .. res.message)
+                tes3mp.StopServer(1)
+            end
+            if threadHandler.callbacks[res.id] ~= nil then
+                threadHandler.callbacks[res.id](res.message)
+                threadHandler.callbacks[res.id] = nil
+            end
+            res = thread.output:pop(0)
+        end
+    end
 end
 
 --
--- public functions for the main thread
+-- public
 --
 
 function threadHandler.CreateThread(body, ...)
@@ -24,7 +48,7 @@ function threadHandler.CreateThread(body, ...)
     thread.input = effil.channel()
     thread.output = effil.channel()
     thread.worker = effil.thread(body)(thread.input, thread.output, ...)
-    local id = threadHandler.GetThreadId()
+    local id = GetThreadId()
     threadHandler.threads[id] = thread
     return id
 end
@@ -34,7 +58,7 @@ function threadHandler.Send(id, message, callback)
     if thread == nil then
         error("Thread " .. id .. " not found!")
     end
-    local id = threadHandler.GetMessageId()
+    local id = GetMessageId()
     if config.threadHandlerDebug then
         local checkpoint = tes3mp.GetMillisecondsSinceServerStart()
         local originalCallback = callback
@@ -62,7 +86,7 @@ function threadHandler.SendAsync(id, message, sync)
         end)
         while not flag do
             effil.sleep(threadHandler.interval, "ms")
-            threadHandler.Check()
+            Check()
         end
     else
         threadHandler.Send(id, message, function(result)
@@ -73,10 +97,6 @@ function threadHandler.SendAsync(id, message, sync)
     end
     return responseMessage
 end
-
---
--- public functions for secondary threads
---
 
 function threadHandler.ReceiveMessages(input, output, callback)
     local fl = true
@@ -97,53 +117,10 @@ function threadHandler.ReceiveMessages(input, output, callback)
     until not fl
 end
 
---
--- private functions
---
-
-function threadHandler.GetThreadId()
-    threadHandler.threadId = threadHandler.threadId + 1
-    return threadHandler.threadId
-end
-
-function threadHandler.GetMessageId()
-    threadHandler.messageId = threadHandler.messageId + 1
-    return threadHandler.messageId
-end
-
-function threadHandler.Check()
-    for id, thread in pairs(threadHandler.threads) do
-        local res = thread.output:pop(0)
-        while res ~= nil do
-            if res.id == threadHandler.ERROR then
-                tes3mp.LogMessage(enumerations.log.ERROR, "[ThreadHandler] Error in thread: " .. res.message)
-                tes3mp.StopServer(1)
-            end
-            if threadHandler.callbacks[res.id] ~= nil then
-                threadHandler.callbacks[res.id](res.message)
-                threadHandler.callbacks[res.id] = nil
-            end
-            res = thread.output:pop(0)
-        end
-    end
-end
-
-function THREADHANDLER_TIMER()
-    threadHandler.Check()
-    threadHandler.RestartTimer()
-end
-
-function threadHandler.Initiate()
-    threadHandler.timer = tes3mp.CreateTimer("THREADHANDLER_TIMER", threadHandler.interval)
-    tes3mp.StartTimer(threadHandler.timer)
-end
-
-function threadHandler.RestartTimer()
-    tes3mp.RestartTimer(threadHandler.timer, threadHandler.interval)
-end
-
-if threadHandler.interval then
-    threadHandler.Initiate()
+if config and config.threadHandlerInterval then
+    timers.Interval(config.threadHandlerInterval, function()
+        Check()
+    end)
 end
 
 return threadHandler

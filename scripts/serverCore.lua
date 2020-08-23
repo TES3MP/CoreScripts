@@ -11,12 +11,12 @@ require("time")
 require("effil")
 
 async = require("async")
+timers = require('timers')
 threadHandler = require("threadHandler")
 
 customEventHooks = require("customEventHooks")
 chatCommandHooks = require("chatCommandHooks")
 serverCommandHooks = require("serverCommandHooks")
-timers = require('timers')
 
 fileHelper = require("fileHelper")
 fileDrive = require('drive.file')

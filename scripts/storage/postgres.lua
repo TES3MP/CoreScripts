@@ -1,5 +1,20 @@
 --
--- public functions
+-- private
+--
+
+local function Save(key)
+    local result = postgresDrive.QueryAsync(
+        [[INSERT INTO storage (key, data) VALUES (?, ?)
+        ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data;]],
+        {key, jsonInterface.encode(storage.data[key])}
+    )
+    if result.error then
+        error("Failed to save storage " .. key)
+    end
+end
+
+--
+-- public
 --
 
 function storage.Load(key, default)
@@ -26,32 +41,17 @@ function storage.Load(key, default)
     return storage.data[key]
 end
 
---
--- private functions
---
-
-function storage.Save(key)
-    local result = postgresDrive.QueryAsync(
-        [[INSERT INTO storage (key, data) VALUES (?, ?)
-        ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data;]],
-        {key, jsonInterface.encode(storage.data[key])}
-    )
-    if result.error then
-        error("Failed to save storage " .. key)
-    end
-end
-
 function storage.SaveAllAsync()
     local tasks = {}
     for key in pairs(storage.data) do
-        table.insert(tasks, function() storage.Save(key) end)
+        table.insert(tasks, function() Save(key) end)
     end
     return async.WaitAllAsync(tasks) -- TODO: consider adding a timeout
 end
 
 function storage.SaveAll()
     for key in pairs(storage.data) do
-        storage.Save(key)
+        Save(key)
     end
 end
 

@@ -1,19 +1,22 @@
 local request = require("drive.postgres.request")
 
-local postgresDrive = {}
+local postgresDrive = {
+    threads = {},
+    currentJobs = {}
+}
 
-postgresDrive.threads = {}
+--
+-- private
+--
 
-postgresDrive.currentJobs = {}
-
-function postgresDrive.ThreadWork(input, output)
+local function ThreadWork(input, output)
     local Run = require("drive.postgres.thread")
     Run(input, output)
 end
 
-function postgresDrive.Initiate()
-    for i = 1, config.postgres.threadCount do
-        local threadId = threadHandler.CreateThread(postgresDrive.ThreadWork)
+local function Initiate()
+    for _ = 1, config.postgres.threadCount do
+        local threadId = threadHandler.CreateThread(ThreadWork)
         table.insert(postgresDrive.threads, threadId)
         postgresDrive.currentJobs[threadId] = 0
     end
@@ -41,7 +44,10 @@ function postgresDrive.Initiate()
     local doneMigrations = postgresDrive.QueryAsync([[SELECT * FROM migrations]])
     local doneTable = {}
     if doneMigrations.error then
-        tes3mp.LogMessage(enumerations.log.INFO, "[Postgres] Seeding database for the first time, ignore the SQL error above!")
+        tes3mp.LogMessage(
+            enumerations.log.INFO,
+            "[Postgres] Seeding database for the first time, ignore the SQL error above!"
+        )
         ProcessMigration(0, "0000_migrations")
     else
         for i = 1, doneMigrations.count do
@@ -57,7 +63,7 @@ function postgresDrive.Initiate()
     end
 end
 
-function postgresDrive.ProcessResponse(res)
+local function ProcessResponse(res)
     if res.error then
         tes3mp.LogMessage(enumerations.log.ERROR, "[Postgres] [[" .. res.error .. "]]")
     elseif res.log then
@@ -65,7 +71,7 @@ function postgresDrive.ProcessResponse(res)
     end
 end
 
-function postgresDrive.ChooseThread()
+local function ChooseThread()
     local minThread = postgresDrive.threads[1]
     local min = postgresDrive.currentJobs[minThread]
     for _, thread in pairs(postgresDrive.threads) do
@@ -80,25 +86,25 @@ function postgresDrive.ChooseThread()
     return minThread
 end
 
-function postgresDrive.StartJob(thread)
+local function StartJob(thread)
     postgresDrive.currentJobs[thread] = postgresDrive.currentJobs[thread] + 1
 end
 
-function postgresDrive.FinishJob(thread)
+local function FinishJob(thread)
     postgresDrive.currentJobs[thread] = postgresDrive.currentJobs[thread] - 1
     if postgresDrive.currentJobs[thread] < 0 then
         postgresDrive.currentJobs[thread] = 0
     end
 end
 
-function postgresDrive.Send(thread, req, callback)
-    postgresDrive.StartJob(thread)
+local function Send(thread, req, callback)
+    StartJob(thread)
     threadHandler.Send(
         thread,
         req,
         function(res)
-            postgresDrive.FinishJob(thread)
-            postgresDrive.ProcessResponse(res)
+            FinishJob(thread)
+            ProcessResponse(res)
             if callback ~= nil then
                 callback(res)
             end
@@ -106,23 +112,27 @@ function postgresDrive.Send(thread, req, callback)
     )
 end
 
-function postgresDrive.SendAsync(thread, req)
-    postgresDrive.StartJob(thread)
+local function SendAsync(thread, req)
+    StartJob(thread)
     local res = threadHandler.SendAsync(
         thread,
         req
     )
-    postgresDrive.FinishJob(thread)
-    postgresDrive.ProcessResponse(res)
+    FinishJob(thread)
+    ProcessResponse(res)
     return res
 end
+
+--
+-- public
+--
 
 function postgresDrive.Connect(connectString)
     local results = {}
     for _, thread in pairs(postgresDrive.threads) do
         table.insert(
             results,
-            postgresDrive.SendAsync(thread, request.Connect(connectString))
+            SendAsync(thread, request.Connect(connectString))
         )
     end
     return results
@@ -132,7 +142,7 @@ function postgresDrive.ConnectAsync(connectString, timeout)
     local tasks = {}
     for _, thread in pairs(postgresDrive.threads) do
         table.insert(tasks, function()
-            return postgresDrive.SendAsync(thread, request.Connect(connectString))
+            return SendAsync(thread, request.Connect(connectString))
         end)
     end
     return async.WaitAll(tasks, timeout)
@@ -143,7 +153,7 @@ function postgresDrive.Disconnect()
     for _, thread in pairs(postgresDrive.threads) do
         table.insert(
             results,
-            postgresDrive.SendAsync(thread, request.Disconnect())
+            SendAsync(thread, request.Disconnect())
         )
     end
     return results
@@ -153,31 +163,31 @@ function postgresDrive.DisconnectAsync()
     local tasks = {}
     for _, thread in pairs(postgresDrive.threads) do
         table.insert(tasks, function()
-            return postgresDrive.SendAsync(thread, request.Disconnect())
+            return SendAsync(thread, request.Disconnect())
         end)
     end
     return async.WaitAll(tasks)
 end
 
 function postgresDrive.Query(sql, parameters, callback, numericalIndices)
-    local thread = postgresDrive.ChooseThread()
+    local thread = ChooseThread()
     if numericalIndices then
-        postgresDrive.Send(thread, request.QueryNumerical(sql, parameters), callback)
+        Send(thread, request.QueryNumerical(sql, parameters), callback)
     else
-        postgresDrive.Send(thread, request.Query(sql, parameters), callback)
+        Send(thread, request.Query(sql, parameters), callback)
     end
 end
 
 function postgresDrive.QueryAsync(sql, parameters, numericalIndices)
-    local thread = postgresDrive.ChooseThread()
+    local thread = ChooseThread()
     if numericalIndices then
-        return postgresDrive.SendAsync(thread, request.QueryNumerical(sql, parameters))
+        return SendAsync(thread, request.QueryNumerical(sql, parameters))
     else
-        return postgresDrive.SendAsync(thread, request.Query(sql, parameters))
+        return SendAsync(thread, request.Query(sql, parameters))
     end
 end
 
-postgresDrive.Initiate()
+Initiate()
 
 -- make sure the disconnect handler is the every last
 customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)

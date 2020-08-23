@@ -14,9 +14,13 @@ end
 
 local jsonInterface = {}
 
--- Remove all text from before the actual JSON content starts
-function jsonInterface.removeHeader(content)
+--
+-- private
+--
 
+-- Remove all text from before the actual JSON content starts
+-- Only used for cjson, dkjson ignores comments on its own
+local function removeHeader(content)
     local closestBracketIndex
 
     local bracketIndex1 = content:find("\n%[")
@@ -31,24 +35,23 @@ function jsonInterface.removeHeader(content)
     return content:sub(closestBracketIndex)
 end
 
+--
+-- public
+--
+
 function jsonInterface.load(fileName)
     local res = fileDrive.LoadAsync(fileName)
     if not res then
         error("Failed to load json file " .. fileName)
     end
-    return jsonInterface.decode(res.content)
-end
-
-
-function jsonInterface.writeToFile(fileName, content)
-    return fileDrive.SaveAsync(fileName, content)
+    return jsonInterface.decode(res.content, fileName)
 end
 
 -- Save data to JSON in a slower but human-readable way, with identation and a specific order
 -- to the keys, provided via dkjson
 function jsonInterface.save(fileName, data, keyOrderArray)
     local content = jsonInterface.encode(data, keyOrderArray)
-    return jsonInterface.writeToFile(fileName, content)
+    return fileDrive.SaveAsync(fileName, content)
 end
 
 -- Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
@@ -57,23 +60,22 @@ function jsonInterface.quicksave(fileName, data)
     return jsonInterface.save(fileName, data)
 end
 
-
 -- Parse a JSON string and return it as a table
 -- fileName is an optional argument, used for logging
 function jsonInterface.decode(content, fileName)
     if cjsonExists then
         if content:sub(1, 2) == "//" then
-            content = jsonInterface.removeHeader(content)
+            content = removeHeader(content)
         end
         local decodedContent = nil
-        local status, error = pcall(function() decodedContent = cjson.decode(content) end)
+        local status, error = pcall(function()
+            decodedContent = cjson.decode(content)
+        end)
 
         if status then
             return decodedContent
         else
-            if not fileName then
-                fileName = "string"
-            end
+            fileName = fileName or "string"
             tes3mp.LogMessage(enumerations.log.ERROR, "Could not decode " .. fileName .. " using Lua CJSON " ..
                 "due to improperly formatted JSON! Error:\n" .. error .. "\n" .. fileName .. " is being decoded " ..
                 "via the slower dkjson instead.")

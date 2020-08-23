@@ -1,24 +1,19 @@
-local effil = require('effil')
 local request = require("drive.file.request")
 
-local fileClient = {
+local fileDrive = {
     thread = nil
 }
 
-function fileClient.ThreadWork(input, output)
+--
+-- private
+--
+
+local function ThreadWork(input, output)
     local Run = require("drive.file.thread")
     Run(input, output)
 end
 
-function fileClient.Initiate()
-    fileClient.thread = threadHandler.CreateThread(fileClient.ThreadWork)
-    fileClient.ProcessResponse(threadHandler.SendAsync(
-        fileClient.thread,
-        request.initiate()
-    ))
-end
-
-function fileClient.ProcessResponse(res)
+local function ProcessResponse(res)
     if res.log then
         tes3mp.LogMessage(enumerations.log.INFO, "[FileClient] " .. res.log)
     end
@@ -27,38 +22,50 @@ function fileClient.ProcessResponse(res)
     end
 end
 
-function fileClient.Send(req, callback)
-    local res = threadHandler.Send(fileClient.thread, req, function(res)
-        fileClient.ProcessResponse(res)
+local function Initiate()
+    fileDrive.thread = threadHandler.CreateThread(ThreadWork)
+    ProcessResponse(threadHandler.SendAsync(
+        fileDrive.thread,
+        request.initiate()
+    ))
+end
+
+local function Send(req, callback)
+    local res = threadHandler.Send(fileDrive.thread, req, function(res)
+        ProcessResponse(res)
         callback(res)
     end)
     return res
 end
 
-function fileClient.SendAsync(req)
-    local res = threadHandler.SendAsync(fileClient.thread, req)
-    fileClient.ProcessResponse(res)
+local function SendAsync(req)
+    local res = threadHandler.SendAsync(fileDrive.thread, req)
+    ProcessResponse(res)
     return res
 end
 
-function fileClient.Save(path, content, callback)
-    fileClient.Send(request.save(path, content), callback)
+--
+-- public
+--
+
+function fileDrive.Save(path, content, callback)
+    Send(request.save(path, content), callback)
 end
 
-function fileClient.SaveAsync(path, content)
-    return fileClient.SendAsync(request.save(path, content))
+function fileDrive.SaveAsync(path, content)
+    return SendAsync(request.save(path, content))
 end
 
-function fileClient.Load(path, callback)
-    fileClient.Send(request.load(path), callback)
+function fileDrive.Load(path, callback)
+    Send(request.load(path), callback)
 end
 
-function fileClient.LoadAsync(path)
-    return fileClient.SendAsync(request.load(path))
+function fileDrive.LoadAsync(path)
+    return SendAsync(request.load(path))
 end
 
 async.Wrap(function()
-    fileClient.Initiate()
+    Initiate()
 end)
 
-return fileClient
+return fileDrive

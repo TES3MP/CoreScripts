@@ -3,11 +3,19 @@ local jsonConfig = {}
 jsonConfig.data = {}
 
 --
--- public functions
+-- private
+--
+
+local function GetFileName(name)
+    return 'custom/config__' .. name .. '.json'
+end
+
+--
+-- public
 --
 
 function jsonConfig.Load(name, default, keyOrderArray)
-    local filename = jsonConfig.GetFileName(name)
+    local filename = GetFileName(name)
     local result = fileDrive.LoadAsync(filename)
     if not result.content then
         fileDrive.SaveAsync(filename, jsonInterface.encode(default, keyOrderArray))
@@ -16,14 +24,6 @@ function jsonConfig.Load(name, default, keyOrderArray)
         jsonConfig.data[name] = jsonInterface.decode(result.content)
     end
     return jsonConfig.data[name]
-end
-
---
--- private functions
---
-
-function jsonConfig.GetFileName(name)
-    return 'custom/config__' .. name .. '.json'
 end
 
 return jsonConfig

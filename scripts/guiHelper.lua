@@ -10,7 +10,15 @@ end
 guiHelper.coroutines = {}
 
 --
--- public functions
+-- private
+--
+
+local function SetCoroutine(id)
+    guiHelper.coroutines[id] = async.CurrentCoroutine()
+end
+
+--
+-- public
 --
 
 function guiHelper.MessageBox(pid, label)
@@ -21,7 +29,7 @@ end
 
 function guiHelper.CustomMessageBoxAsync(pid, buttons, label)
     local id = guiHelper.GetGuiId()
-    guiHelper.SetCoroutine(id)
+    SetCoroutine(id)
     label = label or ''
     tes3mp.CustomMessageBox(pid, id, label, table.concat(buttons, ";"))
     return coroutine.yield() + 1 -- Lua tables are 1-numbered
@@ -29,7 +37,7 @@ end
 
 function guiHelper.InputDialogAsync(pid, label, note)
     local id = guiHelper.GetGuiId()
-    guiHelper.SetCoroutine(id)
+    SetCoroutine(id)
     note = note or ''
     label = label or ''
     tes3mp.InputDialog(pid, id, label, note)
@@ -38,7 +46,7 @@ end
 
 function guiHelper.PasswordDialogAsync(pid, label, note)
     local id = guiHelper.GetGuiId()
-    guiHelper.SetCoroutine(id)
+    SetCoroutine(id)
     label = label or ''
     note = note or ''
     tes3mp.PasswordDialog(pid, id, label, note)
@@ -47,7 +55,7 @@ end
 
 function guiHelper.ListBoxAsync(pid, rows, label)
     local id = guiHelper.GetGuiId()
-    guiHelper.SetCoroutine(id)
+    SetCoroutine(id)
     local items = table.concat(rows, "\n")
     label = label or ''
     tes3mp.ListBox(pid, id, label, items)
@@ -71,15 +79,20 @@ function guiHelper.GetGuiId(name)
     end
 end
 
---
--- private functions
---
-
-function guiHelper.SetCoroutine(id)
-    guiHelper.coroutines[id] = async.CurrentCoroutine()
+function guiHelper.ShowLogin(pid)
+    tes3mp.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
 end
 
-function guiHelper.OnGUIAction(evenStatus, pid, id, data)
+function guiHelper.ShowRegister(pid)
+    tes3mp.PasswordDialog(
+        pid, guiHelper.ID.REGISTER,
+        "Create new password:",
+        "Warning: there is no guarantee that your password will be stored securely on any game server, "
+            .. "so you should use a unique one for each server."
+    )
+end
+
+customEventHooks.registerHandler("OnGUIAction", function(evenStatus, pid, id, data)
     if evenStatus.validDefaultHandler then
         local co = guiHelper.coroutines[id]
         if co then
@@ -87,17 +100,6 @@ function guiHelper.OnGUIAction(evenStatus, pid, id, data)
             async.Resume(co, data)
         end
     end
-end
-customEventHooks.registerHandler("OnGUIAction", guiHelper.OnGUIAction)
-
-guiHelper.ShowLogin = function(pid)
-    tes3mp.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
-end
-
-guiHelper.ShowRegister = function(pid)
-    tes3mp.PasswordDialog(pid, guiHelper.ID.REGISTER, "Create new password:",
-        "Warning: there is no guarantee that your password will be stored securely on any game server, so you should use " ..
-        "a unique one for each server.")
-end
+end)
 
 return guiHelper
