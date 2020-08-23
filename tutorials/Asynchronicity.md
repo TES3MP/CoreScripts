@@ -88,6 +88,24 @@ async.Wrap(function()
 end)
 ```
 
+## Running asynchronous functions synchronously
+
+* `async.RunBlocking(func, timeout)` where
+  * `func` is the function which will be run synchronously.  
+    You can nest as many coroutine scopes inside as you want, the main thread will wait for this function to finish.
+  * `timeout` optional argument. Limits how long should the main thread wait for `func` to finish.  
+    If the time is exceeded, an error is thrown.
+
+An example:
+```Lua
+async.RunBlocking(function()
+  timers.WaitAsync(time.seconds(1))
+end)
+```
+This will freeze the server for a second.
+
+There is an important limitation to `async.RunBlocking`. It can only be used with functions which do not depend on the tes3mp events to resolve. For example, none of the `guiHelper` functions can be ran this way: the server will endlessly wait, and will never actually receive the user's response.
+
 ## Refactoring your own callbacks into Async functions
 
 Let's assume you already have a function such as
@@ -110,7 +128,7 @@ function networkRequestAsync(url)
   return coroutine.yield()
 end
 ```
-* `async.CurrentCoroutine()` simply returns the result of `coroutine.running()` or throws an error if it dosen't exist
+* `async.CurrentCoroutine()` simply returns the result of `coroutine.running()` or throws an error if it doesn't exist
 
 Now use can use your new function in procedural style:
 ```Lua

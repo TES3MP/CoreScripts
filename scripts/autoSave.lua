@@ -167,10 +167,14 @@ function autoSave.SaveAll(exit)
         i = i + 1
     until not res or savingQueue.size == 0 or i > savingQueue.size
 
+    local tasks = {}
     for _, recordStore in pairs(RecordStores) do
-        recordStore:DeleteUnlinkedRecords()
-        recordStore:SaveToDrive()
+        table.insert(tasks, function()
+            recordStore:DeleteUnlinkedRecords()
+            recordStore:SaveToDrive()
+        end)
     end
+    async.WaitAllAsync(tasks)
 end
 
 function autoSave.Log(record)
@@ -209,7 +213,10 @@ function autoSave.Interval()
                 time.seconds(config.autoSaveCompleteInterval) / math.max(savingQueue.size, 1) - intervalAverage,
                 time.seconds(config.autoSaveMinimalInterval)
             ))
-            tes3mp.LogMessage(enumerations.log.VERBOSE, string.format("[AutoSave] Save interval of %ss", time.toSeconds(delay)))
+            tes3mp.LogMessage(
+                enumerations.log.VERBOSE,
+                string.format("[AutoSave] Save interval of %ss",time.toSeconds(delay))
+            )
             timers.WaitAsync(delay)
         end
     end)
@@ -252,7 +259,9 @@ customEventHooks.registerHandler('OnServerInit', function(eventStatus)
             end
 
             tes3mp.LogMessage(enumerations.log.INFO, "[AutoSave] Saving everything before exiting")
-            autoSave.SaveAll(true)
+            async.RunBlocking(function()
+                autoSave.SaveAll(true)
+            end)
         end
     end)
 end)

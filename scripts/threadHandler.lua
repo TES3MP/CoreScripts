@@ -75,19 +75,19 @@ function threadHandler.Send(id, message, callback)
     })
 end
 
-function threadHandler.SendAsync(id, message, sync)
+function threadHandler.SendAsync(id, message)
+    -- replace with async.CurrentCoroutine when synchronous mode is scrapped
     local currentCoroutine = coroutine.running()
     local responseMessage = nil
-    if not currentCoroutine or sync then
-        local flag = false
-        threadHandler.Send(id, message, function(result)
-            flag = true
-            responseMessage = result
+    if not currentCoroutine then
+        async.RunBlocking(function()
+            local co = async.CurrentCoroutine()
+            threadHandler.Send(id, message, function(result)
+                responseMessage = result
+                async.Resume(co)
+            end)
+            coroutine.yield()
         end)
-        while not flag do
-            effil.sleep(threadHandler.interval, "ms")
-            Check()
-        end
     else
         threadHandler.Send(id, message, function(result)
             responseMessage = result
@@ -117,8 +117,9 @@ function threadHandler.ReceiveMessages(input, output, callback)
     until not fl
 end
 
-if config and config.threadHandlerInterval then
-    timers.Interval(config.threadHandlerInterval, function()
+-- we might not be in the main thread, and config might not be imported
+if config and config.schedulerInterval then
+    timers.Interval(config.schedulerInterval, function()
         Check()
     end)
 end

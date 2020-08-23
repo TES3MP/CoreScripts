@@ -145,7 +145,7 @@ function postgresDrive.ConnectAsync(connectString, timeout)
             return SendAsync(thread, request.Connect(connectString))
         end)
     end
-    return async.WaitAll(tasks, timeout)
+    return async.WaitAllAsync(tasks, timeout)
 end
 
 function postgresDrive.Disconnect()
@@ -166,7 +166,7 @@ function postgresDrive.DisconnectAsync()
             return SendAsync(thread, request.Disconnect())
         end)
     end
-    return async.WaitAll(tasks)
+    return async.WaitAllAsync(tasks)
 end
 
 function postgresDrive.Query(sql, parameters, callback, numericalIndices)
@@ -187,17 +187,22 @@ function postgresDrive.QueryAsync(sql, parameters, numericalIndices)
     end
 end
 
-Initiate()
+customEventHooks.registerValidator("OnServerInit", function(eventStatus)
+    if not eventStatus.validDefaultHandler then return end
+    async.RunBlocking(function()
+        Initiate()
+    end)
+end)
 
 -- make sure the disconnect handler is the every last
 customEventHooks.registerHandler("OnServerPostInit", function(eventStatus)
-    if eventStatus.validDefaultHandler then
-        customEventHooks.registerHandler("OnServerExit", function(eventStatus)
-            if eventStatus.validDefaultHandler then
-                async.Wrap(function() postgresDrive.DisconnectAsync() end)
-            end
+    if not eventStatus.validDefaultHandler then return end
+    customEventHooks.registerHandler("OnServerExit", function(eventStatus)
+        if not eventStatus.validDefaultHandler then return end
+        async.RunBlocking(function()
+            postgresDrive.DisconnectAsync()
         end)
-    end
+    end)
 end)
 
 return postgresDrive

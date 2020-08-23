@@ -95,6 +95,8 @@ function TIMERS_CALLBACK()
     timers.Tick()
 end
 
+customEventHooks.registerHandler("OnBlockingTick", TIMERS_CALLBACK)
+
 timers.timer = tes3mp.CreateTimer("TIMERS_CALLBACK", 0)
 tes3mp.StartTimer(timers.timer)
 

@@ -1,4 +1,7 @@
 local async = {}
+local sleep = require('effil').sleep
+local currentTimestamp = tes3mp.GetMillisecondsSinceServerStart
+local blockingInterval = time.toSeconds(config.schedulerInterval)
 
 function async.Wrap(func, ...)
     local co = coroutine.create(func)
@@ -53,6 +56,25 @@ function async.WaitAllAsync(funcs, timeout)
         async.Resume(currentCoroutine, results)
     end)
     return coroutine.yield()
+end
+
+function async.RunBlocking(func, timeout)
+    local done = false
+    local res = nil
+    local start = currentTimestamp()
+    async.Wrap(function()
+        res = func()
+        done = true
+    end)
+    while not done do
+        local now = currentTimestamp()
+        if timeout and (timeout + start) < now then
+            error("async.RunBlocking timed out after " .. (now - start))
+        end
+        customEventHooks.triggerHandlers("OnBlockingTick", customEventHooks.makeEventStatus(true, true), {})
+        sleep(blockingInterval)
+    end
+    return res
 end
 
 return async

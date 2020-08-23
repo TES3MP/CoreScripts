@@ -10,11 +10,12 @@ tableHelper = require("tableHelper")
 require("time")
 require("effil")
 
+customEventHooks = require("customEventHooks")
+
 async = require("async")
 timers = require('timers')
 threadHandler = require("threadHandler")
 
-customEventHooks = require("customEventHooks")
 chatCommandHooks = require("chatCommandHooks")
 serverCommandHooks = require("serverCommandHooks")
 

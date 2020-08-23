@@ -64,8 +64,11 @@ function fileDrive.LoadAsync(path)
     return SendAsync(request.load(path))
 end
 
-async.Wrap(function()
-    Initiate()
+customEventHooks.registerValidator("OnServerInit", function(eventStatus)
+    if not eventStatus.validDefaultHandler then return end
+    async.RunBlocking(function()
+        Initiate()
+    end)
 end)
 
 return fileDrive

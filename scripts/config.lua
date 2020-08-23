@@ -372,8 +372,8 @@ config.enforceDataFiles = true
 --          important data can potentially stay unloaded or get overwritten
 config.ignoreScriptErrors = false
 
--- Interval (in miliseconds) at which to read responses from secondary threads
-config.threadHandlerInterval = 5
+-- Interval (in miliseconds) at which to check for responses from async tasks
+config.schedulerInterval = 5
 
 config.threadHandlerDebug = true
 

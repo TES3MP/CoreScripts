@@ -8,8 +8,7 @@ For most scripts, there is no reason to interact with it directly. However if yo
 * `threadHandler.CreateThread(body, ...)` creates a new thread and returns its `id`
   Will run the function `body` with arguments `input`, `output` and `...`, where `input` and `output` are instances of `effil.channel`.
 * `threadHandler.Send(id, message, callback)` sends `message` to thread with `id` and calls `callback` when it responds
-* `threadHandler.SendAsync(id, message, sync)` asynchonous version of Send.  
-  Unlike most asynchronous functions, this one can be called from the main thread, or forced to wait for the response without pausing the current coroutine - by passing `sync` equal to `true`
+* `threadHandler.SendAsync(id, message)` asynchronous version of Send
 
 Keep in mind that `effil` must be able to serialize any values you pass to threads: arguments of `CreateThread` and `message` for `Send` functions. [Go here for more detail](https://github.com/effil/effil#important-notes).
 
