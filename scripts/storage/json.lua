@@ -6,7 +6,11 @@ local function GetFileName(key)
     return 'custom/data__' .. key .. '.json'
 end
 
-local function Save(key)
+--
+-- public
+--
+
+function storage.Save(key)
     local result = fileDrive.SaveAsync(
         GetFileName(key),
         jsonInterface.encode(storage.data[key])
@@ -16,21 +20,17 @@ local function Save(key)
     end
 end
 
---
--- public
---
-
 function storage.SaveAllAsync()
     local tasks = {}
     for key in pairs(storage.data) do
-        table.insert(tasks, function() Save(key) end)
+        table.insert(tasks, function() storage.Save(key) end)
     end
     return async.WaitAllAsync(tasks) -- TODO: consider adding a timeout
 end
 
 function storage.SaveAll()
     for key in pairs(storage.data) do
-        Save(key)
+        storage.Save(key)
     end
 end
 
