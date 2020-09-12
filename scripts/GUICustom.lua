@@ -16,7 +16,26 @@ end
 
 local GUICustom = class("GUICustom")
 
-GUICustom.DISCONNECT = "disconnect"
+GUICustom.EVENTS = {
+    disconnect = "disconnect"
+}
+
+local resources = {}
+
+function GUICustom.SendResource(pid, name, source)
+    tes3mp.GUIResource(pid, name, source)
+end
+
+function GUICustom.Resource(name, source)
+    resources[name] = source
+end
+
+customEventHooks.registerHandler("OnPlayerConnect", function(eventStatus, pid)
+    if not eventStatus.validDefaultHandler then return end
+    for name, source in pairs(resources) do
+        GUICustom.SendResource(pid, name, source)
+    end
+end)
 
 function GUICustom:__init(pid, layout, background)
     self.pid = pid
@@ -93,7 +112,7 @@ function GUICustom:Event(pid, event, data, fields)
 end
 
 function GUICustom:Disconnect(pid)
-    self:Event(pid, GUICustom.DISCONNECT, "", self.fields)
+    self:Event(pid, GUICustom.EVENTS.disconnect, "", self.fields)
 end
 
 function GUICustom:On(event, callback)
@@ -109,12 +128,12 @@ function GUICustom:Fields()
 end
 
 customEventHooks.registerHandler("OnGUICustom", function (eventStatus, pid, id, event, data, fields)
-    if not eventStatus.validCustomHandlers then return end
+    if not eventStatus.validDefaultHandler then return end
     idToInstance[id]:Event(pid, event, data, fields)
 end)
 
 customEventHooks.registerHandler("OnPlayerDisconnect", function(eventStatus, pid)
-    if not eventStatus.validCustomHandlers then return end
+    if not eventStatus.validDefaultHandler then return end
     if pidToInstances[pid] then
         for _, instance in pairs(pidToInstances[pid]) do
             instance:Disconnect(pid)

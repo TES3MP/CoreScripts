@@ -7,6 +7,19 @@
 
 local GUICustom = require("GUICustom")
 
+GUICustom.Resource("urm_test", [[
+<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Resource" version="1.1">
+<Resource type="ResourceSkin" name="URM_TextEdit" size="512 20">
+    <Child type="Widget" skin="MW_Box" offset="0 0 512 20" align="Stretch"/>
+    <Property key="FontName" value="Default"/>
+    <Property key="TextAlign" value="Left VCenter"/>
+    <Property key="TextColour" value="#ffff00"/>
+    <Child type="TextBox" skin="MW_TextEditClient" offset="4 0 502 18" align="Stretch" name="Client"/>
+</Resource>
+</MyGUI>
+]])
+
 local formLayout = [[
 <?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout">
@@ -21,6 +34,12 @@ local formLayout = [[
     
     <Widget type="EditBox" skin="MW_TextEdit" position="0 0 300 30" align="HStretch Top">
         <UserString key="Field" value="text"/>
+        <Property key="Caption" value="MW"/>
+    </Widget>
+
+    <Widget type="EditBox" skin="URM_TextEdit" position="0 0 300 30" align="HStretch Top">
+        <UserString key="Field" value="yellow_text"/>
+        <Property key="Caption" value="URM"/>
     </Widget>
 
     <Widget type="ListBox" skin="MW_List" position="0 0 300 200" align="Stretch">
@@ -44,10 +63,10 @@ local formMap = {}
 chatCommandHooks.registerCommand("form", function(pid)
     if not formMap[pid] then
         formMap[pid] = GUICustom(pid, formLayout)
-        formMap[pid]:Show({
-            cap = "TEXTBOX"
-        })
     end
+    formMap[pid]:Show({
+        cap = "TEXTBOX"
+    })
 end)
 
 local windowLayout = [[
