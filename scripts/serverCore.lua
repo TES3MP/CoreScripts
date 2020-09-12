@@ -677,6 +677,11 @@ function OnGUIAction(pid, idGui, data)
     if eventHandler.OnGUIAction(pid, idGui, data) then return end -- if eventHandler.OnGUIAction is called
 end
 
+function OnGUICustom(pid, idGui, tag, data)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnGUICustom\" for " .. logicHandler.GetChatName(pid))
+    eventHandler.OnGUICustom(pid, idGui, tag, data)
+end
+
 function OnMpNumIncrement(currentMpNum)
     eventHandler.OnMpNumIncrement(currentMpNum)
 end

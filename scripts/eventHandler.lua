@@ -580,6 +580,18 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
     return false
 end
 
+eventHandler.OnGUICustom = function(pid, idGui, tag, data)
+    local fields = {}
+    local size = tes3mp.GetGUIFieldSize(pid)
+    for i = 0, size-1 do
+        fields[tes3mp.GetGUIFieldKey(pid, i)] = tes3mp.GetGUIFieldValue(pid, i)
+    end
+    customEventHooks.triggerHandlers(
+        "OnGUICustom", customEventHooks.makeEventStatus(true, true),
+        {pid, idGui, tag, data, fields}
+    )
+end
+
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then

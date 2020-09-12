@@ -1,4 +1,4 @@
-tableHelper = require("tableHelper")
+local tableHelper = require("tableHelper")
 
 guiHelper = {}
 guiHelper.names = {"LOGIN", "REGISTER", "PLAYERSLIST", "CELLSLIST"}
