@@ -21,19 +21,52 @@ GUICustom.EVENTS = {
 }
 
 local resources = {}
+local resourcesLogin = {}
 
 function GUICustom.SendResource(pid, name, source)
-    tes3mp.GUIResource(pid, name, source)
+    tes3mp.GUIResource(pid, name, source or resources[name])
 end
 
-function GUICustom.Resource(name, source)
-    resources[name] = source
+function GUICustom.Resource(name, source, requiredAtLogin)
+    if requiredAtLogin then
+        resourcesLogin[name] = source
+    else
+        resources[name] = source
+    end
+end
+
+local layouts = {}
+local layoutsLogin = {}
+
+function GUICustom.Layout(name, source, requiredAtLogin)
+    if requiredAtLogin then
+        layoutsLogin[name] = source
+    else
+        layouts[name] = source
+    end
+end
+
+function GUICustom.SendLayout(pid, name, source)
+    tes3mp.GUILayout(pid, name, source or layouts[name])
 end
 
 customEventHooks.registerHandler("OnPlayerConnect", function(eventStatus, pid)
     if not eventStatus.validDefaultHandler then return end
+    for name, source in pairs(resourcesLogin) do
+        GUICustom.SendResource(pid, name, source)
+    end
+    for name, source in pairs(layoutsLogin) do
+        GUICustom.SendLayout(pid, name, source)
+    end
+end)
+
+customEventHooks.registerHandler("OnPlayerAuthentified", function(eventStatus, pid)
+    if not eventStatus.validDefaultHandler then return end
     for name, source in pairs(resources) do
         GUICustom.SendResource(pid, name, source)
+    end
+    for name, source in pairs(layouts) do
+        GUICustom.SendLayout(pid, name, source)
     end
 end)
 
@@ -58,43 +91,39 @@ function GUICustom:Update(props)
         return
     end
     local pid = self.pid
-    tes3mp.SetGUILayout(pid, "");
     tes3mp.ClearGUIProperties(pid);
     for key, value in pairs(props) do
         self.props[key] = value
         tes3mp.SetGUIProperty(pid, key, value);
     end
-    tes3mp.GUICustom(pid, self.id)
+    tes3mp.GUICustom(pid, self.id, "")
 end
 
 function GUICustom:Show(props)
     local pid = self.pid
-    local layout = self.layout
     if self.visible then layout = "" end
-    tes3mp.SetGUILayout(pid, layout);
     tes3mp.ClearGUIProperties(pid);
     props = props or self.props
     for key, value in pairs(props) do
         self.props[key] = value
         tes3mp.SetGUIProperty(pid, key, value);
     end
-    tes3mp.GUICustom(pid, self.id, false, self.background)
+    tes3mp.GUICustom(pid, self.id, self.layout, false, self.background)
     self.visible = true
 end
 
 function GUICustom:Hide()
     local pid = self.pid
-    tes3mp.SetGUILayout(pid, "");
     tes3mp.ClearGUIProperties(pid);
-    tes3mp.GUICustom(pid, self.id, true, self.background)
+    tes3mp.GUICustom(pid, self.id, "", true, self.background)
     self.visible = false
 end
 
-function GUICustom:Toggle()
+function GUICustom:Toggle(props)
     if self.visible then
         self:Hide()
     else
-        self:Show(self.props)
+        self:Show(props or self.props)
     end
 end
 
