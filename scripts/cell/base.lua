@@ -1913,7 +1913,8 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
     tes3mp.SetObjectListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetObjectListAction(3)
+    tes3mp.SetObjectListAction(enumerations.container.REQUEST)
+    tes3mp.SetObjectListContainerSubAction(enumerations.containerSub.NONE)
 
     -- If certain uniqueIndexes are specified, iterate through them and
     -- add them as world objects

@@ -6,7 +6,7 @@ enumerations.ai = { CANCEL = 0, ACTIVATE = 1, COMBAT = 2, ESCORT = 3, FOLLOW = 4
 enumerations.aiPrintableAction = { CANCEL = "cancelling current AI", ACTIVATE = "activating",
     COMBAT = "initiating combat with", ESCORT = "escorting", FOLLOW = "following", TRAVEL = "travelling to",
     WANDER = "wandering" }
-enumerations.container = { SET = 0, ADD = 1, REMOVE = 2 }
+enumerations.container = { SET = 0, ADD = 1, REMOVE = 2, REQUEST = 3 }
 enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4, RESTOCK_RESULT = 5 }
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 enumerations.inventory = { SET = 0, ADD = 1, REMOVE = 2 }
