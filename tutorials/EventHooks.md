@@ -6,16 +6,16 @@ To handle various events you will need to use two functions:
 * `customEventHooks.registerValidator(event, callback)`
 * `customEventHooks.registerHandler(event, callback)`
 
-Validators are called before any default logic for the event is executed, Handlers are called after such (whether default behaviour was performed or not). 
+Both of these functions accept an `event` string and a `callback` function as their arguments.   
+There is a [table of tes3mp events](#event-table), and you can [create your own](#custom-events)  
 
-Both of these functions accept an `event` string (you can find a table below) and a `callback` function as their arguments.  
-The callback function will be called with a guaranteed argument of `eventStatus` and a few arguments (potentially none) depending on the particular event.
+Validators are called first, before the handlers. Both validator and handler callback functions will be called with a guaranteed argument of `eventStatus` and a few arguments (potentially none) depending on the particular event.
 
 `eventStatus` is a table that defines the way handlers should behave. It has two fields: `validDefaultHandler` and `validCustomHandlers`. By default both of these are `true`.  
-The former defines if default behaviour should be performed, the latter signals custom handlers that they should not run.  
-However, their callbacks still run, and it is scripts' responsibility to handle `eventStatus.validCustomHandlers` being `false`.
+`validDefaultHandler` defines if default behaviour should be performed. Technically, this just means all the handlers in CoreScripts check this flag. You want to set this to `false` if you are overriding default behaviour, or cancelling the event entirely.  
+`validCustomHandlers` signals handlers from other scripts whether the event has been canceled. However, their callbacks still run, and it is each script's responsibility to handle `eventStatus.validCustomHandlers` being `false`.
 
-Validators can change the current `eventStatus`. If your validator returns nothing, it stays the same. However if you return a non-`nil` value for either of the two fields, it will override the previous one. 
+`eventStatus` can only be changed by validators. If your validator returns nothing, `eventStatus` stays the same. However if you return a non-`nil` value for either of the two fields, it will override the previous one. It is recommended to use the following function to construct an `eventStatus`:
 * `customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)`
 
 ### Examples:
@@ -37,9 +37,10 @@ customEventHooks.registerValidator("OnPlayerLevel", function(eventStatus, pid)
         if player.data.stats.level >= maxLevel then
             player.data.stats.level = maxLevel
             player.data.stats.levelProgress = 0
-            player:LoadLevel()
-            --cancel the level increase on the server side
-            --there have been no level up anymore, so don't run custom handlers for it either
+            player:LoadLevel() --override level progress on the client
+
+            --first false prevents the default handler from firing, preventing level progress increase
+            --second false prevents custom handlers - since we've canceled the level up, this event is not valid anymore
             return customEventHooks.makeEventStatus(false,false) 
         end
     end
@@ -74,7 +75,7 @@ customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatu
 
 # Event table
 
-This table will follow this format: `event(args)`, where `event` and `args` are as described in [Custom events](#custom-events)  
+This table will follow this format: `event(args)`, where `event` and `args` are as described in [Custom events](#custom-events). Don't forget that the first argument is always `eventStatus` (omitted in the table).  
 It is recommended to check the source code instead of relying on this table, however. Don't forget that each event has a corresponding `triggerHandlers` call, so it should be very easy to find them all by searching for `customEventHooks.triggerHandlers(`. Similarly you can search for a specific event.  
 Most (but not all) of them will be in [eventHandler.lua](../scripts/eventHandler.lua) or [serverCore.lua](../scripts/serverCore.lua).
 
