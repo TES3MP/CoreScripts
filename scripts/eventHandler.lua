@@ -378,6 +378,25 @@ eventHandler.InitializeDefaultHandlers = function()
         tes3mp.SendObjectRestock(false, false)
     end)
 
+    -- Print object dialogue choice and send an ObjectDialogueChoice packet back to the player
+    customEventHooks.registerHandler("OnObjectDialogueChoice", function(eventStatus, pid, cellDescription, objects)
+
+        if eventStatus.validDefaultHandler == false then return end
+
+        local debugMessage = nil
+
+        for uniqueIndex, object in pairs(objects) do
+            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice for " .. object.refId .. " " .. uniqueIndex)
+        end
+
+        tes3mp.CopyReceivedObjectListToStore()
+        -- Dialogue choices cannot be triggered clientside without the server's approval,
+        -- so we send the packet back to the player who sent it, but we avoid sending it to
+        -- other players
+        -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
+        tes3mp.SendObjectDialogueChoice(false, false)
+    end)
+
 end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
@@ -1318,6 +1337,10 @@ end
 
 eventHandler.OnObjectLock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectLock")
+end
+
+eventHandler.OnObjectDialogueChoice = function(pid, cellDescription)
+    eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectDialogueChoice")
 end
 
 eventHandler.OnObjectMiscellaneous = function(pid, cellDescription)

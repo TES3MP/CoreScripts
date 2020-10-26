@@ -569,6 +569,12 @@ function OnObjectLock(pid, cellDescription)
     eventHandler.OnObjectLock(pid, cellDescription)
 end
 
+function OnObjectDialogueChoice(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectDialogueChoice\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnObjectDialogueChoice(pid, cellDescription)
+end
+
 function OnObjectMiscellaneous(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnObjectMiscellaneous\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)
