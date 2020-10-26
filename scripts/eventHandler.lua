@@ -386,7 +386,8 @@ eventHandler.InitializeDefaultHandlers = function()
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
-            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice for " .. object.refId .. " " .. uniqueIndex)
+            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice of " .. object.dialogueChoice ..
+                " for " .. object.refId .. " " .. uniqueIndex)
         end
 
         tes3mp.CopyReceivedObjectListToStore()

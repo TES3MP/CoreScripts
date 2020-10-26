@@ -205,6 +205,8 @@ packetReader.GetObjectPacketTables = function(packetType)
 
             elseif packetType == "ObjectLock" then
                 object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+            elseif packetType == "ObjectDialogueChoice" then
+                object.dialogueChoice = tes3mp.GetObjectDialogueChoice(packetIndex)
             elseif packetType == "ObjectMiscellaneous" then
                 object.goldPool = tes3mp.GetObjectGoldPool(packetIndex)
                 object.lastGoldRestockHour = tes3mp.GetObjectLastGoldRestockHour(packetIndex)
