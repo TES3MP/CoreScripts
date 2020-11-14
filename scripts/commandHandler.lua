@@ -756,14 +756,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 local message = "Sorry! You can only use " .. color.Yellow .. "/fixme" ..
                     color.White .. " in exteriors.\n"
                 tes3mp.SendMessage(pid, message, false)
-            elseif Players[pid].data.customVariables.lastFixMe == nil or
-                currentTime >= Players[pid].data.customVariables.lastFixMe + config.fixmeInterval then
+            elseif Players[pid].data.timestamps.lastFixMe == nil or
+                currentTime >= Players[pid].data.timestamps.lastFixMe + config.fixmeInterval then
 
                 logicHandler.RunConsoleCommandOnPlayer(pid, "fixme")
-                Players[pid].data.customVariables.lastFixMe = currentTime
+                Players[pid].data.timestamps.lastFixMe = currentTime
                 tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
             else
-                local remainingSeconds = Players[pid].data.customVariables.lastFixMe +
+                local remainingSeconds = Players[pid].data.timestamps.lastFixMe +
                     config.fixmeInterval - currentTime
                 local message = "Sorry! You can't use " .. color.Yellow .. "/fixme" ..
                     color.White .. " for another "

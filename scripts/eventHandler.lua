@@ -509,6 +509,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                     tableHelper.removeValue(pidsByIpAddress[ipAddress], pid)
                 end
 
+                Players[pid].data.timestamps.lastDisconnect = os.time()
                 Players[pid]:DeleteSummons()
 
                 -- Was this player confiscating from someone? If so, clear that

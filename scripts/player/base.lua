@@ -14,6 +14,12 @@ function BasePlayer:__init(pid, playerName)
             passwordSalt = "",
             passwordHash = ""
         },
+        timestamps = {
+            creation = os.time(),
+            lastLogin = os.time(),
+            lastDisconnect = 0,
+            lastFixMe = 0
+        },
         settings = {
             staffRank = 0,
             difficulty = "default",
@@ -107,8 +113,6 @@ function BasePlayer:__init(pid, playerName)
         }
     end
 
-    self.initTimestamp = os.time()
-
     if playerName == nil then
         self.accountName = tes3mp.GetName(pid)
     else
@@ -174,6 +178,16 @@ function BasePlayer:FinishLogin()
 
     if self.hasAccount then
         self:SaveIpAddress()
+
+        if self.data.timestamps == nil then
+            self.data.timestamps = {
+                creation = os.time(),
+                lastDisconnect = 0,
+                lastFixMe = 0
+            }
+        end
+
+        self.data.timestamps.lastLogin = os.time()
 
         self:LoadSettings()
         self:LoadCharacter()

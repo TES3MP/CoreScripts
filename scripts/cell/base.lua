@@ -193,7 +193,7 @@ function BaseCell:AddVisitor(pid)
             shouldSendInfo = true
         -- Otherwise, send them the cell data only if they haven't
         -- visited since last connecting to the server
-        elseif Players[pid].initTimestamp > lastVisitTimestamp then
+        elseif Players[pid].data.timestamps.lastLogin > lastVisitTimestamp then
             shouldSendInfo = true
         end
 
