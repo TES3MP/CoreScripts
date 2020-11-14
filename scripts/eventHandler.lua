@@ -510,6 +510,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 end
 
                 Players[pid].data.timestamps.lastDisconnect = os.time()
+                Players[pid].data.timestamps.lastSessionDuration = os.time() - Players[pid].data.timestamps.lastLogin
                 Players[pid]:DeleteSummons()
 
                 -- Was this player confiscating from someone? If so, clear that

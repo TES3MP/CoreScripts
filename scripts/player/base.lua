@@ -18,7 +18,8 @@ function BasePlayer:__init(pid, playerName)
             creation = os.time(),
             lastLogin = os.time(),
             lastDisconnect = 0,
-            lastFixMe = 0
+            lastFixMe = 0,
+            lastSessionDuration = 0
         },
         settings = {
             staffRank = 0,
@@ -183,7 +184,8 @@ function BasePlayer:FinishLogin()
             self.data.timestamps = {
                 creation = os.time(),
                 lastDisconnect = 0,
-                lastFixMe = 0
+                lastFixMe = 0,
+                lastSessionDuration = 0
             }
         end
 
