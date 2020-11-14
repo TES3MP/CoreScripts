@@ -1214,34 +1214,6 @@ function BasePlayer:CleanSpellbook()
     end
 end
 
-function BasePlayer:UpdateActiveSpellDurations()
-
-    for spellId, spellTable in pairs(self.data.spellsActive) do
-        local hadRemainingEffect = false
-
-        for effectIndex, effectTable in pairs(spellTable.effects) do
-
-            local timeSinceCast = os.time() - spellTable.startTime
-
-            if timeSinceCast <= 0 then
-                self.data.spellsActive[spellId].effects[effectIndex] = nil
-            else
-                hadRemainingEffect = true
-
-                -- Subtract the time elapsed since casting the spell from the
-                -- effect's remaining time
-                effectTable.timeLeft = effectTable.timeLeft - timeSinceCast
-            end
-        end
-
-        if hadRemainingEffect == false then
-            self.data.spellsActive[spellId] = nil
-        end        
-    end
-
-    tableHelper.cleanNils(self.data.spellsActive)
-end
-
 function BasePlayer:LoadSpellbook()
 
     if self.data.spellbook == nil then self.data.spellbook = {} end
@@ -1262,27 +1234,6 @@ function BasePlayer:LoadSpellbook()
     end
 
     tes3mp.SendSpellbookChanges(self.pid)
-end
-
-function BasePlayer:LoadSpellsActive()
-
-    if self.data.spellsActive == nil then self.data.spellsActive = {} end
-
-    tes3mp.ClearSpellsActiveChanges(self.pid)
-    tes3mp.SetSpellsActiveChangesAction(self.pid, enumerations.spellbook.SET)
-
-    for spellId, spellTable in pairs(self.data.spellsActive) do
-
-        for effectIndex, effectTable in pairs(spellTable.effects) do
-
-            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.arg, effectTable.magnitude,
-                effectTable.duration, effectTable.timeLeft)
-        end
-
-        tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
-    end
-
-    tes3mp.SendSpellsActiveChanges(self.pid)
 end
 
 function BasePlayer:SaveSpellbook()
@@ -1325,6 +1276,55 @@ function BasePlayer:SaveSpellbook()
     if action == enumerations.spellbook.REMOVE then
         tableHelper.cleanNils(self.data.spellbook)
     end
+end
+
+function BasePlayer:UpdateActiveSpellTimes()
+
+    for spellId, spellTable in pairs(self.data.spellsActive) do
+        local hadRemainingEffect = false
+
+        for effectIndex, effectTable in pairs(spellTable.effects) do
+
+            local timeSinceCast = os.time() - spellTable.startTime
+
+            if timeSinceCast <= 0 then
+                self.data.spellsActive[spellId].effects[effectIndex] = nil
+            else
+                hadRemainingEffect = true
+
+                -- Subtract the time elapsed since casting the spell from the
+                -- effect's remaining time
+                effectTable.timeLeft = effectTable.timeLeft - timeSinceCast
+            end
+        end
+
+        if hadRemainingEffect == false then
+            self.data.spellsActive[spellId] = nil
+        end        
+    end
+
+    tableHelper.cleanNils(self.data.spellsActive)
+end
+
+function BasePlayer:LoadSpellsActive()
+
+    if self.data.spellsActive == nil then self.data.spellsActive = {} end
+
+    tes3mp.ClearSpellsActiveChanges(self.pid)
+    tes3mp.SetSpellsActiveChangesAction(self.pid, enumerations.spellbook.SET)
+
+    for spellId, spellTable in pairs(self.data.spellsActive) do
+
+        for effectIndex, effectTable in pairs(spellTable.effects) do
+
+            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.arg, effectTable.magnitude,
+                effectTable.duration, effectTable.timeLeft)
+        end
+
+        tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
+    end
+
+    tes3mp.SendSpellsActiveChanges(self.pid)
 end
 
 function BasePlayer:SaveSpellsActive()

@@ -512,8 +512,8 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 Players[pid].data.timestamps.lastDisconnect = os.time()
                 Players[pid].data.timestamps.lastSessionDuration = os.time() - Players[pid].data.timestamps.lastLogin
 
-                -- Adjust the remaining durations of this player's active spells
-                Players[pid]:UpdateActiveSpellDurations()
+                -- Adjust the time left for this player's active spells
+                Players[pid]:UpdateActiveSpellTimes()
 
                 Players[pid]:DeleteSummons()
 
