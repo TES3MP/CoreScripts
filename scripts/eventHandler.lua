@@ -511,6 +511,10 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
                 Players[pid].data.timestamps.lastDisconnect = os.time()
                 Players[pid].data.timestamps.lastSessionDuration = os.time() - Players[pid].data.timestamps.lastLogin
+
+                -- Adjust the remaining durations of this player's active spells
+                Players[pid]:UpdateActiveSpellDurations()
+
                 Players[pid]:DeleteSummons()
 
                 -- Was this player confiscating from someone? If so, clear that
