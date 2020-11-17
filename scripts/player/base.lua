@@ -1317,8 +1317,8 @@ function BasePlayer:LoadSpellsActive()
 
         for effectIndex, effectTable in pairs(spellTable.effects) do
 
-            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.arg, effectTable.magnitude,
-                effectTable.duration, effectTable.timeLeft)
+            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.magnitude,
+                effectTable.duration, effectTable.timeLeft, effectTable.arg)
         end
 
         tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
@@ -1353,10 +1353,10 @@ function BasePlayer:SaveSpellsActive()
                 for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(self.pid, spellIndex) - 1 do
                     local effect = {
                         id = tes3mp.GetSpellsActiveEffectId(self.pid, spellIndex, effectIndex),
-                        arg = tes3mp.GetSpellsActiveEffectArg(self.pid, spellIndex, effectIndex),
                         magnitude = tes3mp.GetSpellsActiveEffectMagnitude(self.pid, spellIndex, effectIndex),
                         duration = tes3mp.GetSpellsActiveEffectDuration(self.pid, spellIndex, effectIndex),
-                        timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(self.pid, spellIndex, effectIndex)
+                        timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(self.pid, spellIndex, effectIndex),
+                        arg = tes3mp.GetSpellsActiveEffectArg(self.pid, spellIndex, effectIndex)
                     }
 
                     table.insert(self.data.spellsActive[spellId].effects, effect)
