@@ -49,12 +49,17 @@ end
 function Player:LoadFromDrive()
     self.data = jsonInterface.load("player/" .. self.accountFile)
 
-    -- JSON doesn't allow numerical keys, but we use them, so convert
-    -- all string number keys into numerical keys
-    tableHelper.fixNumericalKeys(self.data)
+    if self.data == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "player/" .. self.accountFile .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        -- JSON doesn't allow numerical keys, but we use them, so convert
+        -- all string number keys into numerical keys
+        tableHelper.fixNumericalKeys(self.data)
 
-    if self.data.login.password ~= nil and self.data.login.passwordHash == nil then
-        self:ConvertPlaintextPassword()
+        if self.data.login.password ~= nil and self.data.login.passwordHash == nil then
+            self:ConvertPlaintextPassword()
+        end
     end
 end
 

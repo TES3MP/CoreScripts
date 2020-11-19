@@ -297,31 +297,37 @@ function LoadDataFileList(filename)
 
     local jsonDataFileList = jsonInterface.load(filename)
 
-    -- Fix numerical keys to print plugins in the correct order
-    tableHelper.fixNumericalKeys(jsonDataFileList, true)
+    if jsonDataFileList == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Data file list " .. filename .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        -- Fix numerical keys to print plugins in the correct order
+        tableHelper.fixNumericalKeys(jsonDataFileList, true)
 
-    for listIndex, pluginEntry in ipairs(jsonDataFileList) do
-        for entryIndex, checksumStringArray in pairs(pluginEntry) do
+        for listIndex, pluginEntry in ipairs(jsonDataFileList) do
+            for entryIndex, checksumStringArray in pairs(pluginEntry) do
 
-            dataFileList[listIndex] = {}
-            dataFileList[listIndex].name = entryIndex
+                dataFileList[listIndex] = {}
+                dataFileList[listIndex].name = entryIndex
 
-            local checksums = {}
-            local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
+                local checksums = {}
+                local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
 
-            for _, checksumString in ipairs(checksumStringArray) do
+                for _, checksumString in ipairs(checksumStringArray) do
 
-                debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
-                table.insert(checksums, tonumber(checksumString, 16))
+                    debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
+                    table.insert(checksums, tonumber(checksumString, 16))
+                end
+                dataFileList[listIndex].checksums = checksums
+                table.insert(dataFileList[listIndex], "")
+
+                debugMessage = debugMessage .. "\b\b]"
+                tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
             end
-            dataFileList[listIndex].checksums = checksums
-            table.insert(dataFileList[listIndex], "")
-
-            debugMessage = debugMessage .. "\b\b]"
-            tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
         end
+
+        return dataFileList
     end
-    return dataFileList
 end
 
 function OnRequestDataFileList()

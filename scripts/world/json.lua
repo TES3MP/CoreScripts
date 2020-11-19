@@ -52,9 +52,14 @@ function World:LoadFromDrive()
     self.coreVariables = jsonInterface.load("world/" .. self.coreVariablesFile)
     self.data = jsonInterface.load("world/" .. self.worldFile)
 
-    -- JSON doesn't allow numerical keys, but we use them, so convert
-    -- all string number keys into numerical keys
-    tableHelper.fixNumericalKeys(self.data)
+    if self.data == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "world/" .. self.worldFile .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        -- JSON doesn't allow numerical keys, but we use them, so convert
+        -- all string number keys into numerical keys
+        tableHelper.fixNumericalKeys(self.data)
+    end
 end
 
 

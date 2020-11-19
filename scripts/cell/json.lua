@@ -48,9 +48,14 @@ end
 function Cell:LoadFromDrive()
     self.data = jsonInterface.load("cell/" .. self.entryFile)
 
-    -- JSON doesn't allow numerical keys, but we use them, so convert
-    -- all string number keys into numerical keys
-    tableHelper.fixNumericalKeys(self.data)
+    if self.data == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "cell/" .. self.entryFile .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        -- JSON doesn't allow numerical keys, but we use them, so convert
+        -- all string number keys into numerical keys
+        tableHelper.fixNumericalKeys(self.data)
+    end
 end
 
 -- Deprecated function with confusing name, kept around for backwards compatibility

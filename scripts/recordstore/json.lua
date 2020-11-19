@@ -43,9 +43,14 @@ end
 function RecordStore:LoadFromDrive()
     self.data = jsonInterface.load("recordstore/" .. self.recordstoreFile)
 
-    -- JSON doesn't allow numerical keys, but we use them, so convert
-    -- all string number keys into numerical keys
-    tableHelper.fixNumericalKeys(self.data)
+    if self.data == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "recordstore/" .. self.recordstoreFile .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        -- JSON doesn't allow numerical keys, but we use them, so convert
+        -- all string number keys into numerical keys
+        tableHelper.fixNumericalKeys(self.data)
+    end
 end
 
 -- Deprecated functions with confusing names, kept around for backwards compatibility
