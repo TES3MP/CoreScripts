@@ -1958,6 +1958,13 @@ function BaseCell:LoadInitialCellData(pid)
     self:EnsurePacketTables()
     self:EnsurePacketValidity()
 
+    if self.data.loadState == nil then
+        self.data.loadState = {
+            hasFullActorList = false,
+            hasFullContainerData = false
+        }
+    end
+
     tes3mp.LogMessage(enumerations.log.INFO, "Loading data of cell " .. self.description .. " for " ..
         logicHandler.GetChatName(pid))
 
