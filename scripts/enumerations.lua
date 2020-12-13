@@ -8,6 +8,8 @@ enumerations.aiPrintableAction = { CANCEL = "cancelling current AI", ACTIVATE = 
     WANDER = "wandering" }
 enumerations.container = { SET = 0, ADD = 1, REMOVE = 2, REQUEST = 3 }
 enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_TO_REQUEST = 4, RESTOCK_RESULT = 5 }
+enumerations.dialogueChoice = { TOPIC = 0, PERSUASION = 1, COMPANION_SHARE = 2, BARTER = 3, SPELLS = 4, TRAVEL = 5, 
+    SPELLMAKING = 6, ENCHANTING = 7, TRAINING = 8, REPAIR = 9 }
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
 enumerations.inventory = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.journal = { ENTRY = 0, INDEX = 1 }

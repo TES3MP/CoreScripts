@@ -386,8 +386,13 @@ eventHandler.InitializeDefaultHandlers = function()
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
-            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice of " .. object.dialogueChoice ..
+            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice type " ..
+                tableHelper.getIndexByValue(enumerations.dialogueChoice, object.dialogueChoiceType) ..
                 " for " .. object.refId .. " " .. uniqueIndex)
+
+            if object.dialogueChoiceType == enumerations.dialogueChoice.TOPIC then
+                tes3mp.LogAppend(enumerations.log.INFO, "- topic was " .. object.dialogueTopic)
+            end
         end
 
         tes3mp.CopyReceivedObjectListToStore()
