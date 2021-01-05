@@ -1025,40 +1025,38 @@ function BasePlayer:SaveEquipment()
         local slot = tes3mp.GetEquipmentChangesSlot(self.pid, index)
         local newRefId = tes3mp.GetEquipmentItemRefId(self.pid, slot)
 
-        if newRefId ~= "" then
-            if tableHelper.containsValue(config.bannedEquipmentItems, newRefId) then
-                self:Message("You have tried wearing an item that isn't allowed!\n")
-                reloadAtEnd = true
-            else
-                local newCount = tes3mp.GetEquipmentItemCount(self.pid, slot)
-                local newCharge = tes3mp.GetEquipmentItemCharge(self.pid, slot)
-                local newEnchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, slot)
+        if newRefId ~= "" and tableHelper.containsValue(config.bannedEquipmentItems, newRefId) then
+            self:Message("You have tried wearing an item that isn't allowed!\n")
+            reloadAtEnd = true
+        else
+            local newCount = tes3mp.GetEquipmentItemCount(self.pid, slot)
+            local newCharge = tes3mp.GetEquipmentItemCharge(self.pid, slot)
+            local newEnchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, slot)
 
-                self.data.equipment[slot] = {
-                    refId = newRefId,
-                    count = newCount,
-                    charge = newCharge,
-                    enchantmentCharge = newEnchantmentCharge
-                }
+            self.data.equipment[slot] = {
+                refId = newRefId,
+                count = newCount,
+                charge = newCharge,
+                enchantmentCharge = newEnchantmentCharge
+            }
 
-                -- Is this the same item that was previously in this slot? In that case,
-                -- its count, charge or enchantmentCharge must have changed, so we need
-                -- to also update that in the inventory table
-                local previousItem = self.previousEquipment[slot]
+            -- Is this the same item that was previously in this slot? In that case,
+            -- its count, charge or enchantmentCharge must have changed, so we need
+            -- to also update that in the inventory table
+            local previousItem = self.previousEquipment[slot]
 
-                if previousItem ~= nil and previousItem.refId == newRefId then
-                    local inventoryIndex = inventoryHelper.getItemIndex(self.data.inventory,
-                        previousItem.refId, previousItem.charge, previousItem.enchantmentCharge)
+            if previousItem ~= nil and previousItem.refId == newRefId then
+                local inventoryIndex = inventoryHelper.getItemIndex(self.data.inventory,
+                    previousItem.refId, previousItem.charge, previousItem.enchantmentCharge)
 
-                    if inventoryIndex ~= nil then
-                        self.data.inventory[inventoryIndex].count = newCount
-                        self.data.inventory[inventoryIndex].charge = newCharge
-                        self.data.inventory[inventoryIndex].enchantmentCharge = newEnchantmentCharge
-                    end
+                if inventoryIndex ~= nil then
+                    self.data.inventory[inventoryIndex].count = newCount
+                    self.data.inventory[inventoryIndex].charge = newCharge
+                    self.data.inventory[inventoryIndex].enchantmentCharge = newEnchantmentCharge
                 end
-
-                self.previousEquipment[slot] = tableHelper.deepCopy(self.data.equipment[slot])
             end
+
+            self.previousEquipment[slot] = tableHelper.deepCopy(self.data.equipment[slot])
         end
     end
 
