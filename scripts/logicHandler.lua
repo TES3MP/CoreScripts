@@ -251,23 +251,16 @@ logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
 
     local originPlayerName = Players[tonumber(originPid)].name
     local targetPlayerName = Players[tonumber(targetPid)].name
-    local targetCell = ""
-    local targetCellName
-    local targetPos = {0, 0, 0}
-    local targetRot = {0, 0}
-    local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPid)
-    targetPos[1] = tes3mp.GetPosY(targetPid)
-    targetPos[2] = tes3mp.GetPosZ(targetPid)
-    targetRot[0] = tes3mp.GetRotX(targetPid)
-    targetRot[1] = tes3mp.GetRotZ(targetPid)
-    targetCell = tes3mp.GetCell(targetPid)
+    local originCell = tes3mp.GetCell(originPid)
+    local targetCell = tes3mp.GetCell(targetPid)
+    local targetPos = { tes3mp.GetPosX(targetPid), tes3mp.GetPosY(targetPid), tes3mp.GetPosZ(targetPid) }
+    local targetRot = { tes3mp.GetRotX(targetPid), tes3mp.GetRotZ(targetPid) }
 
     tes3mp.SetCell(originPid, targetCell)
     tes3mp.SendCell(originPid)
 
-    tes3mp.SetPos(originPid, targetPos[0], targetPos[1], targetPos[2])
-    tes3mp.SetRot(originPid, targetRot[0], targetRot[1])
+    tes3mp.SetPos(originPid, targetPos[1], targetPos[2], targetPos[3])
+    tes3mp.SetRot(originPid, targetRot[1], targetRot[2])
     tes3mp.SendPos(originPid)
 
     local originMessage = "You have been teleported to " .. targetPlayerName ..
@@ -315,16 +308,11 @@ logicHandler.PrintPlayerPosition = function(pid, targetPid)
     local message = ""
     local targetPlayerName = Players[tonumber(targetPid)].name
     local targetCell = ""
-    local targetCellName = ""
-    local targetPos = {0, 0, 0}
-    local targetGrid = {0, 0}
-    targetPos[0] = tes3mp.GetPosX(targetPid)
-    targetPos[1] = tes3mp.GetPosY(targetPid)
-    targetPos[2] = tes3mp.GetPosZ(targetPid)
+    local targetPos = { tes3mp.GetPosX(targetPid), tes3mp.GetPosY(targetPid), tes3mp.GetPosZ(targetPid) }
     targetCell = tes3mp.GetCell(targetPid)
 
-    message = targetPlayerName .. " (" .. targetPid .. ") is in " .. targetCell .. " at [" .. targetPos[0] ..
-        " " .. targetPos[1] .. " " .. targetPos[2] .. "]\n"
+    message = targetPlayerName .. " (" .. targetPid .. ") is in " .. targetCell .. " at [" .. targetPos[1] ..
+        " " .. targetPos[2] .. " " .. targetPos[3] .. "]\n"
     tes3mp.SendMessage(pid, message, false)
 end
 
