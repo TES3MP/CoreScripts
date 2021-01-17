@@ -945,20 +945,15 @@ function BasePlayer:LoadCell()
 
             tes3mp.SetCell(self.pid, newCell)
 
-            local pos = {0, 0, 0}
-            local rot = {0, 0}
-            pos[0] = self.data.location.posX
-            pos[1] = self.data.location.posY
-            pos[2] = self.data.location.posZ
-            rot[0] = self.data.location.rotX
-            rot[1] = self.data.location.rotZ
+            local pos = { self.data.location.posX, self.data.location.posY, self.data.location.posZ }
+            local rot = { self.data.location.rotX, self.data.location.rotZ }
 
-            if pos[0] ~= nil and pos[1] ~= nil and pos[2] ~= nil then
-                tes3mp.SetPos(self.pid, pos[0], pos[1], pos[2])
+            if pos[1] ~= nil and pos[2] ~= nil and pos[3] ~= nil then
+                tes3mp.SetPos(self.pid, pos[1], pos[2], pos[3])
             end
 
             if rot[0] ~= nil and rot[1] ~= nil then
-                tes3mp.SetRot(self.pid, rot[0], rot[1])
+                tes3mp.SetRot(self.pid, rot[1], rot[2])
             end
 
             tes3mp.SendCell(self.pid)
