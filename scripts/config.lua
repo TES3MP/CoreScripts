@@ -207,9 +207,8 @@ config.pingDifferenceRequiredForAuthority = 40
 config.enforcedLogLevel = -1
 
 -- The physics framerate used by default
--- Note: In OpenMW, the physics framerate is 60 by default, but TES3MP has slightly higher
---       system requirements that make a default of 30 more appropriate.
-config.physicsFramerate = 30
+-- Note: In OpenMW, the physics framerate is 60 by default
+config.physicsFramerate = 60
 
 -- Whether players are allowed to interact with containers located in unloaded cells.
 config.allowOnContainerForUnloadedCells = false
