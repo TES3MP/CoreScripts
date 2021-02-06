@@ -1194,7 +1194,7 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
         if LoadedCells[cellDescription] ~= nil then
 
             tes3mp.ReadReceivedActorList()
-            local actors = packetReader.GetActorPacketTables("death").actors
+            local actors = packetReader.GetActorPacketTables("ActorDeath").actors
 
             local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription, actors})
 
@@ -1388,7 +1388,7 @@ eventHandler.OnConsoleCommand = function(pid, cellDescription)
 
         tes3mp.ReadReceivedObjectList()
 
-        local packetTables = packetReader.GetObjectPacketTables("consoleCommand")
+        local packetTables = packetReader.GetObjectPacketTables("ConsoleCommand")
         local objects = packetTables.objects
         local targetPlayers = packetTables.players
         local consoleCommand = tes3mp.GetObjectListConsoleCommand()
@@ -1528,7 +1528,7 @@ eventHandler.OnVideoPlay = function(pid)
 
         if config.shareVideos == true then
             tes3mp.LogMessage(enumerations.log.INFO, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
-                
+            
             local videos = {}
 
             for i = 0, tes3mp.GetObjectListSize() - 1 do
