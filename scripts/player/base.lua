@@ -1317,7 +1317,8 @@ function BasePlayer:LoadSpellsActive()
         tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
     end
 
-    tes3mp.SendSpellsActiveChanges(self.pid)
+    -- Send this to all players, or they'll only know about active spells added afterwards
+    tes3mp.SendSpellsActiveChanges(self.pid, true)
 end
 
 function BasePlayer:SaveSpellsActive()

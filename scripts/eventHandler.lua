@@ -898,6 +898,10 @@ eventHandler.OnPlayerSpellsActive = function(pid)
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellsActive", {pid})
         if eventStatus.validDefaultHandler then
             Players[pid]:SaveSpellsActive()
+
+            -- Send this PlayerSpellsActive packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendSpellsActiveChanges(pid, true, true)
         end
         customEventHooks.triggerHandlers("OnPlayerSpellsActive", eventStatus, {pid})
     end
