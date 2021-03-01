@@ -633,7 +633,20 @@ function BaseCell:SaveClientScriptLocals(objects)
         local variables = object.variables
 
         self:InitializeObjectData(uniqueIndex, refId)
-        self.data.objectData[uniqueIndex].variables = variables
+
+        if self.data.objectData[uniqueIndex].variables == nil then
+            self.data.objectData[uniqueIndex].variables = {}
+        end
+
+        for variableType, variableTable in pairs(object.variables) do
+            if self.data.objectData[uniqueIndex].variables[variableType] == nil then
+                self.data.objectData[uniqueIndex].variables[variableType] = {}
+            end
+
+            for internalIndex, value in pairs(variableTable) do
+                self.data.objectData[uniqueIndex].variables[variableType][internalIndex] = value
+            end
+        end
 
         tableHelper.insertValueIfMissing(self.data.packets.clientScriptLocal, uniqueIndex)
     end

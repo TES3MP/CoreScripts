@@ -228,16 +228,21 @@ packetReader.GetObjectPacketTables = function(packetType)
 
                 for variableIndex = 0, variableCount - 1 do
                     local internalIndex = tes3mp.GetClientLocalInternalIndex(packetIndex, variableIndex)
-                    local variable = { variableType = tes3mp.GetClientLocalVariableType(packetIndex, variableIndex) }
+                    local variableType = tes3mp.GetClientLocalVariableType(packetIndex, variableIndex)
+                    local value
 
                     if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
-                        variable.variableType) then
-                        variable.intValue = tes3mp.GetClientLocalIntValue(packetIndex, variableIndex)
-                    elseif variable.variableType == enumerations.variableType.FLOAT then
-                        variable.floatValue = tes3mp.GetClientLocalFloatValue(packetIndex, variableIndex)
+                        variableType) then
+                        value = tes3mp.GetClientLocalIntValue(packetIndex, variableIndex)
+                    elseif variableType == enumerations.variableType.FLOAT then
+                        value = tes3mp.GetClientLocalFloatValue(packetIndex, variableIndex)
                     end
 
-                    variables[internalIndex] = variable
+                    if variables[variableType] == nil then
+                        variables[variableType] = {}
+                    end
+
+                    variables[variableType][internalIndex] = value
                 end
 
                 object.variables = variables

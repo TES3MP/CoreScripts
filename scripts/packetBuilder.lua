@@ -160,19 +160,22 @@ packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
 
     local variableCount = 0
 
-    for internalIndex, variableTable in pairs(objectData.variables) do
+    for variableType, variableTable in pairs(objectData.variables) do
 
         if type(variableTable) == "table" then
 
-            if variableTable.variableType == enumerations.variableType.SHORT then
-                tes3mp.AddClientLocalInteger(internalIndex, variableTable.intValue, enumerations.variableType.SHORT)
-            elseif variableTable.variableType == enumerations.variableType.LONG then
-                tes3mp.AddClientLocalInteger(internalIndex, variableTable.intValue, enumerations.variableType.LONG)
-            elseif variableTable.variableType == enumerations.variableType.FLOAT then
-                tes3mp.AddClientLocalFloat(internalIndex, variableTable.floatValue)
-            end
+            for internalIndex, value in pairs(variableTable) do
 
-            variableCount = variableCount + 1
+                if variableType == enumerations.variableType.SHORT then
+                    tes3mp.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.SHORT)
+                elseif variableType == enumerations.variableType.LONG then
+                    tes3mp.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.LONG)
+                elseif variableType == enumerations.variableType.FLOAT then
+                    tes3mp.AddClientLocalFloat(tonumber(internalIndex), value)
+                end
+
+                variableCount = variableCount + 1
+            end
         end
     end
 
