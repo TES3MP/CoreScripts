@@ -414,3 +414,140 @@ defaultCommands.overrideDestination = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
+
+defaultCommands.teleport = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if moderator == false then
+        return
+    end
+
+    if cmd[2] ~= "all" then
+        logicHandler.TeleportToPlayer(pid, cmd[2], pid)
+    else
+        for iteratorPid, player in pairs(Players) do
+            if iteratorPid ~= pid and player:IsLoggedIn() then
+                logicHandler.TeleportToPlayer(pid, iteratorPid, pid)
+            end
+        end
+    end
+
+end
+
+customCommandHooks.registerCommand("teleport", defaultCommands.teleport)
+customCommandHooks.registerCommand("tp", defaultCommands.teleport)
+
+defaultCommands.teleportto = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if moderator == false then
+        return
+    end
+
+    logicHandler.TeleportToPlayer(pid, pid, cmd[2])
+end
+
+customCommandHooks.registerCommand("teleportto", defaultCommands.teleportto)
+customCommandHooks.registerCommand("tpto", defaultCommands.teleportto)
+
+defaultCommands.setauthority = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if moderator == false or #cmd <= 2 then
+        return
+    end
+
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local cellDescription = tableHelper.concatenateFromIndex(cmd, 3)
+
+        -- Get rid of quotation marks
+        cellDescription = string.gsub(cellDescription, '"', '')
+
+        if logicHandler.IsCellLoaded(cellDescription) == true then
+            local targetPid = tonumber(cmd[2])
+            logicHandler.SetCellAuthority(targetPid, cellDescription)
+        else
+            tes3mp.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
+        end
+    end
+end
+
+customCommandHooks.registerCommand("setauthority", defaultCommands.setauthority)
+customCommandHooks.registerCommand("setauth", defaultCommands.setauthority)
+
+defaultCommands.kick = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if moderator == false then
+        return
+    end
+
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local message
+
+        if Players[targetPid]:IsAdmin() then
+            message = "You cannot kick an Admin from the server.\n"
+            tes3mp.SendMessage(pid, message, false)
+        elseif Players[targetPid]:IsModerator() and not admin then
+            message = "You cannot kick a fellow Moderator from the server.\n"
+            tes3mp.SendMessage(pid, message, false)
+        else
+            message = logicHandler.GetChatName(targetPid) .. " was kicked from the server by " ..
+                logicHandler.GetChatName(pid) .. ".\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid]:Kick()
+        end
+    end
+end
+
+customCommandHooks.registerCommand("kick", defaultCommands.kick)
+
+defaultCommands.addadmin = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if serverOwner == false then
+        return
+    end
+
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local targetName = Players[targetPid].name
+        local message
+
+        if Players[targetPid]:IsAdmin() then
+            message = targetName .. " is already an Admin.\n"
+            tes3mp.SendMessage(pid, message, false)
+        else
+            message = targetName .. " was promoted to Admin!\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid].data.settings.staffRank = 2
+            Players[targetPid]:QuicksaveToDrive()
+        end
+    end
+end
+
+customCommandHooks.registerCommand("addadmin", defaultCommands.addadmin)
+
+defaultCommands.removeadmin = function(pid, cmd)
+    local moderator, admin, serverOwner = getRanks(pid)
+    if serverOwner == false then
+        return
+    end
+
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        local targetPid = tonumber(cmd[2])
+        local targetName = Players[targetPid].name
+        local message
+
+        if Players[targetPid]:IsServerOwner() then
+            message = "Cannot demote " .. targetName .. " because they are a Server Owner.\n"
+            tes3mp.SendMessage(pid, message, false)
+        elseif Players[targetPid]:IsAdmin() then
+            message = targetName .. " was demoted from Admin to Moderator!\n"
+            tes3mp.SendMessage(pid, message, true)
+            Players[targetPid].data.settings.staffRank = 1
+            Players[targetPid]:QuicksaveToDrive()
+        else
+            message = targetName .. " is not an Admin.\n"
+            tes3mp.SendMessage(pid, message, false)
+        end
+    end
+end
+
+customCommandHooks.registerCommand("removeadmin", defaultCommands.removeadmin)
