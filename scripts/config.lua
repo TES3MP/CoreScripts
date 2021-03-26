@@ -17,6 +17,26 @@ config.maxClientsPerIP = 3
 --       though you can use any integer value here
 config.difficulty = 0
 
+-- The game settings to enforce for players
+-- Note 1: Anything from the [Game] category in settings-default.cfg can be added here
+-- Note 2: Some settings, such as "difficulty" and "actors processing range", cannot be
+--         changed from here
+config.gameSettings = {
+    { name = "best attack", value = false },
+    { name = "prevent merchant equipping", value = false },
+    { name = "enchanted weapons are magical", value = true },
+    { name = "rebalance soul gem values", value = false },
+    { name = "barter disposition change is permanent", value = false },
+    { name = "strength influences hand to hand", value = 0 },
+    { name = "use magic item animations", value = false },
+    { name = "normalise race speed", value = false },
+    { name = "uncapped damage fatigue", value = false },
+    { name = "NPCs avoid collisions", value = false },
+    { name = "swim upward correction", value = false },
+    { name = "trainers training skills based on base skill", value = true },
+    { name = "always allow stealing from knocked out actors", value = false }
+}
+
 -- The world time used for a newly created world
 config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
     daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }

@@ -1722,6 +1722,12 @@ function BasePlayer:LoadSettings()
     self:SetEnforcedLogLevel(self.data.settings.enforcedLogLevel)
     self:SetPhysicsFramerate(self.data.settings.physicsFramerate)
 
+    tes3mp.ClearGameSettingValues(self.pid)
+
+    for _, settingPairTable in pairs(config.gameSettings) do
+        tes3mp.SetGameSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
+    end
+
     tes3mp.SendSettings(self.pid)
 end
 
