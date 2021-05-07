@@ -1167,6 +1167,10 @@ eventHandler.OnActorEquipment = function(pid, cellDescription)
     eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorEquipment")
 end
 
+eventHandler.OnActorSpellsActive = function(pid, cellDescription)
+    eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorSpellsActive")
+end
+
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then

@@ -213,6 +213,27 @@ packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
     tes3mp.AddActor()
 end
 
+packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, action)
+
+    local splitIndex = actorUniqueIndex:split("-")
+    tes3mp.SetActorRefNum(splitIndex[1])
+    tes3mp.SetActorMpNum(splitIndex[2])
+    tes3mp.SetActorSpellsActiveAction(action)
+
+    for spellId, spellTable in pairs(spellsActive) do
+
+        for effectIndex, effectTable in pairs(spellTable.effects) do
+
+            tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
+                effectTable.duration, effectTable.timeLeft, effectTable.arg)
+        end
+
+        tes3mp.AddActorSpellActive(spellId, spellTable.displayName)
+    end
+
+    tes3mp.AddActor() 
+end
+
 packetBuilder.AddEffectToRecord = function(effect)
 
     tes3mp.SetRecordEffectId(effect.id)

@@ -805,6 +805,8 @@ function BaseCell:SaveActorsByPacketType(packetType, actors)
         self:SaveActorList(actors)
     elseif packetType == "ActorEquipment" then
         self:SaveActorEquipment(actors)
+    elseif packetType == "ActorSpellsActive" then
+        self:SaveActorSpellsActive(actors)
     elseif packetType == "ActorDeath" then
         self:SaveActorDeath(actors)
     end    
@@ -932,6 +934,42 @@ function BaseCell:SaveActorEquipment(actors)
             end
 
             tableHelper.insertValueIfMissing(self.data.packets.equipment, uniqueIndex)
+        end
+    end
+
+    self:QuicksaveToDrive()
+end
+
+function BaseCell:SaveActorSpellsActive(actors)
+
+    for uniqueIndex, actor in pairs(actors) do
+
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
+
+        if self:ContainsObject(uniqueIndex) then
+
+            local action = actor.spellActiveChangesAction
+
+            if action == enumerations.spellbook.SET or self.data.objectData[uniqueIndex].spellsActive == nil then
+                self.data.objectData[uniqueIndex].spellsActive = {}
+            end
+
+            for spellId, spellData in pairs(actor.spellsActiveChanges) do
+
+                if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+                    self.data.objectData[uniqueIndex].spellsActive[spellId] = spellData
+                elseif action == enumerations.spellbook.REMOVE then
+                    if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then
+                        self.data.objectData[uniqueIndex].spellsActive[spellId] = nil
+                    end
+                end
+            end
+
+            if tableHelper.getCount(self.data.objectData[uniqueIndex].spellsActive) > 0 then
+                tableHelper.insertValueIfMissing(self.data.packets.spellsActive, uniqueIndex)
+            else
+                tableHelper.removeValue(self.data.packets.spellsActive, uniqueIndex)
+            end
         end
     end
 
@@ -1673,6 +1711,38 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
     end
 end
 
+function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
+
+    local actorCount = 0
+
+    tes3mp.ClearActorList()
+    tes3mp.SetActorListPid(pid)
+    tes3mp.SetActorListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+
+        local splitIndex = uniqueIndex:split("-")
+        tes3mp.SetActorRefNum(splitIndex[1])
+        tes3mp.SetActorMpNum(splitIndex[2])
+
+        if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].spellsActive ~= nil then
+
+            packetBuilder.AddActorSpellsActive(uniqueIndex, objectData[uniqueIndex].spellsActive,
+                enumerations.spellbook.SET)
+
+            actorCount = actorCount + 1
+        else
+            tes3mp.LogAppend(enumerations.log.ERROR, "- Had spellsActive packet recorded for " .. uniqueIndex ..
+                ", but no matching object data! Please report this to a developer")
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+    end
+
+    if actorCount > 0 then
+        tes3mp.SendActorSpellsActiveChanges()
+    end
+end
+
 function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -2000,6 +2070,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadActorCellChanges(pid, objectData)
     self:LoadActorDeath(pid, objectData, packets.death)
     self:LoadActorEquipment(pid, objectData, packets.equipment)
+    self:LoadActorSpellsActive(pid, objectData, packets.spellsActive)
     self:LoadActorAI(pid, objectData, packets.ai)
 end
 

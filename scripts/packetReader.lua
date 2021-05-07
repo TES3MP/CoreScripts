@@ -34,6 +34,35 @@ packetReader.GetActorPacketTables = function(packetType)
                     }
                 end
             end
+        elseif packetType == "ActorSpellsActive" then
+
+            actor.spellsActiveChanges = {}
+            local spellsActiveChangesSize = tes3mp.GetActorSpellsActiveChangesSize(packetIndex)
+
+            for spellIndex = 0, spellsActiveChangesSize - 1 do
+
+                local spellId = tes3mp.GetActorSpellsActiveId(packetIndex, spellIndex)
+
+                actor.spellActiveChangesAction = tes3mp.GetActorSpellsActiveChangesAction(packetIndex)
+
+                actor.spellsActiveChanges[spellId] = {
+                    effects = {},
+                    displayName = tes3mp.GetActorSpellsActiveDisplayName(packetIndex, spellIndex),
+                    startTime = os.time()
+                }
+
+                for effectIndex = 0, tes3mp.GetActorSpellsActiveEffectCount(packetIndex, spellIndex) - 1 do
+                    local effect = {
+                        id = tes3mp.GetActorSpellsActiveEffectId(packetIndex, spellIndex, effectIndex),
+                        magnitude = tes3mp.GetActorSpellsActiveEffectMagnitude(packetIndex, spellIndex, effectIndex),
+                        duration = tes3mp.GetActorSpellsActiveEffectDuration(packetIndex, spellIndex, effectIndex),
+                        timeLeft = tes3mp.GetActorSpellsActiveEffectTimeLeft(packetIndex, spellIndex, effectIndex),
+                        arg = tes3mp.GetActorSpellsActiveEffectArg(packetIndex, spellIndex, effectIndex)
+                    }
+
+                    table.insert(actor.spellsActiveChanges[spellId].effects, effect)
+                end
+            end
         elseif packetType == "ActorDeath" then
 
             actor.deathState = tes3mp.GetActorDeathState(packetIndex)

@@ -533,6 +533,12 @@ function OnActorDeath(pid, cellDescription)
     eventHandler.OnActorDeath(pid, cellDescription)
 end
 
+function OnActorSpellsActive(pid, cellDescription)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorSpellsActive\" for " .. logicHandler.GetChatName(pid) ..
+        " and cell " .. cellDescription)
+    eventHandler.OnActorSpellsActive(pid, cellDescription)
+end
+
 function OnActorCellChange(pid, cellDescription)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnActorCellChange\" for " .. logicHandler.GetChatName(pid) ..
         " and cell " .. cellDescription)

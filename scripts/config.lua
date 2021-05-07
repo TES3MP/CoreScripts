@@ -383,7 +383,7 @@ config.rgbRecordSettings = { "color" }
 -- The types of object and actor packets stored in cell data
 config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", "state", "miscellaneous",
     "doorState", "clientScriptLocal", "container", "equipment", "ai", "death", "actorList", "position",
-    "statsDynamic", "cellChangeTo", "cellChangeFrom" }
+    "statsDynamic", "spellsActive", "cellChangeTo", "cellChangeFrom" }
 
 -- Whether the server should enforce that all clients connect with a specific list of data files
 -- defined in data/requiredDataFiles.json
