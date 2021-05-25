@@ -466,6 +466,7 @@ packetBuilder.AddCreatureRecord = function(id, record)
     if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
     if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
     if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
+    if record.soulValue ~= nil then tes3mp.SetRecordSoulValue(record.soulValue) end
     if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
     if record.aiServices ~= nil then tes3mp.SetRecordAIServices(record.aiServices) end
     if record.aiFlee ~= nil then tes3mp.SetRecordAIFlee(record.aiFlee) end
