@@ -111,7 +111,8 @@ config.shareVideos = true
 --       because they're not suitable for multiplayer
 config.disabledClientScriptIds = { "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet",
     "CharGenDoorGuardTalker", "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel",
-    "CharGenDialogueMessage", "CharGenDoorExitCaptain", "CharGenJournalMessage" }
+    "CharGenDialogueMessage", "CharGenDoorEnterCaptain", "CharGenDoorExitCaptain",
+    "CharGenJournalMessage" }
 
 -- Which clientside scripts should have all of their variables synchronized across players
 -- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
@@ -134,7 +135,8 @@ config.instancedSpawn = {
     position = {1130.3388671875, -387.14947509766, 193},
     rotation = {0.09375, 1.5078122615814},
     text = "Multiplayer skips several minutes of the game's introduction and places you at the first quest giver." ..
-        "\n\nYou will be able to meet other players only after you leave this room."
+        "\n\nYou will be able to meet other players only after you leave this room.",
+    items = {{refId = "chargen statssheet", count = 1, charge = -1, enchantmentCharge = -1, soul = ""}}    
 }
 
 -- Where players will be spawned if an instanced spawn is not desired
@@ -384,8 +386,8 @@ config.requiredRecordSettings = {
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "charge", "cost", "value", "weight", "quality", "uses",
     "time", "radius", "health", "armorRating", "speed", "reach", "scale", "part", "bloodType", "level",
-    "magicka", "fatigue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender", "flags",
-    "enchantmentCharge" }
+    "magicka", "fatigue", "soulValue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender",
+    "flags", "enchantmentCharge" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" }
@@ -428,14 +430,14 @@ config.disallowedNameStrings = { "bitch", "blowjob", "blow job", "cocksuck", "cu
     "faggot", "fellatio", "fuck", "gas the ", "Hitler", "jizz", "nigga", "nigger", "smegma", "vagina", "whore" }
 
 -- The order in which table keys should be saved to JSON files
-config.playerKeyOrder = { "login", "name", "passwordHash", "passwordSalt", "settings", "character",
-    "customClass", "location", "stats", "fame", "shapeshift", "attributes", "attributeSkillIncreases",
-    "skills", "skillProgress", "recordLinks", "equipment", "inventory", "spellbook", "books", "factionRanks",
-    "factionReputation", "factionExpulsion", "mapExplored", "ipAddresses", "customVariables", "admin",
-    "difficulty", "enforcedLogLevel", "physicsFramerate", "consoleAllowed", "bedRestAllowed",
-    "wildernessRestAllowed", "waitAllowed", "gender", "race", "head", "hair", "class", "birthsign",
-    "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase", "healthCurrent", "magickaBase",
-    "magickaCurrent", "fatigueBase", "fatigueCurrent" }
+config.playerKeyOrder = { "login", "name", "passwordHash", "passwordSalt", "timestamps", "settings",
+    "character", "customClass", "location", "stats", "fame", "shapeshift", "attributes",
+    "attributeSkillIncreases", "skills", "skillProgress", "recordLinks", "equipment", "inventory",
+    "spellbook", "books", "factionRanks", "factionReputation", "factionExpulsion", "mapExplored",
+    "ipAddresses", "customVariables", "admin", "difficulty", "enforcedLogLevel", "physicsFramerate",
+    "consoleAllowed", "bedRestAllowed", "wildernessRestAllowed", "waitAllowed", "gender", "race",
+    "head", "hair", "class", "birthsign", "cell", "posX", "posY", "posZ", "rotX", "rotZ", "healthBase",
+    "healthCurrent", "magickaBase", "magickaCurrent", "fatigueBase", "fatigueCurrent" }
 
 config.cellKeyOrder = { "packets", "entry", "lastVisit", "recordLinks", "objectData", "refId", "count",
     "charge", "enchantmentCharge", "location", "actorList", "ai", "summon", "stats", "cellChangeFrom",
