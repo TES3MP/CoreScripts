@@ -323,6 +323,21 @@ function BasePlayer:EndCharGen()
     WorldInstance:LoadTime(self.pid, false)
     WorldInstance:LoadWeather(self.pid, false, true)
 
+    local spawnUsed
+
+    if config.useInstancedSpawn == true and config.instancedSpawn ~= nil then
+        spawnUsed = tableHelper.shallowCopy(config.instancedSpawn)
+        local originalCellDescription = spawnUsed.cellDescription
+        spawnUsed.cellDescription = originalCellDescription .. " - Instance for " .. self.name
+
+        tes3mp.ClearRecords()
+        tes3mp.SetRecordType(enumerations.recordType["CELL"])
+        packetBuilder.AddCellRecord(spawnUsed.cellDescription, {baseId = originalCellDescription})
+        tes3mp.SendRecordDynamic(self.pid, false, false)
+    elseif config.noninstancedSpawn ~= nil then
+        spawnUsed = config.noninstancedSpawn
+    end
+
     for _, storeType in ipairs(config.recordStoreLoadOrder) do
         local recordStore = RecordStores[storeType]
 
@@ -353,28 +368,26 @@ function BasePlayer:EndCharGen()
 
     WorldInstance:LoadKills(self.pid)
 
-    if config.defaultSpawnCell ~= nil then
-
-        tes3mp.SetCell(self.pid, config.defaultSpawnCell)
+    if spawnUsed ~= nil and spawnUsed.cellDescription ~= nil then
+        tes3mp.SetCell(self.pid, spawnUsed.cellDescription)
         tes3mp.SendCell(self.pid)
 
-        if config.defaultSpawnPos ~= nil and config.defaultSpawnRot ~= nil then
-            tes3mp.SetPos(self.pid, config.defaultSpawnPos[1],
-                config.defaultSpawnPos[2], config.defaultSpawnPos[3])
-            tes3mp.SetRot(self.pid, config.defaultSpawnRot[1], config.defaultSpawnRot[2])
+        if spawnUsed.position ~= nil and spawnUsed.rotation ~= nil then
+            tes3mp.SetPos(self.pid, spawnUsed.position[1], spawnUsed.position[2], spawnUsed.position[3])
+            tes3mp.SetRot(self.pid, spawnUsed.rotation[1], spawnUsed.rotation[2])
             tes3mp.SendPos(self.pid)
         end
-    end
 
-    if config.shareJournal == true and WorldInstance.data.customVariables ~= nil then
-        if WorldInstance.data.customVariables.deliveredCaiusPackage ~= true then
-            local item = { refId = "bk_a1_1_caiuspackage", count = 1, charge = -1,
-                enchantmentCharge = -1, soul = "" }
-            inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
-                item.enchantmentCharge, item.soul)
-            self:LoadItemChanges({item}, enumerations.inventory.ADD)
-            tes3mp.MessageBox(self.pid, -1, "Multiplayer skips over the original character generation." ..
-                "\n\nAs a result, you start out with Caius Cosades' package.")
+        if spawnUsed.text then
+            tes3mp.MessageBox(self.pid, -1, spawnUsed.text)
+        end
+
+        if spawnUsed.items then
+            for _, item in pairs(spawnUsed.items) do
+                inventoryHelper.addItem(self.data.inventory, item.refId, item.count, item.charge,
+                    item.enchantmentCharge, item.soul)
+            end
+            self:LoadItemChanges(spawnUsed.items, enumerations.inventory.ADD)
         end
     end
 

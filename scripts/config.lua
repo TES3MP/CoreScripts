@@ -123,14 +123,29 @@ config.synchronizedClientScriptIds = {
     "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState"
 }
 
--- The cell that newly created players are teleported to
-config.defaultSpawnCell = "-3, -2"
+-- Whether the instanced spawn should be used instead of the noninstanced one
+config.useInstancedSpawn = true
 
--- The X, Y and Z position that newly created players are teleported to
-config.defaultSpawnPos = {-23894.0, -15079.0, 505}
+-- Where players will be spawned if an instanced spawn is desired, with a different clean copy of
+-- this cell existing for each player
+-- Warning: Only interior cells can be instanced
+config.instancedSpawn = {
+    cellDescription = "Seyda Neen, Census and Excise Office",
+    position = {1130.3388671875, -387.14947509766, 193},
+    rotation = {0.09375, 1.5078122615814},
+    text = "Multiplayer skips several minutes of the game's introduction and places you at the first quest giver." ..
+        "\n\nYou will be able to meet other players only after you leave this room."
+}
 
--- The X and Z rotation that newly created players are assigned
-config.defaultSpawnRot = {0, 1.2}
+-- Where players will be spawned if an instanced spawn is not desired
+config.noninstancedSpawn = {
+    cellDescription = "-3, -2",
+    position = {-23894.0, -15079.0, 505},
+    rotation = {0, 1.2},
+    text = "Multiplayer skips over the original character generation." ..
+        "\n\nAs a result, you start out with Caius Cosades' package.",
+    items = {{refId = "bk_a1_1_caiuspackage", count = 1, charge = -1, enchantmentCharge = -1, soul = ""}}
+}
 
 -- The cell that players respawn in, unless overridden below by other respawn options
 config.defaultRespawnCell = "Balmora, Temple"
