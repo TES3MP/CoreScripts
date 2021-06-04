@@ -271,7 +271,7 @@ function OnServerPostInit()
         elseif config.respawnAtTribunalTemple == true then
             respawnCell = "nearest Tribunal temple"
         else
-            respawnCell = tostring(config.defaultRespawnCell)
+            respawnCell = config.defaultRespawn.cellDescription
         end
 
         tes3mp.SetRuleString("respawnCell", respawnCell)

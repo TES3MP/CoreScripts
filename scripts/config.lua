@@ -149,14 +149,12 @@ config.noninstancedSpawn = {
     items = {{refId = "bk_a1_1_caiuspackage", count = 1, charge = -1, enchantmentCharge = -1, soul = ""}}
 }
 
--- The cell that players respawn in, unless overridden below by other respawn options
-config.defaultRespawnCell = "Balmora, Temple"
-
--- The X, Y and Z position that players respawn in
-config.defaultRespawnPos = {4700.5673828125, 3874.7416992188, 14758.990234375}
-
--- The X and Z rotation that respawned players are assigned
-config.defaultRespawnRot = {0.25314688682556, 1.570611000061}
+-- The location that players respawn at, unless overridden below by other respawn options
+config.defaultRespawn = {
+    cellDescription = "Balmora, Temple",
+    position = {4700.5673828125, 3874.7416992188, 14758.990234375},
+    rotation = {0.25314688682556, 1.570611000061}
+}
 
 -- Whether the default respawn location should be ignored in favor of respawning the
 -- player at the nearest Imperial shrine

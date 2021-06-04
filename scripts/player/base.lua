@@ -563,16 +563,16 @@ function BasePlayer:Resurrect()
     elseif config.respawnAtTribunalTemple == true then
         currentResurrectType = enumerations.resurrect.TRIBUNAL_TEMPLE
 
-    elseif config.defaultRespawnCell ~= nil then
+    elseif config.defaultRespawn ~= nil and config.defaultRespawn.cellDescription ~= nil then
         currentResurrectType = enumerations.resurrect.REGULAR
 
-        tes3mp.SetCell(self.pid, config.defaultRespawnCell)
+        tes3mp.SetCell(self.pid, config.defaultRespawn.cellDescription)
         tes3mp.SendCell(self.pid)
 
-        if config.defaultRespawnPos ~= nil and config.defaultRespawnRot ~= nil then
-            tes3mp.SetPos(self.pid, config.defaultRespawnPos[1],
-                config.defaultRespawnPos[2], config.defaultRespawnPos[3])
-            tes3mp.SetRot(self.pid, config.defaultRespawnRot[1], config.defaultRespawnRot[2])
+        if config.defaultRespawn.position ~= nil and config.defaultRespawn.rotation ~= nil then
+            tes3mp.SetPos(self.pid, config.defaultRespawn.position[1],
+                config.defaultRespawn.position[2], config.defaultRespawn.position[3])
+            tes3mp.SetRot(self.pid, config.defaultRespawn.rotation[1], config.defaultRespawn.rotation[2])
             tes3mp.SendPos(self.pid)
         end
     end
