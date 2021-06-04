@@ -359,7 +359,7 @@ eventHandler.InitializeDefaultHandlers = function()
     end)
 
     -- Print object restocking and send an ObjectRestock packet back to the player
-    customEventHooks.registerHandler("OnObjectRestock", function(eventStatus, pid, cellDescription, objects, targetPlayers)
+    customEventHooks.registerHandler("OnObjectRestock", function(eventStatus, pid, cellDescription, objects)
 
         if eventStatus.validDefaultHandler == false then return end
 
