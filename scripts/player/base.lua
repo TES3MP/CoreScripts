@@ -314,9 +314,9 @@ end
 function BasePlayer:EndCharGen()
     self:SaveLogin()
     self:SaveCharacter()
-    self:SaveClass()
-    self:SaveStatsDynamic()
-    self:SaveEquipment()
+    self:SaveClass(packetReader.GetPlayerPacketTables(self.pid, "PlayerClass"))
+    self:SaveStatsDynamic(packetReader.GetPlayerPacketTables(self.pid, "PlayerStatsDynamic"))
+    self:SaveEquipment(packetReader.GetPlayerPacketTables(self.pid, "PlayerEquipment"))
     self:SaveIpAddress()
     self:CreateAccount()
 
@@ -651,6 +651,26 @@ function BasePlayer:DeleteSummons()
     end
 end
 
+function BasePlayer:SaveDataByPacketType(packetType, playerPacket)
+    if packetType == "PlayerAttribute" then
+        self:SaveAttributes(playerPacket)
+    elseif packetType == "PlayerSkill" then
+        self:SaveSkills(playerPacket)
+    elseif packetType == "PlayerLevel" then
+        self:SaveLevel(playerPacket)
+    elseif packetType == "PlayerShapeshift" then
+        self:SaveShapeshift(playerPacket)
+    elseif packetType == "PlayerEquipment" then
+        self:SaveEquipment(playerPacket)
+    elseif packetType == "PlayerInventory" then
+        self:SaveInventory(playerPacket)
+    elseif packetType == "PlayerSpellbook" then
+        self:SaveSpellbook(playerPacket)
+    elseif packetType == "PlayerQuickKeys" then
+        self:SaveQuickKeys(playerPacket)
+    end
+end
+
 function BasePlayer:LoadCharacter()
     tes3mp.SetRace(self.pid, self.data.character.race)
     tes3mp.SetHead(self.pid, self.data.character.head)
@@ -702,30 +722,14 @@ function BasePlayer:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
-function BasePlayer:SaveClass()
-    if tes3mp.IsClassDefault(self.pid) == 1 then
-        self.data.character.class = tes3mp.GetDefaultClass(self.pid)
-    else
-        self.data.character.class = "custom"
-        self.data.customClass.name = tes3mp.GetClassName(self.pid)
-        self.data.customClass.description = tes3mp.GetClassDesc(self.pid):gsub("\n", "\\n")
-        self.data.customClass.specialization = tes3mp.GetClassSpecialization(self.pid)
-        local majorAttributes = {}
-        local majorSkills = {}
-        local minorSkills = {}
+function BasePlayer:SaveClass(playerPacket)
 
-        for index = 0, 1, 1 do
-            majorAttributes[index + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(self.pid, index)))
+    self.data.character.class = playerPacket.character.class
+
+    if playerPacket.character.defaultClassState == 0 then
+        for key, value in pairs(playerPacket.customClass) do
+            self.data.customClass[key] = tableHelper.deepCopy(playerPacket.customClass[key])
         end
-
-        for index = 0, 4, 1 do
-            majorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(self.pid, index)))
-            minorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(self.pid, index)))
-        end
-
-        self.data.customClass.majorAttributes = table.concat(majorAttributes, ", ")
-        self.data.customClass.majorSkills = table.concat(majorSkills, ", ")
-        self.data.customClass.minorSkills = table.concat(minorSkills, ", ")
     end
 end
 
@@ -749,9 +753,9 @@ function BasePlayer:LoadStatsDynamic()
     tes3mp.SendStatsDynamic(self.pid)
 end
 
-function BasePlayer:SaveStatsDynamic()
+function BasePlayer:SaveStatsDynamic(playerPacket)
 
-    local healthBase = tes3mp.GetHealthBase(self.pid)
+    local healthBase = playerPacket.stats.healthBase
 
     -- Sometimes, the player's base health gets set to 1 serverside;
     -- use this temporary fix until we figure out why
@@ -763,18 +767,18 @@ function BasePlayer:SaveStatsDynamic()
             self.data.stats.healthBase = healthBase
         end
 
-        self.data.stats.magickaBase = tes3mp.GetMagickaBase(self.pid)
-        self.data.stats.fatigueBase = tes3mp.GetFatigueBase(self.pid)
-        self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
-        self.data.stats.magickaCurrent = tes3mp.GetMagickaCurrent(self.pid)
-        self.data.stats.fatigueCurrent = tes3mp.GetFatigueCurrent(self.pid)
+        self.data.stats.magickaBase = playerPacket.stats.magickaBase
+        self.data.stats.fatigueBase = playerPacket.stats.fatigueBase
+        self.data.stats.healthCurrent = playerPacket.stats.healthCurrent
+        self.data.stats.magickaCurrent = playerPacket.stats.magickaCurrent
+        self.data.stats.fatigueCurrent = playerPacket.stats.fatigueCurrent
     end
 end
 
 function BasePlayer:LoadAttributes()
 
-    for name, value in pairs(self.data.attributes) do
-        local attributeId = tes3mp.GetAttributeId(name)
+    for attributeName, value in pairs(self.data.attributes) do
+        local attributeId = tes3mp.GetAttributeId(attributeName)
 
         if type(value) == "table" then
             tes3mp.SetAttributeBase(self.pid, attributeId, value.base)
@@ -790,58 +794,46 @@ function BasePlayer:LoadAttributes()
     tes3mp.SendAttributes(self.pid)
 end
 
-function BasePlayer:SaveAttributes()
+function BasePlayer:SaveAttributes(playerPacket)
 
-    for name in pairs(self.data.attributes) do
+    for attributeName in pairs(self.data.attributes) do
 
-        local attributeId = tes3mp.GetAttributeId(name)
-
-        local baseValue = tes3mp.GetAttributeBase(self.pid, attributeId)
-        local modifierValue = tes3mp.GetAttributeModifier(self.pid, attributeId)
+        local attributeId = tes3mp.GetAttributeId(attributeName)
+        local attribute = playerPacket.attributes[attributeName]
         local maxAttributeValue = config.maxAttributeValue
 
         if name == "Speed" then
             maxAttributeValue = config.maxSpeedValue
         end
 
-        if baseValue > maxAttributeValue then
+        if attribute.base > maxAttributeValue then
             self:LoadAttributes()
 
-            local message = "Your base " .. name .. " has exceeded the maximum allowed value " ..
+            local message = "Your base " .. attributeName .. " has exceeded the maximum allowed value " ..
                 "and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
-        elseif (baseValue + modifierValue) > maxAttributeValue then
+        elseif (attribute.base + attribute.modifier) > maxAttributeValue then
             tes3mp.ClearAttributeModifier(self.pid, attributeId)
             tes3mp.SendAttributes(self.pid)
 
-            local message = "Your " .. name .. " fortification has exceeded the maximum allowed " ..
+            local message = "Your " .. attributeName .. " fortification has exceeded the maximum allowed " ..
                 "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
-            self.data.attributes[name] = {
-                base = baseValue,
-                damage = tes3mp.GetAttributeDamage(self.pid, attributeId),
-                skillIncrease = tes3mp.GetSkillIncrease(self.pid, attributeId)
+            self.data.attributes[attributeName] = {
+                base = attribute.base,
+                damage = attribute.damage,
+                skillIncrease = attribute.skillIncrease
             }
-
-            -- Remove old tables for attribute bonuses on level up from skill increases
-            if self.data.attributeSkillIncreases ~= nil and self.data.attributeSkillIncreases[name] ~= nil then
-                self.data.attributeSkillIncreases[name] = nil
-            end
         end
-    end
-
-    -- Remove traces of old way of saving attribute bonuses on level up
-    if self.data.attributeSkillIncreases ~= nil and tableHelper.isEmpty(self.data.attributeSkillIncreases) then
-        self.data.attributeSkillIncreases = nil
     end
 end
 
 function BasePlayer:LoadSkills()
 
-    for name, value in pairs(self.data.skills) do
+    for skillName, value in pairs(self.data.skills) do
 
-        local skillId = tes3mp.GetSkillId(name)
+        local skillId = tes3mp.GetSkillId(skillName)
 
         if type(value) == "table" then
             tes3mp.SetSkillBase(self.pid, skillId, value.base)
@@ -857,50 +849,38 @@ function BasePlayer:LoadSkills()
     tes3mp.SendSkills(self.pid)
 end
 
-function BasePlayer:SaveSkills()
+function BasePlayer:SaveSkills(playerPacket)
 
-    for name in pairs(self.data.skills) do
+    for skillName in pairs(self.data.skills) do
 
-        local skillId = tes3mp.GetSkillId(name)
-
-        local baseValue = tes3mp.GetSkillBase(self.pid, skillId)
-        local modifierValue = tes3mp.GetSkillModifier(self.pid, skillId)
+        local skillId = tes3mp.GetSkillId(skillName)
+        local skill = playerPacket.skills[skillName]
         local maxSkillValue = config.maxSkillValue
 
-        if name == "Acrobatics" then
+        if skillName == "Acrobatics" then
             maxSkillValue = config.maxAcrobaticsValue
         end
 
-        if baseValue > maxSkillValue then
+        if skill.base > maxSkillValue then
             self:LoadSkills()
 
-            local message = "Your base " .. name .. " has exceeded the maximum allowed value " ..
+            local message = "Your base " .. skillName .. " has exceeded the maximum allowed value " ..
                 "and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
-        elseif (baseValue + modifierValue) > maxSkillValue and not config.ignoreModifierWithMaxSkill then
+        elseif (skill.base + skill.modifier) > maxSkillValue and not config.ignoreModifierWithMaxSkill then
             tes3mp.ClearSkillModifier(self.pid, skillId)
             tes3mp.SendSkills(self.pid)
 
-            local message = "Your " .. name .. " fortification has exceeded the maximum allowed " ..
+            local message = "Your " .. skillName .. " fortification has exceeded the maximum allowed " ..
                 "value and been removed.\n"
             tes3mp.SendMessage(self.pid, message)
         else
-            self.data.skills[name] = {
-                base = baseValue,
-                damage = tes3mp.GetSkillDamage(self.pid, skillId),
-                progress = tes3mp.GetSkillProgress(self.pid, skillId)
+            self.data.skills[skillName] = {
+                base = skill.base,
+                damage = skill.damage,
+                progress = skill.progress
             }
-
-            -- Removes old tables for skill progress
-            if self.data.skillProgress ~= nil and self.data.skillProgress[name] ~= nil then
-                self.data.skillProgress[name] = nil
-            end
         end
-    end
-
-    -- Remove traces of old way of saving skill progress
-    if self.data.skillProgress ~= nil and tableHelper.isEmpty(self.data.skillProgress) then
-        self.data.skillProgress = nil
     end
 end
 
@@ -914,9 +894,9 @@ function BasePlayer:LoadLevel()
     tes3mp.SendLevel(self.pid)
 end
 
-function BasePlayer:SaveLevel()
-    self.data.stats.level = tes3mp.GetLevel(self.pid)
-    self.data.stats.levelProgress = tes3mp.GetLevelProgress(self.pid)
+function BasePlayer:SaveLevel(playerPacket)
+    self.data.stats.level = playerPacket.stats.level
+    self.data.stats.levelProgress = playerPacket.stats.levelProgress
 end
 
 function BasePlayer:LoadShapeshift()
@@ -934,11 +914,11 @@ function BasePlayer:LoadShapeshift()
     tes3mp.SendShapeshift(self.pid)
 end
 
-function BasePlayer:SaveShapeshift()
+function BasePlayer:SaveShapeshift(playerPacket)
 
     if self.data.shapeshift == nil then self.data.shapeshift = {} end
 
-    local newScale = tes3mp.GetScale(self.pid)
+    local newScale = playerPacket.shapeshift.scale
 
     if newScale ~= self.data.shapeshift.scale then
         tes3mp.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) ..
@@ -946,7 +926,7 @@ function BasePlayer:SaveShapeshift()
         self.data.shapeshift.scale = newScale
     end
 
-    self.data.shapeshift.isWerewolf = tes3mp.IsWerewolf(self.pid)
+    self.data.shapeshift.isWerewolf = playerPacket.shapeshift.isWerewolf
 end
 
 function BasePlayer:LoadCell()
@@ -981,21 +961,19 @@ function BasePlayer:LoadCell()
     end
 end
 
-function BasePlayer:SaveCell()
+function BasePlayer:SaveCell(playerPacket)
 
     if self.data.location == nil then self.data.location = {} end
 
     -- Keep this around to update old player files
     if self.data.mapExplored == nil then self.data.mapExplored = {} end
 
-    local cell = tes3mp.GetCell(self.pid)
-
-    self.data.location.cell = cell
-    self.data.location.posX = tes3mp.GetPosX(self.pid)
-    self.data.location.posY = tes3mp.GetPosY(self.pid)
-    self.data.location.posZ = tes3mp.GetPosZ(self.pid)
-    self.data.location.rotX = tes3mp.GetRotX(self.pid)
-    self.data.location.rotZ = tes3mp.GetRotZ(self.pid)
+    self.data.location.cell = playerPacket.location.cell
+    self.data.location.posX = playerPacket.location.posX
+    self.data.location.posY = playerPacket.location.posY
+    self.data.location.posZ = playerPacket.location.posZ
+    self.data.location.rotX = playerPacket.location.rotX
+    self.data.location.rotZ = playerPacket.location.rotZ
 
     stateHelper:SaveMapExploration(self.pid, self)
 end
@@ -1025,21 +1003,20 @@ function BasePlayer:LoadEquipment()
     tes3mp.SendEquipment(self.pid)
 end
 
-function BasePlayer:SaveEquipment()
+function BasePlayer:SaveEquipment(playerPacket)
 
     local reloadAtEnd = false
 
-    for index = 0, tes3mp.GetEquipmentChangesSize(self.pid) - 1 do
-        local slot = tes3mp.GetEquipmentChangesSlot(self.pid, index)
-        local newRefId = tes3mp.GetEquipmentItemRefId(self.pid, slot)
+    for slot, equipmentItem in pairs(playerPacket.equipment) do
+        local newRefId = equipmentItem.refId
 
         if newRefId ~= "" and tableHelper.containsValue(config.bannedEquipmentItems, newRefId) then
             self:Message("You have tried wearing an item that isn't allowed!\n")
             reloadAtEnd = true
         else
-            local newCount = tes3mp.GetEquipmentItemCount(self.pid, slot)
-            local newCharge = tes3mp.GetEquipmentItemCharge(self.pid, slot)
-            local newEnchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(self.pid, slot)
+            local newCount = equipmentItem.count
+            local newCharge = equipmentItem.charge
+            local newEnchantmentCharge = equipmentItem.enchantmentCharge
 
             self.data.equipment[slot] = {
                 refId = newRefId,
@@ -1135,28 +1112,17 @@ function BasePlayer:LoadInventory()
     tes3mp.SendInventoryChanges(self.pid)
 end
 
-function BasePlayer:SaveInventory()
+function BasePlayer:SaveInventory(playerPacket)
 
-    local action = tes3mp.GetInventoryChangesAction(self.pid)
-    local itemChangesCount = tes3mp.GetInventoryChangesSize(self.pid)
+    local action = playerPacket.action
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. itemChangesCount .. " item(s) to inventory with action " ..
-        tableHelper.getIndexByValue(enumerations.inventory, action))
+    tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. tableHelper.getCount(playerPacket.inventory) ..
+        " item(s) to inventory with action " .. tableHelper.getIndexByValue(enumerations.inventory, action))
 
     if action == enumerations.inventory.SET then self.data.inventory = {} end
 
-    for index = 0, itemChangesCount - 1 do
-        local itemRefId = tes3mp.GetInventoryItemRefId(self.pid, index)
-
-        if itemRefId ~= "" then
-
-            local item = {
-                refId = itemRefId,
-                count = tes3mp.GetInventoryItemCount(self.pid, index),
-                charge = tes3mp.GetInventoryItemCharge(self.pid, index),
-                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(self.pid, index),
-                soul = tes3mp.GetInventoryItemSoul(self.pid, index)
-            }
+    for itemIndex, item in pairs(playerPacket.inventory) do
+        if item.refId ~= "" then
 
             tes3mp.LogAppend(enumerations.log.INFO, "- id: " .. item.refId .. ", count: " .. item.count ..
                 ", charge: " .. item.charge .. ", enchantmentCharge: " .. item.enchantmentCharge ..
@@ -1242,17 +1208,15 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpellbookChanges(self.pid)
 end
 
-function BasePlayer:SaveSpellbook()
+function BasePlayer:SaveSpellbook(playerPacket)
 
-    local action = tes3mp.GetSpellbookChangesAction(self.pid)
+    local action = playerPacket.action
 
     if action == enumerations.spellbook.SET then
         self.data.spellbook = {}
     end
 
-    for index = 0, tes3mp.GetSpellbookChangesSize(self.pid) - 1 do
-        local spellId = tes3mp.GetSpellId(self.pid, index)
-
+    for spellIndex, spellId in pairs(playerPacket.spellbook) do
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if not tableHelper.containsValue(self.data.spellbook, spellId) then
@@ -1334,40 +1298,22 @@ function BasePlayer:LoadSpellsActive()
     tes3mp.SendSpellsActiveChanges(self.pid, true)
 end
 
-function BasePlayer:SaveSpellsActive()
+function BasePlayer:SaveSpellsActive(playerPacket)
 
-    local action = tes3mp.GetSpellsActiveChangesAction(self.pid)
+    local action = playerPacket.action
 
     if action == enumerations.spellbook.SET or self.data.spellsActive == nil then
         self.data.spellsActive = {}
     end
 
-    for spellIndex = 0, tes3mp.GetSpellsActiveChangesSize(self.pid) - 1 do
-        local spellId = tes3mp.GetSpellsActiveId(self.pid, spellIndex)
+    for spellId, spell in pairs(playerPacket.spellsActive) do
 
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if not tableHelper.containsValue(self.data.spellsActive, spellId) then
                 tes3mp.LogMessage(enumerations.log.INFO, "Adding active spell " .. spellId .. " to " ..
                     logicHandler.GetChatName(self.pid))
-
-                self.data.spellsActive[spellId] = {
-                    effects = {},
-                    displayName = tes3mp.GetSpellsActiveDisplayName(self.pid, spellIndex),
-                    startTime = os.time()
-                }
-
-                for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(self.pid, spellIndex) - 1 do
-                    local effect = {
-                        id = tes3mp.GetSpellsActiveEffectId(self.pid, spellIndex, effectIndex),
-                        magnitude = tes3mp.GetSpellsActiveEffectMagnitude(self.pid, spellIndex, effectIndex),
-                        duration = tes3mp.GetSpellsActiveEffectDuration(self.pid, spellIndex, effectIndex),
-                        timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(self.pid, spellIndex, effectIndex),
-                        arg = tes3mp.GetSpellsActiveEffectArg(self.pid, spellIndex, effectIndex)
-                    }
-
-                    table.insert(self.data.spellsActive[spellId].effects, effect)
-                end
+                self.data.spellsActive[spellId] = tableHelper.deepCopy(spell)
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
@@ -1400,15 +1346,12 @@ function BasePlayer:LoadQuickKeys()
     tes3mp.SendQuickKeyChanges(self.pid)
 end
 
-function BasePlayer:SaveQuickKeys()
+function BasePlayer:SaveQuickKeys(playerPacket)
 
-    for index = 0, tes3mp.GetQuickKeyChangesSize(self.pid) - 1 do
-
-        local slot = tes3mp.GetQuickKeySlot(self.pid, index)
-
+    for slot, quickKey in pairs(playerPacket.quickKeys) do
         self.data.quickKeys[slot] = {
-            keyType = tes3mp.GetQuickKeyType(self.pid, index),
-            itemId = tes3mp.GetQuickKeyItemId(self.pid, index)
+            keyType = quickKey.keyType,
+            itemId = quickKey.itemId
         }
     end
 end

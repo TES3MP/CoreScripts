@@ -529,8 +529,8 @@ eventHandler.OnPlayerDisconnect = function(pid)
                     targetPlayer:SetConfiscationState(false)
                 end
 
-                Players[pid]:SaveCell()
-                Players[pid]:SaveStatsDynamic()
+                Players[pid]:SaveCell(packetReader.GetPlayerPacketTables(pid, "PlayerCellChange"))
+                Players[pid]:SaveStatsDynamic(packetReader.GetPlayerPacketTables(pid, "PlayerStatsDynamic"))
                 tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
                 Players[pid]:SaveToDrive()
 
@@ -724,66 +724,88 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     end
 end
 
-eventHandler.OnPlayerDeath = function(pid)
+eventHandler.OnPlayerEndCharGen = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerDeath", {pid})
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerEndCharGen", {pid})
         if eventStatus.validDefaultHandler then
-            Players[pid]:ProcessDeath()
+            Players[pid]:EndCharGen()
         end
-        customEventHooks.triggerHandlers("OnPlayerDeath", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerEndCharGen", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerAuthentified", eventStatus, {pid})
+    end
+end
+
+eventHandler.OnGenericPlayerEvent = function(pid, packetType)
+    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
+        local playerPacket = packetReader.GetPlayerPacketTables(pid, packetType)
+
+        local eventStatus = customEventHooks.triggerValidators("On" .. packetType, {pid, playerPacket})
+        if eventStatus.validDefaultHandler then
+            Players[pid]:SaveDataByPacketType(packetType, playerPacket)
+        end
+        customEventHooks.triggerHandlers("On" .. packetType, eventStatus, {pid, playerPacket})
     end
 end
 
 eventHandler.OnPlayerAttribute = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerAttribute", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveAttributes()
-        end
-        customEventHooks.triggerHandlers("OnPlayerAttribute", eventStatus, {pid})
-    end
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerAttribute")
 end
 
 eventHandler.OnPlayerSkill = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerSkill", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveSkills()
-        end
-        customEventHooks.triggerHandlers("OnPlayerSkill", eventStatus, {pid})
-    end
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerSkill")
 end
 
 eventHandler.OnPlayerLevel = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerLevel", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveLevel()
-            Players[pid]:SaveStatsDynamic()
-        end
-        customEventHooks.triggerHandlers("OnPlayerLevel", eventStatus, {pid})
-    end
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerLevel")
 end
 
 eventHandler.OnPlayerShapeshift = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerShapeshift")
+end
+
+eventHandler.OnPlayerEquipment = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerEquipment")
+end
+
+eventHandler.OnPlayerInventory = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerInventory")
+end
+
+eventHandler.OnPlayerSpellbook = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerSpellbook")
+end
+
+eventHandler.OnPlayerQuickKeys = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerQuickKeys")
+end
+
+eventHandler.OnPlayerSpellsActive = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerShapeshift", {pid})
+        local playerPacket = packetReader.GetPlayerPacketTables(pid, "PlayerSpellsActive")
+
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellsActive", {pid, playerPacket})
         if eventStatus.validDefaultHandler then
-            Players[pid]:SaveShapeshift()
+            Players[pid]:SaveSpellsActive(playerPacket)
+
+            -- Send this PlayerSpellsActive packet to other players (sendToOthersPlayers is true),
+            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
+            tes3mp.SendSpellsActiveChanges(pid, true, true)
         end
-        customEventHooks.triggerHandlers("OnPlayerShapeshift", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerSpellsActive", eventStatus, {pid, playerPacket})
     end
 end
 
 eventHandler.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local currentCellDescription = tes3mp.GetCell(pid)
+        local playerPacket = packetReader.GetPlayerPacketTables(pid, "PlayerCellChange")
+        local currentCellDescription = playerPacket.location.cell
 
         if not tableHelper.containsValue(config.forbiddenCells, currentCellDescription) then
             local previousCellDescription = Players[pid].data.location.cell
             
-            local eventStatus = customEventHooks.triggerValidators("OnPlayerCellChange", {pid, previousCellDescription, currentCellDescription})
+            local eventStatus = customEventHooks.triggerValidators("OnPlayerCellChange",
+                {pid, playerPacket, previousCellDescription})
             
             if eventStatus.validDefaultHandler then
                 -- If this player is changing their region, add them to the visitors of the new
@@ -826,8 +848,8 @@ eventHandler.OnPlayerCellChange = function(pid)
                     Players[pid].hasFinishedInitialTeleportation = true
                 end
 
-                Players[pid]:SaveCell()
-                Players[pid]:SaveStatsDynamic()
+                Players[pid]:SaveCell(packetReader.GetPlayerPacketTables(pid, "PlayerCellChange"))
+                Players[pid]:SaveStatsDynamic(packetReader.GetPlayerPacketTables(pid, "PlayerStatsDynamic"))
                 Players[pid]:QuicksaveToDrive()
 
                 -- Exchange generated records with the other players who have this cell loaded
@@ -841,7 +863,8 @@ eventHandler.OnPlayerCellChange = function(pid)
                 end
             end
             
-            customEventHooks.triggerHandlers("OnPlayerCellChange", eventStatus, {pid, previousCellDescription, currentCellDescription})
+            customEventHooks.triggerHandlers("OnPlayerCellChange", eventStatus,
+                {pid, playerPacket, previousCellDescription})
         else
             Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
             Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
@@ -852,68 +875,13 @@ eventHandler.OnPlayerCellChange = function(pid)
     end
 end
 
-eventHandler.OnPlayerEndCharGen = function(pid)
+eventHandler.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerEndCharGen", {pid})
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerDeath", {pid})
         if eventStatus.validDefaultHandler then
-            Players[pid]:EndCharGen()
+            Players[pid]:ProcessDeath()
         end
-        customEventHooks.triggerHandlers("OnPlayerEndCharGen", eventStatus, {pid})
-        customEventHooks.triggerHandlers("OnPlayerAuthentified", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnPlayerEquipment = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerEquipment", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveEquipment()
-        end
-        customEventHooks.triggerHandlers("OnPlayerEquipment", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnPlayerInventory = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerInventory", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveInventory()
-        end
-        customEventHooks.triggerHandlers("OnPlayerInventory", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnPlayerSpellbook = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellbook", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveSpellbook()
-        end
-        customEventHooks.triggerHandlers("OnPlayerSpellbook", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnPlayerSpellsActive = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerSpellsActive", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveSpellsActive()
-
-            -- Send this PlayerSpellsActive packet to other players (sendToOthersPlayers is true),
-            -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-            tes3mp.SendSpellsActiveChanges(pid, true, true)
-        end
-        customEventHooks.triggerHandlers("OnPlayerSpellsActive", eventStatus, {pid})
-    end
-end
-
-eventHandler.OnPlayerQuickKeys = function(pid)
-    if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerQuickKeys", {pid})
-        if eventStatus.validDefaultHandler then
-            Players[pid]:SaveQuickKeys()
-        end
-        customEventHooks.triggerHandlers("OnPlayerQuickKeys", eventStatus, {pid})
+        customEventHooks.triggerHandlers("OnPlayerDeath", eventStatus, {pid})
     end
 end
 

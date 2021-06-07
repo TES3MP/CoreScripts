@@ -1,5 +1,172 @@
 packetReader = {}
 
+packetReader.GetPlayerPacketTables = function(pid, packetType)
+
+    local packetTable = {}
+
+    if packetType == "PlayerClass" then
+        packetTable.character = {}
+        packetTable.character.defaultClassState = tes3mp.IsClassDefault(pid)
+
+        if packetTable.character.defaultClassState == 1 then
+            packetTable.character.class = tes3mp.GetDefaultClass(pid)
+        else
+            packetTable.character.class = "custom"
+            packetTable.customClass = {
+                name = tes3mp.GetClassName(pid),
+                description = tes3mp.GetClassDesc(pid):gsub("\n", "\\n"),
+                specialization = tes3mp.GetClassSpecialization(pid)
+            }
+
+            local majorAttributes = {}
+            local majorSkills = {}
+            local minorSkills = {}
+
+            for index = 0, 1, 1 do
+                majorAttributes[index + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(pid, index)))
+            end
+
+            for index = 0, 4, 1 do
+                majorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(pid, index)))
+                minorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(pid, index)))
+            end
+
+            packetTable.customClass.majorAttributes = table.concat(majorAttributes, ", ")
+            packetTable.customClass.majorSkills = table.concat(majorSkills, ", ")
+            packetTable.customClass.minorSkills = table.concat(minorSkills, ", ")
+        end
+    elseif packetType == "PlayerStatsDynamic" then
+        packetTable.stats = {
+            healthBase = tes3mp.GetHealthBase(pid),
+            magickaBase = tes3mp.GetMagickaBase(pid),
+            fatigueBase = tes3mp.GetFatigueBase(pid),
+            healthCurrent = tes3mp.GetHealthCurrent(pid),
+            magickaCurrent = tes3mp.GetMagickaCurrent(pid),
+            fatigueCurrent = tes3mp.GetFatigueCurrent(pid)
+        }
+    elseif packetType == "PlayerAttribute" then
+        packetTable.attributes = {}
+
+        for attributeIndex = 0, tes3mp.GetAttributeCount() - 1 do
+            local attributeName = tes3mp.GetAttributeName(attributeIndex)
+
+            packetTable.attributes[attributeName] = {
+                base = tes3mp.GetAttributeBase(pid, attributeIndex),
+                damage = tes3mp.GetAttributeDamage(pid, attributeIndex),
+                skillIncrease = tes3mp.GetSkillIncrease(pid, attributeIndex),
+                modifier = tes3mp.GetAttributeModifier(pid, attributeIndex)
+            }
+        end
+    elseif packetType == "PlayerSkill" then
+        packetTable.skills = {}
+
+        for skillIndex = 0, tes3mp.GetSkillCount() - 1 do
+            local skillName = tes3mp.GetSkillName(skillIndex)
+
+            packetTable.skills[skillName] = {
+                base = tes3mp.GetSkillBase(pid, skillIndex),
+                damage = tes3mp.GetSkillDamage(pid, skillIndex),
+                progress = tes3mp.GetSkillProgress(pid, skillIndex),
+                modifier = tes3mp.GetSkillModifier(pid, skillIndex)
+            }
+        end
+    elseif packetType == "PlayerLevel" then
+        packetTable.stats = {
+            level = tes3mp.GetLevel(pid),
+            levelProgress = tes3mp.GetLevelProgress(pid)
+        }
+    elseif packetType == "PlayerShapeshift" then
+        packetTable.shapeshift = {
+            scale = tes3mp.GetScale(pid),
+            isWerewolf = tes3mp.IsWerewolf(pid)
+        }
+    elseif packetType == "PlayerCellChange" then
+        packetTable.location = {
+            cell = tes3mp.GetCell(pid),
+            posX = tes3mp.GetPosX(pid),
+            posY = tes3mp.GetPosY(pid),
+            posZ = tes3mp.GetPosZ(pid),
+            rotX = tes3mp.GetRotX(pid),
+            rotZ = tes3mp.GetRotZ(pid)
+        }
+    elseif packetType == "PlayerEquipment" then
+        packetTable.equipment = {}
+
+        for changesIndex = 0, tes3mp.GetEquipmentChangesSize(pid) - 1 do
+            local slot = tes3mp.GetEquipmentChangesSlot(pid, changesIndex)
+
+            packetTable.equipment[slot] = {
+                refId = tes3mp.GetEquipmentItemRefId(pid, slot),
+                count = tes3mp.GetEquipmentItemCount(pid, slot),
+                charge = tes3mp.GetEquipmentItemCharge(pid, slot),
+                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(pid, slot)
+            }
+        end
+    elseif packetType == "PlayerInventory" then
+        packetTable.inventory = {}
+        packetTable.action = tes3mp.GetInventoryChangesAction(pid)
+
+        for changesIndex = 0, tes3mp.GetInventoryChangesSize(pid) - 1 do
+            local item = {
+                refId = tes3mp.GetInventoryItemRefId(pid, changesIndex),
+                count = tes3mp.GetInventoryItemCount(pid, changesIndex),
+                charge = tes3mp.GetInventoryItemCharge(pid, changesIndex),
+                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(pid, changesIndex),
+                soul = tes3mp.GetInventoryItemSoul(pid, changesIndex)
+            }
+
+            table.insert(packetTable.inventory, item)
+        end
+    elseif packetType == "PlayerSpellbook" then
+        packetTable.spellbook = {}
+        packetTable.action = tes3mp.GetSpellbookChangesAction(pid)
+
+        for changesIndex = 0, tes3mp.GetSpellbookChangesSize(pid) - 1 do
+            local spellId = tes3mp.GetSpellId(pid, changesIndex)
+            table.insert(packetTable.spellbook, spellId)
+        end
+    elseif packetType == "PlayerSpellsActive" then
+        packetTable.spellsActive = {}
+        packetTable.action = tes3mp.GetSpellsActiveChangesAction(pid)
+
+        for changesIndex = 0, tes3mp.GetSpellsActiveChangesSize(pid) - 1 do
+            local spellId = tes3mp.GetSpellsActiveId(pid, changesIndex)
+
+            packetTable.spellsActive[spellId] = {
+                effects = {},
+                displayName = tes3mp.GetSpellsActiveDisplayName(pid, changesIndex),
+                startTime = os.time()
+            }
+
+            for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(pid, changesIndex) - 1 do
+                local effect = {
+                    id = tes3mp.GetSpellsActiveEffectId(pid, changesIndex, effectIndex),
+                    magnitude = tes3mp.GetSpellsActiveEffectMagnitude(pid, changesIndex, effectIndex),
+                    duration = tes3mp.GetSpellsActiveEffectDuration(pid, changesIndex, effectIndex),
+                    timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(pid, changesIndex, effectIndex),
+                    arg = tes3mp.GetSpellsActiveEffectArg(pid, changesIndex, effectIndex)
+                }
+
+                table.insert(packetTable.spellsActive[spellId].effects, effect)
+            end
+        end
+    elseif packetType == "PlayerQuickKeys" then
+        packetTable.quickKeys = {}
+
+        for changesIndex = 0, tes3mp.GetQuickKeyChangesSize(pid) - 1 do
+
+            local slot = tes3mp.GetQuickKeySlot(pid, changesIndex)
+
+            packetTable.quickKeys[slot] = {
+                keyType = tes3mp.GetQuickKeyType(pid, changesIndex),
+                itemId = tes3mp.GetQuickKeyItemId(pid, changesIndex)
+            }
+        end
+    end
+
+    return packetTable
+end
+
 packetReader.GetActorPacketTables = function(packetType)
     
     local packetTables = { actors = {} }
