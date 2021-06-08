@@ -455,9 +455,9 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
-packetReader.GetPlayerJournalItemArray = function(pid)
+packetReader.GetPlayerJournalPacketTable = function(pid)
 
-    local journalItemArray = {}
+    local packetTable = {}
     local journalChangesCount = tes3mp.GetJournalChangesSize(pid)
 
     for index = 0, journalChangesCount - 1 do
@@ -476,10 +476,10 @@ packetReader.GetPlayerJournalItemArray = function(pid)
             journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, index)
         end
 
-        table.insert(journalItemArray, journalItem)
+        table.insert(packetTable, journalItem)
     end
 
-    return journalItemArray
+    return packetTable
 end
 
 packetReader.GetWorldMapTileArray = function()

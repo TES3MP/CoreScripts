@@ -221,7 +221,7 @@ function StateHelper:LoadMap(pid, stateObject)
     end
 end
 
-function StateHelper:SaveJournal(stateObject, journalItemArray)
+function StateHelper:SaveJournal(stateObject, playerPacket)
 
     if stateObject.data.journal == nil then
         stateObject.data.journal = {}
@@ -231,7 +231,7 @@ function StateHelper:SaveJournal(stateObject, journalItemArray)
         stateObject.data.customVariables = {}
     end
 
-    for _, journalItem in ipairs(journalItemArray) do
+    for _, journalItem in ipairs(playerPacket) do
 
         table.insert(stateObject.data.journal, journalItem)
 
