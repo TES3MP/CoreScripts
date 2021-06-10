@@ -231,7 +231,7 @@ function StateHelper:SaveJournal(stateObject, playerPacket)
         stateObject.data.customVariables = {}
     end
 
-    for _, journalItem in ipairs(playerPacket) do
+    for _, journalItem in ipairs(playerPacket.journal) do
 
         table.insert(stateObject.data.journal, journalItem)
 

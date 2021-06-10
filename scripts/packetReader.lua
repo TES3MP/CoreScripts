@@ -162,6 +162,27 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                 itemId = tes3mp.GetQuickKeyItemId(pid, changesIndex)
             }
         end
+    elseif packetType == "PlayerJournal" then
+        packetTable.journal = {}
+
+        for changesIndex = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+            local journalItem = {
+                type = tes3mp.GetJournalItemType(pid, changesIndex),
+                index = tes3mp.GetJournalItemIndex(pid, changesIndex),
+                quest = tes3mp.GetJournalItemQuest(pid, changesIndex),
+                timestamp = {
+                    daysPassed = WorldInstance.data.time.daysPassed,
+                    month = WorldInstance.data.time.month,
+                    day = WorldInstance.data.time.day
+                }
+            }
+
+            if journalItem.type == enumerations.journal.ENTRY then
+                journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, changesIndex)
+            end
+
+            table.insert(packetTable, journalItem)
+        end
     end
 
     return packetTable
@@ -453,33 +474,6 @@ packetReader.GetObjectPacketTables = function(packetType)
     end
 
     return packetTables
-end
-
-packetReader.GetPlayerJournalPacketTable = function(pid)
-
-    local packetTable = {}
-    local journalChangesCount = tes3mp.GetJournalChangesSize(pid)
-
-    for index = 0, journalChangesCount - 1 do
-        local journalItem = {
-            type = tes3mp.GetJournalItemType(pid, index),
-            index = tes3mp.GetJournalItemIndex(pid, index),
-            quest = tes3mp.GetJournalItemQuest(pid, index),
-            timestamp = {
-                daysPassed = WorldInstance.data.time.daysPassed,
-                month = WorldInstance.data.time.month,
-                day = WorldInstance.data.time.day
-            }
-        }
-
-        if journalItem.type == enumerations.journal.ENTRY then
-            journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, index)
-        end
-
-        table.insert(packetTable, journalItem)
-    end
-
-    return packetTable
 end
 
 packetReader.GetWorldMapTileArray = function()

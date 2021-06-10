@@ -888,7 +888,7 @@ end
 eventHandler.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local playerPacket = packetReader.GetPlayerJournalPacketTable(pid)
+        local playerPacket = packetReader.GetPlayerPacketTables(pid, "PlayerJournal")
 
         local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid, journalItemArray})
         if eventStatus.validDefaultHandler then
