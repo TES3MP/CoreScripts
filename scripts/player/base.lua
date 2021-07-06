@@ -1250,27 +1250,33 @@ end
 
 function BasePlayer:UpdateActiveSpellTimes()
 
-    for spellId, spellTable in pairs(self.data.spellsActive) do
-        local hadRemainingEffect = false
+    for spellId, spellInstances in pairs(self.data.spellsActive) do
+        for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
+            local hadRemainingEffect = false
 
-        for effectIndex, effectTable in pairs(spellTable.effects) do
+            for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
-            local timeSinceCast = os.time() - spellTable.startTime
+                local timeSinceCast = os.time() - spellInstanceValues.startTime
 
-            if timeSinceCast <= 0 then
-                self.data.spellsActive[spellId].effects[effectIndex] = nil
-            else
-                hadRemainingEffect = true
+                if timeSinceCast <= 0 then
+                    self.data.spellsActive[spellId][spellInstanceIndex].effects[effectIndex] = nil
+                else
+                    hadRemainingEffect = true
 
-                -- Subtract the time elapsed since casting the spell from the
-                -- effect's remaining time
-                effectTable.timeLeft = effectTable.timeLeft - timeSinceCast
+                    -- Subtract the time elapsed since casting the spell from the
+                    -- effect's remaining time
+                    effectTable.timeLeft = effectTable.timeLeft - timeSinceCast
+                end
             end
+
+            if hadRemainingEffect == false then
+                self.data.spellsActive[spellId][spellInstanceIndex] = nil
+            end        
         end
 
-        if hadRemainingEffect == false then
+        if tableHelper.getCount(self.data.spellsActive[spellId]) == 0 then
             self.data.spellsActive[spellId] = nil
-        end        
+        end
     end
 
     tableHelper.cleanNils(self.data.spellsActive)
@@ -1283,15 +1289,16 @@ function BasePlayer:LoadSpellsActive()
     tes3mp.ClearSpellsActiveChanges(self.pid)
     tes3mp.SetSpellsActiveChangesAction(self.pid, enumerations.spellbook.SET)
 
-    for spellId, spellTable in pairs(self.data.spellsActive) do
+    for spellId, spellInstances in pairs(self.data.spellsActive) do
+        for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
+            for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
-        for effectIndex, effectTable in pairs(spellTable.effects) do
+                tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.magnitude,
+                    effectTable.duration, effectTable.timeLeft, effectTable.arg)
+            end
 
-            tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.magnitude,
-                effectTable.duration, effectTable.timeLeft, effectTable.arg)
+            tes3mp.AddSpellActive(self.pid, spellId, spellInstanceValues.displayName)
         end
-
-        tes3mp.AddSpellActive(self.pid, spellId, spellTable.displayName)
     end
 
     -- Send this to all players, or they'll only know about active spells added afterwards
@@ -1309,18 +1316,34 @@ function BasePlayer:SaveSpellsActive(playerPacket)
     for spellId, spell in pairs(playerPacket.spellsActive) do
 
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
-            -- Only add new spell if we don't already have it
-            if not tableHelper.containsValue(self.data.spellsActive, spellId) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Adding active spell " .. spellId .. " to " ..
-                    logicHandler.GetChatName(self.pid))
-                self.data.spellsActive[spellId] = tableHelper.deepCopy(spell)
+            if self.data.spellsActive[spellId] == nil then
+                self.data.spellsActive[spellId] = {}
             end
+
+            tes3mp.LogMessage(enumerations.log.INFO, "Adding active spell " .. spellId .. " to " ..
+                logicHandler.GetChatName(self.pid))
+
+            local spellInstanceIndex
+
+            -- Get an unused spellIndex if this is a spell with stacking effects
+            if spell.stackingState then
+                spellInstanceIndex = tableHelper.getUnusedNumericalIndex(self.data.spellsActive[spellId])
+            -- Otherwise, replace what's under index 1
+            else
+                spellInstanceIndex = 1
+            end
+
+            self.data.spellsActive[spellId][spellInstanceIndex] = {
+                displayName = spell.displayName,
+                effects = tableHelper.deepCopy(spell.effects),
+                startTime = os.time()
+            }
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if self.data.spellsActive[spellId] ~= nil then
                 tes3mp.LogMessage(enumerations.log.INFO, "Removing active spell " .. spellId .. " from " ..
                     logicHandler.GetChatName(self.pid))
-                self.data.spellsActive[spellId] = nil
+                self.data.spellsActive[spellId][1] = nil
             end
         end
     end

@@ -135,6 +135,7 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
             packetTable.spellsActive[spellId] = {
                 effects = {},
                 displayName = tes3mp.GetSpellsActiveDisplayName(pid, changesIndex),
+                stackingState = tes3mp.GetSpellsActiveStackingState(pid, changesIndex),
                 startTime = os.time()
             }
 
