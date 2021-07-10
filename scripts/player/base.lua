@@ -226,6 +226,7 @@ function BasePlayer:FinishLogin()
         self:CleanSpellbook()
         self:LoadSpellbook()
         self:LoadSpellsActive()
+        self:LoadCooldowns()
         self:LoadQuickKeys()
         self:LoadBooks()
         self:LoadShapeshift()
@@ -666,6 +667,8 @@ function BasePlayer:SaveDataByPacketType(packetType, playerPacket)
         self:SaveInventory(playerPacket)
     elseif packetType == "PlayerSpellbook" then
         self:SaveSpellbook(playerPacket)
+    elseif packetType == "PlayerCooldowns" then
+        self:SaveCooldowns(playerPacket)
     elseif packetType == "PlayerQuickKeys" then
         self:SaveQuickKeys(playerPacket)
     end
@@ -1350,6 +1353,28 @@ function BasePlayer:SaveSpellsActive(playerPacket)
 
     if action == enumerations.spellbook.REMOVE then
         tableHelper.cleanNils(self.data.spellsActive)
+    end
+end
+
+function BasePlayer:LoadCooldowns()
+
+    if self.data.cooldowns == nil then self.data.cooldowns = {} end
+
+    if tableHelper.getCount(self.data.cooldowns) > 0 then
+        tes3mp.ClearCooldownChanges(self.pid)
+
+        for _, cooldown in pairs(self.data.cooldowns) do
+            tes3mp.AddCooldownSpell(self.pid, cooldown.spellId, cooldown.startDay, cooldown.startHour)
+        end
+
+        tes3mp.SendCooldownChanges(self.pid)
+    end
+end
+
+function BasePlayer:SaveCooldowns(playerPacket)
+
+    for _, cooldown in pairs(playerPacket.cooldowns) do
+        table.insert(self.data.cooldowns, cooldown)
     end
 end
 

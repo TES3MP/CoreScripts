@@ -151,6 +151,19 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                 table.insert(packetTable.spellsActive[spellId].effects, effect)
             end
         end
+    elseif packetType == "PlayerCooldowns" then
+        packetTable.cooldowns = {}
+
+        for changesIndex = 0, tes3mp.GetCooldownChangesSize(pid) - 1 do
+
+            local cooldown = {
+                spellId = tes3mp.GetCooldownSpellId(pid, changesIndex),
+                startDay = tes3mp.GetCooldownStartDay(pid, changesIndex),
+                startHour = tes3mp.GetCooldownStartHour(pid, changesIndex)
+            }
+            
+            table.insert(packetTable.cooldowns, cooldown)
+        end
     elseif packetType == "PlayerQuickKeys" then
         packetTable.quickKeys = {}
 

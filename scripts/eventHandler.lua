@@ -775,6 +775,10 @@ eventHandler.OnPlayerSpellbook = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerSpellbook")
 end
 
+eventHandler.OnPlayerCooldowns = function(pid)
+    eventHandler.OnGenericPlayerEvent(pid, "PlayerCooldowns")
+end
+
 eventHandler.OnPlayerQuickKeys = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerQuickKeys")
 end

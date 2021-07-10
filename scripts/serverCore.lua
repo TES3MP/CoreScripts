@@ -441,6 +441,11 @@ function OnPlayerSpellsActive(pid)
     eventHandler.OnPlayerSpellsActive(pid)
 end
 
+function OnPlayerCooldowns(pid)
+    tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerCooldowns\" for " .. logicHandler.GetChatName(pid))
+    eventHandler.OnPlayerCooldowns(pid)
+end
+
 function OnPlayerQuickKeys(pid)
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnPlayerQuickKeys\" for " .. logicHandler.GetChatName(pid))
     eventHandler.OnPlayerQuickKeys(pid)
