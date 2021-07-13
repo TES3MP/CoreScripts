@@ -1583,7 +1583,7 @@ eventHandler.OnRecordDynamic = function(pid)
                 if storeType == "potion" then
 
                     recordId = recordStore:GetMatchingRecordId(record, recordStore.data.generatedRecords,
-                        Players[pid].data.recordLinks[storeType], {"icon", "model"}, true, 25)
+                        Players[pid].data.recordLinks[storeType], {"icon", "model", "quantity"}, true, 25)
                 end
 
                 if recordId == nil then
