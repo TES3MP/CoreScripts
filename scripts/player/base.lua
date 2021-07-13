@@ -191,6 +191,18 @@ function BasePlayer:FinishLogin()
 
         self.data.timestamps.lastLogin = os.time()
 
+        -- Send instanced spawn cell in case the player has never left it
+        if config.useInstancedSpawn == true and config.instancedSpawn ~= nil then
+            spawnUsed = tableHelper.shallowCopy(config.instancedSpawn)
+            local originalCellDescription = spawnUsed.cellDescription
+            spawnUsed.cellDescription = originalCellDescription .. " - Instance for " .. self.name
+
+            tes3mp.ClearRecords()
+            tes3mp.SetRecordType(enumerations.recordType["CELL"])
+            packetBuilder.AddCellRecord(spawnUsed.cellDescription, {baseId = originalCellDescription})
+            tes3mp.SendRecordDynamic(self.pid, false, false)
+        end
+
         self:LoadSettings()
         self:LoadCharacter()
         self:LoadClass()
