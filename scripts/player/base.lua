@@ -960,7 +960,7 @@ function BasePlayer:LoadCell()
                 tes3mp.SetPos(self.pid, pos[1], pos[2], pos[3])
             end
 
-            if rot[0] ~= nil and rot[1] ~= nil then
+            if rot[1] ~= nil and rot[2] ~= nil then
                 tes3mp.SetRot(self.pid, rot[1], rot[2])
             end
 
