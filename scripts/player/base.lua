@@ -529,6 +529,9 @@ end
 
 function BasePlayer:ProcessDeath()
 
+    -- Clear this player's active spell effects
+    self.data.spellsActive = {}
+
     local deathReason = "committed suicide"
 
     if tes3mp.DoesPlayerHavePlayerKiller(self.pid) then
