@@ -1213,6 +1213,16 @@ function commandHandler.StoreRecord(pid, cmd)
                 storedTable[inputSetting] = inputValue
             end
 
+            -- Remove any stored settings that are mutually exclusive with the one we've added
+            if config.mutuallyExclusiveRecordSettings[inputType] ~= nil and
+                tableHelper.containsValue(config.mutuallyExclusiveRecordSettings[inputType], inputSetting) then
+                for _, excludedSetting in pairs(config.mutuallyExclusiveRecordSettings[inputType]) do
+                    if excludedSetting ~= inputSetting then
+                        storedTable[excludedSetting] = nil
+                    end
+                end
+            end
+
             local message = "Storing " .. inputType .. " " .. inputSetting .. " with value " .. inputValue .. "\n"
             Players[pid]:Message(message)
         else
@@ -1377,6 +1387,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "creature" then packetBuilder.AddCreatureRecord(id, savedTable)
     elseif inputType == "door" then packetBuilder.AddDoorRecord(id, savedTable)
     elseif inputType == "enchantment" then packetBuilder.AddEnchantmentRecord(id, savedTable)
+    elseif inputType == "gamesetting" then packetBuilder.AddGameSettingRecord(id, savedTable)
     elseif inputType == "ingredient" then packetBuilder.AddIngredientRecord(id, savedTable)
     elseif inputType == "light" then packetBuilder.AddLightRecord(id, savedTable)
     elseif inputType == "lockpick" then packetBuilder.AddLockpickRecord(id, savedTable)
@@ -1392,7 +1403,7 @@ function commandHandler.CreateRecord(pid, cmd)
 
     tes3mp.SendRecordDynamic(pid, true, false)
 
-    if not tableHelper.containsValue({"spell", "cell", "script"}, inputType) then
+    if not tableHelper.containsValue(config.unplaceableRecordTypes, inputType) then
         if inputType ~= "enchantment" then
             if inputType == "creature" or inputType == "npc" then
                 message = message .. "You can spawn an instance of it using /spawnat "

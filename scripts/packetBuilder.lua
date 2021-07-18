@@ -289,6 +289,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
         packetBuilder.AddDoorRecord(id, record)
     elseif storeType == "enchantment" then
         packetBuilder.AddEnchantmentRecord(id, record)
+    elseif storeType == "gamesetting" then
+        packetBuilder.AddGameSettingRecord(id, record)
     elseif storeType == "ingredient" then
         packetBuilder.AddIngredientRecord(id, record)
     elseif storeType == "light" then
@@ -516,6 +518,18 @@ packetBuilder.AddEnchantmentRecord = function(id, record)
             packetBuilder.AddEffectToRecord(effect)
         end
     end
+
+    tes3mp.AddRecord()
+end
+
+packetBuilder.AddGameSettingRecord = function(id, record)
+
+    tes3mp.SetRecordId(id)
+    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+
+    if record.intVar ~= nil then tes3mp.SetRecordIntegerVariable(record.intVar)
+    elseif record.floatVar ~= nil then tes3mp.SetRecordFloatVariable(record.floatVar)
+    elseif record.stringVar ~= nil then tes3mp.SetRecordStringVariable(tostring(record.stringVar)) end
 
     tes3mp.AddRecord()
 end

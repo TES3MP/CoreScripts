@@ -18,12 +18,12 @@ enumerations.miscellaneous = { MARK_LOCATION = 0, SELECTED_SPELL = 1 }
 enumerations.objectCategories = { PLAYER = 0, ACTOR = 1, PLACED_OBJECT = 2 }
 enumerations.packetOrigin = { CLIENT_GAMEPLAY = 0, CLIENT_CONSOLE = 1, CLIENT_DIALOGUE = 2,
     CLIENT_SCRIPT_LOCAL = 3, CLIENT_SCRIPT_GLOBAL = 4, SERVER_SCRIPT = 5 }
-enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 3, BOOK = 4, CELL = 5,
-    CLOTHING = 6, CONTAINER = 7, CREATURE = 8, DOOR = 9, ENCHANTMENT = 10, INGREDIENT = 11, LIGHT = 12,
-    LOCKPICK = 13, MISCELLANEOUS = 14, NPC = 15, POTION = 16, PROBE = 17, REPAIR = 18, SCRIPT = 19,
-    SPELL = 20, STATIC = 21, WEAPON = 22, SOUND = 23 }
+enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 3, BOOK = 4, CELL = 5, CLOTHING = 6,
+    CONTAINER = 7, CREATURE = 8, DOOR = 9, ENCHANTMENT = 10, GAMESETTING = 11, INGREDIENT = 12, LIGHT = 13,
+    LOCKPICK = 14, MISCELLANEOUS = 15, NPC = 16, POTION = 17, PROBE = 18, REPAIR = 19, SCRIPT = 20, SOUND = 21,
+    SPELL = 22, STATIC = 23, WEAPON = 24 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
-enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2 }
+enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2, INT = 3, STRING = 4 }
 
 return enumerations

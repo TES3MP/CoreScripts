@@ -301,9 +301,10 @@ config.generatedRecordIdPrefix = "$custom"
 -- players, with the correct order ensuring that enchantments are loaded before items that might be
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
-config.recordStoreLoadOrder = { "script", "spell", "potion", "enchantment", "bodypart", "armor",
-    "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
-    "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell", "sound" }
+config.recordStoreLoadOrder = { "gamesetting", "script", "spell", "potion", "enchantment", "bodypart",
+    "armor", "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair",
+    "light", "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell",
+    "sound" }
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
@@ -312,6 +313,10 @@ config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }
 -- listed in the order in which they should be loaded
 config.carriableRecordTypes = { "spell", "potion", "armor", "book", "clothing", "weapon", "ingredient",
     "apparatus", "lockpick", "probe", "repair", "light", "miscellaneous" }
+
+-- The types of records that cannot be placed in the world and should not display a message
+-- about how to place them
+config.unplaceableRecordTypes = { "spell", "cell", "script", "gamesetting" }
 
 -- The settings which are accepted as input for different record types when using /storerecord
 config.validRecordSettings = {
@@ -332,6 +337,7 @@ config.validRecordSettings = {
         "aiFight", "aiFlee", "aiAlarm", "aiServices", "flags" },
     door = { "baseId", "id", "name", "model", "openSound", "closeSound", "script" },
     enchantment = { "baseId", "id", "subtype", "cost", "charge", "flags", "effects" },
+    gamesetting = { "baseId", "id", "intVar", "floatVar", "stringVar" },
     ingredient = { "baseId", "id", "name", "model", "icon", "script", "weight", "value" },
     light = { "baseId", "id", "name", "model", "icon", "sound", "script", "weight", "value", "time",
         "radius", "color", "flags" },
@@ -366,6 +372,7 @@ config.requiredRecordSettings = {
     creature = { "name", "model" },
     door = { "name", "model" },
     enchantment = {},
+    gamesetting = { "id" },
     ingredient = { "name", "model" },
     light = { "model" },
     lockpick = { "name", "model" },
@@ -381,11 +388,17 @@ config.requiredRecordSettings = {
     sound = { "sound" }
 }
 
+-- The record type settings that are mutually exclusive with each other and remove each other when one of
+-- them is set
+config.mutuallyExclusiveRecordSettings = {
+    gamesetting = { "intVar", "floatVar", "stringVar" }
+}
+
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "charge", "cost", "value", "weight", "quality", "uses",
     "time", "radius", "health", "armorRating", "speed", "reach", "scale", "part", "bloodType", "level",
     "magicka", "fatigue", "soulValue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender",
-    "flags", "enchantmentCharge" }
+    "flags", "enchantmentCharge", "intVar", "floatVar" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
 config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" }
