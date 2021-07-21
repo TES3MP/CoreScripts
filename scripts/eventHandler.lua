@@ -894,7 +894,7 @@ eventHandler.OnPlayerJournal = function(pid)
 
         local playerPacket = packetReader.GetPlayerPacketTables(pid, "PlayerJournal")
 
-        local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid, journalItemArray})
+        local eventStatus = customEventHooks.triggerValidators("OnPlayerJournal", {pid, playerPacket})
         if eventStatus.validDefaultHandler then
             if config.shareJournal == true then
                 WorldInstance:SaveJournal(playerPacket)
@@ -906,7 +906,7 @@ eventHandler.OnPlayerJournal = function(pid)
                 Players[pid]:SaveJournal(playerPacket)
             end
         end
-        customEventHooks.triggerHandlers("OnPlayerJournal", eventStatus, {pid, journalItemArray})
+        customEventHooks.triggerHandlers("OnPlayerJournal", eventStatus, {pid, playerPacket})
     end
 end
 
