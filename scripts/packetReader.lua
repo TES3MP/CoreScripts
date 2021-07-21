@@ -195,7 +195,7 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                 journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, changesIndex)
             end
 
-            table.insert(packetTable, journalItem)
+            table.insert(packetTable.journal, journalItem)
         end
     end
 
