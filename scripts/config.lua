@@ -49,7 +49,7 @@ config.chatWindowInstructions = color.White .. "Use " .. color.Yellow .. "Y" .. 
 
 -- The startup scripts instructions that show up when the startup scripts have not been run yet
 config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. " For some actors and objects to have their correct" ..
-    "initial states, an admin needs to run the " .. color.Yellow .. "/runstartup" .. color.White .. " command.\n"
+    " initial states, an admin needs to run the " .. color.Yellow .. "/runstartup" .. color.White .. " command.\n"
 
 -- Which ingame startup scripts should be run via the /runstartup command
 -- Note: These affect the world and must not be run for every player who joins.
