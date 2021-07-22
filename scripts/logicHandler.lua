@@ -32,6 +32,8 @@ logicHandler.InitializeWorld = function()
         -- Get the current mpNum from the loaded world
         tes3mp.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
 
+        customEventHooks.triggerHandlers("OnWorldReload", customEventHooks.makeEventStatus(true, true), {})
+
     -- Otherwise, create a data file for it
     else
         WorldInstance:CreateEntry()
