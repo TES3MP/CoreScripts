@@ -132,12 +132,28 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
         for changesIndex = 0, tes3mp.GetSpellsActiveChangesSize(pid) - 1 do
             local spellId = tes3mp.GetSpellsActiveId(pid, changesIndex)
 
-            packetTable.spellsActive[spellId] = {
+            local spellActive = {
                 effects = {},
                 displayName = tes3mp.GetSpellsActiveDisplayName(pid, changesIndex),
                 stackingState = tes3mp.GetSpellsActiveStackingState(pid, changesIndex),
-                startTime = os.time()
+                startTime = os.time(),
+                caster = {}
             }
+
+            spellActive.hasPlayerCaster = tes3mp.DoesSpellsActiveHavePlayerCaster(pid, changesIndex)
+
+            if spellActive.hasPlayerCaster == true then
+                local casterPid = tes3mp.GetSpellsActiveCasterPid(pid, changesIndex)
+                spellActive.caster.pid = casterPid
+
+                if Players[casterPid] ~= nil then
+                    spellActive.caster.player = Players[casterPid].accountName
+                end
+            else
+                spellActive.caster.uniqueIndex = tes3mp.GetSpellsActiveCasterRefNum(pid, changesIndex) ..
+                    "-" .. tes3mp.GetSpellsActiveCasterMpNum(pid, changesIndex)
+                spellActive.caster.refId = tes3mp.GetSpellsActiveCasterRefId(pid, changesIndex)
+            end
 
             for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(pid, changesIndex) - 1 do
                 local effect = {
@@ -148,7 +164,8 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                     arg = tes3mp.GetSpellsActiveEffectArg(pid, changesIndex, effectIndex)
                 }
 
-                table.insert(packetTable.spellsActive[spellId].effects, effect)
+                table.insert(spellActive.effects, effect)
+                packetTable.spellsActive[spellId] = spellActive
             end
         end
     elseif packetType == "PlayerCooldowns" then
