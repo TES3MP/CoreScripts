@@ -255,7 +255,7 @@ packetReader.GetActorPacketTables = function(packetType)
             end
         elseif packetType == "ActorSpellsActive" then
 
-            actor.spellsActiveChanges = {}
+            actor.spellsActive = {}
             local spellsActiveChangesSize = tes3mp.GetActorSpellsActiveChangesSize(packetIndex)
 
             for spellIndex = 0, spellsActiveChangesSize - 1 do
@@ -264,9 +264,10 @@ packetReader.GetActorPacketTables = function(packetType)
 
                 actor.spellActiveChangesAction = tes3mp.GetActorSpellsActiveChangesAction(packetIndex)
 
-                actor.spellsActiveChanges[spellId] = {
+                actor.spellsActive[spellId] = {
                     effects = {},
                     displayName = tes3mp.GetActorSpellsActiveDisplayName(packetIndex, spellIndex),
+                    stackingState = tes3mp.GetActorSpellsActiveStackingState(packetIndex, spellIndex),
                     startTime = os.time()
                 }
 
@@ -279,7 +280,7 @@ packetReader.GetActorPacketTables = function(packetType)
                         arg = tes3mp.GetActorSpellsActiveEffectArg(packetIndex, spellIndex, effectIndex)
                     }
 
-                    table.insert(actor.spellsActiveChanges[spellId].effects, effect)
+                    table.insert(actor.spellsActive[spellId].effects, effect)
                 end
             end
         elseif packetType == "ActorDeath" then

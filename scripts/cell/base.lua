@@ -954,15 +954,38 @@ function BaseCell:SaveActorSpellsActive(actors)
                 self.data.objectData[uniqueIndex].spellsActive = {}
             end
 
-            for spellId, spellData in pairs(actor.spellsActiveChanges) do
+            for spellId, spell in pairs(actor.spellsActive) do
 
                 if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
-                    self.data.objectData[uniqueIndex].spellsActive[spellId] = spellData
+                    if self.data.objectData[uniqueIndex].spellsActive[spellId] == nil then
+                        self.data.objectData[uniqueIndex].spellsActive[spellId] = {}
+                    end
+
+                    local spellInstanceIndex
+
+                    -- Get an unused spellIndex if this is a spell with stacking effects
+                    if spell.stackingState then
+                        spellInstanceIndex = tableHelper.getUnusedNumericalIndex(
+                            self.data.objectData[uniqueIndex].spellsActive[spellId])
+                    -- Otherwise, replace what's under index 1
+                    else
+                        spellInstanceIndex = 1
+                    end
+
+                    self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex] = {
+                        displayName = spell.displayName,
+                        effects = tableHelper.deepCopy(spell.effects),
+                        startTime = os.time()
+                    }
                 elseif action == enumerations.spellbook.REMOVE then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then
-                        self.data.objectData[uniqueIndex].spellsActive[spellId] = nil
+                        self.data.objectData[uniqueIndex].spellsActive[spellId][1] = nil
                     end
                 end
+            end
+
+            if action == enumerations.spellbook.REMOVE then
+                tableHelper.cleanNils(self.data.objectData[uniqueIndex].spellsActive)
             end
 
             if tableHelper.getCount(self.data.objectData[uniqueIndex].spellsActive) > 0 then
