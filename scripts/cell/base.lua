@@ -975,7 +975,12 @@ function BaseCell:SaveActorSpellsActive(actors)
                     self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex] = {
                         displayName = spell.displayName,
                         effects = tableHelper.deepCopy(spell.effects),
-                        startTime = os.time()
+                        startTime = os.time(),
+                        caster = {
+                            player = spell.caster.player,
+                            refId = spell.caster.refId,
+                            uniqueIndex = spell.caster.uniqueIndex
+                        }
                     }
                 elseif action == enumerations.spellbook.REMOVE then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then
