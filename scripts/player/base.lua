@@ -694,6 +694,9 @@ function BasePlayer:LoadCharacter()
     tes3mp.SetHead(self.pid, self.data.character.head)
     tes3mp.SetHair(self.pid, self.data.character.hair)
     tes3mp.SetIsMale(self.pid, self.data.character.gender)
+    if self.data.character.modelOverride ~= nil then
+        tes3mp.SetModel(self.pid, self.data.character.modelOverride)
+    end
     tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
 
     tes3mp.SendBaseInfo(self.pid)
@@ -704,6 +707,7 @@ function BasePlayer:SaveCharacter()
     self.data.character.head = tes3mp.GetHead(self.pid)
     self.data.character.hair = tes3mp.GetHair(self.pid)
     self.data.character.gender = tes3mp.GetIsMale(self.pid)
+    self.data.character.modelOverride = tes3mp.GetModel(self.pid)
     self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
 end
 
