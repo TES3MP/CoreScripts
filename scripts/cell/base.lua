@@ -1786,11 +1786,17 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].deathState ~= nil then
-            tes3mp.SetActorDeathState(objectData[uniqueIndex].deathState)
-            tes3mp.SetActorDeathInstant(true)
-            tes3mp.AddActor()
+            if objectData[uniqueIndex].stats == nil or objectData[uniqueIndex].stats.healthCurrent < 1 then
+                tes3mp.SetActorDeathState(objectData[uniqueIndex].deathState)
+                tes3mp.SetActorDeathInstant(true)
+                tes3mp.AddActor()
 
-            actorCount = actorCount + 1
+                actorCount = actorCount + 1
+            else
+                tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
+                ", but its health is above 0! Please report this to a developer")
+                tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+            end
         else
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
