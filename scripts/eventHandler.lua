@@ -640,7 +640,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     if data == nil then
                         Players[pid]:Message("Incorrect password!\n")
                         guiHelper.ShowLogin(pid)
-                        return true
+                        return
                     end
 
                     Players[pid]:LoadFromDrive()
@@ -649,7 +649,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     if Players[pid].data.login.passwordHash ~= tes3mp.GetSHA256Hash(data .. passwordSalt) then
                         Players[pid]:Message("Incorrect password!\n")
                         guiHelper.ShowLogin(pid)
-                        return true
+                        return
                     end
 
                     -- Is this player on the banlist? If so, store their new IP and ban them
@@ -670,7 +670,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     if data == nil then
                         Players[pid]:Message("Password can not be empty\n")
                         guiHelper.ShowRegister(pid)
-                        return true
+                        return
                     end
                     Players[pid]:Register(data)
                     Players[pid]:Message("You have successfully registered.\n" .. config.chatWindowInstructions)
