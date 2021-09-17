@@ -667,7 +667,14 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                         end
                     end
                 elseif idGui == guiHelper.ID.REGISTER then
-                    if data == nil then
+                    if Players[pid]:HasAccount() then
+                        tes3mp.LogMessage(enumerations.log.ERROR, "Warning! " .. logicHandler.GetChatName(pid) ..
+                            " replied to login for existing account with registration attempt and has been banned")
+                        table.insert(banList.ipAddresses, ipAddress)
+                        SaveBanList()
+                        tes3mp.BanAddress(tes3mp.GetIP(pid))
+                        return
+                    elseif data == nil then
                         Players[pid]:Message("Password can not be empty\n")
                         guiHelper.ShowRegister(pid)
                         return
