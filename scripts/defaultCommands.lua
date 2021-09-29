@@ -456,3 +456,29 @@ defaultCommands.resetCell = function(pid, cmd)
 end
 
 customCommandHooks.registerCommand("resetcell", defaultCommands.resetCell)
+
+defaultCommands.setPlayerModel = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if isModerator == false then
+        tes3mp.SendMessage(pid, "You need to be a moderator to run this command\n")
+        return
+    end
+
+    if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
+        if cmd[3] == nil then
+            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setplayermodel <pid> "Model name"\n')
+            return
+        end
+
+        local targetPid = tonumber(cmd[2])
+        local inputConcatenation = tableHelper.concatenateFromIndex(cmd, 3)
+        local modelName = string.gsub(inputConcatenation, '"', '')
+
+        Players[targetPid].data.character.modelOverride = modelName
+        Players[targetPid]:LoadCharacter()
+        Players[targetPid]:Message("Your model has been changed.\n")
+    end    
+end
+
+customCommandHooks.registerCommand("setmodel", defaultCommands.setPlayerModel)
