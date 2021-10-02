@@ -974,6 +974,7 @@ function BaseCell:SaveActorSpellsActive(actors)
 
                     self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex] = {
                         displayName = spell.displayName,
+                        stackingState = spell.stackingState,
                         effects = tableHelper.deepCopy(spell.effects),
                         startTime = os.time(),
                         caster = {

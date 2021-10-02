@@ -1319,7 +1319,8 @@ function BasePlayer:LoadSpellsActive()
                     effectTable.duration, effectTable.timeLeft, effectTable.arg)
             end
 
-            tes3mp.AddSpellActive(self.pid, spellId, spellInstanceValues.displayName)
+            tes3mp.AddSpellActive(self.pid, spellId, spellInstanceValues.displayName,
+                spellInstanceValues.stackingState)
         end
     end
 
@@ -1357,6 +1358,7 @@ function BasePlayer:SaveSpellsActive(playerPacket)
 
             self.data.spellsActive[spellId][spellInstanceIndex] = {
                 displayName = spell.displayName,
+                stackingState = spell.stackingState,
                 effects = tableHelper.deepCopy(spell.effects),
                 startTime = os.time(),
                 caster = {

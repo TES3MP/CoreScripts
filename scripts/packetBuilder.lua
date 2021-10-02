@@ -228,7 +228,8 @@ packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, ac
                     effectTable.duration, effectTable.timeLeft, effectTable.arg)
             end
 
-            tes3mp.AddActorSpellActive(spellId, spellInstanceValues.displayName)
+            tes3mp.AddActorSpellActive(spellId, spellInstanceValues.displayName,
+                spellInstanceValues.stackingState)
         end
     end
 
