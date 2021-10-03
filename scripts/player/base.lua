@@ -1324,37 +1324,40 @@ function BasePlayer:SaveSpellsActive(playerPacket)
         self.data.spellsActive = {}
     end
 
-    for spellId, spell in pairs(playerPacket.spellsActive) do
+    for spellId, spellInstances in pairs(playerPacket.spellsActive) do
 
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             if self.data.spellsActive[spellId] == nil then
                 self.data.spellsActive[spellId] = {}
             end
 
-            tes3mp.LogMessage(enumerations.log.INFO, "Adding active spell " .. spellId .. " to " ..
-                logicHandler.GetChatName(self.pid))
+            for _, spellInstanceValues in pairs(spellInstances) do
 
-            local spellInstanceIndex
+                tes3mp.LogMessage(enumerations.log.INFO, "Adding instance of active spell " .. spellId .. " to " ..
+                    logicHandler.GetChatName(self.pid))
 
-            -- Get an unused spellIndex if this is a spell with stacking effects
-            if spell.stackingState then
-                spellInstanceIndex = tableHelper.getUnusedNumericalIndex(self.data.spellsActive[spellId])
-            -- Otherwise, replace what's under index 1
-            else
-                spellInstanceIndex = 1
-            end
+                local spellInstanceIndex
 
-            self.data.spellsActive[spellId][spellInstanceIndex] = {
-                displayName = spell.displayName,
-                stackingState = spell.stackingState,
-                effects = tableHelper.deepCopy(spell.effects),
-                startTime = os.time(),
-                caster = {
-                    playerName = spell.caster.playerName,
-                    refId = spell.caster.refId,
-                    uniqueIndex = spell.caster.uniqueIndex
+                -- Get an unused spellInstanceIndex if this is a spell with stacking effects
+                if spellInstanceValues.stackingState then
+                    spellInstanceIndex = tableHelper.getUnusedNumericalIndex(self.data.spellsActive[spellId])
+                -- Otherwise, replace what's under index 1
+                else
+                    spellInstanceIndex = 1
+                end
+
+                self.data.spellsActive[spellId][spellInstanceIndex] = {
+                    displayName = spellInstanceValues.displayName,
+                    stackingState = spellInstanceValues.stackingState,
+                    effects = tableHelper.deepCopy(spellInstanceValues.effects),
+                    startTime = os.time(),
+                    caster = {
+                        playerName = spellInstanceValues.caster.playerName,
+                        refId = spellInstanceValues.caster.refId,
+                        uniqueIndex = spellInstanceValues.caster.uniqueIndex
+                    }
                 }
-            }
+            end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if self.data.spellsActive[spellId] ~= nil then

@@ -955,35 +955,38 @@ function BaseCell:SaveActorSpellsActive(actors)
                 self.data.objectData[uniqueIndex].spellsActive = {}
             end
 
-            for spellId, spell in pairs(actor.spellsActive) do
+            for spellId, spellInstances in pairs(actor.spellsActive) do
 
                 if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] == nil then
                         self.data.objectData[uniqueIndex].spellsActive[spellId] = {}
                     end
 
-                    local spellInstanceIndex
+                    for _, spellInstanceValues in pairs(spellInstances) do
 
-                    -- Get an unused spellIndex if this is a spell with stacking effects
-                    if spell.stackingState then
-                        spellInstanceIndex = tableHelper.getUnusedNumericalIndex(
-                            self.data.objectData[uniqueIndex].spellsActive[spellId])
-                    -- Otherwise, replace what's under index 1
-                    else
-                        spellInstanceIndex = 1
-                    end
+                        local spellInstanceIndex
 
-                    self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex] = {
-                        displayName = spell.displayName,
-                        stackingState = spell.stackingState,
-                        effects = tableHelper.deepCopy(spell.effects),
-                        startTime = os.time(),
-                        caster = {
-                            playerName = spell.caster.playerName,
-                            refId = spell.caster.refId,
-                            uniqueIndex = spell.caster.uniqueIndex
+                        -- Get an unused spellInstanceIndex if this is a spell with stacking effects
+                        if spellInstanceValues.stackingState then
+                            spellInstanceIndex = tableHelper.getUnusedNumericalIndex(
+                                self.data.objectData[uniqueIndex].spellsActive[spellId])
+                        -- Otherwise, replace what's under index 1
+                        else
+                            spellInstanceIndex = 1
+                        end
+
+                        self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex] = {
+                            displayName = spellInstanceValues.displayName,
+                            stackingState = spellInstanceValues.stackingState,
+                            effects = tableHelper.deepCopy(spellInstanceValues.effects),
+                            startTime = os.time(),
+                            caster = {
+                                playerName = spellInstanceValues.caster.playerName,
+                                refId = spellInstanceValues.caster.refId,
+                                uniqueIndex = spellInstanceValues.caster.uniqueIndex
+                            }
                         }
-                    }
+                    end
                 elseif action == enumerations.spellbook.REMOVE then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then
                         self.data.objectData[uniqueIndex].spellsActive[spellId][1] = nil
