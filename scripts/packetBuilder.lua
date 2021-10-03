@@ -72,11 +72,11 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
         local finishTime = objectData.summon.startTime + objectData.summon.duration
         tes3mp.SetObjectSummonDuration(finishTime - currentTime)
 
-        if objectData.summon.summonerPlayer then
-            local player = logicHandler.GetPlayerByName(objectData.summon.summonerPlayer)
+        if objectData.summon.summoner.playerName then
+            local player = logicHandler.GetPlayerByName(objectData.summon.summoner.playerName)
             tes3mp.SetObjectSummonerPid(player.pid)
         else
-            local summonerSplitIndex = objectData.summon.summonerUniqueIndex:split("-")
+            local summonerSplitIndex = objectData.summon.summoner.uniqueIndex:split("-")
             tes3mp.SetObjectSummonerRefNum(summonerSplitIndex[1])
             tes3mp.SetObjectSummonerMpNum(summonerSplitIndex[2])
         end

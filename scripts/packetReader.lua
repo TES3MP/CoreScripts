@@ -147,7 +147,7 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                 spellActive.caster.pid = casterPid
 
                 if Players[casterPid] ~= nil then
-                    spellActive.caster.player = Players[casterPid].accountName
+                    spellActive.caster.playerName = Players[casterPid].accountName
                 end
             else
                 spellActive.caster.uniqueIndex = tes3mp.GetSpellsActiveCasterRefNum(pid, changesIndex) ..
@@ -276,11 +276,10 @@ packetReader.GetActorPacketTables = function(packetType)
                 spellActive.hasPlayerCaster = tes3mp.DoesActorSpellsActiveHavePlayerCaster(packetIndex, spellIndex)
 
                 if spellActive.hasPlayerCaster == true then
-                    local casterPid = tes3mp.GetActorSpellsActiveCasterPid(packetIndex, spellIndex)
-                    spellActive.caster.pid = casterPid
+                    spellActive.caster.pid = tes3mp.GetActorSpellsActiveCasterPid(packetIndex, spellIndex)
 
-                    if Players[casterPid] ~= nil then
-                        spellActive.caster.player = Players[casterPid].accountName
+                    if Players[spellActive.caster.pid] ~= nil then
+                        spellActive.caster.playerName = Players[spellActive.caster.pid].accountName
                     end
                 else
                     spellActive.caster.uniqueIndex = tes3mp.GetActorSpellsActiveCasterRefNum(packetIndex, spellIndex) ..
@@ -305,14 +304,20 @@ packetReader.GetActorPacketTables = function(packetType)
         elseif packetType == "ActorDeath" then
 
             actor.deathState = tes3mp.GetActorDeathState(packetIndex)
+            actor.killer = {}
+
             local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
 
             if doesActorHavePlayerKiller then
-                actor.killerPid = tes3mp.GetActorKillerPid(packetIndex)
+                actor.killer.pid = tes3mp.GetActorKillerPid(packetIndex)
+
+                if Players[actor.killer.pid] ~= nil then
+                    actor.killer.playerName = Players[actor.killer.pid].accountName
+                end
             else
-                actor.killerRefId = tes3mp.GetActorKillerRefId(packetIndex)
-                actor.killerName = tes3mp.GetActorKillerName(packetIndex)
-                actor.killerUniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
+                actor.killer.refId = tes3mp.GetActorKillerRefId(packetIndex)
+                actor.killer.name = tes3mp.GetActorKillerName(packetIndex)
+                actor.killer.uniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
                     "-" .. tes3mp.GetActorKillerMpNum(packetIndex)
             end
         end
@@ -454,19 +459,19 @@ packetReader.GetObjectPacketTables = function(packetType)
                         object.summon.spellId = tes3mp.GetObjectSummonSpellId(packetIndex)
                         object.summon.duration = tes3mp.GetObjectSummonDuration(packetIndex)
                         object.summon.startTime = os.time()
-                        object.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
+                        object.summon.summoner = {}
+                        object.summon.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
 
-                        if object.hasPlayerSummoner == true then
-                            local summonerPid = tes3mp.GetObjectSummonerPid(packetIndex)
-                            object.summon.summonerPid = summonerPid
+                        if object.summon.hasPlayerSummoner == true then
+                            object.summon.summoner.pid = tes3mp.GetObjectSummonerPid(packetIndex)
 
-                            if Players[summonerPid] ~= nil then
-                                object.summon.summonerPlayer = Players[summonerPid].accountName
+                            if Players[object.summon.summoner.pid] ~= nil then
+                                object.summon.summoner.playerName = Players[object.summon.summoner.pid].accountName
                             end
                         else
-                            object.summon.summonerUniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
+                            object.summon.summoner.refId = tes3mp.GetObjectSummonerRefId(packetIndex)
+                            object.summon.summoner.uniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
                                 "-" .. tes3mp.GetObjectSummonerMpNum(packetIndex)
-                            object.summon.summonerRefId = tes3mp.GetObjectSummonerRefId(packetIndex)
                         end
                     end
                 end

@@ -1194,10 +1194,10 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
                     local deathReason = "committed suicide"
                     local debugMessage = "- " .. uniqueIndex .. ", deathReason: "
 
-                    if actor.killerPid ~= nil then
-                        deathReason = "killed by player " .. logicHandler.GetChatName(actor.killerPid)
-                    elseif actor.killerName ~= "" then
-                        deathReason = "killed by actor " .. actor.killerRefId .. " " .. actor.killerUniqueIndex
+                    if actor.killer.pid ~= nil then
+                        deathReason = "killed by player " .. logicHandler.GetChatName(actor.killer.pid)
+                    elseif actor.killer.name ~= "" then
+                        deathReason = "killed by actor " .. actor.killer.refId .. " " .. actor.killer.uniqueIndex
                     end
 
                     tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)

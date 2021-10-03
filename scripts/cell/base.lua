@@ -303,8 +303,8 @@ function BaseCell:DeleteObjectData(uniqueIndex)
     local summon = self.data.objectData[uniqueIndex].summon
 
     if summon ~= nil then
-        if summon.summonerPlayer ~= nil and logicHandler.IsPlayerNameLoggedIn(summon.summonerPlayer) then
-            logicHandler.GetPlayerByName(summon.summonerPlayer).summons[uniqueIndex] = nil
+        if summon.summoner.playerName ~= nil and logicHandler.IsPlayerNameLoggedIn(summon.summoner.playerName) then
+            logicHandler.GetPlayerByName(summon.summoner.playerName).summons[uniqueIndex] = nil
         end
     end
 
@@ -490,23 +490,24 @@ function BaseCell:SaveObjectsSpawned(objects)
                     summon.effectId = object.summon.effectId
                     summon.spellId = object.summon.spellId
                     summon.startTime = object.summon.startTime
+                    summon.summoner = {}
 
-                    local hasPlayerSummoner = object.hasPlayerSummoner
+                    local hasPlayerSummoner = object.summon.hasPlayerSummoner
 
                     if hasPlayerSummoner then
-                        local summonerPid = object.summon.summonerPid
+                        local summonerPid = object.summon.summoner.pid
                         tes3mp.LogAppend(enumerations.log.INFO, "- summoned by player " ..
                             logicHandler.GetChatName(summonerPid))
 
                         -- Track the player and the summon for each other
-                        summon.summonerPlayer = object.summon.summonerPlayer
+                        summon.summoner.playerName = object.summon.summoner.playerName
 
                         Players[summonerPid].summons[uniqueIndex] = refId
                     else
-                        summon.summonerUniqueIndex = object.summon.summonerUniqueIndex
-                        summon.summonerRefId = object.summon.summonerRefId
-                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summon.summonerUniqueIndex ..
-                            ", refId: " .. summon.summonerRefId)
+                        summon.summoner.refId = object.summon.summoner.refId
+                        summon.summoner.uniqueIndex = object.summon.summoner.uniqueIndex
+                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summon.summoner.uniqueIndex ..
+                            ", refId: " .. summon.summoner.refId)
                     end
 
                     self.data.objectData[uniqueIndex].summon = summon
@@ -978,7 +979,7 @@ function BaseCell:SaveActorSpellsActive(actors)
                         effects = tableHelper.deepCopy(spell.effects),
                         startTime = os.time(),
                         caster = {
-                            player = spell.caster.player,
+                            playerName = spell.caster.playerName,
                             refId = spell.caster.refId,
                             uniqueIndex = spell.caster.uniqueIndex
                         }
@@ -1021,14 +1022,14 @@ function BaseCell:SaveActorDeath(actors)
 
             self.data.objectData[uniqueIndex].deathState = actor.deathState
 
-            if actor.killerPid ~= nil then
+            if actor.killer.pid ~= nil then
                 self.data.objectData[uniqueIndex].killer = {
-                    player = Players[actor.killerPid].accountName
+                    playerName = actor.killer.playerName
                 }
             elseif actor.killerName ~= "" then
                 self.data.objectData[uniqueIndex].killer = {
-                    refId = actor.killerRefId,
-                    uniqueIndex = actor.killerUniqueIndex
+                    refId = actor.killer.refId,
+                    uniqueIndex = actor.killer.uniqueIndex
                 }
             end
 
@@ -1300,12 +1301,12 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
                         self:DeleteObjectData(uniqueIndex)
                         shouldSkip = true
                     -- ...or if its player is offline
-                    elseif summon.summonerPlayer ~= nil then
-                        if not logicHandler.IsPlayerNameLoggedIn(summon.summonerPlayer) then
+                    elseif summon.summoner.playerName ~= nil then
+                        if not logicHandler.IsPlayerNameLoggedIn(summon.summoner.playerName) then
                             shouldSkip = true
                         end
                     -- ...or if it doesn't have an actor stored as its summoner
-                    elseif summon.summonerUniqueIndex == nil then
+                    elseif summon.summoner.uniqueIndex == nil then
                         shouldSkip = true
                     end
                 end

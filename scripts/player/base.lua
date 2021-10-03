@@ -1362,7 +1362,7 @@ function BasePlayer:SaveSpellsActive(playerPacket)
                 effects = tableHelper.deepCopy(spell.effects),
                 startTime = os.time(),
                 caster = {
-                    player = spell.caster.player,
+                    playerName = spell.caster.playerName,
                     refId = spell.caster.refId,
                     uniqueIndex = spell.caster.uniqueIndex
                 }
