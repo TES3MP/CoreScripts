@@ -979,13 +979,16 @@ function BaseCell:SaveActorSpellsActive(actors)
                             displayName = spellInstanceValues.displayName,
                             stackingState = spellInstanceValues.stackingState,
                             effects = tableHelper.deepCopy(spellInstanceValues.effects),
-                            startTime = os.time(),
-                            caster = {
+                            startTime = os.time()
+                        }
+
+                        if spellInstanceValues.caster ~= nil then
+                            self.data.objectData[uniqueIndex].spellsActive[spellId][spellInstanceIndex].caster = {
                                 playerName = spellInstanceValues.caster.playerName,
                                 refId = spellInstanceValues.caster.refId,
                                 uniqueIndex = spellInstanceValues.caster.uniqueIndex
                             }
-                        }
+                        end
                     end
                 elseif action == enumerations.spellbook.REMOVE then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then

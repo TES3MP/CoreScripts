@@ -1350,13 +1350,16 @@ function BasePlayer:SaveSpellsActive(playerPacket)
                     displayName = spellInstanceValues.displayName,
                     stackingState = spellInstanceValues.stackingState,
                     effects = tableHelper.deepCopy(spellInstanceValues.effects),
-                    startTime = os.time(),
-                    caster = {
+                    startTime = os.time()
+                }
+
+                if spellInstanceValues.caster ~= nil then
+                    self.data.spellsActive[spellId][spellInstanceIndex].caster = {
                         playerName = spellInstanceValues.caster.playerName,
                         refId = spellInstanceValues.caster.refId,
                         uniqueIndex = spellInstanceValues.caster.uniqueIndex
                     }
-                }
+                end
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
