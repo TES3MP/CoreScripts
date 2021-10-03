@@ -10,6 +10,28 @@ packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
     tes3mp.AddItemChange(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
 end
 
+packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
+
+    tes3mp.ClearSpellsActiveChanges(pid)
+    tes3mp.SetSpellsActiveChangesAction(pid, action)
+
+    for spellId, spellInstances in pairs(spellsActive) do
+        for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
+
+            if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+                for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
+
+                    tes3mp.AddSpellActiveEffect(pid, effectTable.id, effectTable.magnitude,
+                        effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                end
+            end
+
+            tes3mp.AddSpellActive(pid, spellId, spellInstanceValues.displayName,
+                spellInstanceValues.stackingState)
+        end
+    end
+end
+
 packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -222,10 +244,13 @@ packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, ac
 
     for spellId, spellInstances in pairs(spellsActive) do
         for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
-            for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
-                tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
-                    effectTable.duration, effectTable.timeLeft, effectTable.arg)
+            if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+                for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
+
+                    tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
+                        effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                end
             end
 
             tes3mp.AddActorSpellActive(spellId, spellInstanceValues.displayName,

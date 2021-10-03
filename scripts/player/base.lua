@@ -1308,24 +1308,12 @@ function BasePlayer:LoadSpellsActive()
 
     if self.data.spellsActive == nil then self.data.spellsActive = {} end
 
-    tes3mp.ClearSpellsActiveChanges(self.pid)
-    tes3mp.SetSpellsActiveChangesAction(self.pid, enumerations.spellbook.SET)
+    if tableHelper.getCount(self.data.spellsActive) > 0 then
+        packetBuilder.AddPlayerSpellsActive(self.pid, self.data.spellsActive, enumerations.spellbook.SET)
 
-    for spellId, spellInstances in pairs(self.data.spellsActive) do
-        for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
-            for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
-
-                tes3mp.AddSpellActiveEffect(self.pid, effectTable.id, effectTable.magnitude,
-                    effectTable.duration, effectTable.timeLeft, effectTable.arg)
-            end
-
-            tes3mp.AddSpellActive(self.pid, spellId, spellInstanceValues.displayName,
-                spellInstanceValues.stackingState)
-        end
+        -- Send this to all players, or they'll only know about active spells added afterwards
+        tes3mp.SendSpellsActiveChanges(self.pid, true)
     end
-
-    -- Send this to all players, or they'll only know about active spells added afterwards
-    tes3mp.SendSpellsActiveChanges(self.pid, true)
 end
 
 function BasePlayer:SaveSpellsActive(playerPacket)
