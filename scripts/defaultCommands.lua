@@ -460,8 +460,8 @@ customCommandHooks.registerCommand("resetcell", defaultCommands.resetCell)
 defaultCommands.setPlayerModel = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
-    if isModerator == false then
-        tes3mp.SendMessage(pid, "You need to be a moderator to run this command\n")
+    if isAdmin == false then
+        tes3mp.SendMessage(pid, "You need to be an admin to run this command\n")
         return
     end
 
