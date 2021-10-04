@@ -400,7 +400,9 @@ logicHandler.SendClientScriptSettings = function(pid, forEveryone)
     for _, variableCategory in pairs({"personal", "quest", "kills", "faction", "worldwide"}) do
 
         for _, globalId in pairs(clientVariableScopes.globals[variableCategory]) do
-            tes3mp.AddSynchronizedClientGlobalId(globalId)
+            -- Global IDs are stored as lowercase on the client, so make sure we're
+            -- making them lowercase here as well
+            tes3mp.AddSynchronizedClientGlobalId(string.lower(globalId))
         end
     end
 
