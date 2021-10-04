@@ -414,6 +414,18 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     
     if eventStatus.validDefaultHandler then 
 
+        -- Send instanced spawn cell record now so it has time to arrive
+        if config.useInstancedSpawn == true and config.instancedSpawn ~= nil then
+            spawnUsed = tableHelper.shallowCopy(config.instancedSpawn)
+            local originalCellDescription = spawnUsed.cellDescription
+            spawnUsed.cellDescription = originalCellDescription .. " - Instance for " .. playerName
+
+            tes3mp.ClearRecords()
+            tes3mp.SetRecordType(enumerations.recordType["CELL"])
+            packetBuilder.AddCellRecord(spawnUsed.cellDescription, {baseId = originalCellDescription})
+            tes3mp.SendRecordDynamic(pid, false, false)
+        end
+
         tes3mp.SetDifficulty(pid, config.difficulty)
         tes3mp.SetConsoleAllowed(pid, config.allowConsole)
         tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
