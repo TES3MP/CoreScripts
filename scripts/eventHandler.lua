@@ -407,33 +407,33 @@ end
 
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
-    tes3mp.SetDifficulty(pid, config.difficulty)
-    tes3mp.SetConsoleAllowed(pid, config.allowConsole)
-    tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
-    tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
-    tes3mp.SetWaitAllowed(pid, config.allowWait)
-    tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
-    tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
-    tes3mp.SendSettings(pid)
-
-    logicHandler.SendClientScriptDisables(pid, false)
-    logicHandler.SendClientScriptSettings(pid, false)
-
-    tes3mp.SetPlayerCollisionState(config.enablePlayerCollision)
-    tes3mp.SetActorCollisionState(config.enableActorCollision)
-    tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
-    tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
-
-    logicHandler.SendConfigCollisionOverrides(pid, false)
-
-    WorldInstance:LoadTime(pid, false)
-
     Players[pid] = Player(pid, playerName)
     Players[pid].name = playerName
     
     local eventStatus = customEventHooks.triggerValidators("OnPlayerConnect", {pid})
     
     if eventStatus.validDefaultHandler then 
+
+        tes3mp.SetDifficulty(pid, config.difficulty)
+        tes3mp.SetConsoleAllowed(pid, config.allowConsole)
+        tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
+        tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
+        tes3mp.SetWaitAllowed(pid, config.allowWait)
+        tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
+        tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
+        tes3mp.SendSettings(pid)
+
+        logicHandler.SendClientScriptDisables(pid, false)
+        logicHandler.SendClientScriptSettings(pid, false)
+
+        tes3mp.SetPlayerCollisionState(config.enablePlayerCollision)
+        tes3mp.SetActorCollisionState(config.enableActorCollision)
+        tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
+        tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
+
+        logicHandler.SendConfigCollisionOverrides(pid, false)
+
+        WorldInstance:LoadTime(pid, false)
 
         local message = logicHandler.GetChatName(pid) .. " has joined the server"
 
