@@ -214,7 +214,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                     local message = targetName .. "'s " .. tes3mp.GetAttributeName(attrId) ..
                         " is now " .. value .. "\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPid]:SaveAttributes()
+                    Players[targetPid]:SaveAttributes(packetReader.GetPlayerPacketTables(pid, "PlayerAttribute"))
                 end
             end
         end
@@ -241,7 +241,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                     local message = targetName .. "'s " .. tes3mp.GetSkillName(skillId) ..
                         " is now " .. value .. "\n"
                     tes3mp.SendMessage(pid, message, true)
-                    Players[targetPid]:SaveSkills()
+                    Players[targetPid]:SaveSkills(packetReader.GetPlayerPacketTables(pid, "PlayerSkill"))
                 end
             end
         end
