@@ -80,6 +80,7 @@ function BasePlayer:__init(pid, playerName)
         inventory = {},
         spellbook = {},
         spellsActive = {},
+        cooldowns = {},
         quickKeys = {},
         shapeshift = {},
         journal = {},
