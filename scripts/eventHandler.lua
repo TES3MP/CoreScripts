@@ -522,7 +522,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
                 local ipAddress = Players[pid].ipAddress
 
-                if tableHelper.containsValue(pidsByIpAddress[ipAddress], pid) then
+                if pidsByIpAddress[ipAddress] ~= nil and tableHelper.containsValue(pidsByIpAddress[ipAddress], pid) then
                     tableHelper.removeValue(pidsByIpAddress[ipAddress], pid)
                 end
 
