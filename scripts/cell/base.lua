@@ -2057,7 +2057,7 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
             tes3mp.SetObjectRefNum(splitIndex[1])
             tes3mp.SetObjectMpNum(splitIndex[2])
 
-            if self.data.objectData[uniqueIndex].refId ~= nil then
+            if self.data.objectData[uniqueIndex] ~= nil and self.data.objectData[uniqueIndex].refId ~= nil then
                 tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
             end
             tes3mp.AddObject()
