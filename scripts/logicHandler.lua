@@ -567,7 +567,7 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)[1]
+    local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
     return objectUniqueIndex
 end
 
