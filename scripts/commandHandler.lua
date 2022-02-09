@@ -844,7 +844,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 packetType = "spawn"
             end
 
-            logicHandler.CreateObjectAtPlayer(targetPid, refId, packetType)
+            logicHandler.CreateObjectAtPlayer(targetPid, dataTableBuilder.BuildObjectData(refId), packetType)
         end
 
     elseif (cmd[1] == "anim" or cmd[1] == "a") and cmd[2] ~= nil then

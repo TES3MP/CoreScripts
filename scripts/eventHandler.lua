@@ -1856,7 +1856,7 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
             if eventStatus.validDefaultHandler then
 
                 if loop.packetType == "place" or loop.packetType == "spawn" then
-                    logicHandler.CreateObjectAtPlayer(pid, loop.refId, loop.packetType)
+                    logicHandler.CreateObjectAtPlayer(pid, dataTableBuilder.BuildObjectData(loop.refId), loop.packetType)
                 elseif loop.packetType == "console" then
                     logicHandler.RunConsoleCommandOnPlayer(pid, loop.consoleCommand)
                 end

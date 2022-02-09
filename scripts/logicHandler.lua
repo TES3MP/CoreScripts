@@ -447,6 +447,10 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
     for _, object in pairs(objectsToCreate) do
 
         local refId = object.refId
+        local count = object.count
+        local charge = object.charge
+        local enchantmentCharge = object.enchantmentCharge
+        local soul = object.soul
         local location = object.location
 
         local mpNum = WorldInstance:GetCurrentMpNum() + 1
@@ -456,7 +460,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
         -- Is this object based on a a generated record? If so, it needs special
         -- handling here and further below
         if logicHandler.IsGeneratedRecord(refId) then
-            
+
             local recordType = logicHandler.GetRecordTypeByRecordId(refId)
 
             if RecordStores[recordType] ~= nil then
@@ -505,8 +509,14 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
                 tes3mp.SetObjectRefId(refId)
                 tes3mp.SetObjectRefNum(0)
                 tes3mp.SetObjectMpNum(mpNum)
-                tes3mp.SetObjectCharge(-1)
-                tes3mp.SetObjectEnchantmentCharge(-1)
+
+                if packetType == "place" then
+                    tes3mp.SetObjectCount(count)
+                    tes3mp.SetObjectCharge(charge)
+                    tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
+                    tes3mp.SetObjectSoul(soul)
+                end
+
                 tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
                 tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
                 tes3mp.AddObject()
@@ -550,16 +560,25 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
     return uniqueIndexes
 end
 
-logicHandler.CreateObjectAtLocation = function(cellDescription, location, refId, packetType)
+logicHandler.CreateObjectAtLocation = function(cellDescription, location, objectData, packetType)
 
     local objects = {}
-    table.insert(objects, { location = location, refId = refId, packetType = packetType })
+    table.insert(objects, {
+        location = location,
+        refId = objectData.refId,
+        count = objectData.count,
+        charge = objectData.charge,
+        enchantmentCharge = objectData.enchantmentCharge,
+        soul = objectData.soul,
+        packetType = packetType
+        }
+    )
 
     local objectUniqueIndex = logicHandler.CreateObjects(cellDescription, objects, packetType)[1]
     return objectUniqueIndex
 end
 
-logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
+logicHandler.CreateObjectAtPlayer = function(pid, objectData, packetType)
 
     local cell = tes3mp.GetCell(pid)
     local location = {
@@ -567,7 +586,7 @@ logicHandler.CreateObjectAtPlayer = function(pid, refId, packetType)
         rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
     }
 
-    local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, refId, packetType)
+    local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, objectData, packetType)
     return objectUniqueIndex
 end
 
