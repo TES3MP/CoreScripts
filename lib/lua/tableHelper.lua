@@ -508,7 +508,7 @@ function tableHelper.getSimplePrintableTable(inputTable)
         if type(value) == "table" then
             text = text .. "[" .. tableHelper.getSimplePrintableTable(value) .. "]"
         else
-            text = text .. index .. ": " .. value
+            text = text .. index .. ": " .. tostring(value)
         end
 
         shouldPrintComma = true
@@ -542,11 +542,7 @@ function tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLe
         if type(value) == "table" and maxDepth > 0 then
             value = "\n" .. tableHelper.getPrintableTable(value, maxDepth - 1, indentStr, indentLevel + 1)
         else
-            if type(value) ~= "string" then
-                value = tostring(value)
-            end
-
-            value = value .. "\n"
+            value = tostring(value) .. "\n"
         end
 
         str = str .. currentIndent .. index .. ": " .. value
