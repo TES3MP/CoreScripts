@@ -993,10 +993,10 @@ function BaseCell:SaveActorSpellsActive(actors)
                 elseif action == enumerations.spellbook.REMOVE then
                     if self.data.objectData[uniqueIndex].spellsActive[spellId] ~= nil then
                         self.data.objectData[uniqueIndex].spellsActive[spellId][1] = nil
-                    end
 
-                    if tableHelper.getCount(self.data.objectData[uniqueIndex].spellsActive[spellId]) == 0 then
-                       self.data.objectData[uniqueIndex].spellsActive[spellId] = nil
+                        if tableHelper.getCount(self.data.objectData[uniqueIndex].spellsActive[spellId]) == 0 then
+                            self.data.objectData[uniqueIndex].spellsActive[spellId] = nil
+                        end
                     end
                 end
             end
