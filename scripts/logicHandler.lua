@@ -420,6 +420,124 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
+-- Following AddItemToPid, RemoveItemFromPid, AddItemToObject, RemoveItemFromObject
+-- functions are expected to provide itemData in the format specified in
+-- dataTableBuilder.BuildObjectData function
+logicHandler.AddItemToPid = function(pid, itemData)
+
+    local player = Players[pid]
+
+    if player == nil or not player:IsLoggedIn() then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at adding an item for non-existent pid " .. pid)
+        return
+    end
+
+    local inventory = player.data.inventory
+    local refId = itemData.refId
+    local count = itemData.count
+    local charge = itemData.charge
+    local enchantmentCharge = itemData.enchantmentCharge
+    local soul = itemData.soul
+
+    -- Add the item server-side
+    inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
+
+    -- Send server packet to related player
+    player:LoadItemChanges({itemData}, enumerations.inventory.ADD)
+end
+
+logicHandler.RemoveItemFromPid = function(pid, itemData)
+
+    local player = Players[pid]
+
+    if player == nil or not player:IsLoggedIn() then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at removing an item for non-existent pid " .. pid)
+        return
+    end
+
+    local inventory = player.data.inventory
+    local refId = itemData.refId
+    local count = itemData.count
+    local charge = itemData.charge
+    local enchantmentCharge = itemData.enchantmentCharge
+    local soul = itemData.soul
+
+    -- Remove the item server-side
+    inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
+
+    -- Send server packet to related player
+    player:LoadItemChanges({itemData}, enumerations.inventory.REMOVE)
+end
+
+logicHandler.AddItemToObject = function(cellDescription, uniqueIndex, itemData)
+
+    if not logicHandler.IsCellLoaded(cellDescription) then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at adding an item for object in non-existent or unloaded cell " .. cellDescription)
+        return
+    end
+
+    local cell = LoadedCells[cellDescription]
+    if not cell:ContainsObject(uniqueIndex) then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at adding an item for non-existent object " .. uniqueIndex)
+        return
+    end
+
+    -- Prevent attempt at adding an item to non-inventory objects (e.g. dropped items)
+    local inventory = cell.data.objectData[uniqueIndex].inventory
+    if inventory == nil then
+        return
+    end
+
+    local refId = itemData.refId
+    local count = itemData.count
+    local charge = itemData.charge
+    local enchantmentCharge = itemData.enchantmentCharge
+    local soul = itemData.soul
+
+    -- Add the item server-side
+    inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
+
+    -- Send server packet to cell's visitors
+    for _, pid in ipairs(cell.visitors) do
+        cell:LoadContainers(pid, cell.data.objectData, {uniqueIndex})
+    end
+end
+
+logicHandler.RemoveItemFromObject = function(cellDescription, uniqueIndex, itemData)
+
+    if not logicHandler.IsCellLoaded(cellDescription) then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at removing an item for object in non-existent or unloaded cell " .. cellDescription)
+        return
+    end
+
+    local cell = LoadedCells[cellDescription]
+
+    if not cell:ContainsObject(uniqueIndex) then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at removing an item for non-existent object " .. uniqueIndex)
+        return
+    end
+
+    -- Prevent attempt at removing an item from non-inventory objects (e.g. dropped items)
+    local inventory = cell.data.objectData[uniqueIndex].inventory
+    if inventory == nil then
+        return
+    end
+
+    local refId = itemData.refId
+    local count = itemData.count
+    local charge = itemData.charge
+    local enchantmentCharge = itemData.enchantmentCharge
+    local soul = itemData.soul
+
+    -- Remove the item server-side
+    inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
+
+    -- Send server packet to cell's visitors
+    for _, pid in ipairs(cell.visitors) do
+        cell:LoadContainers(pid, cell.data.objectData, {uniqueIndex})
+    end
+end
+
 -- Create objects with newly assigned uniqueIndexes in a particular cell,
 -- where the objectsToCreate parameter is an array of tables with refId
 -- and location keys and packetType is either "spawn" or "place"
