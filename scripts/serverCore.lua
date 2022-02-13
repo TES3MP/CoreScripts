@@ -207,6 +207,23 @@ function OnServerInit()
     customEventHooks.triggerHandlers("OnServerInit", eventStatus, {})
 end
 
+function LoadScriptsFromJson(filename)
+    local scripts = jsonInterface.load(filename)
+    tableHelper.fixNumericalKeys(scripts, true)
+    
+    if scripts == nil then
+        tes3mp.LogMessage(enumerations.log.ERROR, "Script file list " .. filename .. " cannot be read!")
+        tes3mp.StopServer(2)
+    else
+        for index,script in ipairs(scripts) do
+            for name,file in pairs(script) do
+                require(file)
+                tes3mp.LogMessage(enumerations.log.INFO, "Loaded script "..name)
+            end
+        end
+    end
+end
+
 function OnServerPostInit()
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
     local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
@@ -275,6 +292,7 @@ function OnServerPostInit()
         end
 
         tes3mp.SetRuleString("respawnCell", respawnCell)
+        LoadScriptsFromJson(config.customScriptsPath)
     end
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end

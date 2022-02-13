@@ -462,5 +462,7 @@ config.recordstoreKeyOrder = { "general", "permanentRecords", "generatedRecords"
 
 config.worldKeyOrder = { "general", "time", "topics", "kills", "journal", "customVariables", "type",
     "index", "quest", "actorRefId", "year", "month", "day", "hour", "daysPassed", "timeScale" }
+    
+config.customScriptsPath = "scripts.json"
 
 return config
