@@ -20,11 +20,12 @@ dataTableBuilder.BuildAIData = function(targetPid, targetUniqueIndex, action,
 end
 
 -- Use with logicHandler.CreateObject* functions
-dataTableBuilder.BuildObjectData = function(refId, count, charge, enchantmentCharge, soul)
+dataTableBuilder.BuildObjectData = function(refId, count, scale, charge, enchantmentCharge, soul)
 
 	local objectData = {}
 	objectData.refId = refId
 	objectData.count = count or 1
+	objectData.scale = count or 1
 	objectData.charge = charge or -1
 	objectData.enchantmentCharge = enchantmentCharge or -1
 	objectData.soul = soul or ""
