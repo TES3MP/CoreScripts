@@ -11,6 +11,9 @@ enumerations.containerSub = { NONE = 0, DRAG = 1, DROP = 2, TAKE_ALL = 3, REPLY_
 enumerations.dialogueChoice = { TOPIC = 0, PERSUASION = 1, COMPANION_SHARE = 2, BARTER = 3, SPELLS = 4, TRAVEL = 5, 
     SPELLMAKING = 6, ENCHANTING = 7, TRAINING = 8, REPAIR = 9 }
 enumerations.faction = { RANK = 0, EXPULSION = 1, REPUTATION = 2 }
+enumerations.equipment = { HELMET = 0, CUIRASS = 1, GREAVES = 2, LEFT_PAULDRON = 3, RIGHT_PAULDRON = 4, 
+	LEFT_GAUNTLET = 5, RIGHT_GAUNTLET = 6, BOOTS = 7, SHIRT = 8, PANTS = 9, SKIRT = 10, ROBE = 11, LEFT_RING = 12,
+	RIGHT_RING = 13, AMULET = 14, BELT = 15, CARRIED_RIGHT = 16, CARRIED_LEFT = 17, AMMUNITION = 18 }
 enumerations.inventory = { SET = 0, ADD = 1, REMOVE = 2 }
 enumerations.journal = { ENTRY = 0, INDEX = 1 }
 enumerations.log = { VERBOSE = 0, INFO = 1, WARN = 2, ERROR = 3, FATAL = 4 }
