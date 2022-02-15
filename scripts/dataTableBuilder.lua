@@ -20,7 +20,7 @@ dataTableBuilder.BuildAIData = function(targetPid, targetUniqueIndex, action,
 end
 
 -- Use with logicHandler.CreateObject* functions
-dataTableBuilder.BuildObjectData = function(refId, count, charge, enchantmentCharge, soul)
+dataTableBuilder.BuildObjectData = function(refId, count, charge, enchantmentCharge, soul, scale)
 
 	local objectData = {}
 	objectData.refId = refId
@@ -28,7 +28,8 @@ dataTableBuilder.BuildObjectData = function(refId, count, charge, enchantmentCha
 	objectData.charge = charge or -1
 	objectData.enchantmentCharge = enchantmentCharge or -1
 	objectData.soul = soul or ""
-
+	objectData.scale = scale or 1
+	
 	return objectData
 end
 
