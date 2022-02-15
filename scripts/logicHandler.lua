@@ -452,6 +452,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
         local enchantmentCharge = object.enchantmentCharge
         local soul = object.soul
         local location = object.location
+        local scale = object.scale
 
         local mpNum = WorldInstance:GetCurrentMpNum() + 1
         local uniqueIndex =  0 .. "-" .. mpNum
@@ -490,14 +491,14 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
 
             cell:InitializeObjectData(uniqueIndex, refId)
             cell.data.objectData[uniqueIndex].location = location
-
+            cell.data.objectData[uniqueIndex].scale = scale
             if packetType == "place" then
                 table.insert(cell.data.packets.place, uniqueIndex)
             elseif packetType == "spawn" then
                 table.insert(cell.data.packets.spawn, uniqueIndex)
                 table.insert(cell.data.packets.actorList, uniqueIndex)
             end
-
+            table.insert(cell.data.packets.scale, uniqueIndex)
             -- Are there any players on the server? If so, initialize the object
             -- list for the first one we find and just send the corresponding packet
             -- to everyone
@@ -509,6 +510,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
                 tes3mp.SetObjectRefId(refId)
                 tes3mp.SetObjectRefNum(0)
                 tes3mp.SetObjectMpNum(mpNum)
+                tes3mp.SetObjectScale(scale)
 
                 if packetType == "place" then
                     tes3mp.SetObjectCount(count)
@@ -549,6 +551,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
         elseif packetType == "spawn" then
             tes3mp.SendObjectSpawn(true)
         end
+        tes3mp.SendObjectScale(true)
     end
 
     cell:Save()
@@ -570,6 +573,7 @@ logicHandler.CreateObjectAtLocation = function(cellDescription, location, object
         charge = objectData.charge,
         enchantmentCharge = objectData.enchantmentCharge,
         soul = objectData.soul,
+        scale = objectData.scale,
         packetType = packetType
         }
     )
