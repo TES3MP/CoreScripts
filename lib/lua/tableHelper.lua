@@ -197,7 +197,9 @@ end
 function tableHelper.insertValueIfMissing(inputTable, value)
     if tableHelper.containsValue(inputTable, value, false) == false then
         table.insert(inputTable, value)
+        return true
     end
+    return false
 end
 
 function tableHelper.getAnyValue(inputTable)
