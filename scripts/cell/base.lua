@@ -1226,6 +1226,16 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEvery
 
         packetBuilder.AddObjectDelete(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectDelete()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1321,6 +1331,15 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
                     packetBuilder.AddObjectSpawn(uniqueIndex, objectData[uniqueIndex])
                     objectCount = objectCount + 1
                 end
+                -- If we're about to exceed the maximum number of objects in a single packet,
+                -- start a new packet
+                if objectCount >= 3000 then
+                    tes3mp.SendObjectSpawn()    
+                    tes3mp.ClearObjectList()
+                    tes3mp.SetObjectListPid(pid)
+                    tes3mp.SetObjectListCell(self.description)
+                    objectCount = 0
+                end
             else
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
@@ -1351,6 +1370,15 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
             objectCount = objectCount + 1
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectLock()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
         end
     end
 
@@ -1386,6 +1414,15 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectMiscellaneous()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1404,6 +1441,15 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddObjectTrap(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectTrap()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1431,6 +1477,15 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
                 objectCount = objectCount + 1
             end
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectScale()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1455,6 +1510,15 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
             packetBuilder.AddObjectState(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendObjectState()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1473,6 +1537,15 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddDoorState(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendDoorState()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1491,6 +1564,15 @@ function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forE
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddClientScriptLocal(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            tes3mp.SendClientScriptLocal()    
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
+        end
     end
 
     if objectCount > 0 then
@@ -1541,6 +1623,17 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had container packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if objectCount >= 3000 then
+            -- Set the action to SET
+            tes3mp.SetObjectListAction(0)
+            tes3mp.SendContainer()   
+            tes3mp.ClearObjectList()
+            tes3mp.SetObjectListPid(pid)
+            tes3mp.SetObjectListCell(self.description)
+            objectCount = 0
         end
     end
 
@@ -1601,6 +1694,17 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            -- Set the action to SET
+            tes3mp.SetActorListAction(0)
+            tes3mp.SendActorList()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
+        end
     end
 
     if actorCount > 0 then
@@ -1654,6 +1758,15 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorPosition()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
+        end
     end
 
     if actorCount > 0 then
@@ -1695,6 +1808,15 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorStatsDynamic()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
         end
     end
 
@@ -1744,6 +1866,15 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorEquipment()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
+        end
     end
 
     if actorCount > 0 then
@@ -1775,6 +1906,15 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had spellsActive packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorSpellsActiveChanges()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
         end
     end
 
@@ -1813,6 +1953,15 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorDeath()
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
         end
     end
 
@@ -1879,6 +2028,15 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
             tes3mp.LogAppend(enumerations.log.ERROR, "- Had AI packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
+        -- If we're about to exceed the maximum number of objects in a single packet,
+        -- start a new packet
+        if actorCount >= 3000 then 
+            tes3mp.SendActorAI(false)
+            tes3mp.ClearActorList()
+            tes3mp.SetActorListPid(pid)
+            tes3mp.SetActorListCell(self.description)
+            actorCount = 0
         end
     end
 
