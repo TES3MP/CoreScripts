@@ -808,7 +808,7 @@ function BasePlayer:SaveAttributes(playerPacket)
         local attribute = playerPacket.attributes[attributeName]
         local maxAttributeValue = config.maxAttributeValue
 
-        if name == "Speed" then
+        if attributeName == "Speed" then
             maxAttributeValue = config.maxSpeedValue
         end
 
