@@ -104,12 +104,22 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
         end
     end
 
-    -- A difference in souls also instantly resolves the comparison
-    if idealItem.soul ~= nil and not comparedItem.soul:ciEqual(otherItem.soul) then
-        if idealItem.soul:ciEqual(comparedItem.soul) then
-            return true
-        elseif idealItem.soul:ciEqual(otherItem.soul) then
-            return false
+    if idealItem.soul ~= nil then
+        if comparedItem.soul == nil then
+            comparedItem.soul = ""
+        end
+
+        if otherItem.soul == nil then
+            otherItem.soul = ""
+        end
+
+        -- A difference in souls also instantly resolves the comparison
+        if not comparedItem.soul:ciEqual(otherItem.soul) then
+            if idealItem.soul:ciEqual(comparedItem.soul) then
+                return true
+            elseif idealItem.soul:ciEqual(otherItem.soul) then
+                return false
+            end
         end
     end
 
