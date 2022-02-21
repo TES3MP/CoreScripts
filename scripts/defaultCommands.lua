@@ -467,7 +467,7 @@ defaultCommands.setPlayerModel = function(pid, cmd)
 
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         if cmd[3] == nil then
-            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setplayermodel <pid> "Model name"\n')
+            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> "Model name"\n')
             return
         end
 
