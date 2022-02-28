@@ -670,13 +670,6 @@ function BaseCell:SaveContainers(pid)
         local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
         local refId = tes3mp.GetObjectRefId(objectIndex)
 
-        -- Deny players using "take all" on actors while sneaking
-        if tes3mp.GetSneakState(pid) and subAction == enumerations.containerSub.TAKE_ALL then
-            if tableHelper.containsValue(self.data.packets.actorList, uniqueIndex) then
-                return
-            end
-        end
-
         tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         self:InitializeObjectData(uniqueIndex, refId)
