@@ -1777,20 +1777,20 @@ eventHandler.OnClientScriptGlobal = function(pid)
 
                 local isKillSync, isQuestSync, isFactionSync, isWorldwideSync = false, false, false, false
 
-                isKillSync = tableHelper.containsValue(clientVariableScopes.globals.kills, id)
+                isKillSync = tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.kills, id)
 
                 if not isKillSync then
                     isQuestSync = config.shareJournal == true and
-                        tableHelper.containsValue(clientVariableScopes.globals.quest, id)
+                        tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.quest, id)
                 end
 
                 if not isQuestSync then
                     isFactionSync = config.shareFactionRanks == true and
-                        tableHelper.containsValue(clientVariableScopes.globals.faction, id)
+                        tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.faction, id)
                 end
 
                 if not isFactionSync then
-                    isWorldwideSync = tableHelper.containsValue(clientVariableScopes.globals.worldwide, id)
+                    isWorldwideSync = tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.worldwide, id)
                 end
 
                 if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
