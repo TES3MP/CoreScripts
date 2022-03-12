@@ -181,24 +181,24 @@ end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM") then
 
-	local addedVariableScopes = {
+    local addedVariableScopes = {
         globals = {
             ignored = {
                 -- game state
                 "TR_MapPos", "TR_CellX", "TR_CellY", "TR_Test", "PC_NoLore", "T_Glob_cleanup_x", "T_Glob_cleanup_y", 
-				"T_Glob_cleanup_z", "T_Glob_cleanup_state", "T_Glob_DWelk_cleanup", "T_Glb_GetTeleportingDisabled", 
-				"T_Glob_PassTimeHours", "T_Glob_GetTeleportingDisabled", "T_Glob_Speech_Debug", "T_Glob_Speech_Sway", 
-				"T_Glob_Speech_Haggle", "T_Glob_Speech_Debate", 
-				
-				-- card game
-				"T_Glob_CardHortX", "T_Glob_CardHortY",	"T_Glob_CardHortZ", "T_Glob_CardHortReshapeX", "T_Glob_CardHortReshapeY",
-				"T_Glob_CardHortCol1Len", "T_Glob_CardHortCol2Len", "T_Glob_CardHortCol3Len", "T_Glob_CardHortCol4Len",
-				"T_Glob_CardHortCol5Len", "T_Glob_CardHortCol6Len", "T_Glob_CardHortCol1Lock", "T_Glob_CardHortCol2Lock", 
-				"T_Glob_CardHortCol3Lock", "T_Glob_CardHortCol4Lock", "T_Glob_CardHortCol5Lock", "T_Glob_CardHortCol6Lock",
-				"T_Glob_CardHortCol1Lock2", "T_Glob_CardHortCol2Lock2", "T_Glob_CardHortCol3Lock2", "T_Glob_CardHortCol4Lock2", 
-				"T_Glob_CardHortCol5Lock2", "T_Glob_CardHortCol6Lock2", "T_Glob_CardHortSaveLoad", "T_Glob_CardHortActiveLen",
-				"T_Glob_CardHortTop", "T_Glob_CardHortDummy", "T_Glob_CardHortState", "T_Glob_CardHortTracker", "T_Glob_CardHortRow",
-				"T_Glob_CardHortRot", "T_Glob_CardHortRank", "T_Glob_CardHortCol", "T_Glob_CardHortHouse"
+                "T_Glob_cleanup_z", "T_Glob_cleanup_state", "T_Glob_DWelk_cleanup", "T_Glb_GetTeleportingDisabled", 
+                "T_Glob_PassTimeHours", "T_Glob_GetTeleportingDisabled", "T_Glob_Speech_Debug", "T_Glob_Speech_Sway", 
+                "T_Glob_Speech_Haggle", "T_Glob_Speech_Debate", 
+                
+                -- card game
+                "T_Glob_CardHortX", "T_Glob_CardHortY",    "T_Glob_CardHortZ", "T_Glob_CardHortReshapeX", "T_Glob_CardHortReshapeY",
+                "T_Glob_CardHortCol1Len", "T_Glob_CardHortCol2Len", "T_Glob_CardHortCol3Len", "T_Glob_CardHortCol4Len",
+                "T_Glob_CardHortCol5Len", "T_Glob_CardHortCol6Len", "T_Glob_CardHortCol1Lock", "T_Glob_CardHortCol2Lock", 
+                "T_Glob_CardHortCol3Lock", "T_Glob_CardHortCol4Lock", "T_Glob_CardHortCol5Lock", "T_Glob_CardHortCol6Lock",
+                "T_Glob_CardHortCol1Lock2", "T_Glob_CardHortCol2Lock2", "T_Glob_CardHortCol3Lock2", "T_Glob_CardHortCol4Lock2", 
+                "T_Glob_CardHortCol5Lock2", "T_Glob_CardHortCol6Lock2", "T_Glob_CardHortSaveLoad", "T_Glob_CardHortActiveLen",
+                "T_Glob_CardHortTop", "T_Glob_CardHortDummy", "T_Glob_CardHortState", "T_Glob_CardHortTracker", "T_Glob_CardHortRow",
+                "T_Glob_CardHortRot", "T_Glob_CardHortRank", "T_Glob_CardHortCol", "T_Glob_CardHortHouse"
                 
             },
             personal = {
@@ -207,13 +207,13 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM"
                 
                 -- Bank accounts
                 "T_Glob_Bank_All_CurrentBank", "T_Glob_Bank_Bri_AcctAmount", "T_Glob_Bank_Bri_LoanAmount",
-				"T_Glob_Bank_Bri_LoanDate", "T_Glob_Bank_Bri_LoanFail", "T_Glob_Bank_Hla_LoanFail", "T_Glob_Bank_Hla_AcctAmount",
-				"T_Glob_Bank_Hla_LoanAmount", "T_Glob_Bank_Hla_LoanDate",
-				
+                "T_Glob_Bank_Bri_LoanDate", "T_Glob_Bank_Bri_LoanFail", "T_Glob_Bank_Hla_LoanFail", "T_Glob_Bank_Hla_AcctAmount",
+                "T_Glob_Bank_Hla_LoanAmount", "T_Glob_Bank_Hla_LoanDate",
+                
             },
             quest = {
                 -- reputation
-				"T_Glob_Rep_Sky_Pr", "T_Glob_Rep_Sky_Re"
+                "T_Glob_Rep_Sky_Pr", "T_Glob_Rep_Sky_Re"
             },
             kills = {
             
@@ -224,23 +224,23 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM"
             worldwide = {
                 -- mechanisms
                 "T_Glob_SutchElevDir", "T_Glob_SutchElevRest", "T_Glob_SutchElevUpDownCounter",
-				-- objects
+                -- objects
                 "T_Glob_KingOrgCoffer_Uses",
-				-- news
-				"T_Glob_News_Bellman_Pick1", "T_Glob_News_Bellman_Pick2", "T_Glob_News_Bellman_Tracker1", "T_Glob_News_Bellman_Tracker2"				
+                -- news
+                "T_Glob_News_Bellman_Pick1", "T_Glob_News_Bellman_Pick2", "T_Glob_News_Bellman_Tracker1", "T_Glob_News_Bellman_Tracker2"                
             },
             unknown = {
                 
             }
         }
     }
-	
+    
     tableHelper.merge(clientVariableScopes, addedVariableScopes, true)
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM") then
 
-	local addedVariableScopes = {
+    local addedVariableScopes = {
         globals = {
             ignored = {
                 -- game state
@@ -261,13 +261,13 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "TR_m2_q_35_PCVampire",
                 -- tavern rents
                 "TR_m3_Rent_Bosmora_Starlight", "TR_m3_Rent_ED_Velk", "TR_m3_Rent_Gorne_EmeraldHaven",
-				"TR_m2_Rent_Hlersis_Spore", "TR_m2_Rent_Akamora_Gob", "TR_m2_Rent_InnBetween", "TR_m2_Rent_Necrom_Hostel",
-				"TR_m3_Rent_Meralag_Glade", "TR_m3_Rent_Darnim_Windbrk", "TR_Rent_HuntedHound", "TR_m1_Rent_Avenue",
-				"TR_m2_Rent_Helnim_Drake", "TR_m2_Rent_Helnim_Flower", "TR_m2_Rent_Helnim_Racer", "TR_m2_Rent_Mothrivra_Goblet",
-				"TR_m1_Rent_Black_Ogre", "TR_m1_Rent_Dancing_Jug", "TR_m1_Rent_Howling_Noose", "TR_m1_Rent_Queens_Cutlass", 
-				"TR_m1_Rent_Waters_Shadow", "TR_m3_Rent_Sailen_Toiling", "TR_m3_Rent_Moth_and_Tiger", "TR_m3_Rent_Empress_Katariah", 
-				"TR_m3_Rent_Salty_Futtocks", "TR_m3_Rent_Vhul_Hound", "TR_m3_Rent_Aimrah_Inn", "TR_m3_Rent_AT_HC", "TR_m3_Rent_AT_LS",
-				"TR_m3_Rent_AT_TS",
+                "TR_m2_Rent_Hlersis_Spore", "TR_m2_Rent_Akamora_Gob", "TR_m2_Rent_InnBetween", "TR_m2_Rent_Necrom_Hostel",
+                "TR_m3_Rent_Meralag_Glade", "TR_m3_Rent_Darnim_Windbrk", "TR_Rent_HuntedHound", "TR_m1_Rent_Avenue",
+                "TR_m2_Rent_Helnim_Drake", "TR_m2_Rent_Helnim_Flower", "TR_m2_Rent_Helnim_Racer", "TR_m2_Rent_Mothrivra_Goblet",
+                "TR_m1_Rent_Black_Ogre", "TR_m1_Rent_Dancing_Jug", "TR_m1_Rent_Howling_Noose", "TR_m1_Rent_Queens_Cutlass", 
+                "TR_m1_Rent_Waters_Shadow", "TR_m3_Rent_Sailen_Toiling", "TR_m3_Rent_Moth_and_Tiger", "TR_m3_Rent_Empress_Katariah", 
+                "TR_m3_Rent_Salty_Futtocks", "TR_m3_Rent_Vhul_Hound", "TR_m3_Rent_Aimrah_Inn", "TR_m3_Rent_AT_HC", "TR_m3_Rent_AT_LS",
+                "TR_m3_Rent_AT_TS",
                 -- miscellaneous variables related to player-specific actions
                 "TR_m3_Kha_Fountain_Cooldown", "TR_m3_Sa_PearlCurseTimer", "TR_m2_445_BlessingA", "TR_m2_445_BlessingS", "TR_m2_445_BlessingV"
             },
@@ -282,9 +282,9 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "TR_m3_Zanammu_LichDead", "TR_m2_q_27_guardkilled", "TR_m2_q_35_dead", "TR_m3_q_4_dead", "TR_m3_OE_TG_AntioDead",
                 "TR_m3_TT_CalitiaPreKilled", "TR_m3_TT_Lloris5IndCount", "TR_m4_VysAssaDead", "TR_m3_KH_kraskiradead",
                 -- other side quests
-				"TR_m3_q_3_thieving", "TR_Pilgrimages", "TR_m3_q_4_info", "TR_m3_q_3_info", "TR_m3_q_3_infoKiseen", "TR_m3_q_3_infoElegel", 
-				"TR_m3_q_3_infoTemple", "TR_m3_q_3_infoFarys", "TR_m3_q_3_infoFarysWife", "TR_m2_q_38_sabotage", "TR_m2_q_38_talkedto", 
-				"TR_m2_q_38_status", "TR_m2_q_A8_6_rushNPC", "TR_m3_q_3_rumour", "TR_m3_Bosvau_stolen", "TR_m3_Bosvau_stolenvalue", 
+                "TR_m3_q_3_thieving", "TR_Pilgrimages", "TR_m3_q_4_info", "TR_m3_q_3_info", "TR_m3_q_3_infoKiseen", "TR_m3_q_3_infoElegel", 
+                "TR_m3_q_3_infoTemple", "TR_m3_q_3_infoFarys", "TR_m3_q_3_infoFarysWife", "TR_m2_q_38_sabotage", "TR_m2_q_38_talkedto", 
+                "TR_m2_q_38_status", "TR_m2_q_A8_6_rushNPC", "TR_m3_q_3_rumour", "TR_m3_Bosvau_stolen", "TR_m3_Bosvau_stolenvalue", 
                 "TR_m3_q_3_guardsGone", "TR_m2_MG_Aka_seeds", "TR_m2_MG_Aka_Francine1", "TR_m2_MG_Aka_karma", "TR_m2_MG_Aka_Polodie1reward",
                 "TR_m2_MG_Aka_tarry", "TR_m3_q_5_Journal_Read", "TR_m3_q_5_distantJulie", "TR_m3_q_5_Journal_Read", "TR_m3_q_5_distantJulie", 
                 "TR_m3_q_OE_MG_GCount", "TR_m3_OE_smuggleeggsfound", "TR_m3_OE_maesabunsale", "TR_m3_OE_FG_q_FledFromVermai", "TR_m3_OE_FG_q_AureCTalk", 
@@ -304,16 +304,16 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
             worldwide = {
                 -- mechanisms
                 "TR_Necrom_StairsState", "TR_Necrom_MachineState", "TR_Necrom_VaultPortR", "TR_Necrom_VaultPortL",
-				"TR_Necrom_DoorState", "TR_m2_445_grindertimer", "TR_m2_445_grinderangle1", "TR_m3_Aim_GilaWallBreak", 
-				"TR_m3_Aim_LighthouseSecretDoor", "TR_m3_OE_pitgate", "TR_m3_OE_CuriaVaultGate2", "TR_m3_OE_sewergate", 
-				"TR_m3_OE_MainGate", "TR_m3_OE_MainGMove", "TR_m2_kmlz_Chef_WaterLevel", "TR_m3_OE_ETCensusBlockDoor", 
-				"TR_m3_OE_CuriaVaultGate", "set TR_m3_OE_CuriaVaultGlobal", "TR_m3_OE_TG_waterlevel", "TR_m3_OE_chapelsewerdoor",
+                "TR_Necrom_DoorState", "TR_m2_445_grindertimer", "TR_m2_445_grinderangle1", "TR_m3_Aim_GilaWallBreak", 
+                "TR_m3_Aim_LighthouseSecretDoor", "TR_m3_OE_pitgate", "TR_m3_OE_CuriaVaultGate2", "TR_m3_OE_sewergate", 
+                "TR_m3_OE_MainGate", "TR_m3_OE_MainGMove", "TR_m2_kmlz_Chef_WaterLevel", "TR_m3_OE_ETCensusBlockDoor", 
+                "TR_m3_OE_CuriaVaultGate", "set TR_m3_OE_CuriaVaultGlobal", "TR_m3_OE_TG_waterlevel", "TR_m3_OE_chapelsewerdoor",
                 "TR_m3_OE_raathim_sarcophagus", "TR_m3_Aim_GilaWallBreak", "TR_m3_q_OE_UrienChest_glb", "TR_Necrom_AllowVaultEntry",
                 -- building construction
-				"TR_m7_NVA_BuildStage", "TR_m3_OE_ETCensus_RepairState", "TR_m3_OE_ETCensus_Stanchion",
-				-- objects
+                "TR_m7_NVA_BuildStage", "TR_m3_OE_ETCensus_RepairState", "TR_m3_OE_ETCensus_Stanchion",
+                -- objects
                 "TR_m3_MaesabunMummyAwake", "TR_m3_AT_LatikaPitcher", "TR_m3_vontuswalk",
-				-- people
+                -- people
                 "TR_m2_WM_Rethrathi", "TR_m2_q_29_shambaludridrea", "TR_m4_TJ_OgrimStatus", "TR_m3_TT_Illene1_ChaseGlobal",
                 -- both
                 "TR_m3_OE_EECq1solve", "TR_m3_OE_EECq2solve",
