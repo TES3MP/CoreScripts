@@ -329,4 +329,39 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
     tableHelper.merge(clientVariableScopes, addedVariableScopes, true)
 end
 
+if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Cyrodiil_Main.esm") then
+
+    local addedVariableScopes = {
+        globals = {
+            ignored = {
+                -- not actually used at all
+                "PC_Q1_2_State", "PC_Q1_4_State", "PC_Q1_5_Travel"
+            },
+            personal = {
+                -- tavern rents
+                "PC_Rent_Stirk_Sloads_Tale", "PC_Rent_Stirk_Safe_Harbor"
+            },
+            quest = {
+                
+            },
+            kills = {
+
+            },
+            faction = {
+                
+            },
+            worldwide = {
+                -- mechanisms
+                "PC_i1_51_Gate_State"
+            },
+            unknown = {
+                
+            }
+        }
+    }
+
+    tableHelper.merge(clientVariableScopes, addedVariableScopes, true)
+end
+
+
 return clientVariableScopes
