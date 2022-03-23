@@ -44,7 +44,9 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
                 "expredoran", "expmagesguild", "expfightersguild", "exptemple", "expmoragtong", "expimperialcult",
                 "expimperiallegion", "expthievesguild",
                 -- quest variables that are already set correctly without being synced
-                "fargothwalk"
+                "fargothwalk",
+                -- not actually used at all
+                "abelmawiacounter"
             },
             personal = {
                 -- player state
@@ -69,7 +71,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
                 -- side quests for rescues
                 "freedslavescounter", "madurarescued",
                 -- other side quests
-                "threadswebspinner", "monopolyvotes", "bone"
+                "threadswebspinner", "monopolyvotes", "bone", "ownershiphhcs"
             },
             kills = {
                 -- main quest
@@ -89,7 +91,6 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
                 "duelactive"
             },
             unknown = {
-                "ownershiphhcs", "abelmawiacounter"
             }
         }
     }
