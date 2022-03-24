@@ -37,7 +37,7 @@ packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.AddObject()
 end
 
@@ -82,7 +82,6 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-
     tes3mp.SetObjectRefId(objectData.refId)
 
     if objectData.summon ~= nil then
@@ -116,7 +115,7 @@ packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectLockLevel(objectData.lockLevel)
     tes3mp.AddObject()
 end
@@ -126,7 +125,7 @@ packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectGoldPool(objectData.goldPool)
     tes3mp.SetObjectLastGoldRestockHour(objectData.lastGoldRestockHour)
     tes3mp.SetObjectLastGoldRestockDay(objectData.lastGoldRestockDay)
@@ -138,7 +137,7 @@ packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectDisarmState(true)
     tes3mp.AddObject()
 end
@@ -148,7 +147,7 @@ packetBuilder.AddObjectScale = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectScale(objectData.scale)
     tes3mp.AddObject()
 end
@@ -158,7 +157,7 @@ packetBuilder.AddObjectState = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectState(objectData.state)
     tes3mp.AddObject()
 end
@@ -168,7 +167,7 @@ packetBuilder.AddDoorState = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
     tes3mp.SetObjectDoorState(objectData.doorState)
     tes3mp.AddObject()
 end
@@ -178,7 +177,7 @@ packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
     local splitIndex = uniqueIndex:split("-")
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
 
     local variableCount = 0
 
