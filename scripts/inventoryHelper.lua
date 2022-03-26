@@ -134,6 +134,14 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
 
     if idealItem.charge ~= nil and comparedItem.charge ~= otherItem.charge then
 
+        if comparedItem.charge == nil then
+            comparedItem.charge = -1
+        end
+
+        if otherItem.charge == nil then
+            otherItem.charge = -1
+        end
+
         local maxValue = math.max(idealItem.charge, comparedItem.charge, otherItem.charge)
 
         if maxValue < 400 then maxValue = maxValue + 400 end
@@ -151,6 +159,14 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
     end
 
     if idealItem.enchantmentCharge ~= nil and comparedItem.enchantmentCharge ~= otherItem.enchantmentCharge then
+
+        if comparedItem.enchantmentCharge == nil then
+            comparedItem.enchantmentCharge = -1
+        end
+
+        if otherItem.enchantmentCharge == nil then
+            otherItem.enchantmentCharge = -1
+        end
 
         local maxValue = math.max(idealItem.enchantmentCharge, comparedItem.enchantmentCharge, otherItem.enchantmentCharge)
 
