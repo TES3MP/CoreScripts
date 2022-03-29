@@ -1336,10 +1336,9 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = objectData[uniqueIndex].refId
-        local lockLevel = objectData[uniqueIndex].lockLevel
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].refId ~= nil and
+            objectData[uniqueIndex].lockLevel ~= nil then
 
-        if refId ~= nil and lockLevel ~= nil then
             packetBuilder.AddObjectLock(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         else
@@ -1362,12 +1361,11 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = objectData[uniqueIndex].refId
-        local goldPool = objectData[uniqueIndex].goldPool
-        local lastGoldRestockHour = objectData[uniqueIndex].lastGoldRestockHour
-        local lastGoldRestockDay = objectData[uniqueIndex].lastGoldRestockDay
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].refId ~= nil and
+            objectData[uniqueIndex].goldPool ~= nil then
 
-        if refId ~= nil and goldPool ~= nil then
+            local lastGoldRestockHour = objectData[uniqueIndex].lastGoldRestockHour
+            local lastGoldRestockDay = objectData[uniqueIndex].lastGoldRestockDay
 
             if lastGoldRestockHour == nil or lastGoldRestockDay == nil then
                 objectData[uniqueIndex].lastGoldRestockHour = 0
@@ -1395,8 +1393,13 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
-        packetBuilder.AddObjectTrap(uniqueIndex, objectData[uniqueIndex])
-        objectCount = objectCount + 1
+
+        if objectData[uniqueIndex] ~= nil then
+            packetBuilder.AddObjectTrap(uniqueIndex, objectData[uniqueIndex])
+            objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
     end
 
     if objectCount > 0 then
@@ -1414,15 +1417,13 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        if objectData[uniqueIndex] ~= nil then
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].refId ~= nil and
+            objectData[uniqueIndex].scale ~= nil then
 
-            local refId = objectData[uniqueIndex].refId
-            local scale = objectData[uniqueIndex].scale
-
-            if refId ~= nil and scale ~= nil then
-                packetBuilder.AddObjectScale(uniqueIndex, objectData[uniqueIndex])
-                objectCount = objectCount + 1
-            end
+            packetBuilder.AddObjectScale(uniqueIndex, objectData[uniqueIndex])
+            objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1441,12 +1442,13 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        local refId = objectData[uniqueIndex].refId
-        local state = objectData[uniqueIndex].state
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].refId ~= nil and
+            objectData[uniqueIndex].state ~= nil then
 
-        if refId ~= nil and state ~= nil then
             packetBuilder.AddObjectState(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
     end
 
@@ -1464,8 +1466,13 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     tes3mp.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
-        packetBuilder.AddDoorState(uniqueIndex, objectData[uniqueIndex])
-        objectCount = objectCount + 1
+
+        if objectData[uniqueIndex] ~= nil then
+            packetBuilder.AddDoorState(uniqueIndex, objectData[uniqueIndex])
+            objectCount = objectCount + 1
+        else
+            tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
+        end
     end
 
     if objectCount > 0 then
