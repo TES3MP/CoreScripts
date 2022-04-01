@@ -186,6 +186,13 @@ function BaseWorld:UpdateFrametimeMultiplier()
     self.frametimeMultiplier = WorldInstance:GetCurrentTimeScale() / WorldInstance.defaultTimeScale
 end
 
+function BaseWorld:GenerateUniqueIndex()
+    local mpNum = self:GetCurrentMpNum() + 1
+    self:SetCurrentMpNum(mpNum)
+    tes3mp.SetCurrentMpNum(mpNum)
+    return 0 .. "-" .. mpNum
+end
+
 function BaseWorld:GetCurrentMpNum()
     return self.coreVariables.currentMpNum
 end

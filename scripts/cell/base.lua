@@ -626,6 +626,17 @@ function BaseCell:SaveDoorStates(objects)
     end
 end
 
+function BaseCell:SaveDoorDestinations(objects)
+
+    for uniqueIndex, object in pairs(objects) do
+
+        self:InitializeObjectData(uniqueIndex, object.refId)
+        self.data.objectData[uniqueIndex].doorDestination = object.doorDestination
+
+        tableHelper.insertValueIfMissing(self.data.packets.doorDestination, uniqueIndex)
+    end
+end
+
 function BaseCell:SaveClientScriptLocals(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -826,6 +837,8 @@ function BaseCell:SaveObjectsByPacketType(packetType, objects)
         self:SaveObjectStates(objects)
     elseif packetType == "DoorState" then
         self:SaveDoorStates(objects)
+    elseif packetType == "DoorDestination" then
+        self:SaveDoorDestinations(objects)
     elseif packetType == "ClientScriptLocal" then
         self:SaveClientScriptLocals(objects)
     end
@@ -1480,6 +1493,23 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
+function BaseCell:LoadDoorDestinations(pid, objectData, uniqueIndexArray, forEveryone)
+    local objectCount = 0
+
+    tes3mp.ClearObjectList()
+    tes3mp.SetObjectListPid(pid)
+    tes3mp.SetObjectListCell(self.description)
+
+    for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
+        packetBuilder.AddDoorDestination(uniqueIndex, objectData[uniqueIndex])
+        objectCount = objectCount + 1
+    end
+
+    if objectCount > 0 then
+        tes3mp.SendDoorDestination(forEveryone)
+    end
+end
+
 function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -2109,6 +2139,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadObjectsMiscellaneous(pid, objectData, packets.miscellaneous)
     self:LoadObjectStates(pid, objectData, packets.state)
     self:LoadDoorStates(pid, objectData, packets.doorState)
+    self:LoadDoorDestinations(pid, objectData, packets.doorDestination)
     self:LoadClientScriptLocals(pid, objectData, packets.clientScriptLocal)
 
     self:LoadContainers(pid, objectData, packets.container)
