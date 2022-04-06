@@ -260,8 +260,6 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "tr_m3_bloodstone_help_O", "tr_m3_bloodstone_help_B", "tr_m3_bloodstone_help_N", "tr_m3_bloodstone_help_L",
                 -- player equipment
                 "TR_m3_OE_MG_wearingrobe", "TR_m3_TT_FS_helm_on", "TR_m3_TT_InqMantle",
-                -- faction expulsion
-                "TR_Kick_FG", "TR_Kick_TG", "TR_Kick_TT", "TR_Kick_IC", "TR_Kick_MG",
                 -- quest variables that are already set correctly without being synced
                 "TR_m3_bloodstonecheck"
             },
@@ -311,7 +309,8 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 
             },
             factionExpulsion = {
-                
+                -- faction expulsion forgiveness and timers
+                "TR_Kick_FG", "TR_Kick_TG", "TR_Kick_TT", "TR_Kick_IC", "TR_Kick_MG"
             },
             worldwide = {
                 -- mechanisms
