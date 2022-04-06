@@ -40,9 +40,6 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
                 "pchasturnin",
                 -- player equipment
                 "wearinglegionuni", "wearingordinatoruni", "wearinghelmhhda", "wraithguardequipped", "tgglove",
-                -- faction expulsion
-                "expredoran", "expmagesguild", "expfightersguild", "exptemple", "expmoragtong", "expimperialcult",
-                "expimperiallegion", "expthievesguild",
                 -- quest variables that are already set correctly without being synced
                 "fargothwalk",
                 -- not actually used at all
@@ -80,7 +77,11 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
                 "ratskilled", "vampkills"
             },
             faction = {
-                "vampclan"
+                -- membership in mini-factions
+                "vampclan",
+                -- faction expulsion forgiveness and timers
+                "expredoran", "expmagesguild", "expfightersguild", "exptemple", "expmoragtong", "expimperialcult",
+                "expimperiallegion", "expthievesguild"
             },
             worldwide = {
                 -- mechanisms
