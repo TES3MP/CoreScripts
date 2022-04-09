@@ -109,10 +109,15 @@ config.shareVideos = true
 -- Which clientside script records should be blanked out so they are not run
 -- Note: By default, the original character generation scripts are included
 --       because they're not suitable for multiplayer
-config.disabledClientScriptIds = { "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet",
-    "CharGenDoorGuardTalker", "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel",
-    "CharGenDialogueMessage", "CharGenDoorEnterCaptain", "CharGenDoorExitCaptain",
-    "CharGenJournalMessage" }
+config.disabledClientScriptIds = {
+    -- original character generation's scripts
+    "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet", "CharGenDoorGuardTalker",
+    "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel", "CharGenDialogueMessage",
+    "CharGenDoorEnterCaptain", "CharGenDoorExitCaptain", "CharGenJournalMessage",
+    -- OpenMW's default blacklist
+    "Museum", "MockChangeScript", "doortestwarp", "WereChange2Script", "wereDreamScript2",
+    "wereDreamScript3"
+}
 
 -- Which clientside scripts should have all of their variables synchronized across players
 -- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
