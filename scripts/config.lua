@@ -123,10 +123,13 @@ config.disabledClientScriptIds = {
 -- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
 --          through variable changes that clients cannot agree on
 config.synchronizedClientScriptIds = {
+    -- mechanisms
     "GG_OpenGate1", "GG_OpenGate2", "Arkn_doors", "nchuleftingthWrong1", "nchuleftingthWrong2",
     "nchulfetingthRight", "Akula_innerdoors", "Dagoth_doors", "SothaLever1", "SothaLever2",
     "SothaLever3", "SothaLever4", "SothaLever5", "SothaLever6", "SothaLever7", "SothaLever8",
-    "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState"
+    "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState",
+    -- quest stages and timers
+    "helsethScript", "KarrodMovement"
 }
 
 -- Whether the instanced spawn should be used instead of the noninstanced one
