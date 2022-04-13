@@ -379,11 +379,11 @@ end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") then
 
-	local addedVariableScopes = {
+    local addedVariableScopes = {
         globals = {
             ignored = {
                 -- game state
-				"Sky_qRe_KG1_global", "Sky_TempVar_glb"
+                "Sky_qRe_KG1_global", "Sky_TempVar_glb"
                 -- quest variables that are already set correctly without being synced
                 "Sky_qRe_DSW04_BreadCounter_glb",
                 -- not actually used at all
@@ -441,8 +441,8 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") th
             },
             worldwide = {
                 -- mechanisms
-				"Sky_iRe_KW_RPVault_glb", "Sky_qRe_KW_MG06_PenumbraState", "Sky_qRe_KWTG06_Button_glb",
-				-- objects
+                "Sky_iRe_KW_RPVault_glb", "Sky_qRe_KW_MG06_PenumbraState", "Sky_qRe_KWTG06_Button_glb",
+                -- objects
                 "Sky_qRe_DSW01_LetterState_glb",
                 -- npc behavior
                 "Sky_qRe_HA1_CultistState_glb", "Sky_qRe_HA3_Sick_glb", "Sky_qRe_KW_MG04_Returned_glb",
