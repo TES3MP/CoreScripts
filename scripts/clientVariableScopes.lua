@@ -383,7 +383,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") th
         globals = {
             ignored = {
                 -- game state
-                "Sky_qRe_KG1_global", "Sky_TempVar_glb"
+                "Sky_qRe_KG1_global", "Sky_TempVar_glb",
                 -- quest variables that are already set correctly without being synced
                 "Sky_qRe_DSW04_BreadCounter_glb",
                 -- not actually used at all
