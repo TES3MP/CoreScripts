@@ -7,18 +7,18 @@ local deadlyItems = { "keening", "sunder" }
 local fixesByCell = {}
 
 -- Delete the chargen boat and associated guards and objects
-fixesByCell["-1, -9"] = { delete =  { 268178, 297457, 297459, 297460, 299125 }}
-fixesByCell["-2, -9"] = { delete = { 172848, 172850, 172852, 289104, 297461, 397559 }}
-fixesByCell["-2, -10"] = { delete = { 297463, 297464, 297465, 297466 }}
+fixesByCell["-1, -9"] = { disable =  { 268178, 297457, 297459, 297460, 299125 }}
+fixesByCell["-2, -9"] = { disable = { 172848, 172850, 172852, 289104, 297461, 397559 }}
+fixesByCell["-2, -10"] = { disable = { 297463, 297464, 297465, 297466 }}
 
 -- Delete the census papers and unlock the doors
-fixesByCell["Seyda Neen, Census and Excise Office"] = { delete = { 172859 }, unlock = { 119513, 172860 }}
+fixesByCell["Seyda Neen, Census and Excise Office"] = { disable = { 172859 }, unlock = { 119513, 172860 }}
 
 function contentFixer.FixCell(pid, cellDescription)
 
     if fixesByCell[cellDescription] ~= nil then
 
-        for packetType, refNumArray in pairs(fixesByCell[cellDescription]) do
+        for action, refNumArray in pairs(fixesByCell[cellDescription]) do
 
             tes3mp.ClearObjectList()
             tes3mp.SetObjectListPid(pid)
@@ -28,13 +28,16 @@ function contentFixer.FixCell(pid, cellDescription)
                 tes3mp.SetObjectRefNum(refNum)
                 tes3mp.SetObjectMpNum(0)
                 tes3mp.SetObjectRefId("")
-                if packetType == "unlock" then tes3mp.SetObjectLockLevel(0) end
+                if action == "disable" then tes3mp.SetObjectState(false) end
+                if action == "unlock" then tes3mp.SetObjectLockLevel(0) end
                 tes3mp.AddObject()
             end
 
-            if packetType == "delete" then
+            if action == "delete" then
                 tes3mp.SendObjectDelete()
-            elseif packetType == "unlock" then
+            elseif action == "disable" then
+                tes3mp.SendObjectState()
+            elseif action == "unlock" then
                 tes3mp.SendObjectLock()
             end
         end
