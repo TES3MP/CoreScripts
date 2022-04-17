@@ -174,6 +174,7 @@ eventHandler.InitializeDefaultHandlers = function()
             end
 
             WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
+            WorldInstance:QuicksaveToDrive()
             tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
 
             table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
@@ -1775,7 +1776,8 @@ eventHandler.OnClientScriptGlobal = function(pid)
             -- when applicable
             for id, variable in pairs(variables) do
 
-                local isKillSync, isQuestSync, isFactionSync, isWorldwideSync = false, false, false, false
+                local isKillSync, isQuestSync, isFactionRanksSync, isFactionExpulsionSync, isWorldwideSync =
+                    false, false, false, false, false
 
                 isKillSync = tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.kills, id)
 
@@ -1785,15 +1787,20 @@ eventHandler.OnClientScriptGlobal = function(pid)
                 end
 
                 if not isQuestSync then
-                    isFactionSync = config.shareFactionRanks == true and
-                        tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.faction, id)
+                    isFactionRanksSync = config.shareFactionRanks == true and
+                        tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.factionRanks, id)
                 end
 
-                if not isFactionSync then
+                if not isFactionRanksSync then
+                    isFactionExpulsionSync = config.shareFactionExpulsion == true and
+                        tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.factionExpulsion, id)
+                end
+
+                if not isFactionExpulsionSync then
                     isWorldwideSync = tableHelper.containsCaseInsensitiveString(clientVariableScopes.globals.worldwide, id)
                 end
 
-                if isKillSync or isQuestSync or isFactionSync or isWorldwideSync then
+                if isKillSync or isQuestSync or isFactionRanksSync or isFactionExpulsionSync or isWorldwideSync then
                     WorldInstance:SaveClientScriptGlobal(variables)
                     shouldSync = true
                 else

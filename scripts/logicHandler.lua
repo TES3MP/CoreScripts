@@ -397,7 +397,8 @@ logicHandler.SendClientScriptSettings = function(pid, forEveryone)
 
     tes3mp.ClearSynchronizedClientGlobalIds()
 
-    for _, variableCategory in pairs({"personal", "quest", "kills", "faction", "worldwide"}) do
+    for _, variableCategory in pairs({"personal", "quest", "kills", "factionRanks",
+        "factionExpulsion", "worldwide"}) do
 
         for _, globalId in pairs(clientVariableScopes.globals[variableCategory]) do
             -- Global IDs are stored as lowercase on the client, so make sure we're
@@ -590,18 +591,31 @@ logicHandler.CreateObjectAtPlayer = function(pid, objectData, packetType)
     return objectUniqueIndex
 end
 
-logicHandler.DeleteObject = function(pid, objectCellDescription, objectUniqueIndex, forEveryone)
+logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEveryone)
 
     tes3mp.ClearObjectList()
     tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(objectCellDescription)
-
-    local splitIndex = objectUniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-
-    tes3mp.AddObject()
+    tes3mp.SetObjectListCell(cellDescription)
+    packetBuilder.AddObjectDelete(uniqueIndex, {})
     tes3mp.SendObjectDelete(forEveryone)
+
+    if forEveryone then
+        -- If the desired cell is not loaded, load it temporarily
+        if LoadedCells[cellDescription] == nil then
+            logicHandler.LoadCell(cellDescription)
+            unloadCellAtEnd = true
+        end
+
+        LoadedCells[cellDescription]:DeleteObjectData(uniqueIndex)
+
+        if tonumber(uniqueIndex:split("-")[1]) > 0 then
+            table.insert(LoadedCells[cellDescription].data.packets.delete, uniqueIndex)
+        end
+
+        if unloadCellAtEnd then
+            logicHandler.UnloadCell(cellDescription)
+        end        
+    end
 end
 
 logicHandler.DeleteObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)

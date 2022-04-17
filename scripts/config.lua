@@ -109,19 +109,27 @@ config.shareVideos = true
 -- Which clientside script records should be blanked out so they are not run
 -- Note: By default, the original character generation scripts are included
 --       because they're not suitable for multiplayer
-config.disabledClientScriptIds = { "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet",
-    "CharGenDoorGuardTalker", "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel",
-    "CharGenDialogueMessage", "CharGenDoorEnterCaptain", "CharGenDoorExitCaptain",
-    "CharGenJournalMessage" }
+config.disabledClientScriptIds = {
+    -- original character generation's scripts
+    "CharGenRaceNPC", "CharGenClassNPC", "CharGenStatsSheet", "CharGenDoorGuardTalker",
+    "CharGenBed", "CharGenStuffRoom", "CharGenFatigueBarrel", "CharGenDialogueMessage",
+    "CharGenDoorEnterCaptain", "CharGenDoorExitCaptain", "CharGenJournalMessage",
+    -- OpenMW's default blacklist
+    "Museum", "MockChangeScript", "doortestwarp", "WereChange2Script", "wereDreamScript2",
+    "wereDreamScript3"
+}
 
 -- Which clientside scripts should have all of their variables synchronized across players
 -- Warning: Make sure whatever scripts you add in here don't cause infinite packet spam
 --          through variable changes that clients cannot agree on
 config.synchronizedClientScriptIds = {
+    -- mechanisms
     "GG_OpenGate1", "GG_OpenGate2", "Arkn_doors", "nchuleftingthWrong1", "nchuleftingthWrong2",
     "nchulfetingthRight", "Akula_innerdoors", "Dagoth_doors", "SothaLever1", "SothaLever2",
     "SothaLever3", "SothaLever4", "SothaLever5", "SothaLever6", "SothaLever7", "SothaLever8",
-    "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState"
+    "SothaLever9", "SothaLever10", "SothaLever11", "SothaOilLever", "LocalState",
+    -- quest stages and timers
+    "helsethScript", "KarrodMovement"
 }
 
 -- Whether the instanced spawn should be used instead of the noninstanced one
