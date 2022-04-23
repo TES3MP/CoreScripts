@@ -291,18 +291,22 @@ end
 --       from the 1st table, unless both tables are arrays and combineArrays is true,
 --       in which case the non-duplicate values in the 2nd table will be added to the 1st
 function tableHelper.merge(mainTable, addedTable, combineArrays)
-    for key, value in pairs(addedTable) do
 
-        if mainTable[key] == nil then
-            mainTable[key] = value
-        elseif type(value) == "table" then
-            if tableHelper.isArray(mainTable[key]) and tableHelper.isArray(value) and combineArrays then
-                tableHelper.insertValues(mainTable[key], value, true)
-            else
+    if tableHelper.isArray(mainTable) and tableHelper.isArray(addedTable) and combineArrays then
+        tableHelper.insertValues(mainTable, addedTable, true)
+    else
+        for key, value in pairs(addedTable) do
+            if mainTable[key] == nil then
+                if type(value) == "table" then
+                    mainTable[key] = tableHelper.shallowCopy(value)
+                else
+                    mainTable[key] = value
+                end
+            elseif type(value) == "table" then
                 tableHelper.merge(mainTable[key], value, combineArrays)
+            else
+                mainTable[key] = value
             end
-        else
-            mainTable[key] = value
         end
     end
 end
