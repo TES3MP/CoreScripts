@@ -1,6 +1,7 @@
 require("utils")
 require("enumerations")
-
+tableHelper = require("tableHelper")
+class = require("classy")
 jsonInterface = require("jsonInterface")
 
 -- Lua's default io library for input/output can't open Unicode filenames on Windows,
@@ -13,8 +14,6 @@ end
 
 require("color")
 require("config")
-class = require("classy")
-tableHelper = require("tableHelper")
 require("time")
 
 customEventHooks = require("customEventHooks")
