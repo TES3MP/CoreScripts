@@ -309,10 +309,14 @@ config.generatedRecordIdPrefix = "$custom"
 -- players, with the correct order ensuring that enchantments are loaded before items that might be
 -- using those enchantments or ensuring that NPCs are loaded after the items they might have in their
 -- inventories
-config.recordStoreLoadOrder = { "gamesetting", "script", "spell", "potion", "enchantment", "bodypart",
-    "armor", "clothing", "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair",
-    "light", "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "cell",
-    "sound" }
+-- Note: Cells are loaded first before anything else so players already inside custom cells are moved
+-- to them correctly on other clients
+config.recordStoreLoadOrder = {
+    { "cell" },
+    { "gamesetting", "script", "spell", "potion", "enchantment", "bodypart", "armor", "clothing",
+      "book", "weapon", "ingredient", "apparatus", "lockpick", "probe", "repair", "light",
+      "miscellaneous", "creature", "npc", "container", "door", "activator", "static", "sound" }
+}
 
 -- The types of records that can be enchanted and therefore have links to enchantment records
 config.enchantableRecordTypes = { "armor", "book", "clothing", "weapon" }

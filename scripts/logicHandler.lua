@@ -529,17 +529,19 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
 
         -- Ensure the visitors to this cell have the records they need for the
         -- objects we've created
-        for _, recordType in pairs(config.recordStoreLoadOrder) do
-            if generatedRecordIdsPerType[recordType] ~= nil then
+        for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+            for _, recordType in ipairs(recordStoreTypes) do
+                if generatedRecordIdsPerType[recordType] ~= nil then
 
-                local recordStore = RecordStores[recordType]
+                    local recordStore = RecordStores[recordType]
 
-                if recordStore ~= nil then
+                    if recordStore ~= nil then
 
-                    local idArray = generatedRecordIdsPerType[recordType]
+                        local idArray = generatedRecordIdsPerType[recordType]
 
-                    for _, visitorPid in pairs(cell.visitors) do
-                        recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, idArray)
+                        for _, visitorPid in pairs(cell.visitors) do
+                            recordStore:LoadGeneratedRecords(visitorPid, recordStore.data.generatedRecords, idArray)
+                        end
                     end
                 end
             end
@@ -709,12 +711,14 @@ logicHandler.GetRecordTypeByRecordId = function(recordId)
         end
     end
 
-    for _, storeType in pairs(config.recordStoreLoadOrder) do
+    for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+        for _, storeType in ipairs(recordStoreTypes) do
 
-        if isGenerated and RecordStores[storeType].data.generatedRecords[recordId] ~= nil then
-            return storeType
-        elseif RecordStores[storeType].data.permanentRecords[recordId] ~= nil then
-            return storeType
+            if isGenerated and RecordStores[storeType].data.generatedRecords[recordId] ~= nil then
+                return storeType
+            elseif RecordStores[storeType].data.permanentRecords[recordId] ~= nil then
+                return storeType
+            end
         end
     end
 
@@ -729,22 +733,24 @@ end
 
 logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
 
-    for _, storeType in ipairs(config.recordStoreLoadOrder) do
-        local recordStore = RecordStores[storeType]
+    for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+        for _, storeType in ipairs(recordStoreTypes) do
+            local recordStore = RecordStores[storeType]
 
-        for _, otherPid in pairs(otherPidsArray) do
-            if pid ~= otherPid then
+            for _, otherPid in pairs(otherPidsArray) do
+                if pid ~= otherPid then
 
-                -- Load the generated records linked to other players
-                if Players[otherPid].data.recordLinks[storeType] ~= nil then
-                    recordStore:LoadGeneratedRecords(pid, recordStore.data.generatedRecords,
-                        Players[otherPid].data.recordLinks[storeType])
-                end
+                    -- Load the generated records linked to other players
+                    if Players[otherPid].data.recordLinks[storeType] ~= nil then
+                        recordStore:LoadGeneratedRecords(pid, recordStore.data.generatedRecords,
+                            Players[otherPid].data.recordLinks[storeType])
+                    end
 
-                -- Make the other players load the generated records linked to us too
-                if Players[pid].data.recordLinks[storeType] ~= nil then
-                    recordStore:LoadGeneratedRecords(otherPid, recordStore.data.generatedRecords,
-                        Players[pid].data.recordLinks[storeType])
+                    -- Make the other players load the generated records linked to us too
+                    if Players[pid].data.recordLinks[storeType] ~= nil then
+                        recordStore:LoadGeneratedRecords(otherPid, recordStore.data.generatedRecords,
+                            Players[pid].data.recordLinks[storeType])
+                    end
                 end
             end
         end

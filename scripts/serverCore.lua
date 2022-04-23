@@ -185,8 +185,10 @@ function OnServerInit()
     if eventStatus.validDefaultHandler then
         logicHandler.InitializeWorld()
 
-        for _, storeType in ipairs(config.recordStoreLoadOrder) do
-            logicHandler.LoadRecordStore(storeType)
+        for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+            for _, storeType in ipairs(recordStoreTypes) do
+                logicHandler.LoadRecordStore(storeType)
+            end
         end
 
         hourCounter = WorldInstance.data.time.hour

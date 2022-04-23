@@ -427,6 +427,15 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
             tes3mp.SendRecordDynamic(pid, false, false)
         end
 
+        -- Load high priority permanent records
+        for _, storeType in ipairs(config.recordStoreLoadOrder[1]) do
+            local recordStore = RecordStores[storeType]
+
+            -- Load all the permanent records in this record store
+            recordStore:LoadRecords(pid, recordStore.data.permanentRecords,
+                tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+        end
+
         tes3mp.SetDifficulty(pid, config.difficulty)
         tes3mp.SetConsoleAllowed(pid, config.allowConsole)
         tes3mp.SetBedRestAllowed(pid, config.allowBedRest)

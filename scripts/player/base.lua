@@ -205,18 +205,25 @@ function BasePlayer:FinishLogin()
 
         if self.data.recordLinks == nil then self.data.recordLinks = {} end
 
-        for _, storeType in ipairs(config.recordStoreLoadOrder) do
-            local recordStore = RecordStores[storeType]
+        -- Load high priority records linked to us, then load lower priority permanent
+        -- records and lower priority records linked to this player
+        for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+            for _, storeType in ipairs(recordStoreTypes) do
+                local recordStore = RecordStores[storeType]
 
-            if recordStore ~= nil then
-                -- Load all the permanent records in this record store
-                recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
-                    tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+                if recordStore ~= nil then
+                    -- Skip permanent records from high priority stores here because those
+                    -- were already loaded upon first connecting to the server
+                    if priorityLevel > 1 then
+                        recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
+                            tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+                    end
 
-                -- Load the generated records linked to us in this record store
-                if self.data.recordLinks[storeType] ~= nil then
-                    recordStore:LoadGeneratedRecords(self.pid, recordStore.data.generatedRecords,
-                        self.data.recordLinks[storeType])
+                    -- Load the generated records linked to us in this record store
+                    if self.data.recordLinks[storeType] ~= nil then
+                        recordStore:LoadGeneratedRecords(self.pid, recordStore.data.generatedRecords,
+                            self.data.recordLinks[storeType])
+                    end
                 end
             end
         end
@@ -335,12 +342,17 @@ function BasePlayer:EndCharGen()
         spawnUsed = config.noninstancedSpawn
     end
 
-    for _, storeType in ipairs(config.recordStoreLoadOrder) do
-        local recordStore = RecordStores[storeType]
+    -- Load lower priority permanent records
+    for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+        if priorityLevel > 1 then
+            for _, storeType in ipairs(recordStoreTypes) do
+                local recordStore = RecordStores[storeType]
 
-        -- Load all the permanent records in this record store
-        recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
-            tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+                -- Load all the permanent records in this record store
+                recordStore:LoadRecords(self.pid, recordStore.data.permanentRecords,
+                    tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
+            end
+        end
     end
 
     if config.shareJournal == true then
