@@ -37,6 +37,12 @@ config.gameSettings = {
     { name = "always allow stealing from knocked out actors", value = false }
 }
 
+-- The VR settings to enforce for players
+config.vrSettings = {
+    { name = "realistic combat minimum swing velocity", value = 1.0 },
+    { name = "realistic combat maximum swing velocity", value = 4.0 }
+}
+
 -- The world time used for a newly created world
 config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
     daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }
