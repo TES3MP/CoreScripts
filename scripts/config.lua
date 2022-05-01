@@ -49,9 +49,11 @@ config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
 
 -- The chat window instructions that show up when players join the server
 config.chatWindowInstructions = color.White .. "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
-    " from your client config. Type in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
-    " available to you. Type in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to become " ..
-    "your ally. Use " .. color.Yellow .. "F2" .. color.White .. " by default to hide the chat window.\n"
+    " from your client config.\nType in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
+    " available to you.\nType in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to become " ..
+    "your ally so their followers don't react to your friendly fire.\nUse " .. color.Yellow .. "F2" .. color.White ..
+    " by default to hide the chat window or use the " .. color.Yellow .. "Chat Window Mode" .. color.White .. " button from " ..
+    "your left controller menu if you're in VR.\n"
 
 -- The startup scripts instructions that show up when the startup scripts have not been run yet
 config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. " For some actors and objects to have their correct" ..
