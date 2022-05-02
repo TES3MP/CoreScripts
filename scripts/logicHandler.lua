@@ -602,6 +602,7 @@ logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEvery
     tes3mp.SendObjectDelete(forEveryone)
 
     if forEveryone then
+        local unloadCellAtEnd = false
         -- If the desired cell is not loaded, load it temporarily
         if LoadedCells[cellDescription] == nil then
             logicHandler.LoadCell(cellDescription)
