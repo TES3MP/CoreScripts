@@ -653,6 +653,16 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SetPlayerAsObject(pid)
     tes3mp.AddObject()
 
+    -- Track the fact that these clients are allowed to process this console
+    -- command at the moment
+    if forEveryone then
+        for otherPid, player in pairs(Players) do
+            table.insert(Players[otherPid].consoleCommandsQueued, consoleCommand)
+        end
+    elseif Players[pid] ~= nil then
+        table.insert(Players[pid].consoleCommandsQueued, consoleCommand)
+    end
+
     -- Depending on what the console command is, you may or may not want to send it
     -- to all the players; experiment if you're not sure
     tes3mp.SendConsoleCommand(forEveryone)
@@ -674,6 +684,14 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
         tes3mp.SetObjectMpNum(splitIndex[2])
 
         tes3mp.AddObject()
+    end
+
+    -- Track the fact that these clients are allowed to process this console
+    -- command at the moment
+    if forEveryone then
+        for otherPid, player in pairs(Players) do
+            table.insert(Players[otherPid].consoleCommandsQueued, consoleCommand)
+        end
     end
 
     tes3mp.SendConsoleCommand(forEveryone, false)

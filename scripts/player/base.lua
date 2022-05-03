@@ -132,6 +132,7 @@ function BasePlayer:__init(pid, playerName)
     self.generatedRecordsReceived = {}
     self.unresolvedEnchantments = {}
     self.previousEquipment = {}
+    self.consoleCommandsQueued = {}
 
     self.hasFinishedInitialTeleportation = false
 end
