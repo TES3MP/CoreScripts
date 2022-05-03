@@ -18,7 +18,8 @@ config.maxClientsPerIP = 3
 config.difficulty = 0
 
 -- The game settings to enforce for players
--- Note 1: Anything from the [Game] category in settings-default.cfg can be added here
+-- Note 1: Anything from OpenMW's game settings can be added here, which means anything listed
+--         on https://openmw.readthedocs.io/en/latest/reference/modding/settings/game.html
 -- Note 2: Some settings, such as "difficulty" and "actors processing range", cannot be
 --         changed from here
 config.gameSettings = {
