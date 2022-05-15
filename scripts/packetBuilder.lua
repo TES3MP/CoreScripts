@@ -21,8 +21,10 @@ packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
             if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
-                    tes3mp.AddSpellActiveEffect(pid, effectTable.id, effectTable.magnitude,
-                        effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                    if effectTable.timeLeft > 0 then
+                        tes3mp.AddSpellActiveEffect(pid, effectTable.id, effectTable.magnitude,
+                            effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                    end
                 end
             end
 
@@ -247,8 +249,10 @@ packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, ac
             if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
-                    tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
-                        effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                    if effectTable.timeLeft > 0 then
+                        tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
+                            effectTable.duration, effectTable.timeLeft, effectTable.arg)
+                    end
                 end
             end
 

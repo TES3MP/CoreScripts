@@ -168,10 +168,14 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
                     arg = tes3mp.GetSpellsActiveEffectArg(pid, changesIndex, effectIndex)
                 }
 
-                table.insert(spellInstance.effects, effect)
+                if effect.timeLeft > 0 then
+                    table.insert(spellInstance.effects, effect)
+                end
             end
 
-            table.insert(packetTable.spellsActive[spellId], spellInstance)
+            if tableHelper.getCount(spellInstance.effects) > 0 then
+                table.insert(packetTable.spellsActive[spellId], spellInstance)
+            end
         end
     elseif packetType == "PlayerCooldowns" then
         packetTable.cooldowns = {}
@@ -304,10 +308,14 @@ packetReader.GetActorPacketTables = function(packetType)
                         arg = tes3mp.GetActorSpellsActiveEffectArg(packetIndex, spellIndex, effectIndex)
                     }
 
-                    table.insert(spellInstance.effects, effect)
+                    if effect.timeLeft > 0 then
+                        table.insert(spellInstance.effects, effect)
+                    end
                 end
 
-                table.insert(actor.spellsActive[spellId], spellInstance)
+                if tableHelper.getCount(spellInstance.effects) > 0 then
+                    table.insert(actor.spellsActive[spellId], spellInstance)
+                end
             end
         elseif packetType == "ActorDeath" then
 
