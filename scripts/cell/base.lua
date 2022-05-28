@@ -1266,6 +1266,9 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
 
     if objectCount > 0 then
         tes3mp.SendObjectPlace(forEveryone)
+        -- The object rotation isn't set correctly via ObjectPlace in clients without a certain hotfix,
+        -- so set it separately here
+        tes3mp.SendObjectRotate(forEveryone)
     end
 end
 
