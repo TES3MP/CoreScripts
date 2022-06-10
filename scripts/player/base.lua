@@ -132,6 +132,7 @@ function BasePlayer:__init(pid, playerName)
     self.generatedRecordsReceived = {}
     self.unresolvedEnchantments = {}
     self.previousEquipment = {}
+    self.consoleCommandsQueued = {}
 
     self.hasFinishedInitialTeleportation = false
 end
@@ -1746,6 +1747,12 @@ function BasePlayer:LoadSettings()
 
     for _, settingPairTable in pairs(config.gameSettings) do
         tes3mp.SetGameSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
+    end
+
+    tes3mp.ClearVRSettingValues(self.pid)
+
+    for _, settingPairTable in pairs(config.vrSettings) do
+        tes3mp.SetVRSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
     end
 
     tes3mp.SendSettings(self.pid)

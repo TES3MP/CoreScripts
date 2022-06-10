@@ -152,6 +152,24 @@ eventHandler.InitializeDefaultValidators = function()
         end
     end)
 
+    -- Don't allow console commands from players who lack the permissions for them and haven't been asked
+    -- to run the console commands by the server itself; kick them instead
+    customEventHooks.registerValidator("OnConsoleCommand", function(eventStatus, pid, cellDescription, consoleCommand,
+        objects, targetPlayers)
+
+        local hasConsoleCommandQueued = tableHelper.containsValue(Players[pid].consoleCommandsQueued, consoleCommand)
+
+        if not logicHandler.IsPlayerAllowedConsole(pid) and not hasConsoleCommandQueued then
+            local debugMessage = "Rejected ConsoleCommand from " .. logicHandler.GetChatName(pid) ..
+                " about " .. cellDescription .. " and kicked them due to them not being allowed to" ..
+                " use the console"
+            debugMessage = debugMessage .. "\n- consoleCommand: " .. consoleCommand
+            tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
+            tes3mp.Kick(pid)
+            return customEventHooks.makeEventStatus(false, false)
+        end
+    end)
+
 end
 
 eventHandler.InitializeDefaultHandlers = function()
@@ -1423,6 +1441,22 @@ eventHandler.OnConsoleCommand = function(pid, cellDescription)
 
             for targetPid, targetPlayer in pairs(targetPlayers) do
                 debugMessage = debugMessage .. "\n- player target: " .. logicHandler.GetChatName(targetPid)
+            end
+
+            local isQueuedConsoleCommand = false
+
+            -- Clear this only once from the console commands queued for this player, if found in that table
+            for arrayIndex, consoleCommandQueued in pairs(Players[pid].consoleCommandsQueued) do
+                if consoleCommandQueued == consoleCommand then
+                    Players[pid].consoleCommandsQueued[arrayIndex] = nil
+                    isQueuedConsoleCommand = true
+                    debugMessage = debugMessage .. "\n- was a console command executed at the server's request"
+                    break
+                end
+            end
+
+            if not isQueuedConsoleCommand then
+                debugMessage = debugMessage .. "\n- was a console command executed unilaterally from the client"
             end
 
             tes3mp.LogMessage(enumerations.log.INFO, debugMessage)

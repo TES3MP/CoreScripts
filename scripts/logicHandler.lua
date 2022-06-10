@@ -602,6 +602,7 @@ logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEvery
     tes3mp.SendObjectDelete(forEveryone)
 
     if forEveryone then
+        local unloadCellAtEnd = false
         -- If the desired cell is not loaded, load it temporarily
         if LoadedCells[cellDescription] == nil then
             logicHandler.LoadCell(cellDescription)
@@ -652,6 +653,16 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SetPlayerAsObject(pid)
     tes3mp.AddObject()
 
+    -- Track the fact that these clients are allowed to process this console
+    -- command at the moment
+    if forEveryone then
+        for otherPid, player in pairs(Players) do
+            table.insert(Players[otherPid].consoleCommandsQueued, consoleCommand)
+        end
+    elseif Players[pid] ~= nil then
+        table.insert(Players[pid].consoleCommandsQueued, consoleCommand)
+    end
+
     -- Depending on what the console command is, you may or may not want to send it
     -- to all the players; experiment if you're not sure
     tes3mp.SendConsoleCommand(forEveryone)
@@ -667,9 +678,6 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
     tes3mp.SetObjectListCell(cellDescription)
     tes3mp.SetObjectListConsoleCommand(consoleCommand)
 
-    -- Set the object state to deal with the oversight mentioned below
-    tes3mp.SetObjectState(true)
-
     for _, uniqueIndex in pairs(objectUniqueIndexes) do
         local splitIndex = uniqueIndex:split("-")
         tes3mp.SetObjectRefNum(splitIndex[1])
@@ -678,10 +686,13 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
         tes3mp.AddObject()
     end
 
-    -- Due to an oversight, console command packets do not include the cell for their
-    -- associated objects; as a result, the last cell received by players in an unrelated
-    -- object packet is used instead, so send them a dummy packet for that sake
-    tes3mp.SendObjectState(forEveryone, false)
+    -- Track the fact that these clients are allowed to process this console
+    -- command at the moment
+    if forEveryone then
+        for otherPid, player in pairs(Players) do
+            table.insert(Players[otherPid].consoleCommandsQueued, consoleCommand)
+        end
+    end
 
     tes3mp.SendConsoleCommand(forEveryone, false)
 end

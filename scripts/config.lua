@@ -18,7 +18,8 @@ config.maxClientsPerIP = 3
 config.difficulty = 0
 
 -- The game settings to enforce for players
--- Note 1: Anything from the [Game] category in settings-default.cfg can be added here
+-- Note 1: Anything from OpenMW's game settings can be added here, which means anything listed
+--         on https://openmw.readthedocs.io/en/latest/reference/modding/settings/game.html
 -- Note 2: Some settings, such as "difficulty" and "actors processing range", cannot be
 --         changed from here
 config.gameSettings = {
@@ -37,15 +38,23 @@ config.gameSettings = {
     { name = "always allow stealing from knocked out actors", value = false }
 }
 
+-- The VR settings to enforce for players
+config.vrSettings = {
+    { name = "realistic combat minimum swing velocity", value = 1.0 },
+    { name = "realistic combat maximum swing velocity", value = 4.0 }
+}
+
 -- The world time used for a newly created world
 config.defaultTimeTable = { year = 427, month = 7, day = 16, hour = 9,
     daysPassed = 1, dayTimeScale = 30, nightTimeScale = 40 }
 
 -- The chat window instructions that show up when players join the server
 config.chatWindowInstructions = color.White .. "Use " .. color.Yellow .. "Y" .. color.White .. " by default to chat or change it" ..
-    " from your client config. Type in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
-    " available to you. Type in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to become " ..
-    "your ally. Use " .. color.Yellow .. "F2" .. color.White .. " by default to hide the chat window.\n"
+    " from your client config.\nType in " .. color.Yellow .. "/help" .. color.White .. " to see the commands" ..
+    " available to you.\nType in " .. color.Yellow .. "/invite <pid>" .. color.White .. " to invite a player to become " ..
+    "your ally so their followers don't react to your friendly fire.\nUse " .. color.Yellow .. "F2" .. color.White ..
+    " by default to hide the chat window or use the " .. color.Yellow .. "Chat Window Mode" .. color.White .. " button from " ..
+    "your left controller menu if you're in VR.\n"
 
 -- The startup scripts instructions that show up when the startup scripts have not been run yet
 config.startupScriptsInstructions = color.Red .. "Warning: " .. color.White .. " For some actors and objects to have their correct" ..
