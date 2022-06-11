@@ -1,5 +1,8 @@
 local commandHandler = {}
 
+---@param pid integer
+---@param cmd string
+---@return boolean
 function commandHandler.ProcessCommand(pid, cmd)
 
     if cmd[1] == nil then
@@ -1018,6 +1021,8 @@ function commandHandler.ProcessCommand(pid, cmd)
     end
 end
 
+---@param pid integer
+---@param cmd string
 function commandHandler.StoreRecord(pid, cmd)
 
     if Players[pid].data.customVariables == nil then
@@ -1235,6 +1240,8 @@ function commandHandler.StoreRecord(pid, cmd)
     end
 end
 
+---@param pid integer
+---@param cmd string
 function commandHandler.CreateRecord(pid, cmd)
 
     if Players[pid].data.customVariables == nil then

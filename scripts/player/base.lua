@@ -2,6 +2,8 @@ require("config")
 require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
+
+---@class Player
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid, playerName)
@@ -166,6 +168,7 @@ function BasePlayer:ConvertPlaintextPassword()
     self.data.login.password = nil
 end
 
+---@param clientPasswordHash string
 function BasePlayer:Register(clientPasswordHash)
     self.loggedIn = true
     self.isNewlyRegistered = true
@@ -404,26 +407,33 @@ function BasePlayer:EndCharGen()
     self:RunPlayerSpecificStartupScripts()
 end
 
+---@return boolean
 function BasePlayer:IsLoggedIn()
     return self.loggedIn
 end
 
+---@return boolean
 function BasePlayer:IsServerStaff()
     return self.data.settings.staffRank > 0
 end
 
+---@return boolean
 function BasePlayer:IsServerOwner()
     return self.data.settings.staffRank == 3
 end
 
+---@return boolean
 function BasePlayer:IsAdmin()
     return self.data.settings.staffRank >= 2
 end
 
+---@return boolean
 function BasePlayer:IsModerator()
     return self.data.settings.staffRank >= 1
 end
 
+---@param storeType string
+---@param recordId number
 function BasePlayer:AddLinkToRecord(storeType, recordId)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end
@@ -445,6 +455,8 @@ function BasePlayer:AddLinkToRecord(storeType, recordId)
     end
 end
 
+---@param storeType string
+---@param recordId number
 function BasePlayer:RemoveLinkToRecord(storeType, recordId)
 
     local recordStore = RecordStores[storeType]
@@ -468,30 +480,36 @@ function BasePlayer:RemoveLinkToRecord(storeType, recordId)
     end
 end
 
+---@return number
 function BasePlayer:GetHealthCurrent()
     self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
     return self.data.stats.healthCurrent
 end
 
+---@param health number
 function BasePlayer:SetHealthCurrent(health)
     self.data.stats.healthCurrent = health
     tes3mp.SetHealthCurrent(self.pid, health)
 end
 
+---@return number
 function BasePlayer:GetHealthBase()
     self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
     return self.data.stats.healthBase
 end
 
+---@param health number
 function BasePlayer:SetHealthBase(health)
     self.data.stats.healthBase = health
     tes3mp.SetHealthBase(self.pid, health)
 end
 
+---@return boolean
 function BasePlayer:HasAccount()
     return self.hasAccount
 end
 
+---@param message string
 function BasePlayer:Message(message)
     tes3mp.SendMessage(self.pid, message, false)
 end
@@ -664,6 +682,8 @@ function BasePlayer:DeleteSummons()
     end
 end
 
+---@param packetType string
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveDataByPacketType(packetType, playerPacket)
     if packetType == "PlayerAttribute" then
         self:SaveAttributes(playerPacket)
@@ -772,6 +792,7 @@ function BasePlayer:LoadStatsDynamic()
     tes3mp.SendStatsDynamic(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveStatsDynamic(playerPacket)
 
     local healthBase = playerPacket.stats.healthBase
@@ -813,6 +834,7 @@ function BasePlayer:LoadAttributes()
     tes3mp.SendAttributes(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveAttributes(playerPacket)
 
     for attributeName in pairs(self.data.attributes) do
@@ -868,6 +890,7 @@ function BasePlayer:LoadSkills()
     tes3mp.SendSkills(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveSkills(playerPacket)
 
     for skillName in pairs(self.data.skills) do
@@ -913,6 +936,7 @@ function BasePlayer:LoadLevel()
     tes3mp.SendLevel(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveLevel(playerPacket)
     self.data.stats.level = playerPacket.stats.level
     self.data.stats.levelProgress = playerPacket.stats.levelProgress
@@ -933,6 +957,7 @@ function BasePlayer:LoadShapeshift()
     tes3mp.SendShapeshift(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveShapeshift(playerPacket)
 
     if self.data.shapeshift == nil then self.data.shapeshift = {} end
@@ -980,6 +1005,7 @@ function BasePlayer:LoadCell()
     end
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveCell(playerPacket)
 
     if self.data.location == nil then self.data.location = {} end
@@ -1022,6 +1048,7 @@ function BasePlayer:LoadEquipment()
     tes3mp.SendEquipment(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveEquipment(playerPacket)
 
     local reloadAtEnd = false
@@ -1091,11 +1118,13 @@ function BasePlayer:CleanInventory()
     end
 end
 
--- Send a packet with some specific item changes to the player, to avoid having
--- to resend the entire inventory
---
--- Note: This just sends a packet, so the same item changes should be applied to
---       self.data.inventory separately
+---Send a packet with some specific item changes to the player, to avoid having
+---to resend the entire inventory
+---
+---Note: This just sends a packet, so the same item changes should be applied to
+---      self.data.inventory separately
+---@param itemArray unknown[]
+---@param inventoryAction string
 function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
 
     tes3mp.ClearInventoryChanges(self.pid)
@@ -1131,6 +1160,7 @@ function BasePlayer:LoadInventory()
     tes3mp.SendInventoryChanges(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveInventory(playerPacket)
 
     local action = playerPacket.action
@@ -1227,6 +1257,7 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpellbookChanges(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveSpellbook(playerPacket)
 
     local action = playerPacket.action
@@ -1313,6 +1344,7 @@ function BasePlayer:LoadSpellsActive()
     end
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveSpellsActive(playerPacket)
 
     local action = playerPacket.action
@@ -1388,6 +1420,7 @@ function BasePlayer:LoadCooldowns()
     end
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveCooldowns(playerPacket)
 
     for _, cooldown in pairs(playerPacket.cooldowns) do
@@ -1411,6 +1444,7 @@ function BasePlayer:LoadQuickKeys()
     tes3mp.SendQuickKeyChanges(self.pid)
 end
 
+---@param playerPacket PlayerPacket
 function BasePlayer:SaveQuickKeys(playerPacket)
 
     for slot, quickKey in pairs(playerPacket.quickKeys) do
@@ -1611,6 +1645,7 @@ function BasePlayer:GetPhysicsFramerate()
     return self.data.settings.physicsFramerate
 end
 
+---@param difficulty number
 function BasePlayer:SetDifficulty(difficulty)
     if difficulty == nil or difficulty == "default" then
         difficulty = config.difficulty
@@ -1624,6 +1659,7 @@ function BasePlayer:SetDifficulty(difficulty)
         logicHandler.GetChatName(self.pid))
 end
 
+---@param enforcedLogLevel number
 function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
     if enforcedLogLevel == nil or enforcedLogLevel == "default" then
         enforcedLogLevel = config.enforcedLogLevel
@@ -1637,6 +1673,7 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
         " for " .. logicHandler.GetChatName(self.pid))
 end
 
+---@param physicsFramerate number
 function BasePlayer:SetPhysicsFramerate(physicsFramerate)
     if physicsFramerate == nil or physicsFramerate == "default" then
         physicsFramerate = config.physicsFramerate
@@ -1650,6 +1687,7 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
         " for " .. logicHandler.GetChatName(self.pid))
 end
 
+---@param state boolean
 function BasePlayer:SetConsoleAllowed(state)
     if state == nil or state == "default" then
         state = config.allowConsole
@@ -1661,6 +1699,7 @@ function BasePlayer:SetConsoleAllowed(state)
     tes3mp.SetConsoleAllowed(self.pid, state)
 end
 
+---@param state boolean
 function BasePlayer:SetBedRestAllowed(state)
     if state == nil or state == "default" then
         state = config.allowBedRest
@@ -1672,6 +1711,7 @@ function BasePlayer:SetBedRestAllowed(state)
     tes3mp.SetBedRestAllowed(self.pid, state)
 end
 
+---@param state boolean
 function BasePlayer:SetWildernessRestAllowed(state)
     if state == nil or state == "default" then
         state = config.allowWildernessRest
@@ -1683,6 +1723,7 @@ function BasePlayer:SetWildernessRestAllowed(state)
     tes3mp.SetWildernessRestAllowed(self.pid, state)
 end
 
+---@param state boolean
 function BasePlayer:SetWaitAllowed(state)
     if state == nil or state == "default" then
         state = config.allowWait
@@ -1694,6 +1735,7 @@ function BasePlayer:SetWaitAllowed(state)
     tes3mp.SetWaitAllowed(self.pid, state)
 end
 
+---@param state boolean
 function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
@@ -1701,6 +1743,7 @@ function BasePlayer:SetWerewolfState(state)
     tes3mp.SendShapeshift(self.pid)
 end
 
+---@param scale number
 function BasePlayer:SetScale(scale)
     self.data.shapeshift.scale = scale
 
@@ -1708,6 +1751,7 @@ function BasePlayer:SetScale(scale)
     tes3mp.SendShapeshift(self.pid)
 end
 
+---@param state boolean
 function BasePlayer:SetConfiscationState(state)
 
     self.data.customVariables.isConfiscationTarget = state
@@ -1765,6 +1809,7 @@ function BasePlayer:LoadSpecialStates()
     end
 end
 
+---@param cellDescription string
 function BasePlayer:AddCellLoaded(cellDescription)
 
     -- Only add new loaded cell if we don't already have it
@@ -1773,6 +1818,7 @@ function BasePlayer:AddCellLoaded(cellDescription)
     end
 end
 
+---@param cellDescription string
 function BasePlayer:RemoveCellLoaded(cellDescription)
 
     tableHelper.removeValue(self.cellsLoaded, cellDescription)

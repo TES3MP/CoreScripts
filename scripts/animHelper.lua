@@ -11,6 +11,9 @@ local generalAnimAliases = { act_impatient = "idle6", check_missing_item = "idle
 local femaleAnimAliases = { adjust_hair = "idle4", touch_hip = "idle5" }
 local beastAnimAliases = { act_confused = "idle9", look_around = "idle2", touch_hands = "idle6" }
 
+---@param pid integer
+---@param animAlias string
+---@return string
 function animHelper.GetAnimation(pid, animAlias)
 
     -- Is this animation included in the default animation names?
@@ -49,6 +52,8 @@ function animHelper.GetAnimation(pid, animAlias)
     return "invalid"
 end
 
+---@param pid integer
+---@return string
 function animHelper.GetValidList(pid)
 
     local validList = {}
@@ -89,6 +94,9 @@ function animHelper.GetValidList(pid)
     return tableHelper.concatenateFromIndex(validList, 1, ", ")
 end
 
+---@param pid integer
+---@param animAlias string
+---@return boolean
 function animHelper.PlayAnimation(pid, animAlias)
 
     local defaultAnim = animHelper.GetAnimation(pid, animAlias)

@@ -1,4 +1,9 @@
 -- Helper functions
+
+---@param pid integer
+---@return boolean
+---@return boolean
+---@return boolean
 local getRanks = function(pid)
     local serverOwner = false
     local admin = false
@@ -18,6 +23,7 @@ local getRanks = function(pid)
     return moderator, admin, serverOwner
 end
 
+---@param pid integer
 local invalidCommand = function(pid)
     local message = "Not a valid command. Type /help for more info.\n"
     tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
@@ -26,6 +32,9 @@ end
 defaultCommands = {}
 
 -- Commands
+
+---@param pid integer
+---@param cmd string
 defaultCommands.msg = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't message yourself.\n")
@@ -43,6 +52,8 @@ end
 customCommandHooks.registerCommand("msg", defaultCommands.msg)
 customCommandHooks.registerCommand("message", defaultCommands.msg)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.inviteAlly = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't invite yourself to be your own ally.\n")
@@ -74,6 +85,8 @@ end
 
 customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
+---@param pid intgeger
+---@param cmd string
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't join yourself as your own ally.\n")
@@ -109,6 +122,8 @@ end
 
 customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.leaveTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
         tes3mp.SendMessage(pid, "You can't leave an alliance with yourself.\n")
@@ -140,6 +155,8 @@ end
 
 customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
     tes3mp.SendMessage(pid, message, true)
@@ -147,6 +164,8 @@ end
 
 customCommandHooks.registerCommand("me", defaultCommands.me)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.localMessage = function(pid, cmd)
     local cellDescription = Players[pid].data.location.cell
 
@@ -163,6 +182,8 @@ end
 customCommandHooks.registerCommand("local", defaultCommands.localMessage)
 customCommandHooks.registerCommand("l", defaultCommands.localMessage)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.greentext = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
             ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
@@ -172,6 +193,8 @@ end
 customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
 customCommandHooks.registerCommand("gt", defaultCommands.greentext)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.ban = function(pid, cmd)
 
     local moderator, admin, serverOwner = getRanks(pid)
@@ -208,6 +231,8 @@ end
 
 customCommandHooks.registerCommand("ban", defaultCommands.ban)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.unban = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -238,6 +263,8 @@ end
 
 customCommandHooks.registerCommand("unban", defaultCommands.unban)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.banlist = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -291,6 +318,8 @@ end
 
 customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.ipaddresses = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -323,6 +352,8 @@ end
 customCommandHooks.registerCommand("ipaddresses", defaultCommands.ipaddresses)
 customCommandHooks.registerCommand("ips", defaultCommands.ipaddresses)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.players = function(pid, cmd)
     guiHelper.ShowPlayerList(pid)
 end
@@ -330,6 +361,8 @@ end
 customCommandHooks.registerCommand("players", defaultCommands.players)
 customCommandHooks.registerCommand("list", defaultCommands.players)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.cells = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -343,6 +376,8 @@ end
 
 customCommandHooks.registerCommand("cells", defaultCommands.cells)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.regions = function(pid, cmd)
     local moderator, admin, serverOwner = getRanks(pid)
 
@@ -356,6 +391,8 @@ end
 
 customCommandHooks.registerCommand("regions", defaultCommands.regions)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.overrideDestination = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
@@ -415,6 +452,8 @@ end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.runStartup = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
@@ -436,6 +475,8 @@ end
 
 customCommandHooks.registerCommand("runstartup", defaultCommands.runStartup)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.resetCell = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
@@ -457,6 +498,8 @@ end
 
 customCommandHooks.registerCommand("resetcell", defaultCommands.resetCell)
 
+---@param pid integer
+---@param cmd string
 defaultCommands.setPlayerModel = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 

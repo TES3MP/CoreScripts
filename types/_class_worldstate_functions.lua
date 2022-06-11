@@ -19,7 +19,7 @@ function api.CopyReceivedWorldstateToStore() end
 function api.ClearMapChanges() end
 
 ---Get the number of indexes in the read worldstate's map changes.
----@return number
+---@return integer
 function api.GetMapChangesSize() end
 
 ---Get the weather region in the read worldstate.
@@ -27,29 +27,29 @@ function api.GetMapChangesSize() end
 function api.GetWeatherRegion() end
 
 ---Get the current weather in the read worldstate.
----@return number
+---@return integer
 function api.GetWeatherCurrent() end
 
 ---Get the next weather in the read worldstate.
----@return number
+---@return integer
 function api.GetWeatherNext() end
 
 ---Get the queued weather in the read worldstate.
----@return number
+---@return integer
 function api.GetWeatherQueued() end
 
 ---Get the transition factor of the weather in the read worldstate.
----@return number
+---@return integer
 function api.GetWeatherTransitionFactor() end
 
 ---Get the X coordinate of the cell corresponding to the map tile at a certain index in the read worldstate's map tiles.
----@param index number @The index of the map tile.
----@return number
+---@param index integer @The index of the map tile.
+---@return integer
 function api.GetMapTileCellX(index) end
 
 ---Get the Y coordinate of the cell corresponding to the map tile at a certain index in the read worldstate's map tiles.
----@param index number @The index of the map tile.
----@return number
+---@param index integer @The index of the map tile.
+---@return integer
 function api.GetMapTileCellY(index) end
 
 ---Set the region affected by the next WorldRegionAuthority packet sent.
@@ -67,43 +67,43 @@ function api.SetWeatherRegion(region) end
 function api.SetWeatherForceState(forceState) end
 
 ---Set the current weather in the write-only worldstate stored on the server.
----@param currentWeather number @The current weather.
+---@param currentWeather integer @The current weather.
 function api.SetWeatherCurrent(currentWeather) end
 
 ---Set the next weather in the write-only worldstate stored on the server.
----@param nextWeather number @The next weather.
+---@param nextWeather integer @The next weather.
 function api.SetWeatherNext(nextWeather) end
 
 ---Set the queued weather in the write-only worldstate stored on the server.
----@param queuedWeather number @The queued weather.
+---@param queuedWeather integer @The queued weather.
 function api.SetWeatherQueued(queuedWeather) end
 
 ---Set the transition factor for the weather in the write-only worldstate stored on the server.
----@param transitionFactor number @The transition factor.
+---@param transitionFactor integer @The transition factor.
 function api.SetWeatherTransitionFactor(transitionFactor) end
 
 ---Set the world's hour in the write-only worldstate stored on the server.
----@param hour number @The hour.
+---@param hour integer @The hour.
 function api.SetHour(hour) end
 
 ---Set the world's day in the write-only worldstate stored on the server.
----@param day number @The day.
+---@param day integer @The day.
 function api.SetDay(day) end
 
 ---Set the world's month in the write-only worldstate stored on the server.
----@param month number @The month.
+---@param month integer @The month.
 function api.SetMonth(month) end
 
 ---Set the world's year in the write-only worldstate stored on the server.
----@param year number @The year.
+---@param year integer @The year.
 function api.SetYear(year) end
 
 ---Set the world's days passed in the write-only worldstate stored on the server.
----@param daysPassed number @The days passed.
+---@param daysPassed integer @The days passed.
 function api.SetDaysPassed(daysPassed) end
 
 ---Set the world's time scale in the write-only worldstate stored on the server.
----@param timeScale number @The time scale.
+---@param timeScale integer @The time scale.
 function api.SetTimeScale(timeScale) end
 
 ---Set the collision state for other players in the write-only worldstate stored on the server.
@@ -130,42 +130,42 @@ function api.AddEnforcedCollisionRefId(refId) end
 function api.ClearEnforcedCollisionRefIds() end
 
 ---Save the .png image data of the map tile at a certain index in the read worldstate's map changes.
----@param index number @The index of the map tile.
+---@param index integer @The index of the map tile.
 ---@param filePath string @The file path of the resulting file.
 function api.SaveMapTileImageFile(index, filePath) end
 
 ---Load a .png file as the image data for a map tile and add it to the write-only worldstate stored on the server.
----@param cellX number @The X coordinate of the cell corresponding to the map tile.
----@param cellY number @The Y coordinate of the cell corresponding to the map tile.
+---@param cellX integer @The X coordinate of the cell corresponding to the map tile.
+---@param cellY integer @The Y coordinate of the cell corresponding to the map tile.
 ---@param filePath string @The file path of the loaded file.
 function api.LoadMapTileImageFile(cellX, cellY, filePath) end
 
 ---Send a WorldRegionAuthority packet establishing a certain player as the only one who should process certain region-specific events (such as weather changes).
 ---
 ---It is always sent to all players.
----@param pid number @The player ID attached to the packet.
+---@param pid integer @The player ID attached to the packet.
 function api.SendWorldRegionAuthority(pid) end
 
 ---Send a WorldMap packet with the current set of map changes in the write-only worldstate.
----@param pid number @The player ID attached to the packet.
+---@param pid integer @The player ID attached to the packet.
 ---@param sendToOtherPlayers boolean
 ---@param skipAttachedPlayer boolean
 function api.SendWorldMap(pid, sendToOtherPlayers, skipAttachedPlayer) end
 
 ---Send a WorldTime packet with the current time and time scale in the write-only worldstate.
----@param pid number @The player ID attached to the packet.
+---@param pid integer @The player ID attached to the packet.
 ---@param sendToOtherPlayers boolean|nil @Whether this packet should be sent to players other than the player attached to the packet (false by default).
 ---@param skipAttachedPlayer boolean|nil @Whether the packet should skip being sent to the player attached to the packet (false by default).
 function api.SendWorldTime(pid, sendToOtherPlayers, skipAttachedPlayer) end
 
 ---Send a WorldWeather packet with the current weather in the write-only worldstate.
----@param pid number @The player ID attached to the packet.
+---@param pid integer @The player ID attached to the packet.
 ---@param sendToOtherPlayers boolean|nil @Whether this packet should be sent to players other than the player attached to the packet (false by default).
 ---@param skipAttachedPlayer boolean|nil @Whether the packet should skip being sent to the player attached to the packet (false by default).
 function api.SendWorldWeather(pid, sendToOtherPlayers, skipAttachedPlayer) end
 
 ---Send a WorldCollisionOverride packet with the current collision overrides in the write-only worldstate.
----@param pid number @The player ID attached to the packet.
+---@param pid integer @The player ID attached to the packet.
 ---@param sendToOtherPlayers boolean|nil @Whether this packet should be sent to players other than the player attached to the packet (false by default).
 ---@param skipAttachedPlayer boolean|nil @Whether the packet should skip being sent to the player attached to the packet (false by default).
 function api.SendWorldCollisionOverride(pid, sendToOtherPlayers, skipAttachedPlayer) end

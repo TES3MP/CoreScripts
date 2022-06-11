@@ -206,6 +206,7 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
         packetTable.journal = {}
 
         for changesIndex = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+            ---@type JournalItem
             local journalItem = {
                 type = tes3mp.GetJournalItemType(pid, changesIndex),
                 index = tes3mp.GetJournalItemIndex(pid, changesIndex),

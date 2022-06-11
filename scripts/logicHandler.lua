@@ -9,6 +9,7 @@ packetReader = require("packetReader")
 
 local logicHandler = {}
 
+---@type table<number, Player>
 Players = {}
 LoadedCells = {}
 RecordStores = {}
@@ -780,6 +781,17 @@ logicHandler.GetCellContainingActor = function(actorUniqueIndex)
     return nil
 end
 
+---@param cell Cell
+---@param actorUniqueIndex integer
+---@param action integer
+---@param targetPid integer
+---@param targetUniqueIndex integer
+---@param posX number
+---@param posY number
+---@param posZ number
+---@param distance number
+---@param duration integer
+---@param shouldRepeat boolean
 logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid, targetUniqueIndex,
     posX, posY, posZ, distance, duration, shouldRepeat)
 

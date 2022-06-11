@@ -2,11 +2,11 @@
 local api
 
 ---Shut down the server.
----@param code number @The shutdown code.
+---@param code integer @The shutdown code.
 function api.StopServer(code) end
 
 ---Kick a certain player from the server.
----@param pid number @The player ID.
+---@param pid integer @The player ID.
 function api.Kick(pid) end
 
 ---Ban a certain IP address from the server.
@@ -38,21 +38,21 @@ function api.GetServerVersion() end
 function api.GetProtocolVersion() end
 
 ---Get the average ping of a certain player.
----@param pid number @The player ID.
----@return number
+---@param pid integer @The player ID.
+---@return integer
 function api.GetAvgPing(pid) end
 
 ---Get the IP address of a certain player.
----@param pid number @The player ID.
+---@param pid integer @The player ID.
 ---@return string
 function api.GetIP(pid) end
 
 ---Get the port used by the server.
----@return number
+---@return integer
 function api.GetPort() end
 
 ---Get the maximum number of players.
----@return number
+---@return integer
 function api.GetMaxPlayers() end
 
 ---Checking if the server requires a password to connect.
@@ -102,7 +102,7 @@ function api.SetRuleString(key, value) end
 
 ---Set a rule value for the server details displayed in the server browser.
 ---@param key string @The name of the rule.
----@param value number @The numerical value of the rule.
+---@param value integer @The numerical value of the rule.
 function api.SetRuleValue(key, value) end
 
 ---Adds plugins to the internal server structure to validate players.

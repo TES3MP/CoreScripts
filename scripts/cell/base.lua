@@ -5,6 +5,7 @@ tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
 packetBuilder = require("packetBuilder")
 
+---@class Cell
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
@@ -53,6 +54,9 @@ function BaseCell:__init(cellDescription)
     end
 end
 
+---@param posX number
+---@param posY number
+---@return boolean
 function BaseCell:ContainsPosition(posX, posY)
 
     local cellSize = 8192
@@ -69,6 +73,7 @@ function BaseCell:ContainsPosition(posX, posY)
     return true
 end
 
+---@return boolean
 function BaseCell:HasEntry()
     return self.hasEntry
 end
@@ -100,6 +105,9 @@ end
 
 -- Adding record links to cells is special because we'll keep track of the uniqueIndex
 -- of every object that uses a particular generated record
+---@param storeType any
+---@param recordId any
+---@param uniqueIndex any
 function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end
@@ -122,6 +130,9 @@ function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
     end
 end
 
+---@param storeType any
+---@param recordId any
+---@param uniqueIndex any
 function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
 
     local recordStore = RecordStores[storeType]
@@ -173,6 +184,7 @@ function BaseCell:GetVisitorCount()
     return tableHelper.getCount(self.visitors)
 end
 
+---@param pid integer
 function BaseCell:AddVisitor(pid)
 
     -- Only add new visitor if we don't already have them

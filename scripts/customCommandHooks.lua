@@ -24,40 +24,54 @@ local customCommandHooks = {}
 
 local specialCharacter = "/"
 
+---@type table<string, CommandCallback>
 customCommandHooks.commands = {}
+---@type table<string, number>
 customCommandHooks.rankRequirement = {}
+---@type table<string, string[]>
 customCommandHooks.nameRequirement = {}
 
+---@param cmd string
+---@param callback CommandCallback
 function customCommandHooks.registerCommand(cmd, callback)
     customCommandHooks.commands[cmd] = callback 
 end
 
+---@param cmd string
 function customCommandHooks.removeCommand(cmd)
     customCommandHooks.commands[cmd] = nil 
     customCommandHooks.rankRequirement[cmd] = nil
     customCommandHooks.nameRequirement[cmd] = nil
 end
 
+---@param cmd string
 function customCommandHooks.getCallback(cmd)
     return customCommandHooks.commands[cmd]
 end
 
+---@param cmd string
+---@param rank number
 function customCommandHooks.setRankRequirement(cmd, rank)
     if customCommandHooks.commands[cmd] ~= nil then
         customCommandHooks.rankRequirement[cmd] = rank
     end
 end
 
+---@param cmd string
 function customCommandHooks.removeRankRequirement(cmd)
     customCommandHooks.rankRequirement[cmd] = nil
 end
 
+---@param cmd string
+---@param names string[]
 function customCommandHooks.setNameRequirement(cmd, names)
     if customCommandHooks.commands[cmd] ~= nil then
         customCommandHooks.nameRequirement[cmd] = names
     end
 end
 
+---@param cmd string
+---@param name string
 function customCommandHooks.addNameRequirement(cmd, name)
     if customCommandHooks.commands[cmd] ~= nil then
         if customCommandHooks.nameRequirement[cmd] == nil then
@@ -67,10 +81,15 @@ function customCommandHooks.addNameRequirement(cmd, name)
     end
 end
 
+---@param cmd string
 function customCommandHooks.removeNameRequirement(cmd)
     customCommandHooks.nameRequirement[cmd] = nil
 end
 
+---@param eventStatus EventStatus
+---@param pid integer
+---@param message string
+---@return EventStatus
 function customCommandHooks.validator(eventStatus, pid, message)
     if message:sub(1,1) == specialCharacter then
         local cmd = (message:sub(2, #message)):split(" ")

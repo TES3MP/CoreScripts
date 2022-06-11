@@ -14,6 +14,8 @@ fixesByCell["-2, -10"] = { disable = { 297463, 297464, 297465, 297466 }}
 -- Delete the census papers and unlock the doors
 fixesByCell["Seyda Neen, Census and Excise Office"] = { disable = { 172859 }, unlock = { 119513, 172860 }}
 
+---@param pid integer
+---@param cellDescription string
 function contentFixer.FixCell(pid, cellDescription)
 
     if fixesByCell[cellDescription] ~= nil then
@@ -49,7 +51,7 @@ end
 -- Note: Items with constant damage effects like Whitewalker and the Mantle of Woe
 --       are already unequipped by default in the TES3MP client, so this only needs
 --       to account for scripted items that are missed there
---
+---@param pid integer
 function contentFixer.UnequipDeadlyItems(pid)
 
     local itemsFound = 0
@@ -68,6 +70,7 @@ function contentFixer.UnequipDeadlyItems(pid)
     end
 end
 
+---@param pid integer
 function contentFixer.AdjustSharedCorprusState(pid)
 
     local corprusId = "corprus"
@@ -106,6 +109,7 @@ function contentFixer.AdjustSharedCorprusState(pid)
     end
 end
 
+---@param journal JournalItem[]
 function contentFixer.AdjustWorldCorprusVariables(journal)
 
     local madeAdjustment = false
@@ -124,19 +128,22 @@ function contentFixer.AdjustWorldCorprusVariables(journal)
     return madeAdjustment
 end
 
-customEventHooks.registerHandler("OnPlayerJournal", function(eventStatus, pid, playerPacket)
-    if config.shareJournal == true then
-        local madeAdjustment = contentFixer.AdjustWorldCorprusVariables(playerPacket.journal)
+customEventHooks.registerHandler("OnPlayerJournal", 
+    ---@param playerPacket PlayerPacket
+    function(eventStatus, pid, playerPacket)
+        if config.shareJournal == true then
+            local madeAdjustment = contentFixer.AdjustWorldCorprusVariables(playerPacket.journal)
 
-        if madeAdjustment == true then
-            for otherPid, otherPlayer in pairs(Players) do
-                if otherPid ~= pid then
-                    contentFixer.AdjustSharedCorprusState(otherPid)
+            if madeAdjustment == true then
+                for otherPid, otherPlayer in pairs(Players) do
+                    if otherPid ~= pid then
+                        contentFixer.AdjustSharedCorprusState(otherPid)
+                    end
                 end
             end
         end
     end
-end)
+)
 
 customEventHooks.registerHandler("OnPlayerFinishLogin", function(eventStatus, pid)
     if config.shareJournal == true then

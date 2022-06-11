@@ -1,5 +1,11 @@
 local inventoryHelper = {}
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@param charge integer|nil
+---@param enchantmentCharge integer|nil
+---@param soul string|nil
+---@return boolean
 function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul)
 
     if charge ~= nil then charge = math.floor(charge) end
@@ -28,6 +34,12 @@ function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharg
     return false
 end
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@param charge integer|nil
+---@param enchantmentCharge integer|nil
+---@param soul string|nil
+---@return integer|nil
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
 
     if charge ~= nil then charge = math.floor(charge) end
@@ -56,6 +68,9 @@ function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharg
     return nil
 end
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@return integer[]
 function inventoryHelper.getItemIndexes(inventory, refId)
 
     local indexes = {}
@@ -69,6 +84,12 @@ function inventoryHelper.getItemIndexes(inventory, refId)
     return indexes
 end
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@param count integer
+---@param charge integer
+---@param enchantmentCharge integer
+---@param soul string
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
@@ -76,6 +97,7 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
 
         inventory[index].count = inventory[index].count + count
     else
+        ---@type ObjectData
         local item = {}
         item.refId = refId
         item.count = count
@@ -87,8 +109,12 @@ function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCha
     end
 end
 
--- Return true if an item (comparedItem) is closer to a desired item (idealItem) than
--- another item is (otherItem)
+---Return true if an item (comparedItem) is closer to a desired item (idealItem) than
+---another item is (otherItem)
+---@param idealItem ObjectData
+---@param comparedItem ObjectData
+---@param otherItem ObjectData
+---@return boolean
 function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherItem)
 
     if comparedItem == otherItem then
@@ -191,6 +217,12 @@ function inventoryHelper.compareClosenessToItem(idealItem, comparedItem, otherIt
     return false
 end
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@param count integer
+---@param charge integer
+---@param enchantmentCharge integer
+---@param soul string
 function inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId) then
@@ -243,6 +275,12 @@ function inventoryHelper.removeClosestItem(inventory, refId, count, charge, ench
     end
 end
 
+---@param inventory ObjectData[]
+---@param refId integer
+---@param count integer
+---@param charge integer
+---@param enchantmentCharge integer
+---@param soul string
 function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
@@ -256,7 +294,13 @@ function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchan
     end
 end
 
--- Deprecated
+---Deprecated
+---@param inventory ObjectData[]
+---@param refId integer
+---@param count integer
+---@param charge integer
+---@param enchantmentCharge integer
+---@param soul string
 function inventoryHelper.removeItem(inventory, refId, count, charge, enchantmentCharge, soul)
     return inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 end

@@ -8,14 +8,14 @@ function api.ReadReceivedObjectList() end
 function api.ClearObjectList() end
 
 ---Set the pid attached to the ObjectList.
----@param pid number @The player ID to whom the object list should be attached.
+---@param pid integer @The player ID to whom the object list should be attached.
 function api.SetObjectListPid(pid) end
 
 ---Take the contents of the read-only object list last received by the server from a player and move its contents to the stored object list that can be sent by the server.
 function api.CopyReceivedObjectListToStore() end
 
 ---Get the number of indexes in the read object list.
----@return number
+---@return integer
 function api.GetObjectListSize() end
 
 ---Get the origin of the read object list.
@@ -39,230 +39,230 @@ function api.GetObjectListContainerSubAction() end
 ---Check whether the object at a certain index in the read object list is a player.
 ---
 ---Note: Although most player data and events are dealt with in Player packets, object activation is general enough for players themselves to be included as objects in ObjectActivate packets.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return boolean
 function api.IsObjectPlayer(index) end
 
 ---Get the player ID of the object at a certain index in the read object list, only valid if the object is a player.
 ---
 ---Note: Currently, players can only be objects in ObjectActivate and ConsoleCommand packets.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectPid(index) end
 
 ---Get the refId of the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return string
 function api.GetObjectRefId(index) end
 
 ---Get the refNum of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectRefNum(index) end
 
 ---Get the mpNum of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectMpNum(index) end
 
 ---Get the count of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectCount(index) end
 
 ---Get the charge of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectCharge(index) end
 
 ---Get the enchantment charge of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectEnchantmentCharge(index) end
 
 ---Get the soul of the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return string
 function api.GetObjectSoul(index) end
 
 ---Get the gold value of the object at a certain index in the read object list.
 ---
 ---This is used solely to get the gold value of gold. It is not used for other objects.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectGoldValue(index) end
 
 ---Get the object scale of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectScale(index) end
 
 ---Get the object state of the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return boolean
 function api.GetObjectState(index) end
 
 ---Get the door state of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectDoorState(index) end
 
 ---Get the lock level of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectLockLevel(index) end
 
 ---Check whether the object at a certain index in the read object list has been activated by a player.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return boolean
 function api.DoesObjectHavePlayerActivating(index) end
 
 ---Get the player ID of the player activating the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectActivatingPid(index) end
 
 ---Get the refId of the actor activating the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return string
 function api.GetObjectActivatingRefId(index) end
 
 ---Get the refNum of the actor activating the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectActivatingRefNum(index) end
 
 ---Get the mpNum of the actor activating the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectActivatingMpNum(index) end
 
 ---Get the name of the actor activating the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return string
 function api.GetObjectActivatingName(index) end
 
 ---Check whether the object at a certain index in the read object list is a summon.
 ---
 ---Only living actors can be summoned.
----@param index number
+---@param index integer
 ---@return boolean
 function api.GetObjectSummonState(index) end
 
 ---Get the summon duration of the object at a certain index in the read object list.
 ---
 ---Note: Returns -1 if indefinite.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectSummonDuration(index) end
 
 ---Check whether the object at a certain index in the read object list has a player as its summoner.
 ---
 ---Only living actors can be summoned.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return boolean
 function api.DoesObjectHavePlayerSummoner(index) end
 
 ---Get the player ID of the summoner of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectSummonerPid(index) end
 
 ---Get the refId of the actor summoner of the object at a certain index in the read object list.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return string
 function api.GetObjectSummonerRefId(index) end
 
 ---Get the refNum of the actor summoner of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectSummonerRefNum(index) end
 
 ---Get the mpNum of the actor summoner of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectSummonerMpNum(index) end
 
 ---Get the X position of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectPosX(index) end
 
 ---Get the Y position of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectPosY(index) end
 
 ---Get the Z position at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectPosZ(index) end
 
 ---Get the X rotation of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectRotX(index) end
 
 ---Get the Y rotation of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectRotY(index) end
 
 ---Get the Z rotation of the object at a certain index in the read object list.
----@param index number @The index of the object.
----@return number
+---@param index integer @The index of the object.
+---@return integer
 function api.GetObjectRotZ(index) end
 
 ---Get the videoFilename of the object at a certain index in the read object list.
----@param index number
+---@param index integer
 ---@return string
 function api.GetVideoFilename(index) end
 
 ---Get the number of container item indexes of the object at a certain index in the read object list.
----@param objectIndex number
----@return number
+---@param objectIndex integer
+---@return integer
 function api.GetContainerChangesSize(objectIndex) end
 
 ---Get the refId of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
 ---@return string
 function api.GetContainerItemRefId(objectIndex, itemIndex) end
 
 ---Get the item count of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
----@return number
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
+---@return integer
 function api.GetContainerItemCount(objectIndex, itemIndex) end
 
 ---Get the charge of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
----@return number
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
+---@return integer
 function api.GetContainerItemCharge(objectIndex, itemIndex) end
 
 ---Get the enchantment charge of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
----@return number
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
+---@return integer
 function api.GetContainerItemEnchantmentCharge(objectIndex, itemIndex) end
 
 ---Get the soul of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
 ---@return string
 function api.GetContainerItemSoul(objectIndex, itemIndex) end
 
 ---Get the action count of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
----@return number
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
+---@return integer
 function api.GetContainerItemActionCount(objectIndex, itemIndex) end
 
 ---Check whether the object at a certain index in the read object list has a container.
 ---
 ---Note: Only ObjectLists from ObjectPlace packets contain this information. Objects from received ObjectSpawn packets can always be assumed to have a container.
----@param index number @The index of the object.
+---@param index integer @The index of the object.
 ---@return boolean
 function api.DoesObjectHaveContainer(index) end
 
@@ -289,31 +289,31 @@ function api.SetObjectRefId(refId) end
 ---Set the refNum of the temporary object stored on the server.
 ---
 ---On the other hand, objects placed or spawned via the server should always have a refNum of 0.
----@param refNum number @The refNum.
+---@param refNum integer @The refNum.
 function api.SetObjectRefNum(refNum) end
 
 ---Set the mpNum of the temporary object stored on the server.
 ---
 ---Objects loaded from .ESM and .ESP data files should always have an mpNum of 0, because they have unique refNumes instead.
----@param mpNum number @The mpNum.
+---@param mpNum integer @The mpNum.
 function api.SetObjectMpNum(mpNum) end
 
 ---Set the object count of the temporary object stored on the server.
 ---
 ---This determines the quantity of an object, with the exception of gold.
----@param count number @The object count.
+---@param count integer @The object count.
 function api.SetObjectCount(count) end
 
 ---Set the charge of the temporary object stored on the server.
 ---
 ---Object durabilities are set through this value.
----@param charge number @The charge.
+---@param charge integer @The charge.
 function api.SetObjectCharge(charge) end
 
 ---Set the enchantment charge of the temporary object stored on the server.
 ---
 ---Object durabilities are set through this value.
----@param enchantmentCharge number
+---@param enchantmentCharge integer
 function api.SetObjectEnchantmentCharge(enchantmentCharge) end
 
 ---Set the soul of the temporary object stored on the server.
@@ -323,13 +323,13 @@ function api.SetObjectSoul(soul) end
 ---Set the gold value of the temporary object stored on the server.
 ---
 ---This is used solely to set the gold value for gold. It has no effect on other objects.
----@param goldValue number @The gold value.
+---@param goldValue integer @The gold value.
 function api.SetObjectGoldValue(goldValue) end
 
 ---Set the scale of the temporary object stored on the server.
 ---
 ---Objects are smaller or larger than their default size based on their scale.
----@param scale number @The scale.
+---@param scale integer @The scale.
 function api.SetObjectScale(scale) end
 
 ---Set the object state of the temporary object stored on the server.
@@ -339,7 +339,7 @@ function api.SetObjectScale(scale) end
 function api.SetObjectState(objectState) end
 
 ---Set the lock level of the temporary object stored on the server.
----@param lockLevel number @The lock level.
+---@param lockLevel integer @The lock level.
 function api.SetObjectLockLevel(lockLevel) end
 
 ---Set the summon duration of the temporary object stored on the server.
@@ -357,25 +357,25 @@ function api.SetObjectDisarmState(disarmState) end
 function api.SetObjectSummonState(summonState) end
 
 ---Set the position of the temporary object stored on the server.
----@param x number @The X position.
----@param y number @The Y position.
----@param z number @The Z position.
+---@param x integer @The X position.
+---@param y integer @The Y position.
+---@param z integer @The Z position.
 function api.SetObjectPosition(x, y, z) end
 
 ---Set the rotation of the temporary object stored on the server.
----@param x number @The X rotation.
----@param y number @The Y rotation.
----@param z number @The Z rotation.
+---@param x integer @The X rotation.
+---@param y integer @The Y rotation.
+---@param z integer @The Z rotation.
 function api.SetObjectRotation(x, y, z) end
 
 ---Set the player ID of the player activating the temporary object stored on the server. Currently only used for ObjectActivate packets.
----@param pid number @The pid of the player.
+---@param pid integer @The pid of the player.
 function api.SetObjectActivatingPid(pid) end
 
 ---Set the door state of the temporary object stored on the server.
 ---
 ---Doors are open or closed based on their door state.
----@param doorState number @The door state.
+---@param doorState integer @The door state.
 function api.SetObjectDoorState(doorState) end
 
 ---Set the teleport state of the temporary object stored on the server.
@@ -391,20 +391,20 @@ function api.SetObjectDoorTeleportState(teleportState) end
 function api.SetObjectDoorDestinationCell(cellDescription) end
 
 ---Set the door destination position of the temporary object stored on the server.
----@param x number @The X position.
----@param y number @The Y position.
----@param z number @The Z position.
+---@param x integer @The X position.
+---@param y integer @The Y position.
+---@param z integer @The Z position.
 function api.SetObjectDoorDestinationPosition(x, y, z) end
 
 ---Set the door destination rotation of the temporary object stored on the server.
 ---
 ---Note: Because this sets the rotation a player will have upon using the door, and rotation on the Y axis has no effect on players, the Y value has been omitted as an argument.
----@param x number @The X rotation.
----@param z number @The Z rotation.
+---@param x integer @The X rotation.
+---@param z integer @The Z rotation.
 function api.SetObjectDoorDestinationRotation(x, z) end
 
 ---Set a player as the object in the temporary object stored on the server. Currently only used for ConsoleCommand packets.
----@param pid number @The pid of the player.
+---@param pid integer @The pid of the player.
 function api.SetPlayerAsObject(pid) end
 
 ---Set the refId of the temporary container item stored on the server.
@@ -412,15 +412,15 @@ function api.SetPlayerAsObject(pid) end
 function api.SetContainerItemRefId(refId) end
 
 ---Set the item count of the temporary container item stored on the server.
----@param count number @The item count.
+---@param count integer @The item count.
 function api.SetContainerItemCount(count) end
 
 ---Set the charge of the temporary container item stored on the server.
----@param charge number @The charge.
+---@param charge integer @The charge.
 function api.SetContainerItemCharge(charge) end
 
 ---Set the enchantment charge of the temporary container item stored on the server.
----@param enchantmentCharge number
+---@param enchantmentCharge integer
 function api.SetContainerItemEnchantmentCharge(enchantmentCharge) end
 
 ---Set the soul of the temporary container item stored on the server.
@@ -430,9 +430,9 @@ function api.SetContainerItemSoul(soul) end
 ---Set the action count of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the object list stored on the server.
 ---
 ---When resending a received Container packet, this allows you to correct the amount of items removed from a container by a player when it conflicts with what other players have already taken.
----@param objectIndex number @The index of the object.
----@param itemIndex number @The index of the container item.
----@param actionCount number @The action count.
+---@param objectIndex integer @The index of the object.
+---@param itemIndex integer @The index of the container item.
+---@param actionCount integer @The action count.
 function api.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount) end
 
 ---Add a copy of the server's temporary object to the server's currently stored object list.
@@ -514,15 +514,15 @@ function api.ReadLastObjectList() end
 
 function api.ReadLastEvent() end
 
----@param pid number
+---@param pid integer
 function api.InitializeObjectList(pid) end
 
----@param pid number
+---@param pid integer
 function api.InitializeEvent(pid) end
 
 function api.CopyLastObjectListToStore() end
 
----@return number
+---@return integer
 function api.GetObjectChangesSize() end
 
 ---@return string
@@ -531,12 +531,12 @@ function api.GetEventAction() end
 ---@return string
 function api.GetEventContainerSubAction() end
 
----@param index number
----@return number
+---@param index integer
+---@return integer
 function api.GetObjectRefNumIndex(index) end
 
----@param index number
----@return number
+---@param index integer
+---@return integer
 function api.GetObjectSummonerRefNumIndex(index) end
 
 ---@param cellDescription string
@@ -548,7 +548,7 @@ function api.SetEventAction(action) end
 ---@param consoleCommand string
 function api.SetEventConsoleCommand(consoleCommand) end
 
----@param refNum number
+---@param refNum integer
 function api.SetObjectRefNumIndex(refNum) end
 
 function api.AddWorldObject() end
