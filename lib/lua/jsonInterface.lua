@@ -20,7 +20,9 @@ function jsonInterface.setLibrary(ioLibrary)
     jsonInterface.ioLibrary = ioLibrary
 end
 
--- Remove all text from before the actual JSON content starts
+---Remove all text from before the actual JSON content starts
+---@param content string
+---@return string
 function jsonInterface.removeHeader(content)
 
     local closestBracketIndex
@@ -37,6 +39,8 @@ function jsonInterface.removeHeader(content)
     return content:sub(closestBracketIndex)
 end
 
+---@param fileName string
+---@return unknown|nil
 function jsonInterface.load(fileName)
 
     if jsonInterface.ioLibrary == nil then
@@ -76,7 +80,9 @@ function jsonInterface.load(fileName)
     end
 end
 
-
+---@param fileName string
+---@param content any
+---@return boolean
 function jsonInterface.writeToFile(fileName, content)
 
     if jsonInterface.ioLibrary == nil then
@@ -96,8 +102,12 @@ function jsonInterface.writeToFile(fileName, content)
     end
 end
 
--- Save data to JSON in a slower but human-readable way, with identation and a specific order
--- to the keys, provided via dkjson
+---Save data to JSON in a slower but human-readable way, with identation and a specific order
+---to the keys, provided via dkjson
+---@param fileName string
+---@param data any
+---@param keyOrderArray boolean
+---@return boolean
 function jsonInterface.save(fileName, data, keyOrderArray)
 
     local content = dkjson.encode(data, { indent = true, keyorder = keyOrderArray })
@@ -105,8 +115,11 @@ function jsonInterface.save(fileName, data, keyOrderArray)
     return jsonInterface.writeToFile(fileName, content)
 end
 
--- Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
--- that need to be saved over and over
+---Save data to JSON in a fast but minimized way, provided via Lua CJSON, ideal for large files
+---that need to be saved over and over
+---@param fileName string
+---@param data any
+---@return boolean
 function jsonInterface.quicksave(fileName, data)
 
     if cjsonExists then

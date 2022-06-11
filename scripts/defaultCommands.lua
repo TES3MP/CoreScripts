@@ -85,7 +85,7 @@ end
 
 customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
----@param pid intgeger
+---@param pid integer
 ---@param cmd string
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
