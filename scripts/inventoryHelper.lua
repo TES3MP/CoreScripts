@@ -3,7 +3,7 @@ local inventoryHelper = {}
 ---@param inventory ObjectData[]
 ---@param refId integer
 ---@param charge integer|nil
----@param enchantmentCharge integer|nil
+---@param enchantmentCharge number|nil
 ---@param soul string|nil
 ---@return boolean
 function inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul)
@@ -37,7 +37,7 @@ end
 ---@param inventory ObjectData[]
 ---@param refId integer
 ---@param charge integer|nil
----@param enchantmentCharge integer|nil
+---@param enchantmentCharge number|nil
 ---@param soul string|nil
 ---@return integer|nil
 function inventoryHelper.getItemIndex(inventory, refId, charge, enchantmentCharge, soul)
@@ -88,7 +88,7 @@ end
 ---@param refId integer
 ---@param count integer
 ---@param charge integer
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 ---@param soul string
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -221,7 +221,7 @@ end
 ---@param refId integer
 ---@param count integer
 ---@param charge integer
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 ---@param soul string
 function inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -279,7 +279,7 @@ end
 ---@param refId integer
 ---@param count integer
 ---@param charge integer
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 ---@param soul string
 function inventoryHelper.removeExactItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
@@ -299,7 +299,7 @@ end
 ---@param refId integer
 ---@param count integer
 ---@param charge integer
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 ---@param soul string
 function inventoryHelper.removeItem(inventory, refId, count, charge, enchantmentCharge, soul)
     return inventoryHelper.removeClosestItem(inventory, refId, count, charge, enchantmentCharge, soul)

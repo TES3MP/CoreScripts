@@ -19,7 +19,7 @@ function api.SetEnforcedLogLevel(pid, enforcedLogLevel) end
 ---
 ---This changes the physics framerate for that player in the server memory, but does not by itself send a packet.
 ---@param pid integer @The player ID.
----@param physicsFramerate integer @The physics framerate.
+---@param physicsFramerate number @The physics framerate.
 function api.SetPhysicsFramerate(pid, physicsFramerate) end
 
 ---Set whether the console is allowed for a player.

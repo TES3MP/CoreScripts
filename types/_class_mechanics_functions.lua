@@ -13,27 +13,27 @@ function api.GetMarkCell(pid) end
 
 ---Get the X position of a player's Mark.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMarkPosX(pid) end
 
 ---Get the Y position of a player's Mark.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMarkPosY(pid) end
 
 ---Get the Z position of a player's Mark.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMarkPosZ(pid) end
 
 ---Get the X rotation of a player's Mark.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMarkRotX(pid) end
 
 ---Get the Z rotation of a player's Mark.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMarkRotZ(pid) end
 
 ---Get the ID of a player's selected spell.
@@ -92,17 +92,17 @@ function api.SetMarkCell(pid, cellDescription) end
 ---
 ---This changes the Mark positional coordinates recorded for that player in the server memory, but does not by itself send a packet.
 ---@param pid integer @The player ID.
----@param x integer @The X position.
----@param y integer @The Y position.
----@param z integer @The Z position.
+---@param x number @The X position.
+---@param y number @The Y position.
+---@param z number @The Z position.
 function api.SetMarkPos(pid, x, y, z) end
 
 ---Set the Mark rotation of a player.
 ---
 ---This changes the Mark positional coordinates recorded for that player in the server memory, but does not by itself send a packet.
 ---@param pid integer @The player ID.
----@param x integer @The X rotation.
----@param z integer @The Z rotation.
+---@param x number @The X rotation.
+---@param z number @The Z rotation.
 function api.SetMarkRot(pid, x, z) end
 
 ---Set the ID of a player's selected spell.

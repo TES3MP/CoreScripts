@@ -34,7 +34,7 @@ end
 ---@param refId integer
 ---@param count integer
 ---@param charge integer
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 ---@param soul string
 ---@return ObjectData
 dataTableBuilder.BuildObjectData = function(refId, count, charge, enchantmentCharge, soul)

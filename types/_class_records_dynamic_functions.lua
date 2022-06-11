@@ -89,7 +89,7 @@ function api.GetRecordValue(index) end
 
 ---Get the weight of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return number
 function api.GetRecordWeight(index) end
 
 ---Get the ID of the effect at a certain index in the read worldstate's current records.
@@ -205,7 +205,7 @@ function api.SetRecordFlags(flags) end
 function api.SetRecordValue(value) end
 
 ---Set the weight of the temporary record stored on the server for the currently specified record type.
----@param weight integer @The weight of the record.
+---@param weight number @The weight of the record.
 function api.SetRecordWeight(weight) end
 
 ---Set the armor rating of the temporary record stored on the server for the currently specified record type.
@@ -232,11 +232,11 @@ function api.SetRecordDamageSlash(minDamage, maxDamage) end
 function api.SetRecordDamageThrust(minDamage, maxDamage) end
 
 ---Set the reach of the temporary record stored on the server for the currently specified record type.
----@param reach integer @The reach of the record.
+---@param reach number @The reach of the record.
 function api.SetRecordReach(reach) end
 
 ---Set the speed of the temporary record stored on the server for the currently specified record type.
----@param speed integer @The speed of the record.
+---@param speed number @The speed of the record.
 function api.SetRecordSpeed(speed) end
 
 ---Set whether the temporary record stored on the server for the currently specified record type is a key.

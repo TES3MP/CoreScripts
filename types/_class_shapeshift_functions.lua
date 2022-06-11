@@ -3,7 +3,7 @@ local api
 
 ---Get the scale of a player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetScale(pid) end
 
 ---Check whether a player is a werewolf.
@@ -29,7 +29,7 @@ function api.GetCreatureNameDisplayState(pid) end
 ---
 ---This changes the scale recorded for that player in the server memory, but does not by itself send a packet.
 ---@param pid integer @The player ID.
----@param scale integer @The new scale.
+---@param scale number @The new scale.
 function api.SetScale(pid, scale) end
 
 ---Set the werewolf state of a player.

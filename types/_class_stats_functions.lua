@@ -83,32 +83,32 @@ function api.GetLevelProgress(pid) end
 
 ---Get the base health of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetHealthBase(pid) end
 
 ---Get the current health of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetHealthCurrent(pid) end
 
 ---Get the base magicka of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMagickaBase(pid) end
 
 ---Get the current magicka of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetMagickaCurrent(pid) end
 
 ---Get the base fatigue of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetFatigueBase(pid) end
 
 ---Get the current fatigue of the player.
 ---@param pid integer @The player ID.
----@return integer
+---@return number
 function api.GetFatigueCurrent(pid) end
 
 ---Get the base value of a player's attribute.
@@ -138,7 +138,7 @@ function api.GetSkillModifier(pid, skillId) end
 ---Get the progress the player has made towards increasing a certain skill by 1.
 ---@param pid integer @The player ID.
 ---@param skillId integer @The skill ID.
----@return integer
+---@return number
 function api.GetSkillProgress(pid, skillId) end
 
 ---Get the bonus applied to a certain attribute at the next level up as a result of associated skill increases.
@@ -203,32 +203,32 @@ function api.SetLevelProgress(pid, value) end
 
 ---Set the base health of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetHealthBase(pid, value) end
 
 ---Set the current health of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetHealthCurrent(pid, value) end
 
 ---Set the base magicka of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetMagickaBase(pid, value) end
 
 ---Set the current magicka of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetMagickaCurrent(pid, value) end
 
 ---Set the base fatigue of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetFatigueBase(pid, value) end
 
 ---Set the current fatigue of a player.
 ---@param pid integer @The player ID.
----@param value integer
+---@param value number
 function api.SetFatigueCurrent(pid, value) end
 
 ---Set the base value of a player's attribute.
@@ -260,7 +260,7 @@ function api.ClearSkillModifier(pid, skillId) end
 ---Set the progress the player has made towards increasing a certain skill by 1.
 ---@param pid integer @The player ID.
 ---@param skillId integer @The skill ID.
----@param value integer @The progress value.
+---@param value number @The progress value.
 function api.SetSkillProgress(pid, skillId, value) end
 
 ---Set the bonus applied to a certain attribute at the next level up as a result of associated skill increases.

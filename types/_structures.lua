@@ -37,5 +37,5 @@
 ---@field refId integer
 ---@field count integer
 ---@field charge integer
----@field enchantmentCharge integer
+---@field enchantmentCharge number
 ---@field soul string

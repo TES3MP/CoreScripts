@@ -50,77 +50,77 @@ function api.GetActorMpNum(index) end
 
 ---Get the X position of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorPosX(index) end
 
 ---Get the Y position of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorPosY(index) end
 
 ---Get the Z position of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorPosZ(index) end
 
 ---Get the X rotation of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorRotX(index) end
 
 ---Get the Y rotation of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorRotY(index) end
 
 ---Get the Z rotation of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorRotZ(index) end
 
 ---Get the base health of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorHealthBase(index) end
 
 ---Get the current health of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorHealthCurrent(index) end
 
 ---Get the modified health of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorHealthModified(index) end
 
 ---Get the base magicka of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorMagickaBase(index) end
 
 ---Get the current magicka of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorMagickaCurrent(index) end
 
 ---Get the modified magicka of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorMagickaModified(index) end
 
 ---Get the base fatigue of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorFatigueBase(index) end
 
 ---Get the current fatigue of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorFatigueCurrent(index) end
 
 ---Get the modified fatigue of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
----@return integer
+---@return number
 function api.GetActorFatigueModified(index) end
 
 ---Get the refId of the item in a certain slot of the equipment of the actor at a certain index in the read actor list.
@@ -144,7 +144,7 @@ function api.GetActorEquipmentItemCharge(index, slot) end
 ---Get the enchantment charge of the item in a certain slot of the equipment of the actor at a certain index in the read actor list.
 ---@param index integer @The index of the actor.
 ---@param slot integer @The slot of the equipment item.
----@return integer
+---@return number
 function api.GetActorEquipmentItemEnchantmentCharge(index, slot) end
 
 ---Check whether the killer of the actor at a certain index in the read actor list is a player.
@@ -220,51 +220,51 @@ function api.SetActorRefNum(refNum) end
 function api.SetActorMpNum(mpNum) end
 
 ---Set the position of the temporary actor stored on the server.
----@param x integer @The X position.
----@param y integer @The Y position.
----@param z integer @The Z position.
+---@param x number @The X position.
+---@param y number @The Y position.
+---@param z number @The Z position.
 function api.SetActorPosition(x, y, z) end
 
 ---Set the rotation of the temporary actor stored on the server.
----@param x integer @The X rotation.
----@param y integer @The Y rotation.
----@param z integer @The Z rotation.
+---@param x number @The X rotation.
+---@param y number @The Y rotation.
+---@param z number @The Z rotation.
 function api.SetActorRotation(x, y, z) end
 
 ---Set the base health of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorHealthBase(value) end
 
 ---Set the current health of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorHealthCurrent(value) end
 
 ---Set the modified health of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorHealthModified(value) end
 
 ---Set the base magicka of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorMagickaBase(value) end
 
 ---Set the current magicka of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorMagickaCurrent(value) end
 
 ---Set the modified magicka of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorMagickaModified(value) end
 
 ---Set the base fatigue of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorFatigueBase(value) end
 
 ---Set the current fatigue of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorFatigueCurrent(value) end
 
 ---Set the modified fatigue of the temporary actor stored on the server.
----@param value integer @The new value.
+---@param value number @The new value.
 function api.SetActorFatigueModified(value) end
 
 ---Set the sound of the temporary actor stored on the server.
@@ -285,9 +285,9 @@ function api.SetActorAITargetToPlayer(pid) end
 function api.SetActorAITargetToObject(refNum, mpNum) end
 
 ---Set the coordinates for the AI package associated with the current AI action.
----@param x integer @The X coordinate.
----@param y integer @The Y coordinate.
----@param z integer @The Z coordinate.
+---@param x number @The X coordinate.
+---@param y number @The Y coordinate.
+---@param z number @The Z coordinate.
 function api.SetActorAICoordinates(x, y, z) end
 
 ---Set the distance of the AI package associated with the current AI action.
@@ -309,7 +309,7 @@ function api.SetActorAIRepetition(shouldRepeat) end
 ---@param refId string @The refId of the item.
 ---@param count integer @The count of the item.
 ---@param charge integer @The charge of the item.
----@param enchantmentCharge integer @The enchantment charge of the item.
+---@param enchantmentCharge number @The enchantment charge of the item.
 function api.EquipActorItem(slot, refId, count, charge, enchantmentCharge) end
 
 ---Unequip the item in a certain slot of the equipment of the temporary actor stored on the server.

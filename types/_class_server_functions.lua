@@ -102,7 +102,7 @@ function api.SetRuleString(key, value) end
 
 ---Set a rule value for the server details displayed in the server browser.
 ---@param key string @The name of the rule.
----@param value integer @The numerical value of the rule.
+---@param value number @The numerical value of the rule.
 function api.SetRuleValue(key, value) end
 
 ---Adds plugins to the internal server structure to validate players.

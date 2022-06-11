@@ -39,7 +39,7 @@ function api.GetWeatherNext() end
 function api.GetWeatherQueued() end
 
 ---Get the transition factor of the weather in the read worldstate.
----@return integer
+---@return number
 function api.GetWeatherTransitionFactor() end
 
 ---Get the X coordinate of the cell corresponding to the map tile at a certain index in the read worldstate's map tiles.
@@ -79,11 +79,11 @@ function api.SetWeatherNext(nextWeather) end
 function api.SetWeatherQueued(queuedWeather) end
 
 ---Set the transition factor for the weather in the write-only worldstate stored on the server.
----@param transitionFactor integer @The transition factor.
+---@param transitionFactor number @The transition factor.
 function api.SetWeatherTransitionFactor(transitionFactor) end
 
 ---Set the world's hour in the write-only worldstate stored on the server.
----@param hour integer @The hour.
+---@param hour number @The hour.
 function api.SetHour(hour) end
 
 ---Set the world's day in the write-only worldstate stored on the server.
@@ -103,7 +103,7 @@ function api.SetYear(year) end
 function api.SetDaysPassed(daysPassed) end
 
 ---Set the world's time scale in the write-only worldstate stored on the server.
----@param timeScale integer @The time scale.
+---@param timeScale number @The time scale.
 function api.SetTimeScale(timeScale) end
 
 ---Set the collision state for other players in the write-only worldstate stored on the server.

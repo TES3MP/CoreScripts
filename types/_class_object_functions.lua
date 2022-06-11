@@ -77,7 +77,7 @@ function api.GetObjectCharge(index) end
 
 ---Get the enchantment charge of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectEnchantmentCharge(index) end
 
 ---Get the soul of the object at a certain index in the read object list.
@@ -94,7 +94,7 @@ function api.GetObjectGoldValue(index) end
 
 ---Get the object scale of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectScale(index) end
 
 ---Get the object state of the object at a certain index in the read object list.
@@ -153,7 +153,7 @@ function api.GetObjectSummonState(index) end
 ---
 ---Note: Returns -1 if indefinite.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectSummonDuration(index) end
 
 ---Check whether the object at a certain index in the read object list has a player as its summoner.
@@ -185,32 +185,32 @@ function api.GetObjectSummonerMpNum(index) end
 
 ---Get the X position of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectPosX(index) end
 
 ---Get the Y position of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectPosY(index) end
 
 ---Get the Z position at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectPosZ(index) end
 
 ---Get the X rotation of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectRotX(index) end
 
 ---Get the Y rotation of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectRotY(index) end
 
 ---Get the Z rotation of the object at a certain index in the read object list.
 ---@param index integer @The index of the object.
----@return integer
+---@return number
 function api.GetObjectRotZ(index) end
 
 ---Get the videoFilename of the object at a certain index in the read object list.
@@ -244,7 +244,7 @@ function api.GetContainerItemCharge(objectIndex, itemIndex) end
 ---Get the enchantment charge of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
 ---@param objectIndex integer @The index of the object.
 ---@param itemIndex integer @The index of the container item.
----@return integer
+---@return number
 function api.GetContainerItemEnchantmentCharge(objectIndex, itemIndex) end
 
 ---Get the soul of the container item at a certain itemIndex in the container changes of the object at a certain objectIndex in the read object list.
@@ -313,7 +313,7 @@ function api.SetObjectCharge(charge) end
 ---Set the enchantment charge of the temporary object stored on the server.
 ---
 ---Object durabilities are set through this value.
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 function api.SetObjectEnchantmentCharge(enchantmentCharge) end
 
 ---Set the soul of the temporary object stored on the server.
@@ -329,7 +329,7 @@ function api.SetObjectGoldValue(goldValue) end
 ---Set the scale of the temporary object stored on the server.
 ---
 ---Objects are smaller or larger than their default size based on their scale.
----@param scale integer @The scale.
+---@param scale number @The scale.
 function api.SetObjectScale(scale) end
 
 ---Set the object state of the temporary object stored on the server.
@@ -357,15 +357,15 @@ function api.SetObjectDisarmState(disarmState) end
 function api.SetObjectSummonState(summonState) end
 
 ---Set the position of the temporary object stored on the server.
----@param x integer @The X position.
----@param y integer @The Y position.
----@param z integer @The Z position.
+---@param x number @The X position.
+---@param y number @The Y position.
+---@param z number @The Z position.
 function api.SetObjectPosition(x, y, z) end
 
 ---Set the rotation of the temporary object stored on the server.
----@param x integer @The X rotation.
----@param y integer @The Y rotation.
----@param z integer @The Z rotation.
+---@param x number @The X rotation.
+---@param y number @The Y rotation.
+---@param z number @The Z rotation.
 function api.SetObjectRotation(x, y, z) end
 
 ---Set the player ID of the player activating the temporary object stored on the server. Currently only used for ObjectActivate packets.
@@ -391,16 +391,16 @@ function api.SetObjectDoorTeleportState(teleportState) end
 function api.SetObjectDoorDestinationCell(cellDescription) end
 
 ---Set the door destination position of the temporary object stored on the server.
----@param x integer @The X position.
----@param y integer @The Y position.
----@param z integer @The Z position.
+---@param x number @The X position.
+---@param y number @The Y position.
+---@param z number @The Z position.
 function api.SetObjectDoorDestinationPosition(x, y, z) end
 
 ---Set the door destination rotation of the temporary object stored on the server.
 ---
 ---Note: Because this sets the rotation a player will have upon using the door, and rotation on the Y axis has no effect on players, the Y value has been omitted as an argument.
----@param x integer @The X rotation.
----@param z integer @The Z rotation.
+---@param x number @The X rotation.
+---@param z number @The Z rotation.
 function api.SetObjectDoorDestinationRotation(x, z) end
 
 ---Set a player as the object in the temporary object stored on the server. Currently only used for ConsoleCommand packets.
@@ -420,7 +420,7 @@ function api.SetContainerItemCount(count) end
 function api.SetContainerItemCharge(charge) end
 
 ---Set the enchantment charge of the temporary container item stored on the server.
----@param enchantmentCharge integer
+---@param enchantmentCharge number
 function api.SetContainerItemEnchantmentCharge(enchantmentCharge) end
 
 ---Set the soul of the temporary container item stored on the server.
