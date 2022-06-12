@@ -97,6 +97,36 @@
 ---@field spellsActive table<string, PlayerDataSpellInstance[]>
 ---@field action integer
 
+-- ActorPackets
+
+---@class ActorPacket
+---@field refId string
+
+--
+-- OnActorDeathCallback
+
+---@class ActorDeathActorPacketKiller
+---@field refId string
+---@field uniqueIndex string
+---@field pid integer
+---@field playerName string
+
+---@class ActorDeathActorPacket
+---@field deathState integer
+---@field killer ActorDeathActorPacketKiller
+
+--
+-- OnActorEquipmentCallback
+
+---@class ActorEquipmentActorPacket
+---@field equipment PlayerDataEquipmentItem[]
+
+--
+-- OnActorSpellsActiveCallback
+
+---@class ActorSpellsActiveActorPacket
+---@field spellsActive table<string, PlayerDataSpellInstance[]>
+
 -- ObjectPackets
 
 ---@class ObjectObjectPacket
