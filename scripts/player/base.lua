@@ -3,7 +3,148 @@ require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
 
+---@class PlayerDataLogin
+
+---@class PlayerDataTimestamps
+
+---@class PlayerDataSettings
+
+---@class PlayerDataCharacter
+
+---@class PlayerDataLocation
+---@field cell string
+---@field regionName string
+---@field posX number
+---@field posY number
+---@field posZ number
+---@field rotX number
+---@field rotZ number
+
+---@class PlayerDataStats
+
+---@class PlayerDataFame
+
+---@class PlayerDataMiscellaneous
+
+---@class PlayerDataCustomClass
+
+---@class PlayerDataAttribute
+---@field base integer
+---@field damage integer
+---@field skillIncrease integer
+
+---@class PlayerDataSkill
+---@field base integer
+---@field damage integer
+---@field progress integer
+
+---@class PlayerDataItem
+---@field refId string
+---@field count integer
+---@field charge integer
+---@field enchantmentCharge integer
+
+---@class PlayerDataEquipmentItem : PlayerDataItem
+
+---@class PlayerDataInventoryItem : PlayerDataItem
+---@field soul string
+
+---@class PlayerDataSpellInstanceEffect
+---@field id unknown
+---@field magnitude integer
+---@field duration integer
+---@field timeLeft integer
+---@field arg unknown
+
+---@class PlayerDataSpellInstanceCaster
+---@field pid integer
+---@field playerName string
+---@field uniqueIndex string
+---@field refId string
+
+---@class PlayerDataSpellInstance
+---@field effects PlayerDataSpellInstanceEffect[]
+---@field displayName string
+---@field stackingState integer
+---@field startTime integer
+---@field caster PlayerDataSpellInstanceCaster
+---@field hasPlayerCaster boolean
+
+---@class PlayerDataCooldown
+---@field spellId string
+---@field startDay integer
+---@field startHour integer
+
+---@class PlayerDataQuickKey
+---@field keyType integer
+---@field itemId string
+
+---@class PlayerDataShapeshift
+---@field scale number
+---@field isWerewolf boolean
+---@field creatureRefId string
+---@field displayCreatureName string
+
+---@class PlayerDataJournalItemTimestamp
+---@field daysPassed integer
+---@field month integer
+---@field day integer
+
+---@class PlayerDataJournalItem
+---@field type integer
+---@field index integer
+---@field quest string
+---@field timestamp PlayerDataJournalItemTimestamp
+---@field actorRefId string
+
+---@class PlayerData
+---@field login PlayerDataLogin
+---@field timestamps PlayerDataTimestamps
+---@field settings PlayerDataSettings
+---@field character PlayerDataCharacter
+---@field location PlayerDataLocation
+---@field stats PlayerDataStats
+---@field fame PlayerDataFame
+---@field miscellaneous PlayerDataMiscellaneous
+---@field customClass PlayerDataCustomClass
+---@field attributes PlayerDataAttribute[]
+---@field skills PlayerDataSkill[]
+---@field equipment PlayerDataEquipmentItem[]
+---@field inventory PlayerDataInventoryItem[]
+---@field spellbook string[]
+---@field spellsActive table<string, PlayerDataSpellInstance>
+---@field cooldowns PlayerDataCooldown[]
+---@field quickKeys PlayerDataQuickKey[]
+---@field shapeshift PlayerDataShapeshift
+---@field journal PlayerDataJournalItem[]
+---@field factionRanks unknown
+---@field factionExpulsion unknown
+---@field factionReputation unknown
+---@field topics unknown
+---@field books unknown
+---@field mapExplored unknown
+---@field ipAddresses unknown
+---@field recordLinks unknown
+---@field alliedPlayers unknown
+---@field destinationOverrides unknown
+---@field customVariables unknown
+
 ---@class Player
+---@field dbPid integer
+---@field data PlayerData
+---@field accountName string
+---@field pid integer
+---@field loggedIn boolean
+---@field isNewlyRegistered boolean
+---@field loginTimerId integer
+---@field hasAccount boolean
+---@field cellsLoaded unknown
+---@field summons unknown
+---@field generatedRecordsReceived unknown
+---@field unresolvedEnchantments unknown
+---@field previousEquipment unknown
+---@field consoleCommandsQueued unknown
+---@field hasFinishedInitialTeleportation boolean
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid, playerName)
@@ -890,7 +1031,7 @@ function BasePlayer:LoadSkills()
     tes3mp.SendSkills(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerSkillPacket
 function BasePlayer:SaveSkills(playerPacket)
 
     for skillName in pairs(self.data.skills) do

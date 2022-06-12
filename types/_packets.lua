@@ -1,3 +1,102 @@
+-- PlayerPackets
+
+--
+-- OnPlayerAttributeCallback
+
+---@class PlayerAttributePacketAttribute : PlayerDataAttribute
+---@field modifier integer
+
+---@class PlayerAttributePacket
+---@field attributes PlayerAttributePacketAttribute[]
+
+--
+-- OnPlayerCellChangeCallback
+
+---@class PlayerCellChangePacketLocation
+---@field cell string
+---@field posX number
+---@field posY number
+---@field posZ number
+---@field rotX number
+---@field rotZ number
+
+---@class PlayerCellChangePacket
+---@field location PlayerCellChangePacketLocation
+
+--
+-- OnPlayerCooldownsCallback
+
+---@class PlayerCooldownsPacket
+---@field cooldowns PlayerDataCooldown[]
+
+--
+-- OnPlayerEquipmentCallback
+
+---@class PlayerEquipmentPacket
+---@field equipment PlayerDataEquipmentItem[]
+
+--
+-- OnPlayerInventoryCallback
+
+---@class PlayerInventoryPacket
+---@field inventory PlayerDataInventoryItem[]
+---@field action integer
+
+--
+-- OnPlayerJournalCallback
+
+---@class PlayerJournalPacket
+---@field journal PlayerDataJournalItem[]
+
+--
+-- OnPlayerLevelCallback
+
+---@class PlayerLevelPacketStats
+---@field level integer
+---@field levelProgress integer
+
+---@class PlayerLevelPacket
+---@field stats PlayerLevelPacketStats
+
+--
+-- OnPlayerQuickKeysCallback
+
+---@class PlayerQuickKeysPacket
+---@field quickKeys PlayerDataQuickKey[]
+
+--
+-- OnPlayerShapeshiftCallback
+
+---@class PlayerShapeshiftPacketShapeshift
+---@field scale number
+---@field isWerewolf boolean
+
+---@class PlayerShapeshiftPacket
+---@field shapeshift PlayerShapeshiftPacketShapeshift
+
+--
+-- OnPlayerSkillCallback
+
+---@class PlayerAttributePacketSkill : PlayerDataSkill
+---@field modifier integer
+
+---@class PlayerSkillPacket
+---@field skills PlayerAttributePacketSkill[]
+
+--
+-- OnPlayerSpellbookCallback
+
+---@class PlayerSpellbookPacket
+---@field spellbook string[]
+---@field action integer
+
+--
+-- OnPlayerSpellsActiveCallback
+
+---@class PlayerSpellsActivePacket
+---@field spellsActive table<string, PlayerDataSpellInstance[]>
+---@field action integer
+
 -- ObjectPackets
 
 ---@class ObjectObjectPacket
@@ -110,7 +209,6 @@
 ---@class ObjectSoundObjectPacket : ObjectObjectPacket, ObjectSoundPacket
 
 ---@class ObjectSoundPlayerPacket : ObjectPlayerPacket, ObjectSoundPacket
-
 
 --
 -- OnObjectSpawnCallback
