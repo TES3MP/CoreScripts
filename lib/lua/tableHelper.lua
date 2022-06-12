@@ -2,8 +2,8 @@ local tableHelper = {}
 
 ---Swap keys with their values in a table, allowing for the easy creation of tables similar to enums
 ---@generic K, V
----@param inputTable table<K, V>
----@return table<V, K>
+---@param inputTable table<K, integer>
+---@return K[]
 function tableHelper.enum(inputTable)
     local newTable = {}
     for key, value in ipairs(inputTable) do

@@ -111,7 +111,7 @@
 ---@field pid integer
 ---@field playerName string
 
----@class ActorDeathActorPacket
+---@class ActorDeathActorPacket : ActorPacket
 ---@field deathState integer
 ---@field killer ActorDeathActorPacketKiller
 
