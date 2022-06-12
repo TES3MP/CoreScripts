@@ -2,10 +2,15 @@ require("config")
 inventoryHelper = require("inventoryHelper")
 
 local menuHelper = {}
-menuHelper.conditions = {}
-menuHelper.effects = {}
-menuHelper.destinations = {}
-menuHelper.variables = {}
+local menuHelperConditions = {}
+local menuHelperEffects = {}
+local menuHelperDestinations = {}
+local menuHelperVariables = {}
+
+menuHelper.conditions = menuHelperConditions
+menuHelper.effects = menuHelperEffects
+menuHelper.destinations = menuHelperDestinations
+menuHelper.variables = menuHelperVariables
 
 ---@class Menu
 ---@field text string[]
@@ -23,7 +28,7 @@ menuHelper.variables = {}
 ---@param inputRefIds string|string[]
 ---@param inputCount integer
 ---@return RequireItemMenuCondition
-function menuHelper.conditions.requireItem(inputRefIds, inputCount)
+function menuHelperConditions.requireItem(inputRefIds, inputCount)
 
     if type(inputRefIds) ~= "table" then
         inputRefIds = { inputRefIds }
@@ -46,7 +51,7 @@ end
 ---@param inputName string
 ---@param inputValue integer
 ---@return RequireAttributeMenuCondition
-function menuHelper.conditions.requireAttribute(inputName, inputValue)
+function menuHelperConditions.requireAttribute(inputName, inputValue)
     local condition = {
         conditionType = "attribute",
         attributeName = inputName,
@@ -64,7 +69,7 @@ end
 ---@param inputName string
 ---@param inputValue integer
 ---@return RequireSkillMenuCondition
-function menuHelper.conditions.requireSkill(inputName, inputValue)
+function menuHelperConditions.requireSkill(inputName, inputValue)
     local condition = {
         conditionType = "skill",
         skillName = inputName,
@@ -80,7 +85,7 @@ end
 
 ---@param inputValue integer
 ---@return RequireStaffRankMenuCondition
-function menuHelper.conditions.requireStaffRank(inputValue)
+function menuHelperConditions.requireStaffRank(inputValue)
     local condition = {
         conditionType = "staffRank",
         rankValue = inputValue
@@ -97,7 +102,7 @@ end
 ---@param inputFunctionName string
 ---@param inputArguments string[]
 ---@return RequirePlayerFunctionMenuCondition
-function menuHelper.conditions.requirePlayerFunction(inputFunctionName, inputArguments)
+function menuHelperConditions.requirePlayerFunction(inputFunctionName, inputArguments)
     local condition = {
         conditionType = "playerFunction",
         functionName = inputFunctionName,
@@ -108,7 +113,7 @@ function menuHelper.conditions.requirePlayerFunction(inputFunctionName, inputArg
 end
 
 -- Deprecated
-function menuHelper.conditions.requireAdminRank(inputValue)
+function menuHelperConditions.requireAdminRank(inputValue)
     return menuHelper.conditions.requireStaffRank(inputValue)
 end
 
@@ -123,7 +128,7 @@ end
 ---@param inputRefId string
 ---@param inputCount integer
 ---@return GiveItemMenuEffect
-function menuHelper.effects.giveItem(inputRefId, inputCount)
+function menuHelperEffects.giveItem(inputRefId, inputCount)
     local effect = {
         effectType = "item",
         action = "give",
@@ -143,7 +148,7 @@ end
 ---@param inputRefIds string|string[]
 ---@param inputCount integer
 ---@return RemoveItemMenuEffect
-function menuHelper.effects.removeItem(inputRefIds, inputCount)
+function menuHelperEffects.removeItem(inputRefIds, inputCount)
 
     if type(inputRefIds) ~= "table" then
         inputRefIds = { inputRefIds }
@@ -168,7 +173,7 @@ end
 ---@param inputVariable string
 ---@param inputValue string
 ---@return SetPlayerDataVariableMenuEffect
-function menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
+function menuHelperEffects.setPlayerDataVariable(inputVariable, inputValue)
     local effect = {
         effectType = "playerVariable",
         action = "data",
@@ -182,12 +187,12 @@ end
 ---@class RunPlayerFunctionMenuEffect
 ---@field effectType "playerFunction"
 ---@field functionName string
----@field arguments string[]
+---@field arguments string[]|nil
 
 ---@param inputFunctionName string
----@param inputArguments string[]
+---@param inputArguments string[]|nil
 ---@return RunPlayerFunctionMenuEffect
-function menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
+function menuHelperEffects.runPlayerFunction(inputFunctionName, inputArguments)
     local effect = {
         effectType = "playerFunction",
         functionName = inputFunctionName,
@@ -201,13 +206,13 @@ end
 ---@field effectType "globalFunction"
 ---@field objectName string
 ---@field functionName string
----@field arguments string[]
+---@field arguments string[]|nil
 
 ---@param inputObjectName string
 ---@param inputFunctionName string
----@param inputArguments string[]
+---@param inputArguments string[]|nil
 ---@return RunGlobalFunctionMenuEffect
-function menuHelper.effects.runGlobalFunction(inputObjectName, inputFunctionName, inputArguments)
+function menuHelperEffects.runGlobalFunction(inputObjectName, inputFunctionName, inputArguments)
     local effect = {
         effectType = "globalFunction",
         objectName = inputObjectName,
@@ -219,25 +224,25 @@ function menuHelper.effects.runGlobalFunction(inputObjectName, inputFunctionName
 end
 
 -- Deprecated
-function menuHelper.effects.setDataVariable(inputVariable, inputValue)
-    return menuHelper.effects.setPlayerDataVariable(inputVariable, inputValue)
+function menuHelperEffects.setDataVariable(inputVariable, inputValue)
+    return menuHelperEffects.setPlayerDataVariable(inputVariable, inputValue)
 end
 
 -- Deprecated
-function menuHelper.effects.runFunction(inputFunctionName, inputArguments)
-    return menuHelper.effects.runPlayerFunction(inputFunctionName, inputArguments)
+function menuHelperEffects.runFunction(inputFunctionName, inputArguments)
+    return menuHelperEffects.runPlayerFunction(inputFunctionName, inputArguments)
 end
 
 ---@alias MenuEffect GiveItemMenuEffect|RemoveItemMenuEffect|SetPlayerDataVariableMenuEffect|RunPlayerFunctionMenuEffect|RunGlobalFunctionMenuEffect
 
 ---@class DefaultMenuDestination
 ---@field targetMenu string
----@field effects MenuEffect[]
+---@field effects MenuEffect[]|nil
 
 ---@param inputMenu string
----@param inputEffects MenuEffect[]
+---@param inputEffects MenuEffect[]|nil
 ---@return DefaultMenuDestination
-function menuHelper.destinations.setDefault(inputMenu, inputEffects)
+function menuHelperDestinations.setDefault(inputMenu, inputEffects)
     local destination = {
         targetMenu = inputMenu,
         effects = inputEffects
@@ -251,7 +256,7 @@ end
 
 ---@param inputVariable string
 ---@return CustomVariableMenuDestination
-function menuHelper.destinations.setFromCustomVariable(inputVariable)
+function menuHelperDestinations.setFromCustomVariable(inputVariable)
     local destination = {
         customVariable = inputVariable
     }
@@ -262,13 +267,13 @@ end
 ---@class ConditionalMenuDestination
 ---@field customVariable string
 ---@field conditions MenuCondition[]
----@field effects MenuEffect[]
+---@field effects MenuEffect[]|nil
 
 ---@param inputMenu string
 ---@param inputConditions MenuCondition[]
----@param inputEffects MenuEffect[]
+---@param inputEffects MenuEffect[]|nil
 ---@return ConditionalMenuDestination
-function menuHelper.destinations.setConditional(inputMenu, inputConditions, inputEffects)
+function menuHelperDestinations.setConditional(inputMenu, inputConditions, inputEffects)
     local destination = {
         targetMenu = inputMenu,
         conditions = inputConditions,
@@ -285,7 +290,7 @@ end
 ---@field source "current"
 
 ---@return CurrentPidMenuVariable
-function menuHelper.variables.currentPid()
+function menuHelperVariables.currentPid()
     local variable = {
         variableType = "pid",
         source = "current"
@@ -299,7 +304,7 @@ end
 ---@field source "current"
 
 ---@return CurrentChatNameMenuVariable
-function menuHelper.variables.currentChatName()
+function menuHelperVariables.currentChatName()
     local variable = {
         variableType = "chatName",
         source = "current"
@@ -315,7 +320,7 @@ end
 
 ---@param inputVariableName string
 ---@return CurrentPlayerMenuVariable
-function menuHelper.variables.currentPlayerVariable(inputVariableName)
+function menuHelperVariables.currentPlayerVariable(inputVariableName)
     local variable = {
         variableType = "playerVariable",
         source = "current",
@@ -326,8 +331,8 @@ function menuHelper.variables.currentPlayerVariable(inputVariableName)
 end
 
 -- Deprecated
-function menuHelper.variables.currentPlayerDataVariable(inputVariableName)
-    return menuHelper.variables.currentPlayerVariable("data." .. inputVariableName)
+function menuHelperVariables.currentPlayerDataVariable(inputVariableName)
+    return menuHelperVariables.currentPlayerVariable("data." .. inputVariableName)
 end
 
 ---@class GlobalMenuVariable
@@ -338,7 +343,7 @@ end
 ---@param inputObjectName string
 ---@param inputVariableName string
 ---@return GlobalMenuVariable
-function menuHelper.variables.globalVariable(inputObjectName, inputVariableName)
+function menuHelperVariables.globalVariable(inputObjectName, inputVariableName)
     local variable = {
         variableType = "globalVariable",
         objectName = inputObjectName,
@@ -357,7 +362,7 @@ end
 ---@param inputDelimiter string
 ---@param ... MenuVariable[]
 ---@return ConcatenationMenuVariable
-function menuHelper.variables.concatenation(inputDelimiter, ...)
+function menuHelperVariables.concatenation(inputDelimiter, ...)
     local variable = {
         variableType = "argumentArray",
         operation = "concatenation",
