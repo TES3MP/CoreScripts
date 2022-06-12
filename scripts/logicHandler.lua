@@ -9,7 +9,7 @@ packetReader = require("packetReader")
 
 local logicHandler = {}
 
----@type table<number, Player>
+---@type table<integer|number, Player>
 Players = {}
 LoadedCells = {}
 RecordStores = {}

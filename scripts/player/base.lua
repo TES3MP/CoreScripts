@@ -4,12 +4,35 @@ stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
 
 ---@class PlayerDataLogin
+---@field name string
+---@field passwordSalt string
+---@field passwordHash string
 
 ---@class PlayerDataTimestamps
+---@field creation integer
+---@field lastLogin integer
+---@field lastDisconnect integer
+---@field lastFixMe integer
+---@field lastSessionDuration integer
 
 ---@class PlayerDataSettings
+---@field staffRank integer
+---@field difficulty string
+---@field consoleAllowed string
+---@field bedRestAllowed string
+---@field wildernessRestAllowed string
+---@field waitAllowed string
+---@field enforcedLogLevel string
+---@field physicsFramerate string
 
 ---@class PlayerDataCharacter
+---@field race string
+---@field head string
+---@field hair string
+---@field gender integer
+---@field class string
+---@field birthsign string
+---@field modelOverride string
 
 ---@class PlayerDataLocation
 ---@field cell string
@@ -21,12 +44,38 @@ tableHelper = require("tableHelper")
 ---@field rotZ number
 
 ---@class PlayerDataStats
+---@field level integer
+---@field levelProgress integer
+---@field healthBase integer
+---@field healthCurrent integer
+---@field magickaBase integer
+---@field magickaCurrent integer
+---@field fatigueBase integer
+---@field fatigueCurrent integer
 
 ---@class PlayerDataFame
+---@field bounty integer
+---@field reputation integer
+
+---@class PlayerDataMiscellaneousMarkLocation
+---@field cell string
+---@field posX number
+---@field posY number
+---@field posZ number
+---@field rotX number
+---@field rotZ number
 
 ---@class PlayerDataMiscellaneous
+---@field markLocation PlayerDataMiscellaneousMarkLocation
+---@field selectedSpell string
 
 ---@class PlayerDataCustomClass
+---@field name string
+---@field specialization integer
+---@field description string|nil
+---@field majorAttributes string
+---@field majorSkills string
+---@field minorSkills string
 
 ---@class PlayerDataAttribute
 ---@field base integer
@@ -84,6 +133,7 @@ tableHelper = require("tableHelper")
 ---@field isWerewolf boolean
 ---@field creatureRefId string
 ---@field displayCreatureName string
+---@field werewolfHealthBase integer
 
 ---@class PlayerDataJournalItemTimestamp
 ---@field daysPassed integer
@@ -145,6 +195,11 @@ tableHelper = require("tableHelper")
 ---@field previousEquipment unknown
 ---@field consoleCommandsQueued string[]
 ---@field hasFinishedInitialTeleportation boolean
+---@field stateSpam table<string, integer>
+---@field ipAddress string
+---@field confiscationTargetName string
+---@field currentCustomMenu string
+---@field displayedMenuButtons MenuButton[]
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid, playerName)
@@ -933,7 +988,7 @@ function BasePlayer:LoadStatsDynamic()
     tes3mp.SendStatsDynamic(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerStatsDynamicPacket
 function BasePlayer:SaveStatsDynamic(playerPacket)
 
     local healthBase = playerPacket.stats.healthBase
@@ -975,7 +1030,7 @@ function BasePlayer:LoadAttributes()
     tes3mp.SendAttributes(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerAttributePacket
 function BasePlayer:SaveAttributes(playerPacket)
 
     for attributeName in pairs(self.data.attributes) do
@@ -1077,7 +1132,7 @@ function BasePlayer:LoadLevel()
     tes3mp.SendLevel(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerLevelPacket
 function BasePlayer:SaveLevel(playerPacket)
     self.data.stats.level = playerPacket.stats.level
     self.data.stats.levelProgress = playerPacket.stats.levelProgress
@@ -1098,7 +1153,7 @@ function BasePlayer:LoadShapeshift()
     tes3mp.SendShapeshift(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerShapeshiftPacket
 function BasePlayer:SaveShapeshift(playerPacket)
 
     if self.data.shapeshift == nil then self.data.shapeshift = {} end
@@ -1146,7 +1201,7 @@ function BasePlayer:LoadCell()
     end
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerCellChangePacket
 function BasePlayer:SaveCell(playerPacket)
 
     if self.data.location == nil then self.data.location = {} end
@@ -1189,7 +1244,7 @@ function BasePlayer:LoadEquipment()
     tes3mp.SendEquipment(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerEquipmentPacket
 function BasePlayer:SaveEquipment(playerPacket)
 
     local reloadAtEnd = false
@@ -1264,7 +1319,7 @@ end
 ---
 ---Note: This just sends a packet, so the same item changes should be applied to
 ---      self.data.inventory separately
----@param itemArray unknown[]
+---@param itemArray PlayerDataInventoryItem[]
 ---@param inventoryAction string
 function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
 
@@ -1301,7 +1356,7 @@ function BasePlayer:LoadInventory()
     tes3mp.SendInventoryChanges(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerInventoryPacket
 function BasePlayer:SaveInventory(playerPacket)
 
     local action = playerPacket.action
@@ -1398,7 +1453,7 @@ function BasePlayer:LoadSpellbook()
     tes3mp.SendSpellbookChanges(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerSpellbookPacket
 function BasePlayer:SaveSpellbook(playerPacket)
 
     local action = playerPacket.action
@@ -1485,7 +1540,7 @@ function BasePlayer:LoadSpellsActive()
     end
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerSpellsActivePacket
 function BasePlayer:SaveSpellsActive(playerPacket)
 
     local action = playerPacket.action
@@ -1561,7 +1616,7 @@ function BasePlayer:LoadCooldowns()
     end
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerCooldownsPacket
 function BasePlayer:SaveCooldowns(playerPacket)
 
     for _, cooldown in pairs(playerPacket.cooldowns) do
@@ -1585,7 +1640,7 @@ function BasePlayer:LoadQuickKeys()
     tes3mp.SendQuickKeyChanges(self.pid)
 end
 
----@param playerPacket PlayerPacket
+---@param playerPacket PlayerQuickKeysPacket
 function BasePlayer:SaveQuickKeys(playerPacket)
 
     for slot, quickKey in pairs(playerPacket.quickKeys) do

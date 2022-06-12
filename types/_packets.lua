@@ -97,6 +97,20 @@
 ---@field spellsActive table<string, PlayerDataSpellInstance[]>
 ---@field action integer
 
+--
+-- Other Player Packets
+
+---@class PlayerStatsDynamicPacketStats
+---@field healthBase integer
+---@field magickaBase integer
+---@field fatigueBase integer
+---@field healthCurrent integer
+---@field magickaCurrent integer
+---@field fatigueCurrent integer
+
+---@class PlayerStatsDynamicPacket
+---@field stats PlayerStatsDynamicPacketStats
+
 -- ActorPackets
 
 ---@class ActorPacket

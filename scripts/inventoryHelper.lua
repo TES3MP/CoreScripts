@@ -89,7 +89,7 @@ end
 ---@param count integer
 ---@param charge integer
 ---@param enchantmentCharge number
----@param soul string
+---@param soul string|nil
 function inventoryHelper.addItem(inventory, refId, count, charge, enchantmentCharge, soul)
 
     if inventoryHelper.containsItem(inventory, refId, charge, enchantmentCharge, soul) then
