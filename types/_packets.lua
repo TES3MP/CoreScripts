@@ -141,7 +141,7 @@
 -- OnClientScriptLocalCallback
 
 ---@class ClientScriptLocalObjectPacket : ObjectObjectPacket
----@field variables table<unknown, unknown[]>
+---@field variables table<integer, number|integer[]>
 
 --
 -- OnDoorStateCallback
@@ -270,3 +270,68 @@
 -- OnObjectTrapCallback
 
 ---@class ObjectTrapObjectPacket : ObjectObjectPacket
+
+-- Standalone Packets
+
+--
+-- OnWorldMapCallback
+
+---@class MapTilePacket
+---@field cellX integer
+---@field cellY integer
+
+--
+-- OnClientScriptGlobalCallback
+
+---@class VariablePacket
+---@field variableType integer
+---@field intValue integer
+---@field floatValue number
+
+--
+-- OnRecordDynamicCallback
+
+---@class RecordDynamicPacketEffect
+---@field id integer
+---@field attribute integer
+---@field skill integer
+---@field rangeType integer
+---@field area integer
+---@field duration integer
+---@field magnitudeMin integer
+---@field magnitudeMax integer
+
+---@class RecordDynamicPacketEnchantment
+---@field name string
+
+---@class RecordDynamicPacketSpell
+---@field subtype integer
+---@field cost integer
+---@field flags integer
+---@field effects RecordDynamicPacketEffect[]
+
+---@class RecordDynamicPacketPotion
+---@field weight integer
+---@field value integer
+---@field autoCalc integer
+---@field icon string
+---@field model string
+---@field script string
+---@field effects RecordDynamicPacketEffect[]
+---@field quantitiy integer
+
+---@class RecordDynamicPacketEnchantment
+---@field subtype integer
+---@field cost integer
+---@field charge integer
+---@field flags integer
+---@field effects RecordDynamicPacketEffect[]
+---@field clientsideEnchantmentId string
+
+---@class RecordDynamicPacketOther
+---@field baseId string
+---@field enchantmentCharge integer
+---@field quantity integer
+---@field enchantmentId string
+
+---@alias RecordDynamicPacket RecordDynamicPacketEnchantment|RecordDynamicPacketSpell|RecordDynamicPacketPotion|RecordDynamicPacketEnchantment|RecordDynamicPacketOther
