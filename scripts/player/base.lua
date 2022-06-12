@@ -143,7 +143,7 @@ tableHelper = require("tableHelper")
 ---@field generatedRecordsReceived unknown
 ---@field unresolvedEnchantments unknown
 ---@field previousEquipment unknown
----@field consoleCommandsQueued unknown
+---@field consoleCommandsQueued string[]
 ---@field hasFinishedInitialTeleportation boolean
 local BasePlayer = class("BasePlayer")
 
