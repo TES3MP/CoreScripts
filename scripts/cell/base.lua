@@ -5,7 +5,58 @@ tableHelper = require("tableHelper")
 inventoryHelper = require("inventoryHelper")
 packetBuilder = require("packetBuilder")
 
+---@class CellDataEntry
+---@field description string
+---@field creationTime integer
+
+---@class CellDataLoadState
+---@field hasFullActorList boolean
+---@field hasFullContainerData boolean
+
+---@class CellDataPackets
+---@field delete string[]
+---@field place string[]
+---@field spawn string[]
+---@field lock string[]
+---@field trap string[]
+---@field scale string[]
+---@field state string[]
+---@field miscellaneous string[]
+---@field doorState string[]
+---@field clientScriptLocal string[]
+---@field container string[]
+---@field equipment string[]
+---@field ai string[]
+---@field death string[]
+---@field actorList string[]
+---@field position string[]
+---@field statsDynamic string[]
+---@field spellsActive string[]
+---@field cellChangeTo string[]
+---@field cellChangeFrom string[]
+
+---@class CellData
+---@field entry CellDataEntry
+---@field loadState CellDataLoadState
+---@field lastVisit table<string, integer>
+---@field objectData table<string, ObjectData> @TODO what exactly is this data structure?
+---@field packets CellDataPackets
+---@field recordLinks table<string, table<string, string>>
+
 ---@class Cell
+---@field data CellData
+---@field description string
+---@field visitors integer[]
+---@field authority integer
+---@field isRequestingContainerData boolean
+---@field containerRequestPid integer
+---@field isRequestingActorList boolean
+---@field actorListRequestPid integer
+---@field isResetting boolean
+---@field unusableContainerUniqueIndexes string[]
+---@field isExterior boolean
+---@field gridX integer
+---@field gridY integer
 local BaseCell = class("BaseCell")
 
 function BaseCell:__init(cellDescription)
@@ -105,9 +156,9 @@ end
 
 -- Adding record links to cells is special because we'll keep track of the uniqueIndex
 -- of every object that uses a particular generated record
----@param storeType any
----@param recordId any
----@param uniqueIndex any
+---@param storeType string
+---@param recordId string
+---@param uniqueIndex string
 function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end
@@ -130,9 +181,9 @@ function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
     end
 end
 
----@param storeType any
----@param recordId any
----@param uniqueIndex any
+---@param storeType string
+---@param recordId string
+---@param uniqueIndex string
 function BaseCell:RemoveLinkToRecord(storeType, recordId, uniqueIndex)
 
     local recordStore = RecordStores[storeType]
@@ -296,6 +347,8 @@ function BaseCell:HasFullActorList()
     return false
 end
 
+---@param uniqueIndex string
+---@param refId string
 function BaseCell:InitializeObjectData(uniqueIndex, refId)
 
     if uniqueIndex ~= nil and refId ~= nil and self.data.objectData[uniqueIndex] == nil then
@@ -304,6 +357,7 @@ function BaseCell:InitializeObjectData(uniqueIndex, refId)
     end
 end
 
+---@param uniqueIndex string
 function BaseCell:DeleteObjectData(uniqueIndex)
 
     if self.data.objectData[uniqueIndex] == nil then
@@ -312,7 +366,7 @@ function BaseCell:DeleteObjectData(uniqueIndex)
 
     -- Is this a player's summon? If so, remove it from the summons tracked
     -- for the player
-    local summon = self.data.objectData[uniqueIndex].summon
+    local summon = self.data.objectData[uniqueIndex].summon -- TODO which kind of object structure always has summon?
 
     if summon ~= nil then
         if summon.summoner.playerName ~= nil and logicHandler.IsPlayerNameLoggedIn(summon.summoner.playerName) then
@@ -329,6 +383,8 @@ function BaseCell:DeleteObjectData(uniqueIndex)
     self.data.objectData[uniqueIndex] = nil
 end
 
+---@param uniqueIndex string
+---@param newCell Cell
 function BaseCell:MoveObjectData(uniqueIndex, newCell)
 
     -- Ensure we're not trying to move the object to the cell it's already in
@@ -348,10 +404,12 @@ function BaseCell:MoveObjectData(uniqueIndex, newCell)
     self.data.objectData[uniqueIndex] = nil
 end
 
+---@param playerName string
 function BaseCell:SaveLastVisit(playerName)
     self.data.lastVisit[playerName] = os.time()
 end
 
+---@param objects table<string, ObjectDeleteObjectPacket>
 function BaseCell:SaveObjectsDeleted(objects)
 
     local temporaryLoadedCells = {}
@@ -412,6 +470,7 @@ function BaseCell:SaveObjectsDeleted(objects)
     end
 end
 
+---@param objects table<string, ObjectPlaceObjectPacket>
 function BaseCell:SaveObjectsPlaced(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -476,6 +535,7 @@ function BaseCell:SaveObjectsPlaced(objects)
     self:QuicksaveToDrive()
 end
 
+---@param objects table<string, ObjectSpawnObjectPacket>
 function BaseCell:SaveObjectsSpawned(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -540,6 +600,7 @@ function BaseCell:SaveObjectsSpawned(objects)
     end
 end
 
+---@param objects table<string, ObjectLockObjectPacket>
 function BaseCell:SaveObjectsLocked(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -557,6 +618,7 @@ function BaseCell:SaveObjectsLocked(objects)
     end
 end
 
+---@param objects table<string, ObjectMiscellaneousObjectPacket>
 function BaseCell:SaveObjectsMiscellaneous(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -576,6 +638,7 @@ function BaseCell:SaveObjectsMiscellaneous(objects)
     end
 end
 
+---@param objects table<string, ObjectTrapObjectPacket>
 function BaseCell:SaveObjectTrapsTriggered(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -590,6 +653,7 @@ function BaseCell:SaveObjectTrapsTriggered(objects)
     end
 end
 
+---@param objects table<string, ObjectScaleObjectPacket>
 function BaseCell:SaveObjectsScaled(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -607,6 +671,7 @@ function BaseCell:SaveObjectsScaled(objects)
     end
 end
 
+---@param objects table<string, ObjectStateObjectPacket>
 function BaseCell:SaveObjectStates(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -624,6 +689,7 @@ function BaseCell:SaveObjectStates(objects)
     end
 end
 
+---@param objects table<string, DoorStateObjectPacket>
 function BaseCell:SaveDoorStates(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -638,6 +704,7 @@ function BaseCell:SaveDoorStates(objects)
     end
 end
 
+---@param objects table<string, ClientScriptLocalObjectPacket>
 function BaseCell:SaveClientScriptLocals(objects)
 
     for uniqueIndex, object in pairs(objects) do
@@ -665,6 +732,7 @@ function BaseCell:SaveClientScriptLocals(objects)
     end
 end
 
+---@param pid integer
 function BaseCell:SaveContainers(pid)
 
     tes3mp.ReadReceivedObjectList()
@@ -805,6 +873,8 @@ function BaseCell:SaveContainers(pid)
     end
 end
 
+---@param packetType string
+---@param actors table<ActorPacket>
 function BaseCell:SaveActorsByPacketType(packetType, actors)
 
     if packetType == "ActorList" then
@@ -818,6 +888,8 @@ function BaseCell:SaveActorsByPacketType(packetType, actors)
     end    
 end
 
+---@param packetType string
+---@param objects table<string, ObjectPacket>
 function BaseCell:SaveObjectsByPacketType(packetType, objects)
 
     if packetType == "ObjectPlace" then
@@ -843,6 +915,7 @@ function BaseCell:SaveObjectsByPacketType(packetType, objects)
     end
 end
 
+---@param actors table<string, ActorPacket>
 function BaseCell:SaveActorList(actors)
 
     for uniqueIndex, actor in pairs(actors) do
@@ -926,6 +999,7 @@ function BaseCell:SaveActorStatsDynamic()
     end
 end
 
+---@param actors table<string, ActorEquipmentActorPacket>
 function BaseCell:SaveActorEquipment(actors)
 
     for uniqueIndex, actor in pairs(actors) do
@@ -946,6 +1020,7 @@ function BaseCell:SaveActorEquipment(actors)
     self:QuicksaveToDrive()
 end
 
+---@param actors table<string, ActorSpellsActiveActorPacket>
 function BaseCell:SaveActorSpellsActive(actors)
 
     for uniqueIndex, actor in pairs(actors) do
@@ -1021,6 +1096,7 @@ function BaseCell:SaveActorSpellsActive(actors)
     self:QuicksaveToDrive()
 end
 
+---@param actors table<string, ActorDeathActorPacket>
 function BaseCell:SaveActorDeath(actors)
 
     if self.data.packets.death == nil then
@@ -1051,6 +1127,7 @@ function BaseCell:SaveActorDeath(actors)
     self:QuicksaveToDrive()
 end
 
+---@param pid integer
 function BaseCell:SaveActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
@@ -1120,7 +1197,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 -- Was this actor moved to the old cell from another cell?
                 elseif tableHelper.containsValue(self.data.packets.cellChangeFrom, uniqueIndex) == true then
 
-                    local originalCellDescription = self.data.objectData[uniqueIndex].cellChangeFrom
+                    local originalCellDescription = self.data.objectData[uniqueIndex].cellChangeFrom -- TODO cellChangeFrom
 
                     -- Is the new cell actually this actor's original cell?
                     -- If so, move its data back and remove all of its cell change data
@@ -1158,7 +1235,7 @@ function BaseCell:SaveActorCellChanges(pid)
 
                 -- Otherwise, simply move this actor's data to the new cell and mark it as being moved there
                 -- in its old cell, as long as it's not supposed to already be in the new cell
-                elseif self.data.objectData[uniqueIndex].cellChangeTo ~= newCellDescription then
+                elseif self.data.objectData[uniqueIndex].cellChangeTo ~= newCellDescription then -- TODO cellChangeTo
 
                     tes3mp.LogAppend(enumerations.log.INFO, "-- This was its first move away from its original cell")
 
@@ -1202,6 +1279,9 @@ function BaseCell:SaveActorCellChanges(pid)
     self:QuicksaveToDrive()
 end
 
+---@param pid integer
+---@param objectData ActorPacket
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
 
     local packets = self.data.packets
@@ -1219,6 +1299,10 @@ function BaseCell:LoadActorPackets(pid, objectData, uniqueIndexArray)
     self:LoadActorAI(pid, objectData, tableHelper.getValueOverlap(uniqueIndexArray, packets.ai))
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectDeleteObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1238,6 +1322,10 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEvery
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectPlaceObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1250,7 +1338,7 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
 
         if objectData[uniqueIndex] ~= nil then
 
-            local location = objectData[uniqueIndex].location
+            local location = objectData[uniqueIndex].location -- TODO location
 
             -- Ensure data integrity before proceeeding
             if type(location) == "table" and tableHelper.getCount(location) == 6 and
@@ -1284,6 +1372,10 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectSpawnObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1296,7 +1388,7 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
 
         if objectData[uniqueIndex] ~= nil then
 
-            local location = objectData[uniqueIndex].location
+            local location = objectData[uniqueIndex].location -- TODO location
 
             -- Ensure data integrity before proceeeding
             if type(location) == "table" and tableHelper.getCount(location) == 6 and
@@ -1341,6 +1433,10 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectLockObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1366,6 +1462,10 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectMiscellaneousObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1399,6 +1499,10 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectTrapObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1422,6 +1526,10 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectScaleObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1447,6 +1555,10 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ObjectStateObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1472,6 +1584,10 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
     end
 end
 
+---@param pid integer
+---@param objectData table<string, DoorStateObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1495,6 +1611,10 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ClientScriptLocalObjectPacket>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
@@ -1513,6 +1633,9 @@ function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forE
     end
 end
 
+---@param pid integer
+---@param objectData table<string, Container>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
@@ -1568,6 +1691,11 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param packetType string
+---@param pid integer
+---@param objectData table<string, ObjectData>
+---@param uniqueIndexArray string[]
+---@param forEveryone boolean|nil
 function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueIndexArray, forEveryone)
 
     if packetType == "ObjectPlace" then
@@ -1593,6 +1721,9 @@ function BaseCell:LoadObjectsByPacketType(packetType, pid, objectData, uniqueInd
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorPacket>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1627,6 +1758,7 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
 function BaseCell:LoadActorAuthority(pid)
 
     tes3mp.ClearActorList()
@@ -1636,6 +1768,9 @@ function BaseCell:LoadActorAuthority(pid)
     tes3mp.SendActorAuthority()
 end
 
+---@param pid integer
+---@param objectData table<string, ActorPosition>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1676,6 +1811,9 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorStatsDynamic>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1718,6 +1856,9 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorEquipmentActorPacket>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1766,6 +1907,9 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorSpellsActiveActorPacket>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1798,6 +1942,9 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorDeathActorPacket>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1813,7 +1960,7 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
         tes3mp.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].deathState ~= nil then
-            if objectData[uniqueIndex].stats == nil or objectData[uniqueIndex].stats.healthCurrent < 1 then
+            if objectData[uniqueIndex].stats == nil or objectData[uniqueIndex].stats.healthCurrent < 1 then -- TODO stats
                 tes3mp.SetActorDeathState(objectData[uniqueIndex].deathState)
                 tes3mp.SetActorDeathInstant(true)
                 tes3mp.AddActor()
@@ -1836,6 +1983,9 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
     end    
 end
 
+---@param pid integer
+---@param objectData table<string, Actor>
+---@param uniqueIndexArray string[]
 function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
@@ -1923,6 +2073,8 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
     end
 end
 
+---@param pid integer
+---@param objectData table<string, ActorCellChange>
 function BaseCell:LoadActorCellChanges(pid, objectData)
 
     local temporaryLoadedCells = {}
@@ -2047,6 +2199,8 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     end
 end
 
+---@param pid integer
+---@param requestUniqueIndexes string[]
 function BaseCell:RequestContainers(pid, requestUniqueIndexes)
 
     self.isRequestingContainerData = true
@@ -2082,6 +2236,7 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
     tes3mp.SendContainer()
 end
 
+---@param pid integer
 function BaseCell:RequestActorList(pid)
 
     self.isRequestingActorList = true
@@ -2097,6 +2252,7 @@ function BaseCell:RequestActorList(pid)
     tes3mp.SendActorList()
 end
 
+---@param pid integer
 function BaseCell:LoadInitialCellData(pid)
 
     self:EnsurePacketTables()
@@ -2135,6 +2291,7 @@ function BaseCell:LoadInitialCellData(pid)
     self:LoadActorAI(pid, objectData, packets.ai)
 end
 
+---@param pid integer
 function BaseCell:LoadMomentaryCellData(pid)
 
     local objectData = self.data.objectData
@@ -2144,6 +2301,7 @@ function BaseCell:LoadMomentaryCellData(pid)
     self:LoadActorStatsDynamic(pid, objectData, packets.statsDynamic)
 end
 
+---@param pid integer
 function BaseCell:LoadGeneratedRecords(pid)
 
     if self.data.recordLinks == nil then self.data.recordLinks = {} end

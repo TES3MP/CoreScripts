@@ -149,6 +149,7 @@ tableHelper = require("tableHelper")
 
 ---@class PlayerDataCustomVariables
 ---@field storedRecords unknown
+---@field isConfiscationTarget boolean
 
 ---@class PlayerData
 ---@field login PlayerDataLogin

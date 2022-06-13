@@ -1,5 +1,3 @@
--- PlayerPackets
-
 ---@class PlayerAttributePacketAttribute : PlayerDataAttribute
 ---@field modifier integer
 
@@ -82,24 +80,27 @@
 
 ---@alias PlayerPacket PlayerAttributePacketAttribute|PlayerAttributePacket|PlayerCellChangePacket|PlayerClassPacket|PlayerCooldownsPacket|PlayerEquipmentPacket|PlayerInventoryPacket|PlayerJournalPacket|PlayerLevelPacket|PlayerQuickKeysPacket|PlayerShapeshiftPacket|PlayerSkillPacket|PlayerSpellbookPacket|PlayerSpellsActivePacket|PlayerStatsDynamicPacket
 
----@class ActorPacket
----@field refId string
-
 ---@class ActorDeathActorPacketKiller
 ---@field refId string
 ---@field uniqueIndex string
 ---@field pid integer
 ---@field playerName string
 
----@class ActorDeathActorPacket : ActorPacket
+---@class ActorDeathActorPacket
+---@field refId string
 ---@field deathState integer
 ---@field killer ActorDeathActorPacketKiller
 
 ---@class ActorEquipmentActorPacket
+---@field refId string
 ---@field equipment PlayerDataEquipmentItem[]
 
 ---@class ActorSpellsActiveActorPacket
+---@field refId string
 ---@field spellsActive table<string, PlayerDataSpellInstance[]>
+---@field spellActiveChangesAction integer
+
+---@alias ActorPacket ActorDeathActorPacketKiller|ActorDeathActorPacket|ActorEquipmentActorPacket|ActorSpellsActiveActorPacket
 
 ---@class ObjectObjectPacket
 ---@field refId string
@@ -198,6 +199,8 @@
 
 ---@class ObjectTrapObjectPacket : ObjectObjectPacket
 
+---@alias ObjectPacket ClientScriptLocalObjectPacket|DoorStateObjectPacket|ObjectActivateObjectPacket|ObjectDeleteObjectPacket|ObjectDialogueChoiceObjectPacket|ObjectHitObjectPacket|ObjectLockObjectPacket|ObjectMiscellaneousObjectPacket|ObjectPlaceObjectPacket|ObjectRestockObjectPacket|ObjectScaleObjectPacket|ObjectSoundObjectPacket|ObjectSpawnObjectPacket|ObjectStateObjectPacket|ObjectTrapObjectPacket
+
 ---@class MapTilePacket
 ---@field cellX integer
 ---@field cellY integer
@@ -251,3 +254,32 @@
 ---@field enchantmentId string
 
 ---@alias RecordDynamicPacket RecordDynamicPacketEnchantment|RecordDynamicPacketSpell|RecordDynamicPacketPotion|RecordDynamicPacketEnchantment|RecordDynamicPacketOther
+
+-- Placeholder stuff
+
+---@class Container
+---@field inventory InventoryItem[]
+---@field refId string
+
+---@class ActorPositionLocation : Location
+---@field rotX number
+---@field rotY number
+---@field rotZ number
+
+---@class ActorPosition
+---@field location ActorPositionLocation
+
+---@class ActorStatsDynamicStats : PlayerStatsDynamicPacketStats
+---@field healthModified integer
+---@field magickaModified integer
+---@field fatigueModified integer
+
+---@class ActorStatsDynamic
+---@field stats ActorStatsDynamicStats
+
+---@class Actor
+---@field ai AIData
+
+---@class ActorCellChange
+---@field cellChangeTo string
+---@field cellChangeFrom string
