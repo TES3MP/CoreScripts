@@ -147,6 +147,9 @@ tableHelper = require("tableHelper")
 ---@field timestamp PlayerDataJournalItemTimestamp
 ---@field actorRefId string
 
+---@class PlayerDataCustomVariables
+---@field storedRecords unknown
+
 ---@class PlayerData
 ---@field login PlayerDataLogin
 ---@field timestamps PlayerDataTimestamps
@@ -177,7 +180,7 @@ tableHelper = require("tableHelper")
 ---@field recordLinks unknown
 ---@field alliedPlayers unknown
 ---@field destinationOverrides unknown
----@field customVariables unknown
+---@field customVariables PlayerDataCustomVariables
 
 ---@class Player
 ---@field dbPid integer
@@ -200,6 +203,7 @@ tableHelper = require("tableHelper")
 ---@field confiscationTargetName string
 ---@field currentCustomMenu string
 ---@field displayedMenuButtons MenuButton[]
+---@field name string
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid, playerName)

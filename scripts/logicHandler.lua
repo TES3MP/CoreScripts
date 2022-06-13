@@ -11,7 +11,9 @@ local logicHandler = {}
 
 ---@type table<integer|number, Player>
 Players = {}
+---@type table<string, Cell>
 LoadedCells = {}
+---@type table<string, RecordStore>
 RecordStores = {}
 WorldInstance = nil
 ObjectLoops = {}
@@ -41,6 +43,9 @@ logicHandler.InitializeWorld = function()
     end
 end
 
+---@param pid integer
+---@param targetPid integer
+---@return boolean
 logicHandler.CheckPlayerValidity = function(pid, targetPid)
 
     local valid = false
@@ -76,7 +81,9 @@ logicHandler.CheckPlayerValidity = function(pid, targetPid)
     return valid
 end
 
--- Get the "Name (pid)" representation of a player used in chat
+---Get the "Name (pid)" representation of a player used in chat
+---@param pid integer
+---@return string
 logicHandler.GetChatName = function(pid)
     if pid == nil then
         return "Unlogged player (nil)"
@@ -89,7 +96,9 @@ logicHandler.GetChatName = function(pid)
     end
 end
 
--- Get a array of chat names corresponding to an array of player IDs
+---Get a array of chat names corresponding to an array of player IDs
+---@param pidArray any
+---@return table
 logicHandler.GetChatNames = function(pidArray)
 
     local chatNames = {}
@@ -101,8 +110,10 @@ logicHandler.GetChatNames = function(pidArray)
     return chatNames
 end
 
--- Iterate through a table of pids and find the player with the
--- lowest ping in it
+---Iterate through a table of pids and find the player with the
+---lowest ping in it
+---@param pidArray integer[]
+---@return integer
 logicHandler.GetLowestPingPid = function(pidArray)
 
     local lowestPing
@@ -121,6 +132,8 @@ logicHandler.GetLowestPingPid = function(pidArray)
     return lowestPingPid
 end
 
+---@param inputName string
+---@return boolean
 logicHandler.IsNameAllowed = function(inputName)
 
     if type(config.disallowedNameStrings) == "table" then
@@ -136,7 +149,9 @@ logicHandler.IsNameAllowed = function(inputName)
     return true
 end
 
--- Check if there is already a player with this name on the server
+---Check if there is already a player with this name on the server
+---@param newName string
+---@return boolean
 logicHandler.IsPlayerNameLoggedIn = function(newName)
 
     -- Make sure we also check the account name this new player would end up having
@@ -155,6 +170,8 @@ logicHandler.IsPlayerNameLoggedIn = function(newName)
     return false
 end
 
+---@param pid integer
+---@return boolean
 logicHandler.IsPlayerAllowedConsole = function(pid)
 
     local player = Players[pid]
@@ -171,7 +188,9 @@ logicHandler.IsPlayerAllowedConsole = function(pid)
     return false
 end
 
--- Get the Player object of either an online player or an offline one
+---Get the Player object of either an online player or an offline one
+---@param targetName string
+---@return Player
 logicHandler.GetPlayerByName = function(targetName)
     -- Check if the player is online
     for iteratorPid, player in pairs(Players) do
@@ -192,6 +211,8 @@ logicHandler.GetPlayerByName = function(targetName)
     end
 end
 
+---@param pid integer
+---@param targetName string
 logicHandler.BanPlayer = function(pid, targetName)
 
     -- Ban players based on their account names, i.e. based on the filenames used for their JSON files that
@@ -219,6 +240,8 @@ logicHandler.BanPlayer = function(pid, targetName)
     end
 end
 
+---@param pid integer
+---@param targetName string
 logicHandler.UnbanPlayer = function(pid, targetName)
     if tableHelper.containsValue(banList.playerNames, string.lower(targetName)) == true then
         tableHelper.removeValue(banList.playerNames, string.lower(targetName))
@@ -242,6 +265,9 @@ logicHandler.UnbanPlayer = function(pid, targetName)
     end
 end
 
+---@param pid integer
+---@param originPid integer
+---@param targetPid integer
 logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
     if (not logicHandler.CheckPlayerValidity(pid, originPid)) or
         (not logicHandler.CheckPlayerValidity(pid, targetPid)) then
@@ -273,6 +299,7 @@ logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
     tes3mp.SendMessage(targetPid, targetMessage, false)
 end
 
+---@return integer
 logicHandler.GetConnectedPlayerCount = function()
 
     local playerCount = 0
@@ -286,11 +313,13 @@ logicHandler.GetConnectedPlayerCount = function()
     return playerCount
 end
 
+---@return number
 logicHandler.GetLoadedCellCount = function()
 
     return tableHelper.getCount(LoadedCells)
 end
 
+---@return integer
 logicHandler.GetLoadedRegionCount = function()
 
     local regionCount = 0
@@ -304,6 +333,8 @@ logicHandler.GetLoadedRegionCount = function()
     return regionCount
 end
 
+---@param pid integer
+---@param targetPid integer
 logicHandler.PrintPlayerPosition = function(pid, targetPid)
     if not logicHandler.CheckPlayerValidity(pid, targetPid) then
         return
@@ -319,10 +350,13 @@ logicHandler.PrintPlayerPosition = function(pid, targetPid)
     tes3mp.SendMessage(pid, message, false)
 end
 
+---@param pls table<integer, Player>
 logicHandler.PushPlayerList = function(pls)
     Players = pls
 end
 
+---@param pid integer
+---@return boolean
 logicHandler.AuthCheck = function(pid)
     if Players[pid] ~= nil then
         if Players[pid]:IsLoggedIn() then
@@ -344,6 +378,8 @@ logicHandler.AuthCheck = function(pid)
     end
 end
 
+---@param packetOrigin integer
+---@return boolean
 logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_GAMEPLAY then
@@ -353,6 +389,8 @@ logicHandler.DoesPacketOriginRequireLoadedCell = function(packetOrigin)
     return false
 end
 
+---@param packetOrigin integer
+---@return boolean
 logicHandler.IsPacketFromConsole = function(packetOrigin)
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_CONSOLE then
@@ -362,6 +400,8 @@ logicHandler.IsPacketFromConsole = function(packetOrigin)
     return false
 end
 
+---@param packetOrigin integer
+---@return boolean
 logicHandler.IsPacketFromClientScript = function(packetOrigin)
 
     if packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL or
@@ -372,6 +412,8 @@ logicHandler.IsPacketFromClientScript = function(packetOrigin)
     return false
 end
 
+---@param pid integer
+---@param forEveryone boolean
 logicHandler.SendClientScriptDisables = function(pid, forEveryone)
 
     tes3mp.ClearRecords()
@@ -388,6 +430,8 @@ logicHandler.SendClientScriptDisables = function(pid, forEveryone)
     end
 end
 
+---@param pid integer
+---@param forEveryone boolean
 logicHandler.SendClientScriptSettings = function(pid, forEveryone)
 
     tes3mp.ClearSynchronizedClientScriptIds()
@@ -411,6 +455,8 @@ logicHandler.SendClientScriptSettings = function(pid, forEveryone)
     tes3mp.SendClientScriptSettings(pid, forEveryone)
 end
 
+---@param pid integer
+---@param forEveryone boolean
 logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 
     tes3mp.ClearEnforcedCollisionRefIds()
@@ -422,9 +468,13 @@ logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
     tes3mp.SendWorldCollisionOverride(pid, forEveryone)
 end
 
--- Create objects with newly assigned uniqueIndexes in a particular cell,
--- where the objectsToCreate parameter is an array of tables with refId
--- and location keys and packetType is either "spawn" or "place"
+---Create objects with newly assigned uniqueIndexes in a particular cell,
+---where the objectsToCreate parameter is an array of tables with refId
+---and location keys and packetType is either "spawn" or "place"
+---@param cellDescription string
+---@param objectsToCreate ObjectData[]
+---@param packetType integer
+---@return string[]
 logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetType)
 
     local uniqueIndexes = {}
@@ -453,7 +503,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
         local charge = object.charge
         local enchantmentCharge = object.enchantmentCharge
         local soul = object.soul
-        local location = object.location
+        local location = object.location -- TODO which kind of object structure always has location?
 
         local mpNum = WorldInstance:GetCurrentMpNum() + 1
         local uniqueIndex =  0 .. "-" .. mpNum
@@ -564,6 +614,11 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
     return uniqueIndexes
 end
 
+---@param cellDescription string
+---@param location Location
+---@param objectData ObjectData
+---@param packetType integer
+---@return string
 logicHandler.CreateObjectAtLocation = function(cellDescription, location, objectData, packetType)
 
     local objects = {}
@@ -582,6 +637,10 @@ logicHandler.CreateObjectAtLocation = function(cellDescription, location, object
     return objectUniqueIndex
 end
 
+---@param pid integer
+---@param objectData ObjectData
+---@param packetType integer
+---@return string
 logicHandler.CreateObjectAtPlayer = function(pid, objectData, packetType)
 
     local cell = tes3mp.GetCell(pid)
@@ -594,6 +653,10 @@ logicHandler.CreateObjectAtPlayer = function(pid, objectData, packetType)
     return objectUniqueIndex
 end
 
+---@param pid integer
+---@param cellDescription string
+---@param uniqueIndex string
+---@param forEveryone boolean
 logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEveryone)
 
     tes3mp.ClearObjectList()
@@ -622,14 +685,22 @@ logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEvery
     end
 end
 
+---@param pid integer
+---@param objectCellDescription string
+---@param objectUniqueIndex string
 logicHandler.DeleteObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
     logicHandler.DeleteObject(pid, objectCellDescription, objectUniqueIndex, false)
 end
 
+---@param objectCellDescription string
+---@param objectUniqueIndex string
 logicHandler.DeleteObjectForEveryone = function(objectCellDescription, objectUniqueIndex)
     logicHandler.DeleteObject(tableHelper.getAnyValue(Players).pid, objectCellDescription, objectUniqueIndex, true)
 end
 
+---@param pid integer
+---@param objectCellDescription string
+---@param objectUniqueIndex string
 logicHandler.ActivateObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
 
     tes3mp.ClearObjectList()
@@ -645,6 +716,9 @@ logicHandler.ActivateObjectForPlayer = function(pid, objectCellDescription, obje
     tes3mp.SendObjectActivate()
 end
 
+---@param pid integer
+---@param consoleCommand string
+---@param forEveryone boolean
 logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
     tes3mp.ClearObjectList()
@@ -669,6 +743,11 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
     tes3mp.SendConsoleCommand(forEveryone)
 end
 
+---@param pid integer
+---@param consoleCommand string
+---@param cellDescription string
+---@param objectUniqueIndexes string[]
+---@param forEveryone boolean
 logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
     tes3mp.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
@@ -698,10 +777,17 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
     tes3mp.SendConsoleCommand(forEveryone, false)
 end
 
+---@param pid integer
+---@param consoleCommand string
+---@param cellDescription string
+---@param objectUniqueIndex string
+---@param forEveryone boolean
 logicHandler.RunConsoleCommandOnObject = function(pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
     logicHandler.RunConsoleCommandOnObjects(pid, consoleCommand, cellDescription, {objectUniqueIndex}, forEveryone)
 end
 
+---@param recordId string
+---@return boolean
 logicHandler.IsGeneratedRecord = function(recordId)
 
     if string.find(string.lower(recordId), string.lower(config.generatedRecordIdPrefix)) ~= nil then
@@ -711,6 +797,8 @@ logicHandler.IsGeneratedRecord = function(recordId)
     return false
 end
 
+---@param recordId string
+---@return string
 logicHandler.GetRecordTypeByRecordId = function(recordId)
 
     local isGenerated = logicHandler.IsGeneratedRecord(recordId)
@@ -737,12 +825,16 @@ logicHandler.GetRecordTypeByRecordId = function(recordId)
     return nil
 end
 
+---@param recordId string
+---@return RecordStore
 logicHandler.GetRecordStoreByRecordId = function(recordId)
 
     local recordType = logicHandler.GetRecordTypeByRecordId(recordId)
     return RecordStores[recordType]
 end
 
+---@param pid integer
+---@param otherPidsArray integer[]
 logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
 
     for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
@@ -769,6 +861,8 @@ logicHandler.ExchangeGeneratedRecords = function(pid, otherPidsArray)
     end
 end
 
+---@param actorUniqueIndex string
+---@return Cell
 logicHandler.GetCellContainingActor = function(actorUniqueIndex)
 
     for cellDescription, cell in pairs(LoadedCells) do
@@ -828,15 +922,20 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
     end
 end
 
+---@param cellDescription string
+---@return boolean
 logicHandler.IsCellLoaded = function(cellDescription)
 
     return LoadedCells[cellDescription] ~= nil
 end
 
+---@param pid integer
+---@param cellDescription string
 logicHandler.SetCellAuthority = function(pid, cellDescription)
     LoadedCells[cellDescription]:SetAuthority(pid)
 end
 
+---@param storeType string
 logicHandler.LoadRecordStore = function(storeType)
 
     if RecordStores[storeType] == nil then
@@ -854,6 +953,7 @@ logicHandler.LoadRecordStore = function(storeType)
     end
 end
 
+---@param cellDescription string
 logicHandler.LoadCell = function(cellDescription)
 
     -- If this cell isn't loaded at all, load it
@@ -876,6 +976,8 @@ logicHandler.LoadCell = function(cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 logicHandler.LoadCellForPlayer = function(pid, cellDescription)
 
     logicHandler.LoadCell(cellDescription)
@@ -904,6 +1006,7 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
     end
 end
 
+---@param cellDescription string
 logicHandler.UnloadCell = function(cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
@@ -913,6 +1016,8 @@ logicHandler.UnloadCell = function(cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
 
     if LoadedCells[cellDescription] ~= nil then
@@ -941,6 +1046,9 @@ logicHandler.UnloadCellForPlayer = function(pid, cellDescription)
     end
 end
 
+---@param pid integer
+---@param regionName string
+---@param isTeleported boolean
 logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
     if regionName == "" then return end
@@ -978,6 +1086,8 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
     end
 end
 
+---@param pid integer
+---@param regionName string
 logicHandler.UnloadRegionForPlayer = function(pid, regionName)
 
     if regionName == "" then return end
@@ -1006,6 +1116,8 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 logicHandler.ResetCell = function(pid, cellDescription)
 
     tes3mp.SendMessage(pid, "Resetting cell " .. cellDescription .. "\n")

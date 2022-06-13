@@ -1,3 +1,18 @@
+---@class RecordStoreGeneral
+---@field currentGeneratedNum integer
+
+---@class RecordStoreRecordLink
+---@field records unknown
+---@field cells unknown[]
+---@field players string[]
+
+---@class RecordStore
+---@field generate RecordStoreGeneral
+---@field permanentRecords unknown
+---@field generatedRecords table<string, unknown>
+---@field recordLinks table<string, RecordStoreRecordLink>
+---@field unlinkedRecordsToCheck unknown
+---@field hasEntry boolean
 local BaseRecordStore = class("BaseRecordStore")
 
 BaseRecordStore.defaultData = 
@@ -11,12 +26,14 @@ BaseRecordStore.defaultData =
         unlinkedRecordsToCheck = {}
     }
 
+---@param storeType string
 function BaseRecordStore:__init(storeType)
 
     self.data = tableHelper.deepCopy(self.defaultData)
     self.storeType = storeType
 end
 
+---@return boolean
 function BaseRecordStore:HasEntry()
     return self.hasEntry
 end
@@ -30,26 +47,30 @@ function BaseRecordStore:EnsureDataStructure()
     end
 end
 
+---@return integer
 function BaseRecordStore:GetCurrentGeneratedNum()
     return self.data.general.currentGeneratedNum
 end
 
+---@param currentGeneratedNum integer
 function BaseRecordStore:SetCurrentGeneratedNum(currentGeneratedNum)
     self.data.general.currentGeneratedNum = currentGeneratedNum
     self:QuicksaveToDrive()
 end
 
+---@return integer
 function BaseRecordStore:IncrementGeneratedNum()
     self:SetCurrentGeneratedNum(self:GetCurrentGeneratedNum() + 1)
     return self:GetCurrentGeneratedNum()
 end
 
+---@return string
 function BaseRecordStore:GenerateRecordId()
     return config.generatedRecordIdPrefix .. "_" .. self.storeType .. "_" .. self:IncrementGeneratedNum()
 end
 
--- Go through all the generated records that were at some point tracked as having no links remaining
--- and delete them if they still have no links
+---Go through all the generated records that were at some point tracked as having no links remaining
+---and delete them if they still have no links
 function BaseRecordStore:DeleteUnlinkedRecords()
 
     if type(self.data.unlinkedRecordsToCheck) == "table" then
@@ -63,6 +84,7 @@ function BaseRecordStore:DeleteUnlinkedRecords()
     end
 end
 
+---@param recordId integer
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
     if self.data.generatedRecords[recordId] == nil then
@@ -94,7 +116,9 @@ function BaseRecordStore:DeleteGeneratedRecord(recordId)
     self:QuicksaveToDrive()
 end
 
--- Check whether there are any links remaining to a certain generated record
+---Check whether there are any links remaining to a certain generated record
+---@param recordId integer
+---@return boolean
 function BaseRecordStore:HasLinks(recordId)
 
     local recordLinks = self.data.recordLinks
@@ -117,8 +141,11 @@ function BaseRecordStore:HasLinks(recordId)
     return false
 end
 
--- Add a link between a record and another record from a different record store,
--- i.e. for enchantments being used by other items
+---Add a link between a record and another record from a different record store,
+---i.e. for enchantments being used by other items
+---@param recordId string
+---@param otherRecordId string
+---@param otherStoreType string
 function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType)
 
     local recordLinks = self.data.recordLinks
@@ -132,6 +159,9 @@ function BaseRecordStore:AddLinkToRecord(recordId, otherRecordId, otherStoreType
     end
 end
 
+---@param recordId string
+---@param otherRecordId string
+---@param otherStoreType string
 function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreType)
 
     local recordLinks = self.data.recordLinks
@@ -151,7 +181,9 @@ function BaseRecordStore:RemoveLinkToRecord(recordId, otherRecordId, otherStoreT
     end
 end
 
--- Add a link between a record and a cell it is found in
+---Add a link between a record and a cell it is found in
+---@param recordId string
+---@param cell Cell
 function BaseRecordStore:AddLinkToCell(recordId, cell)
 
     local cellDescription = cell.description
@@ -165,6 +197,8 @@ function BaseRecordStore:AddLinkToCell(recordId, cell)
     end
 end
 
+---@param recordId string
+---@param cell Cell
 function BaseRecordStore:RemoveLinkToCell(recordId, cell)
 
     local cellDescription = cell.description
@@ -184,7 +218,9 @@ function BaseRecordStore:RemoveLinkToCell(recordId, cell)
     end
 end
 
--- Add a link between a record and a player in whose inventory or spellbook it is found
+---Add a link between a record and a player in whose inventory or spellbook it is found
+---@param recordId string
+---@param player Player
 function BaseRecordStore:AddLinkToPlayer(recordId, player)
 
     local accountName = player.accountName
@@ -198,6 +234,8 @@ function BaseRecordStore:AddLinkToPlayer(recordId, player)
     end
 end
 
+---@param recordId string
+---@param player Player
 function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
 
     local accountName = player.accountName
@@ -217,6 +255,10 @@ function BaseRecordStore:RemoveLinkToPlayer(recordId, player)
     end
 end
 
+---@param pid integer
+---@param recordList Record[]
+---@param idArray string[]
+---@param forEveryone boolean
 function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
@@ -263,6 +305,10 @@ function BaseRecordStore:LoadGeneratedRecords(pid, recordList, idArray, forEvery
     self:LoadRecords(pid, recordList, validIdArray, forEveryone)
 end
 
+---@param pid integer
+---@param recordList Record[]
+---@param idArray string[]
+---@param forEveryone boolean
 function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
 
     if type(recordList) ~= "table" then return end
@@ -286,9 +332,16 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
     end
 end
 
--- Check if a record is a perfect match for any of the records whose IDs
--- are contained in an ID array, with optional parameters that allow starting
--- from the end of the idArray and performing a limited number of checks
+---Check if a record is a perfect match for any of the records whose IDs
+---are contained in an ID array, with optional parameters that allow starting
+---from the end of the idArray and performing a limited number of checks
+---@param comparedRecord Record
+---@param recordList Record[]
+---@param idArray string[]
+---@param ignoredKeys string[]
+---@param useReverseOrder boolean
+---@param maximumChecks integer
+---@return nil
 function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray, ignoredKeys, useReverseOrder, maximumChecks)
 
     if idArray == nil then
@@ -328,6 +381,7 @@ function BaseRecordStore:GetMatchingRecordId(comparedRecord, recordList, idArray
     return nil
 end
 
+---@param recordTable table<string, Record>
 function BaseRecordStore:SaveGeneratedRecords(recordTable)
 
     for recordId, record in pairs(recordTable) do

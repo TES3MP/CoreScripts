@@ -1,5 +1,7 @@
 packetBuilder = {}
 
+---@param pid integer
+---@param item Item
 packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
 
     -- Use default values when necessary
@@ -10,6 +12,9 @@ packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
     tes3mp.AddItemChange(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
 end
 
+---@param pid integer
+---@param spellsActive table<string, SpellInstance[]>
+---@param action integer
 packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
 
     tes3mp.ClearSpellsActiveChanges(pid)
@@ -34,6 +39,8 @@ packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
     end
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectDeleteObjectPacket
 packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -43,6 +50,8 @@ packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectPlaceObjectPacket
 packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -79,6 +88,8 @@ packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectSpawnObjectPacket
 packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -112,6 +123,8 @@ packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectLockObjectPacket
 packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -122,6 +135,8 @@ packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectMiscellaneousObjectPacket
 packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -134,6 +149,8 @@ packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectTrapObjectPacket
 packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -144,6 +161,8 @@ packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectScaleObjectPacket
 packetBuilder.AddObjectScale = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -154,6 +173,8 @@ packetBuilder.AddObjectScale = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ObjectStateObjectPacket
 packetBuilder.AddObjectState = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -164,6 +185,8 @@ packetBuilder.AddObjectState = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData DoorStateObjectPacket
 packetBuilder.AddDoorState = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -174,6 +197,8 @@ packetBuilder.AddDoorState = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+---@param uniqueIndex string
+---@param objectData ClientScriptLocalObjectPacket
 packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
@@ -207,6 +232,9 @@ packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
     end
 end
 
+---@param actorUniqueIndex string
+---@param targetPid integer
+---@param aiData AIData
 packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
 
     local splitIndex = actorUniqueIndex:split("-")
@@ -236,6 +264,9 @@ packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
     tes3mp.AddActor()
 end
 
+---@param actorUniqueIndex string
+---@param spellsActive table<string, SpellInstance[]>
+---@param action integer
 packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, action)
 
     local splitIndex = actorUniqueIndex:split("-")
@@ -264,6 +295,7 @@ packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, ac
     tes3mp.AddActor() 
 end
 
+---@param effect RecordEffect
 packetBuilder.AddEffectToRecord = function(effect)
 
     tes3mp.SetRecordEffectId(effect.id)
@@ -278,6 +310,7 @@ packetBuilder.AddEffectToRecord = function(effect)
     tes3mp.AddRecordEffect()
 end
 
+---@param part RecordBodyPart
 packetBuilder.AddBodyPartToRecord = function(part)
 
     tes3mp.SetRecordBodyPartType(part.partType)
@@ -287,6 +320,7 @@ packetBuilder.AddBodyPartToRecord = function(part)
     tes3mp.AddRecordBodyPart()
 end
 
+---@param item RecordItem
 packetBuilder.AddInventoryItemToRecord = function(item)
 
     tes3mp.SetRecordInventoryItemId(item.id)
@@ -295,6 +329,9 @@ packetBuilder.AddInventoryItemToRecord = function(item)
     tes3mp.AddRecordInventoryItem()
 end
 
+---@param id string
+---@param record Record
+---@param storeType string
 packetBuilder.AddRecordByType = function(id, record, storeType)
 
     if storeType == "activator" then
@@ -350,6 +387,8 @@ packetBuilder.AddRecordByType = function(id, record, storeType)
     end
 end
 
+---@param id string
+---@param record ActivatorRecord
 packetBuilder.AddActivatorRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -361,6 +400,8 @@ packetBuilder.AddActivatorRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ApparatusRecord
 packetBuilder.AddApparatusRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -377,6 +418,8 @@ packetBuilder.AddApparatusRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ArmorRecord
 packetBuilder.AddArmorRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -402,6 +445,8 @@ packetBuilder.AddArmorRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record BodyPartRecord
 packetBuilder.AddBodyPartRecord = function(id, record)
     
     tes3mp.SetRecordId(id)
@@ -416,6 +461,8 @@ packetBuilder.AddBodyPartRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record BookRecord
 packetBuilder.AddBookRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -435,6 +482,8 @@ packetBuilder.AddBookRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record CellRecord
 packetBuilder.AddCellRecord = function(id, record)
 
     tes3mp.SetRecordName(id)
@@ -443,6 +492,8 @@ packetBuilder.AddCellRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ClothingRecord
 packetBuilder.AddClothingRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -466,6 +517,8 @@ packetBuilder.AddClothingRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ContainerRecord
 packetBuilder.AddContainerRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -485,6 +538,8 @@ packetBuilder.AddContainerRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record CreatureRecord
 packetBuilder.AddCreatureRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -518,6 +573,8 @@ packetBuilder.AddCreatureRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record DoorRecord
 packetBuilder.AddDoorRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -531,6 +588,8 @@ packetBuilder.AddDoorRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record EnchantmentRecord
 packetBuilder.AddEnchantmentRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -552,6 +611,8 @@ packetBuilder.AddEnchantmentRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record GameSettingRecord
 packetBuilder.AddGameSettingRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -564,6 +625,8 @@ packetBuilder.AddGameSettingRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record IngredientRecord
 packetBuilder.AddIngredientRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -590,6 +653,8 @@ packetBuilder.AddIngredientRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record LightRecord
 packetBuilder.AddLightRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -609,6 +674,8 @@ packetBuilder.AddLightRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record LockpickRecord
 packetBuilder.AddLockpickRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -625,6 +692,8 @@ packetBuilder.AddLockpickRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record MiscellaneousRecord
 packetBuilder.AddMiscellaneousRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -640,6 +709,8 @@ packetBuilder.AddMiscellaneousRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record NpcRecord
 packetBuilder.AddNpcRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -672,6 +743,8 @@ packetBuilder.AddNpcRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record PotionRecord
 packetBuilder.AddPotionRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -693,6 +766,8 @@ packetBuilder.AddPotionRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ProbeRecord
 packetBuilder.AddProbeRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -709,6 +784,8 @@ packetBuilder.AddProbeRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record RepairRecord
 packetBuilder.AddRepairRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -725,6 +802,8 @@ packetBuilder.AddRepairRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record ScriptRecord
 packetBuilder.AddScriptRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -734,6 +813,8 @@ packetBuilder.AddScriptRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record SoundRecord
 packetBuilder.AddSoundRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -746,6 +827,8 @@ packetBuilder.AddSoundRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record SpellRecord
 packetBuilder.AddSpellRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -764,6 +847,8 @@ packetBuilder.AddSpellRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record StaticRecord
 packetBuilder.AddStaticRecord = function(id, record)
 
     tes3mp.SetRecordId(id)
@@ -773,6 +858,8 @@ packetBuilder.AddStaticRecord = function(id, record)
     tes3mp.AddRecord()
 end
 
+---@param id string
+---@param record WeaponRecord
 packetBuilder.AddWeaponRecord = function(id, record)
 
     tes3mp.SetRecordId(id)

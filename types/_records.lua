@@ -1,0 +1,292 @@
+
+---@class RecordEffect
+---@field id integer
+---@field attribute integer
+---@field skill integer
+---@field rangeType integer
+---@field area integer
+---@field duration integer
+---@field magnitudeMin integer
+---@field magnitudeMax integer
+
+---@class RecordBodyPart
+---@field partType integer
+---@field malePart boolean
+---@field femalePart boolean
+
+---@class RecordItem
+---@field id string
+---@field count integer
+
+---@class ActivatorRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field script string
+
+---@class ApparatusRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field subtype integer
+---@field weight number
+---@field value integer
+---@field quality integer
+---@field script string
+
+---@class ArmorRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field subtype integer
+---@field weight number
+---@field value integer
+---@field health integer
+---@field armorRating integer
+---@field enchantmentId string
+---@field enchantmentCharge integer
+---@field script string
+---@field parts RecordBodyPart[]
+
+---@class BodyPartRecord
+---@field baseId string
+---@field subtype integer
+---@field part integer
+---@field model string
+---@field race string
+---@field vampireState boolean
+---@field flags integer
+
+---@class BookRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field text string
+---@field weight number
+---@field value integer
+---@field scrollState boolean
+---@field skillId integer
+---@field enchantmentId string
+---@field enchantmentCharge integer
+---@field script string
+
+---@class CellRecord
+---@field baseId string
+
+---@class ClothingRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field subtype integer
+---@field weight number
+---@field value integer
+---@field enchantmentId string
+---@field enchantmentCharge integer
+---@field script string
+---@field parts RecordBodyPart[]
+
+---@class ContainerRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field weight number
+---@field flags integer
+---@field script string
+---@field items RecordItem[]
+
+---@class CreatureRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field subtype integer
+---@field scale number
+---@field bloodType unknown
+---@field level integer
+---@field health integer
+---@field magicka integer
+---@field fatigue integer
+---@field soulValue unknown
+---@field damageChop Damage
+---@field damageSlash Damage
+---@field damageThrust Damage
+---@field aiFight integer
+---@field aiServices integer
+---@field aiFlee integer
+---@field aiAlarm integer
+---@field flags integer
+---@field script string
+---@field items RecordItem[]
+
+---@class DoorRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field openSound string
+---@field closeSound string
+---@field script string
+
+---@class EnchantmentRecord
+---@field baseId string
+---@field subtype integer
+---@field cost integer
+---@field charge integer
+---@field flags integer
+---@field autoCalc integer @deprecated
+---@field effects RecordEffect[]
+
+---@class GameSettingRecord
+---@field baseId string
+---@field intVar integer
+---@field floatVar number
+---@field stringVar string
+
+---@class IngredientRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field weight number
+---@field value integer
+---@field script string
+---@field effects RecordEffect[]
+
+---@class LightRecordColor
+---@field red integer
+---@field green integer
+---@field blue integer
+
+---@class LightRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field sound string
+---@field weight number
+---@field value integer
+---@field time unknown
+---@field radius number
+---@field color LightRecordColor
+---@field flags integer
+---@field script string
+
+---@class LockpickRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field weight number
+---@field value integer
+---@field quality integer
+---@field uses integer
+---@field script string
+
+---@class MiscellaneousRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field weight number
+---@field value integer
+---@field keyState boolean
+---@field script string
+
+---@class NpcRecord
+---@field baseId string
+---@field inventoryBaseId string
+---@field name string
+---@field gender string
+---@field race string
+---@field hair string
+---@field head string
+---@field class string
+---@field level integer
+---@field health integer
+---@field magicka integer
+---@field fatigue integer
+---@field aiFight integer
+---@field aiFlee integer
+---@field aiAlarm integer
+---@field aiServices string
+---@field autoCalc integer
+---@field faction string
+---@field script string
+---@field items RecordItem[]
+
+---@class PotionRecord
+---@field baseId string
+---@field name string
+---@field weight number
+---@field value integer
+---@field autoCalc string
+---@field icon string
+---@field model string
+---@field script string
+---@field effects RecordEffect[]
+
+---@class ProbeRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field weight number
+---@field value integer
+---@field quality integer
+---@field uses integer
+---@field script string
+
+---@class RepairRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field weight number
+---@field value integer
+---@field quality integer
+---@field uses integer
+---@field script string
+
+---@class ScriptRecord
+---@field baseId string
+---@field scriptText string
+
+---@class SoundRecord
+---@field baseId string
+---@field sound string
+---@field volume number
+---@field minRange integer
+---@field maxRange integer
+
+---@class SpellRecord
+---@field baseId string
+---@field name string
+---@field subtype integer
+---@field cost integer
+---@field flags integer
+---@field effects RecordEffect[]
+
+---@class StaticRecord
+---@field baseId string
+---@field model string
+
+---@class WeaponRecord
+---@field baseId string
+---@field name string
+---@field model string
+---@field icon string
+---@field subtype integer
+---@field weight number
+---@field value integer
+---@field health integer
+---@field speed number
+---@field reach number
+---@field damageChop Damage
+---@field damageSlash Damage
+---@field damageThrust Damage
+---@field flags integer
+---@field enchantmentId string
+---@field enchantmentCharge integer
+---@field script string

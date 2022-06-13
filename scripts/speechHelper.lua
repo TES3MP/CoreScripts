@@ -6,6 +6,11 @@ local speechHelper = {}
 local speechTypesToFilePrefixes = { attack = "Atk", flee = "Fle", follower = "Flw", hello = "Hlo", hit = "Hit",
     idle = "Idl", intruder = "int", oppose = "OP", service = "Srv", thief = "Thf", uniform = "uni" }
 
+---@param speechCollectionTable table @TODO type this?
+---@param speechType string
+---@param speechIndex string
+---@param gender integer
+---@return string|nil
 function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechType, speechIndex, gender)
 
     if speechCollectionTable == nil or speechTypesToFilePrefixes[speechType] == nil then
@@ -64,6 +69,10 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
     return speechPath
 end
 
+---@param pid integer
+---@param speechInput string
+---@param speechIndex string
+---@return string|nil
 function speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
 
     local speechCollectionKey
@@ -94,6 +103,10 @@ function speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
     end
 end
 
+---@param speechCollectionTable table @TODO
+---@param gender integer
+---@param collectionPrefix string
+---@return string
 function speechHelper.GetPrintableValidListForSpeechCollection(speechCollectionTable, gender, collectionPrefix)
 
     local validList = {}
@@ -127,6 +140,8 @@ function speechHelper.GetPrintableValidListForSpeechCollection(speechCollectionT
     return validList
 end
 
+---@param pid integer
+---@return string
 function speechHelper.GetPrintableValidListForPid(pid)
 
     local validList = {}
@@ -148,6 +163,10 @@ function speechHelper.GetPrintableValidListForPid(pid)
     return tableHelper.concatenateFromIndex(validList, 1, ", ")
 end
 
+---@param pid integer
+---@param speechInput string
+---@param speechIndex string
+---@return boolean
 function speechHelper.PlaySpeech(pid, speechInput, speechIndex)
 
     local speechPath = speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
