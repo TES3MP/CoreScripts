@@ -1,16 +1,10 @@
 -- PlayerPackets
 
---
--- OnPlayerAttributeCallback
-
 ---@class PlayerAttributePacketAttribute : PlayerDataAttribute
 ---@field modifier integer
 
 ---@class PlayerAttributePacket
 ---@field attributes PlayerAttributePacketAttribute[]
-
---
--- OnPlayerCellChangeCallback
 
 ---@class PlayerCellChangePacketLocation
 ---@field cell string
@@ -23,33 +17,26 @@
 ---@class PlayerCellChangePacket
 ---@field location PlayerCellChangePacketLocation
 
---
--- OnPlayerCooldownsCallback
+---@class PlayerClassPacketCharacter
+---@field class string
+---@field defaultClassState integer
+
+---@class PlayerClassPacket
+---@field character PlayerClassPacketCharacter
+---@field customClass PlayerDataCustomClass
 
 ---@class PlayerCooldownsPacket
 ---@field cooldowns PlayerDataCooldown[]
 
---
--- OnPlayerEquipmentCallback
-
 ---@class PlayerEquipmentPacket
 ---@field equipment PlayerDataEquipmentItem[]
-
---
--- OnPlayerInventoryCallback
 
 ---@class PlayerInventoryPacket
 ---@field inventory PlayerDataInventoryItem[]
 ---@field action integer
 
---
--- OnPlayerJournalCallback
-
 ---@class PlayerJournalPacket
 ---@field journal PlayerDataJournalItem[]
-
---
--- OnPlayerLevelCallback
 
 ---@class PlayerLevelPacketStats
 ---@field level integer
@@ -58,14 +45,8 @@
 ---@class PlayerLevelPacket
 ---@field stats PlayerLevelPacketStats
 
---
--- OnPlayerQuickKeysCallback
-
 ---@class PlayerQuickKeysPacket
 ---@field quickKeys PlayerDataQuickKey[]
-
---
--- OnPlayerShapeshiftCallback
 
 ---@class PlayerShapeshiftPacketShapeshift
 ---@field scale number
@@ -74,31 +55,19 @@
 ---@class PlayerShapeshiftPacket
 ---@field shapeshift PlayerShapeshiftPacketShapeshift
 
---
--- OnPlayerSkillCallback
-
 ---@class PlayerAttributePacketSkill : PlayerDataSkill
 ---@field modifier integer
 
 ---@class PlayerSkillPacket
 ---@field skills PlayerAttributePacketSkill[]
 
---
--- OnPlayerSpellbookCallback
-
 ---@class PlayerSpellbookPacket
 ---@field spellbook string[]
 ---@field action integer
 
---
--- OnPlayerSpellsActiveCallback
-
 ---@class PlayerSpellsActivePacket
 ---@field spellsActive table<string, PlayerDataSpellInstance[]>
 ---@field action integer
-
---
--- Other Player Packets
 
 ---@class PlayerStatsDynamicPacketStats
 ---@field healthBase integer
@@ -111,13 +80,10 @@
 ---@class PlayerStatsDynamicPacket
 ---@field stats PlayerStatsDynamicPacketStats
 
--- ActorPackets
+---@alias PlayerPacket PlayerAttributePacketAttribute|PlayerAttributePacket|PlayerCellChangePacket|PlayerClassPacket|PlayerCooldownsPacket|PlayerEquipmentPacket|PlayerInventoryPacket|PlayerJournalPacket|PlayerLevelPacket|PlayerQuickKeysPacket|PlayerShapeshiftPacket|PlayerSkillPacket|PlayerSpellbookPacket|PlayerSpellsActivePacket|PlayerStatsDynamicPacket
 
 ---@class ActorPacket
 ---@field refId string
-
---
--- OnActorDeathCallback
 
 ---@class ActorDeathActorPacketKiller
 ---@field refId string
@@ -129,19 +95,11 @@
 ---@field deathState integer
 ---@field killer ActorDeathActorPacketKiller
 
---
--- OnActorEquipmentCallback
-
 ---@class ActorEquipmentActorPacket
 ---@field equipment PlayerDataEquipmentItem[]
 
---
--- OnActorSpellsActiveCallback
-
 ---@class ActorSpellsActiveActorPacket
 ---@field spellsActive table<string, PlayerDataSpellInstance[]>
-
--- ObjectPackets
 
 ---@class ObjectObjectPacket
 ---@field refId string
@@ -151,20 +109,11 @@
 ---@field pid integer
 ---@field player Player
 
---
--- OnClientScriptLocalCallback
-
 ---@class ClientScriptLocalObjectPacket : ObjectObjectPacket
 ---@field variables table<integer, number|integer[]>
 
---
--- OnDoorStateCallback
-
 ---@class DoorStateObjectPacket : ObjectObjectPacket
 ---@field doorState integer
-
---
--- OnObjectActivateCallback
 
 ---@class ObjectActivatePacket
 ---@field activatingPid integer
@@ -176,20 +125,11 @@
 ---@class ObjectActivatePlayerPacket : ObjectPlayerPacket, ObjectActivatePacket
 ---@field drawState integer
 
---
--- OnObjectDeleteCallback
-
 ---@class ObjectDeleteObjectPacket : ObjectObjectPacket
-
---
--- OnObjectDialogueChoiceCallback
 
 ---@class ObjectDialogueChoiceObjectPacket : ObjectObjectPacket
 ---@field dialogueChoiceType integer
 ---@field dialogueTopic unknown
-
---
--- OnObjectHitCallback
 
 ---@class ObjectHitPacketHit
 ---@field success boolean
@@ -207,22 +147,13 @@
 
 ---@class ObjectHitPlayerPacket : ObjectPlayerPacket, ObjectHitPacket
 
---
--- OnObjectLockCallback
-
 ---@class ObjectLockObjectPacket : ObjectObjectPacket
 ---@field lockLevel integer
-
---
--- OnObjectMiscellaneousCallback
 
 ---@class ObjectMiscellaneousObjectPacket : ObjectObjectPacket
 ---@field goldPool integer
 ---@field lastGoldRestockHour integer
 ---@field lastGoldRestockDay integer
-
---
--- OnObjectPlaceCallback
 
 ---@class ObjectPlaceObjectPacket : ObjectObjectPacket
 ---@field count integer
@@ -233,19 +164,10 @@
 ---@field hasContainer boolean
 ---@field droppedByPlayer boolean
 
---
--- OnObjectRestockCallback
-
 ---@class ObjectRestockObjectPacket : ObjectObjectPacket
-
---
--- OnObjectScaleCallback
 
 ---@class ObjectScaleObjectPacket : ObjectObjectPacket
 ---@field scale number
-
---
--- OnObjectSoundCallback
 
 ---@class ObjectSoundPacket
 ---@field soundId string
@@ -253,9 +175,6 @@
 ---@class ObjectSoundObjectPacket : ObjectObjectPacket, ObjectSoundPacket
 
 ---@class ObjectSoundPlayerPacket : ObjectPlayerPacket, ObjectSoundPacket
-
---
--- OnObjectSpawnCallback
 
 ---@class ObjectSummonSummonerPacket
 ---@field refId string
@@ -274,36 +193,19 @@
 ---@class ObjectSpawnObjectPacket : ObjectObjectPacket
 ---@field summon ObjectSummonPacket
 
---
--- OnObjectStateCallback
-
 ---@class ObjectStateObjectPacket : ObjectObjectPacket
 ---@field state number
 
---
--- OnObjectTrapCallback
-
 ---@class ObjectTrapObjectPacket : ObjectObjectPacket
-
--- Standalone Packets
-
---
--- OnWorldMapCallback
 
 ---@class MapTilePacket
 ---@field cellX integer
 ---@field cellY integer
 
---
--- OnClientScriptGlobalCallback
-
 ---@class VariablePacket
 ---@field variableType integer
 ---@field intValue integer
 ---@field floatValue number
-
---
--- OnRecordDynamicCallback
 
 ---@class RecordDynamicPacketEffect
 ---@field id integer

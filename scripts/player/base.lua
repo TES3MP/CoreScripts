@@ -961,6 +961,7 @@ function BasePlayer:LoadClass()
     tes3mp.SendClass(self.pid)
 end
 
+---@param playerPacket PlayerClassPacket
 function BasePlayer:SaveClass(playerPacket)
 
     self.data.character.class = playerPacket.character.class

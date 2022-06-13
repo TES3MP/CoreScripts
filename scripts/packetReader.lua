@@ -1,5 +1,22 @@
 packetReader = {}
 
+---@overload fun(pid: integer, packetType: "PlayerClass"): PlayerClassPacket
+---@overload fun(pid: integer, packetType: "PlayerStatsDynamic"): PlayerStatsDynamicPacket
+---@overload fun(pid: integer, packetType: "PlayerAttribute"): PlayerAttributePacket
+---@overload fun(pid: integer, packetType: "PlayerSkill"): PlayerSkillPacket
+---@overload fun(pid: integer, packetType: "PlayerLevel"): PlayerLevelPacket
+---@overload fun(pid: integer, packetType: "PlayerShapeshift"): PlayerShapeshiftPacket
+---@overload fun(pid: integer, packetType: "PlayerCellChange"): PlayerCellChangePacket
+---@overload fun(pid: integer, packetType: "PlayerEquipment"): PlayerEquipmentPacket
+---@overload fun(pid: integer, packetType: "PlayerInventory"): PlayerInventoryPacket
+---@overload fun(pid: integer, packetType: "PlayerSpellbook"): PlayerSpellbookPacket
+---@overload fun(pid: integer, packetType: "PlayerSpellsActive"): PlayerSpellsActivePacket
+---@overload fun(pid: integer, packetType: "PlayerCooldowns"): PlayerCooldownsPacket
+---@overload fun(pid: integer, packetType: "PlayerQuickKeys"): PlayerQuickKeysPacket
+---@overload fun(pid: integer, packetType: "PlayerJournal"): PlayerJournalPacket
+---@param pid integer
+---@param packetType string
+---@return PlayerPacket
 packetReader.GetPlayerPacketTables = function(pid, packetType)
 
     local packetTable = {}
@@ -229,6 +246,11 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
     return packetTable
 end
 
+---@overload fun(pid: integer, packetType: "ActorEquipment"): ActorEquipmentActorPacket
+---@overload fun(pid: integer, packetType: "ActorSpellsActive"): ActorSpellsActiveActorPacket
+---@overload fun(pid: integer, packetType: "ActorDeath"): ActorDeathActorPacket
+---@param packetType string
+---@return ActorPacket
 packetReader.GetActorPacketTables = function(packetType)
     
     local packetTables = { actors = {} }
@@ -345,6 +367,66 @@ packetReader.GetActorPacketTables = function(packetType)
     return packetTables
 end
 
+---@class ObjectActivatePacketTables
+---@field objects table<string, ObjectActivateObjectPacket>
+---@field players table<integer, ObjectActivatePlayerPacket>
+
+---@class ObjectHitPacketTables
+---@field objects table<string, ObjectHitObjectPacket>
+---@field players table<integer, ObjectHitPlayerPacket>
+
+---@class ObjectSoundPacketTables
+---@field objects table<string, ObjectSoundObjectPacket>
+---@field players table<integer, ObjectSoundPlayerPacket>
+
+---@class ConsoleCommandPacketTables
+---@field objects table<string, ObjectObjectPacket>
+---@field players table<integer, ObjectPlayerPacket>
+
+---@class ObjectPlacePacketTables
+---@field objects table<string, ObjectPlaceObjectPacket>
+
+---@class ObjectSpawnPacketTables
+---@field objects table<string, ObjectSpawnObjectPacket>
+
+---@class ObjectLockPacketTables
+---@field objects table<string, ObjectLockObjectPacket>
+
+---@class ObjectDialogueChoicePacketTables
+---@field objects table<string, ObjectDialogueChoiceObjectPacket>
+
+---@class ObjectMiscellaneousPacketTables
+---@field objects table<string, ObjectMiscellaneousObjectPacket>
+
+---@class ObjectScalePacketTables
+---@field objects table<string, ObjectScaleObjectPacket>
+
+---@class ObjectStatePacketTables
+---@field objects table<string, ObjectStateObjectPacket>
+
+---@class DoorStatePacketTables
+---@field objects table<string, DoorStateObjectPacket>
+
+---@class ClientScriptLocalPacketTables
+---@field objects table<string, ClientScriptLocalObjectPacket>
+
+---@alias PacketTables ObjectActivatePacketTables|ObjectHitPacketTables|ObjectSoundPacketTables|ObjectPlacePacketTables|ObjectSpawnPacketTables|ObjectLockPacketTables|ObjectDialogueChoicePacketTables|ObjectMiscellaneousPacketTables|ObjectScalePacketTables|ObjectStatePacketTables|DoorStatePacketTables|ClientScriptLocalPacketTables
+
+---@overload fun(pid: integer, packetType: "ObjectActivate"): ObjectActivatePacketTables
+---@overload fun(pid: integer, packetType: "ObjectHit"): ObjectHitPacketTables
+---@overload fun(pid: integer, packetType: "ObjectSound"): ObjectSoundPacketTables
+---@overload fun(pid: integer, packetType: "ConsoleCommand"): ConsoleCommandPacketTables
+---@overload fun(pid: integer, packetType: "ObjectPlace"): ObjectPlacePacketTables
+---@overload fun(pid: integer, packetType: "ObjectSpawn"): ObjectSpawnPacketTables
+---@overload fun(pid: integer, packetType: "ObjectLock"): ObjectLockPacketTables
+---@overload fun(pid: integer, packetType: "ObjectDialogueChoice"): ObjectDialogueChoicePacketTables
+---@overload fun(pid: integer, packetType: "ObjectMiscellaneous"): ObjectMiscellaneousPacketTables
+---@overload fun(pid: integer, packetType: "ObjectScale"): ObjectScalePacketTables
+---@overload fun(pid: integer, packetType: "ObjectState"): ObjectStatePacketTables
+---@overload fun(pid: integer, packetType: "DoorState"): DoorStatePacketTables
+---@overload fun(pid: integer, packetType: "ClientScriptLocal"): ClientScriptLocalPacketTables
+---@param packetType string
+---@return PacketTables
 packetReader.GetObjectPacketTables = function(packetType)
 
     local packetTables = { objects = {}, players = {} }
@@ -549,6 +631,7 @@ packetReader.GetObjectPacketTables = function(packetType)
     return packetTables
 end
 
+---@return MapTilePacket[]
 packetReader.GetWorldMapTileArray = function()
 
     local mapTileArray = {}
@@ -568,6 +651,7 @@ packetReader.GetWorldMapTileArray = function()
     return mapTileArray
 end
 
+---@return VariablePacket[]
 packetReader.GetClientScriptGlobalPacketTable = function()
 
     local variables = {}
@@ -590,6 +674,8 @@ packetReader.GetClientScriptGlobalPacketTable = function()
     return variables
 end
 
+---@param pid integer
+---@return RecordDynamicPacket[]
 packetReader.GetRecordDynamicArray = function(pid)
 
     local recordArray = {}
@@ -661,6 +747,8 @@ packetReader.GetRecordDynamicArray = function(pid)
     return recordArray
 end
 
+---@param recordIndex integer
+---@return RecordDynamicPacketEffect[]
 packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}

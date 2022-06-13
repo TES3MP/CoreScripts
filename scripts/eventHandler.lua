@@ -424,6 +424,8 @@ eventHandler.InitializeDefaultHandlers = function()
 
 end
 
+---@param pid integer
+---@param playerName string
 eventHandler.OnPlayerConnect = function(pid, playerName)
 
     Players[pid] = Player(pid, playerName)
@@ -527,6 +529,7 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
     customEventHooks.triggerHandlers("OnPlayerConnect", eventStatus, {pid})
 end
 
+---@param pid integer
 eventHandler.OnPlayerDisconnect = function(pid)
 
     local message = logicHandler.GetChatName(pid) .. " has left the server.\n"
@@ -607,6 +610,10 @@ eventHandler.OnPlayerDisconnect = function(pid)
     end
 end
 
+---@param pid integer
+---@param idGui string
+---@param data string|number
+---@return boolean
 eventHandler.OnGUIAction = function(pid, idGui, data)
 
     if Players[pid] ~= nil then
@@ -735,6 +742,8 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
     return false
 end
 
+---@param pid integer
+---@param message string
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
@@ -771,6 +780,7 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerEndCharGen = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerEndCharGen", {pid})
@@ -782,6 +792,8 @@ eventHandler.OnPlayerEndCharGen = function(pid)
     end
 end
 
+---@param pid integer
+---@param packetType string
 eventHandler.OnGenericPlayerEvent = function(pid, packetType)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local playerPacket = packetReader.GetPlayerPacketTables(pid, packetType)
@@ -794,42 +806,52 @@ eventHandler.OnGenericPlayerEvent = function(pid, packetType)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerAttribute = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerAttribute")
 end
 
+---@param pid integer
 eventHandler.OnPlayerSkill = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerSkill")
 end
 
+---@param pid integer
 eventHandler.OnPlayerLevel = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerLevel")
 end
 
+---@param pid integer
 eventHandler.OnPlayerShapeshift = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerShapeshift")
 end
 
+---@param pid integer
 eventHandler.OnPlayerEquipment = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerEquipment")
 end
 
+---@param pid integer
 eventHandler.OnPlayerInventory = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerInventory")
 end
 
+---@param pid integer
 eventHandler.OnPlayerSpellbook = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerSpellbook")
 end
 
+---@param pid integer
 eventHandler.OnPlayerCooldowns = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerCooldowns")
 end
 
+---@param pid integer
 eventHandler.OnPlayerQuickKeys = function(pid)
     eventHandler.OnGenericPlayerEvent(pid, "PlayerQuickKeys")
 end
 
+---@param pid integer
 eventHandler.OnPlayerSpellsActive = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local playerPacket = packetReader.GetPlayerPacketTables(pid, "PlayerSpellsActive")
@@ -846,6 +868,7 @@ eventHandler.OnPlayerSpellsActive = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerCellChange = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -926,6 +949,7 @@ eventHandler.OnPlayerCellChange = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerDeath = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerDeath", {pid})
@@ -936,6 +960,7 @@ eventHandler.OnPlayerDeath = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerJournal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -957,6 +982,7 @@ eventHandler.OnPlayerJournal = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
@@ -1000,6 +1026,7 @@ eventHandler.OnPlayerFaction = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerTopic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerTopic", {pid})
@@ -1019,6 +1046,7 @@ eventHandler.OnPlayerTopic = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerBounty = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         
@@ -1052,6 +1080,7 @@ eventHandler.OnPlayerBounty = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerReputation = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerReputation", {pid})
@@ -1072,6 +1101,7 @@ eventHandler.OnPlayerReputation = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerBook = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnPlayerBook", {pid})
@@ -1082,6 +1112,7 @@ eventHandler.OnPlayerBook = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerItemUse = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local itemRefId = tes3mp.GetUsedItemRefId(pid)
@@ -1098,6 +1129,7 @@ eventHandler.OnPlayerItemUse = function(pid)
     end
 end
 
+---@param pid integer
 eventHandler.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local changeType = tes3mp.GetMiscellaneousChangeType(pid)
@@ -1118,6 +1150,8 @@ eventHandler.OnPlayerMiscellaneous = function(pid)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnCellLoad = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnCellLoad", {pid, cellDescription})
@@ -1131,6 +1165,8 @@ eventHandler.OnCellLoad = function(pid, cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnCellUnload = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnCellUnload", {pid, cellDescription})
@@ -1141,6 +1177,7 @@ eventHandler.OnCellUnload = function(pid, cellDescription)
     end
 end
 
+---@param cellDescription string
 eventHandler.OnCellDeletion = function(cellDescription)
     local eventStatus = customEventHooks.triggerValidators("OnCellDeletion", {cellDescription})
     if eventStatus.validDefaultHandler then
@@ -1149,6 +1186,9 @@ eventHandler.OnCellDeletion = function(cellDescription)
     customEventHooks.triggerHandlers("OnCellDeletion", eventStatus, {cellDescription})
 end
 
+---@param pid integer
+---@param cellDescription string
+---@param packetType string
 eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
@@ -1178,18 +1218,26 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorList = function(pid, cellDescription)
     eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorList")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorEquipment = function(pid, cellDescription)
     eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorEquipment")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorSpellsActive = function(pid, cellDescription)
     eventHandler.OnGenericActorEvent(pid, cellDescription, "ActorSpellsActive")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
@@ -1215,6 +1263,8 @@ eventHandler.OnActorAI = function(pid, cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorDeath = function(pid, cellDescription)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
@@ -1253,6 +1303,8 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnActorCellChange = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
@@ -1275,6 +1327,9 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
+---@param packetType string
 eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
@@ -1355,66 +1410,98 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
     end
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectActivate = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectActivate")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectHit = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectHit")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectSound = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectSound")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectPlace = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectPlace")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectSpawn = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectSpawn")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectDelete = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectDelete")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectLock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectLock")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectDialogueChoice = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectDialogueChoice")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectMiscellaneous = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectMiscellaneous")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectRestock = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectRestock")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectTrap = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectTrap")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectScale = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectScale")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnObjectState = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ObjectState")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnDoorState = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "DoorState")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnClientScriptLocal = function(pid, cellDescription)
     eventHandler.OnGenericObjectEvent(pid, cellDescription, "ClientScriptLocal")
 end
 
+---@param pid integer
+---@param cellDescription string
 eventHandler.OnConsoleCommand = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
