@@ -9,36 +9,36 @@ function api.ClearFactionChanges(pid) end
 
 ---Get the number of indexes in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
----@return integer
+---@return integer @The number of indexes.
 function api.GetFactionChangesSize(pid) end
 
 ---Get the action type used in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
----@return string
+---@return string @The action type (0 for RANK, 1 for EXPULSION, 2 for REPUTATION).
 function api.GetFactionChangesAction(pid) end
 
 ---Get the factionId at a certain index in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
 ---@param index integer @The index of the faction.
----@return string
+---@return string @The factionId.
 function api.GetFactionId(pid, index) end
 
 ---Get the rank at a certain index in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
 ---@param index integer @The index of the faction.
----@return integer
+---@return integer @The rank.
 function api.GetFactionRank(pid, index) end
 
 ---Get the expulsion state at a certain index in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
 ---@param index integer @The index of the faction.
----@return boolean
+---@return boolean @The expulsion state.
 function api.GetFactionExpulsionState(pid, index) end
 
 ---Get the reputation at a certain index in a player's latest faction changes.
 ---@param pid integer @The player ID whose faction changes should be used.
 ---@param index integer @The index of the faction.
----@return integer
+---@return integer @The reputation.
 function api.GetFactionReputation(pid, index) end
 
 ---Set the action type in a player's faction changes.
@@ -73,6 +73,3 @@ function api.AddFaction(pid) end
 ---@param sendToOtherPlayers boolean|nil @Whether this packet should be sent to players other than the player attached to the packet (false by default).
 ---@param skipAttachedPlayer boolean|nil @Whether the packet should skip being sent to the player attached to the packet (false by default).
 function api.SendFactionChanges(pid, sendToOtherPlayers, skipAttachedPlayer) end
-
----@param pid integer
-function api.InitializeFactionChanges(pid) end

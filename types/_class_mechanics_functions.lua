@@ -1,87 +1,93 @@
 ---@class TES3MP
 local api
 
+---Clear the list of players who will be regarded as being player's allies.
+---@param pid integer @The player ID.
+function api.ClearAlliedPlayersForPlayer(pid) end
+
 ---Get the type of a PlayerMiscellaneous packet.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The type.
 function api.GetMiscellaneousChangeType(pid) end
 
 ---Get the cell description of a player's Mark cell.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The cell description.
 function api.GetMarkCell(pid) end
 
 ---Get the X position of a player's Mark.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X position.
 function api.GetMarkPosX(pid) end
 
 ---Get the Y position of a player's Mark.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Y position.
 function api.GetMarkPosY(pid) end
 
 ---Get the Z position of a player's Mark.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Z position.
 function api.GetMarkPosZ(pid) end
 
 ---Get the X rotation of a player's Mark.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X rotation.
 function api.GetMarkRotX(pid) end
 
 ---Get the Z rotation of a player's Mark.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X rotation.
 function api.GetMarkRotZ(pid) end
 
 ---Get the ID of a player's selected spell.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The spell ID.
 function api.GetSelectedSpellId(pid) end
 
 ---Check whether the killer of a certain player is also a player.
 ---@param pid integer @The player ID of the killed player.
----@return boolean
+---@return boolean @Whether the player was killed by another player.
 function api.DoesPlayerHavePlayerKiller(pid) end
 
 ---Get the player ID of the killer of a certain player.
 ---@param pid integer @The player ID of the killed player.
----@return integer
+---@return integer @The player ID of the killer.
 function api.GetPlayerKillerPid(pid) end
 
 ---Get the refId of the actor killer of a certain player.
 ---@param pid integer @The player ID of the killed player.
----@return string
+---@return string @The refId of the killer.
 function api.GetPlayerKillerRefId(pid) end
 
 ---Get the refNum of the actor killer of a certain player.
 ---@param pid integer @The player ID of the killed player.
----@return integer
+---@return integer @The refNum of the killer.
 function api.GetPlayerKillerRefNum(pid) end
 
 ---Get the mpNum of the actor killer of a certain player.
 ---@param pid integer @The player ID of the killed player.
----@return integer
+---@return integer @The mpNum of the killer.
 function api.GetPlayerKillerMpNum(pid) end
 
 ---Get the name of the actor killer of a certain player.
 ---@param pid integer @The player ID of the killed player.
----@return string
+---@return string @The name of the killer.
 function api.GetPlayerKillerName(pid) end
 
 ---Get the draw state of a player (0 for nothing, 1 for drawn weapon, 2 for drawn spell).
 ---@param pid integer @The player ID.
----@return integer
+---@return integer @The draw state.
 function api.GetDrawState(pid) end
 
 ---Get the sneak state of a player.
 ---@param pid integer @The player ID.
----@return boolean
+---@return boolean @Whether the player is sneaking.
 function api.GetSneakState(pid) end
 
 ---Set the Mark cell of a player.
+---
+---This changes the Mark cell recorded for that player in the server memory, but does not by itself send a packet.
 ---
 ---The cell is determined to be an exterior cell if it fits the pattern of a number followed by a comma followed by another number.
 ---@param pid integer @The player ID.
@@ -112,6 +118,11 @@ function api.SetMarkRot(pid, x, z) end
 ---@param spellId string @The spell ID.
 function api.SetSelectedSpellId(pid, spellId) end
 
+---Add an ally to a player's list of allied players.
+---@param pid integer @The player ID.
+---@param alliedPlayerPid integer @The ally's player ID.
+function api.AddAlliedPlayerForPlayer(pid, alliedPlayerPid) end
+
 ---Send a PlayerMiscellaneous packet with a Mark location to a player.
 ---@param pid integer @The player ID.
 function api.SendMarkLocation(pid) end
@@ -120,13 +131,20 @@ function api.SendMarkLocation(pid) end
 ---@param pid integer @The player ID.
 function api.SendSelectedSpell(pid) end
 
+---Send a PlayerAlly packet with a list of team member IDs to a player.
+---@param pid integer @The player ID.
+---@param sendToOtherPlayers boolean|nil @Whether this packet should be sent to players other than the player attached to the packet (false by default).
+function api.SendAlliedPlayers(pid, sendToOtherPlayers) end
+
 ---Send a PlayerJail packet about a player.
+---
+---This is similar to the player being jailed by a guard, but provides extra parameters for increased flexibility.
 ---
 ---It is only sent to the player being jailed, as the other players will be informed of the jailing's actual consequences via other packets sent by the affected client.
 ---@param pid integer @The player ID.
 ---@param jailDays integer @The number of days to spend jailed, where each day affects one skill point.
 ---@param ignoreJailTeleportation boolean @Whether the player being teleported to the nearest jail marker should be overridden.
----@param ignoreJailSkillIncreases boolean
+---@param ignoreJailSkillIncreases boolean @Whether the player's Sneak and Security skills should be prevented from increasing as a result of the jailing, overriding default behavior.
 ---@param jailProgressText string @The text that should be displayed while jailed.
 ---@param jailEndText string @The text that should be displayed once the jailing period is over.
 function api.Jail(pid, jailDays, ignoreJailTeleportation, ignoreJailSkillIncreases, jailProgressText, jailEndText) end
@@ -137,11 +155,3 @@ function api.Jail(pid, jailDays, ignoreJailTeleportation, ignoreJailSkillIncreas
 ---@param pid integer @The player ID.
 ---@param type integer @The type of resurrection (0 for REGULAR, 1 for IMPERIAL_SHRINE, 2 for TRIBUNAL_TEMPLE).
 function api.Resurrect(pid, type) end
-
----@param pid integer
----@return string
-function api.GetDeathReason(pid) end
-
----@param pid integer
----@return integer
-function api.GetPlayerKillerRefNumIndex(pid) end

@@ -9,7 +9,7 @@ function api.ClearTopicChanges(pid) end
 
 ---Get the number of indexes in a player's latest topic changes.
 ---@param pid integer @The player ID whose topic changes should be used.
----@return integer
+---@return integer @The number of indexes.
 function api.GetTopicChangesSize(pid) end
 
 ---Add a new topic to the topic changes for a player.
@@ -20,7 +20,7 @@ function api.AddTopic(pid, topicId) end
 ---Get the topicId at a certain index in a player's latest topic changes.
 ---@param pid integer @The player ID whose topic changes should be used.
 ---@param index integer @The index of the topic.
----@return string
+---@return string @The topicId.
 function api.GetTopicId(pid, index) end
 
 ---Send a PlayerTopic packet with a player's recorded topic changes.
@@ -34,13 +34,10 @@ function api.SendTopicChanges(pid, sendToOtherPlayers, skipAttachedPlayer) end
 ---@param groupname string @The groupname of the animation.
 ---@param mode integer @The mode of the animation.
 ---@param count integer @The number of times the animation should be played.
----@param persist boolean
+---@param persist boolean @Whether the animation should persist or not.
 function api.PlayAnimation(pid, groupname, mode, count, persist) end
 
 ---Play a certain sound for a player as spoken by their character by sending a PlayerSpeech packet.
 ---@param pid integer @The player ID of the character playing the sound.
 ---@param sound string @The path of the sound file.
 function api.PlaySpeech(pid, sound) end
-
----@param pid integer
-function api.InitializeTopicChanges(pid) end

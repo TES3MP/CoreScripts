@@ -5,139 +5,144 @@ local api
 function api.ClearRecords() end
 
 ---Get the type of records in the read worldstate's dynamic records.
----@return integer
+---@return integer @The type of records (0 for SPELL, 1 for POTION, 2 for ENCHANTMENT, 3 for NPC).
 function api.GetRecordType() end
 
 ---Get the number of records in the read worldstate's dynamic records.
----@return integer
+---@return integer @The number of records.
 function api.GetRecordCount() end
 
 ---Get the number of effects for the record at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
----@return integer
+---@return integer @The number of effects.
 function api.GetRecordEffectCount(recordIndex) end
 
 ---Get the id of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The id of the record.
 function api.GetRecordId(index) end
 
 ---Get the base id (i.e. the id this record should inherit default values from) of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The base id of the record.
 function api.GetRecordBaseId(index) end
 
 ---Get the subtype of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The type of the record.
 function api.GetRecordSubtype(index) end
 
 ---Get the name of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The name of the record.
 function api.GetRecordName(index) end
 
 ---Get the model of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The model of the record.
 function api.GetRecordModel(index) end
 
 ---Get the icon of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The icon of the record.
 function api.GetRecordIcon(index) end
 
 ---Get the script of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The script of the record.
 function api.GetRecordScript(index) end
 
 ---Get the enchantment id of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return string
+---@return string @The enchantment id of the record.
 function api.GetRecordEnchantmentId(index) end
 
 ---Get the enchantment charge of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The enchantment charge of the record.
 function api.GetRecordEnchantmentCharge(index) end
 
 ---Get the auto-calculation flag value of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The auto-calculation flag value of the record.
 function api.GetRecordAutoCalc(index) end
 
 ---Get the charge of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The charge of the record.
 function api.GetRecordCharge(index) end
 
 ---Get the cost of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The cost of the record.
 function api.GetRecordCost(index) end
 
 ---Get the flags of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The flags of the spell as an integer.
 function api.GetRecordFlags(index) end
 
 ---Get the value of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return integer
+---@return integer @The value of the record.
 function api.GetRecordValue(index) end
 
 ---Get the weight of the record at a certain index in the read worldstate's dynamic records of the current type.
 ---@param index integer @The index of the record.
----@return number
+---@return number @The weight of the record.
 function api.GetRecordWeight(index) end
+
+---Get the quantity of the record at a certain index in the read worldstate's dynamic records of the current type.
+---@param index integer @The index of the record.
+---@return integer @The brewed count of the record.
+function api.GetRecordQuantity(index) end
 
 ---Get the ID of the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The ID of the effect.
 function api.GetRecordEffectId(recordIndex, effectIndex) end
 
 ---Get the ID of the attribute modified by the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The attribute ID for the effect.
 function api.GetRecordEffectAttribute(recordIndex, effectIndex) end
 
 ---Get the ID of the skill modified by the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The skill ID for the effect.
 function api.GetRecordEffectSkill(recordIndex, effectIndex) end
 
 ---Get the range type of the effect at a certain index in the read worldstate's current records (0 for self, 1 for touch, 2 for target).
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The range of the effect.
 function api.GetRecordEffectRangeType(recordIndex, effectIndex) end
 
 ---Get the area of the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The area of the effect.
 function api.GetRecordEffectArea(recordIndex, effectIndex) end
 
 ---Get the duration of the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The duration of the effect.
 function api.GetRecordEffectDuration(recordIndex, effectIndex) end
 
 ---Get the maximum magnitude of the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The maximum magnitude of the effect.
 function api.GetRecordEffectMagnitudeMax(recordIndex, effectIndex) end
 
 ---Get the minimum magnitude of the effect at a certain index in the read worldstate's current records.
 ---@param recordIndex integer @The index of the record.
 ---@param effectIndex integer @The index of the effect.
----@return integer
+---@return integer @The minimum magnitude of the effect.
 function api.GetRecordEffectMagnitudeMin(recordIndex, effectIndex) end
 
 ---Set which type of temporary records stored on the server should have their data changed via setter functions.
@@ -157,7 +162,7 @@ function api.SetRecordBaseId(baseId) end
 function api.SetRecordInventoryBaseId(inventoryBaseId) end
 
 ---Set the subtype of the temporary record stored on the server for the currently specified record type.
----@param subtype integer
+---@param subtype integer @The spell type.
 function api.SetRecordSubtype(subtype) end
 
 ---Set the name of the temporary record stored on the server for the currently specified record type.
@@ -207,6 +212,28 @@ function api.SetRecordValue(value) end
 ---Set the weight of the temporary record stored on the server for the currently specified record type.
 ---@param weight number @The weight of the record.
 function api.SetRecordWeight(weight) end
+
+---Set the item quality of the temporary record stored on the server for the currently specified record type.
+---@param quality number @The quality of the record.
+function api.SetRecordQuality(quality) end
+
+---Set the number of uses of the temporary record stored on the server for the currently specified record type.
+---@param uses integer @The number of uses of the record.
+function api.SetRecordUses(uses) end
+
+---Set the time of the temporary record stored on the server for the currently specified record type.
+---@param time integer @The time of the record.
+function api.SetRecordTime(time) end
+
+---Set the radius of the temporary record stored on the server for the currently specified record type.
+---@param radius integer @The radius of the record.
+function api.SetRecordRadius(radius) end
+
+---Set the color of the temporary record stored on the server for the currently specified record type.
+---@param red integer @The red value of the record.
+---@param green integer @The green value of the record.
+---@param blue integer @The blue value of the record.
+function api.SetRecordColor(red, green, blue) end
 
 ---Set the armor rating of the temporary record stored on the server for the currently specified record type.
 ---@param armorRating integer @The armor rating of the record.
@@ -264,24 +291,36 @@ function api.SetRecordText(text) end
 function api.SetRecordHair(hair) end
 
 ---Set the head of the temporary record stored on the server for the currently specified record type.
----@param head string
+---@param head string @The head of the record.
 function api.SetRecordHead(head) end
 
 ---Set the gender of the temporary record stored on the server for the currently specified record type (0 for female, 1 for male).
----@param gender integer
+---@param gender integer @The gender of the record.
 function api.SetRecordGender(gender) end
 
 ---Set the race of the temporary record stored on the server for the currently specified record type.
----@param race string
+---@param race string @The race of the record.
 function api.SetRecordRace(race) end
 
 ---Set the character class of the temporary record stored on the server for the currently specified record type.
----@param charClass string
+---@param charClass string @The character class of the record.
 function api.SetRecordClass(charClass) end
 
 ---Set the faction of the temporary record stored on the server for the currently specified record type.
 ---@param faction string @The faction of the record.
 function api.SetRecordFaction(faction) end
+
+---Set the scale of the temporary record stored on the server for the currently specified record type.
+---@param scale number @The scale of the record.
+function api.SetRecordScale(scale) end
+
+---Set the blood type of the temporary record stored on the server for the currently specified record type.
+---@param bloodType integer @The blood type of the record.
+function api.SetRecordBloodType(bloodType) end
+
+---Set the vampire state of the temporary record stored on the server for the currently specified record type.
+---@param vampireState boolean @The vampire state of the record.
+function api.SetRecordVampireState(vampireState) end
 
 ---Set the level of the temporary record stored on the server for the currently specified record type.
 ---@param level integer @The level of the record.
@@ -295,9 +334,65 @@ function api.SetRecordMagicka(magicka) end
 ---@param fatigue integer @The fatigue of the record.
 function api.SetRecordFatigue(fatigue) end
 
+---Set the soul value of the temporary record stored on the server for the currently specified record type.
+---@param soulValue integer @The soul value of the record.
+function api.SetRecordSoulValue(soulValue) end
+
 ---Set the AI fight value of the temporary record stored on the server for the currently specified record type.
 ---@param aiFight integer @The AI fight value of the record.
 function api.SetRecordAIFight(aiFight) end
+
+---Set the AI flee value of the temporary record stored on the server for the currently specified record type.
+---@param aiFlee integer @The AI flee value of the record.
+function api.SetRecordAIFlee(aiFlee) end
+
+---Set the AI alarm value of the temporary record stored on the server for the currently specified record type.
+---@param aiAlarm integer @The AI alarm value of the record.
+function api.SetRecordAIAlarm(aiAlarm) end
+
+---Set the AI services value of the temporary record stored on the server for the currently specified record type.
+---@param aiServices integer @The AI services value of the record.
+function api.SetRecordAIServices(aiServices) end
+
+---Set the sound of the temporary record stored on the server for the currently specified record type.
+---@param sound string @The sound of the record.
+function api.SetRecordSound(sound) end
+
+---Set the volume of the temporary record stored on the server for the currently specified record type.
+---@param volume number @The volume of the record.
+function api.SetRecordVolume(volume) end
+
+---Set the minimum range of the temporary record stored on the server for the currently specified record type.
+---@param minRange number @The minimum range of the record.
+function api.SetRecordMinRange(minRange) end
+
+---Set the maximum range of the temporary record stored on the server for the currently specified record type.
+---@param maxRange number @The maximum range of the record.
+function api.SetRecordMaxRange(maxRange) end
+
+---Set the opening sound of the temporary record stored on the server for the currently specified record type.
+---@param sound string @The opening sound of the record.
+function api.SetRecordOpenSound(sound) end
+
+---Set the closing sound of the temporary record stored on the server for the currently specified record type.
+---@param sound string @The closing sound of the record.
+function api.SetRecordCloseSound(sound) end
+
+---Set the script text of the temporary record stored on the server for the currently specified record type.
+---@param scriptText string @The script text of the record.
+function api.SetRecordScriptText(scriptText) end
+
+---Set the integer variable of the temporary record stored on the server for the currently specified record type.
+---@param intVar integer @The integer variable of the record.
+function api.SetRecordIntegerVariable(intVar) end
+
+---Set the float variable of the temporary record stored on the server for the currently specified record type.
+---@param floatVar number @The float variable of the record.
+function api.SetRecordFloatVariable(floatVar) end
+
+---Set the string variable of the temporary record stored on the server for the currently specified record type.
+---@param stringVar string @The string variable of the record.
+function api.SetRecordStringVariable(stringVar) end
 
 ---Set the id of the record at a certain index in the records stored on the server.
 ---
@@ -345,7 +440,7 @@ function api.SetRecordEffectMagnitudeMax(magnitudeMax) end
 ---@param magnitudeMin integer @The minimum magnitude of the effect.
 function api.SetRecordEffectMagnitudeMin(magnitudeMin) end
 
----Set the type of the temporary body part stored on the server.
+---Set the body part type of the temporary body part stored on the server (which then needs to be added to ARMOR or CLOTHING records) or set the body part type of the current record if it's a BODYPART.
 ---@param partType integer @The type of the body part.
 function api.SetRecordBodyPartType(partType) end
 
@@ -358,7 +453,7 @@ function api.SetRecordBodyPartIdForMale(partId) end
 function api.SetRecordBodyPartIdForFemale(partId) end
 
 ---Set the id of the of the temporary inventory item stored on the server.
----@param itemId string
+---@param itemId string @The id of the inventory item.
 function api.SetRecordInventoryItemId(itemId) end
 
 ---Set the count of the of the temporary inventory item stored on the server.
@@ -381,6 +476,8 @@ function api.AddRecordEffect() end
 function api.AddRecordBodyPart() end
 
 ---Add a copy of the server's temporary inventory item to the temporary record of the current specified type.
+---
+---In the process, the server's temporary inventory item will automatically be cleared so a new one can be set up.
 ---
 ---Note: Any items added this way will be ignored if the record already has a valid inventoryBaseId.
 function api.AddRecordInventoryItem() end

@@ -3,42 +3,42 @@ local api
 
 ---Get the X position of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X position.
 function api.GetPosX(pid) end
 
 ---Get the Y position of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Y position.
 function api.GetPosY(pid) end
 
 ---Get the Z position of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Z position.
 function api.GetPosZ(pid) end
 
 ---Get the X position of a player from before their latest cell change.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X position.
 function api.GetPreviousCellPosX(pid) end
 
 ---Get the Y position of a player from before their latest cell change.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Y position.
 function api.GetPreviousCellPosY(pid) end
 
 ---Get the Z position of a player from before their latest cell change.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Z position.
 function api.GetPreviousCellPosZ(pid) end
 
 ---Get the X rotation of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The X rotation.
 function api.GetRotX(pid) end
 
 ---Get the Z rotation of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The Z rotation.
 function api.GetRotZ(pid) end
 
 ---Set the position of a player.
@@ -51,6 +51,8 @@ function api.GetRotZ(pid) end
 function api.SetPos(pid, x, y, z) end
 
 ---Set the rotation of a player.
+---
+---This changes the rotational coordinates recorded for that player in the server memory, but does not by itself send a packet.
 ---
 ---A player's Y rotation is always 0, which is why there is no Y rotation parameter.
 ---@param pid integer @The player ID.

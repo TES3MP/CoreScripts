@@ -3,26 +3,26 @@ local api
 
 ---Get the scale of a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The scale.
 function api.GetScale(pid) end
 
 ---Check whether a player is a werewolf.
 ---
 ---This is based on the last PlayerShapeshift packet received or sent for that player.
 ---@param pid integer @The player ID.
----@return boolean
+---@return boolean @The werewolf state.
 function api.IsWerewolf(pid) end
 
 ---Get the refId of the creature the player is disguised as.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The creature refId.
 function api.GetCreatureRefId(pid) end
 
 ---Check whether a player's name is replaced by that of the creature they are disguised as when other players hover over them.
 ---
 ---This is based on the last PlayerShapeshift packet received or sent for that player.
 ---@param pid integer @The player ID.
----@return boolean
+---@return boolean @The creature name display state.
 function api.GetCreatureNameDisplayState(pid) end
 
 ---Set the scale of a player.

@@ -10,17 +10,22 @@ function api.ClearInventoryChanges(pid) end
 ---Get the number of slots used for equipment.
 ---
 ---The number is 19 before any dehardcoding is done in OpenMW.
----@return integer
+---@return integer @The number of slots.
 function api.GetEquipmentSize() end
+
+---Get the number of indexes in a player's latest equipment changes.
+---@param pid integer @The player ID whose equipment changes should be used.
+---@return integer @The number of indexes.
+function api.GetEquipmentChangesSize(pid) end
 
 ---Get the number of indexes in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
----@return integer
+---@return integer @The number of indexes.
 function api.GetInventoryChangesSize(pid) end
 
 ---Get the action type used in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
----@return integer
+---@return integer @The action type (0 for SET, 1 for ADD, 2 for REMOVE).
 function api.GetInventoryChangesAction(pid) end
 
 ---Set the action type in a player's inventory changes.
@@ -54,86 +59,92 @@ function api.AddItemChange(pid, refId, count, charge, enchantmentCharge, soul) e
 ---Check whether a player has equipped an item with a certain refId in any slot.
 ---@param pid integer @The player ID.
 ---@param refId string @The refId of the item.
----@return boolean
+---@return boolean @Whether the player has the item equipped.
 function api.HasItemEquipped(pid, refId) end
+
+---Get the slot used for the equipment item at a specific index in the most recent equipment changes.
+---@param pid integer @The player ID.
+---@param changeIndex integer @The index of the equipment change.
+---@return integer @The slot.
+function api.GetEquipmentChangesSlot(pid, changeIndex) end
 
 ---Get the refId of the item in a certain slot of the equipment of a player.
 ---@param pid integer @The player ID.
 ---@param slot integer @The slot of the equipment item.
----@return string
+---@return string @The refId.
 function api.GetEquipmentItemRefId(pid, slot) end
 
 ---Get the count of the item in a certain slot of the equipment of a player.
 ---@param pid integer @The player ID.
 ---@param slot integer @The slot of the equipment item.
----@return integer
+---@return integer @The item count.
 function api.GetEquipmentItemCount(pid, slot) end
 
 ---Get the charge of the item in a certain slot of the equipment of a player.
 ---@param pid integer @The player ID.
 ---@param slot integer @The slot of the equipment item.
----@return integer
+---@return integer @The charge.
 function api.GetEquipmentItemCharge(pid, slot) end
 
 ---Get the enchantment charge of the item in a certain slot of the equipment of a player.
 ---@param pid integer @The player ID.
 ---@param slot integer @The slot of the equipment item.
----@return number
+---@return number @The enchantment charge.
 function api.GetEquipmentItemEnchantmentCharge(pid, slot) end
 
 ---Get the refId of the item at a certain index in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
 ---@param index integer @The index of the inventory item.
----@return string
+---@return string @The refId.
 function api.GetInventoryItemRefId(pid, index) end
 
 ---Get the count of the item at a certain index in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
 ---@param index integer @The index of the inventory item.
----@return integer
+---@return integer @The item count.
 function api.GetInventoryItemCount(pid, index) end
 
 ---Get the charge of the item at a certain index in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
 ---@param index integer @The index of the inventory item.
----@return integer
+---@return integer @The charge.
 function api.GetInventoryItemCharge(pid, index) end
 
 ---Get the enchantment charge of the item at a certain index in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
 ---@param index integer @The index of the inventory item.
----@return number
+---@return number @The enchantment charge.
 function api.GetInventoryItemEnchantmentCharge(pid, index) end
 
 ---Get the soul of the item at a certain index in a player's latest inventory changes.
 ---@param pid integer @The player ID whose inventory changes should be used.
 ---@param index integer @The index of the inventory item.
----@return string
+---@return string @The soul.
 function api.GetInventoryItemSoul(pid, index) end
 
 ---Get the refId of the item last used by a player.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The refId.
 function api.GetUsedItemRefId(pid) end
 
 ---Get the count of the item last used by a player.
 ---@param pid integer @The player ID.
----@return integer
+---@return integer @The item count.
 function api.GetUsedItemCount(pid) end
 
 ---Get the charge of the item last used by a player.
 ---@param pid integer @The player ID.
----@return integer
+---@return integer @The charge.
 function api.GetUsedItemCharge(pid) end
 
 ---Get the enchantment charge of the item last used by a player.
 ---@param pid integer @The player ID.
----@return number
+---@return number @The enchantment charge.
 function api.GetUsedItemEnchantmentCharge(pid) end
 
 ---Get the soul of the item last used by a player.
 ---@param pid integer @The player ID.
----@return string
+---@return string @The soul.
 function api.GetUsedItemSoul(pid) end
 
 ---Send a PlayerEquipment packet with a player's equipment.
@@ -151,14 +162,3 @@ function api.SendInventoryChanges(pid, sendToOtherPlayers, skipAttachedPlayer) e
 ---Send a PlayerItemUse causing a player to use their recorded usedItem.
 ---@param pid integer @The player ID affected.
 function api.SendItemUse(pid) end
-
----@param pid integer
-function api.InitializeInventoryChanges(pid) end
-
----@param pid integer
----@param refId string
----@param count integer
----@param charge integer
----@param enchantmentCharge number
----@param soul string
-function api.AddItem(pid, refId, count, charge, enchantmentCharge, soul) end
