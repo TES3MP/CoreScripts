@@ -2,12 +2,10 @@
 local api
 
 ---Display a simple messagebox at the bottom of the screen that vanishes after a few seconds.
----
----Note for C++ programmers: do not rename into MessageBox so as to not conflict with WINAPI's MessageBox.
 ---@param pid integer @The player ID for whom the messagebox should appear.
 ---@param id integer @The numerical ID of the messagebox.
 ---@param label string @The text in the messagebox.
-function api._MessageBox(pid, id, label) end
+function api.MessageBox(pid, id, label) end
 
 ---Display an interactive messagebox at the center of the screen that vanishes only when one of its buttons is clicked.
 ---@param pid integer @The player ID for whom the messagebox should appear.
