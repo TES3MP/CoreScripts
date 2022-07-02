@@ -271,12 +271,15 @@ function OnServerPostInit()
             end
         elseif config.respawnAtTribunalTemple == true then
             respawnCell = "nearest Tribunal temple"
-        else
+        elseif type(config.defaultRespawn) == "table" then
             respawnCell = config.defaultRespawn.cellDescription
         end
 
-        tes3mp.SetRuleString("respawnCell", respawnCell)
+        if respawnCell ~= nil then
+            tes3mp.SetRuleString("respawnCell", respawnCell)
+        end
     end
+
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 

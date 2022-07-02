@@ -576,7 +576,7 @@ function BasePlayer:Resurrect()
     elseif config.respawnAtTribunalTemple == true then
         currentResurrectType = enumerations.resurrect.TRIBUNAL_TEMPLE
 
-    elseif config.defaultRespawn ~= nil and config.defaultRespawn.cellDescription ~= nil then
+    elseif type(config.defaultRespawn) == "table" and config.defaultRespawn.cellDescription ~= nil then
         currentResurrectType = enumerations.resurrect.REGULAR
 
         tes3mp.SetCell(self.pid, config.defaultRespawn.cellDescription)

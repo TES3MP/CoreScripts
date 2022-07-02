@@ -167,6 +167,8 @@ config.noninstancedSpawn = {
 }
 
 -- The location that players respawn at, unless overridden below by other respawn options
+-- Note: By setting both this and the other respawn options to false, players can be made
+--       to respawn in the spot where they die
 config.defaultRespawn = {
     cellDescription = "Balmora, Temple",
     position = {4700.5673828125, 3874.7416992188, 14758.990234375},
