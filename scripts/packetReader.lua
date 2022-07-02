@@ -427,6 +427,8 @@ packetReader.GetObjectPacketTables = function(packetType)
 
                     if isObjectPlayer then
                         player.hittingPid = hittingPid
+                        player.hittingRefId = nil
+                        player.hittingUniqueIndex = nil
                     else
                         object.hittingPid = hittingPid
                     end
@@ -436,6 +438,7 @@ packetReader.GetObjectPacketTables = function(packetType)
                         "-" .. tes3mp.GetObjectHittingMpNum(packetIndex)
 
                     if isObjectPlayer then
+                        player.hittingPid = nil
                         player.hittingRefId = hittingRefId
                         player.hittingUniqueIndex = hittingUniqueIndex
                     else
