@@ -569,10 +569,19 @@ function BaseCell:SaveObjectTrapsTriggered(objects)
     for uniqueIndex, object in pairs(objects) do
 
         local refId = object.refId
-
         self:InitializeObjectData(uniqueIndex, refId)
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
+        -- The cell data doesn't need to store whether a trap was disarmed or triggered,
+        -- just that it is no longer present
+        if object.trapAction == enumerations.trap.SET_TRAP then
+            self.data.objectData[uniqueIndex].trapSpellId = object.trapSpellId
+        else
+            self.data.objectData[uniqueIndex].trapSpellId = ""
+        end
+
+        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            ", trapSpellId: " .. object.trapSpellId .. ", trapAction: " ..
+            tableHelper.getIndexByValue(enumerations.trap, object.trapAction))
 
         tableHelper.insertValueIfMissing(self.data.packets.trap, uniqueIndex)
     end
@@ -1397,7 +1406,7 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
-        if objectData[uniqueIndex] ~= nil then
+        if objectData[uniqueIndex] ~= nil and objectData[uniqueIndex].trapSpellId ~= nil then
             packetBuilder.AddObjectTrap(uniqueIndex, objectData[uniqueIndex])
             objectCount = objectCount + 1
         else

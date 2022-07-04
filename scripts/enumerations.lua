@@ -57,6 +57,7 @@ enumerations.recordType = { ACTIVATOR = 0, APPARATUS = 1, ARMOR = 2, BODYPART = 
     SPELL = 22, STATIC = 23, WEAPON = 24 }
 enumerations.resurrect = { REGULAR = 0, IMPERIAL_SHRINE = 1, TRIBUNAL_TEMPLE = 2 }
 enumerations.spellbook = { SET = 0, ADD = 1, REMOVE = 2 }
+enumerations.trap = { SET_TRAP = 0, DISARM = 1, TRIGGER = 2 }
 enumerations.variableType = { SHORT = 0, LONG = 1, FLOAT = 2, INT = 3, STRING = 4 }
 enumerations.weather = { CLEAR = 0, CLOUDY = 1, FOGGY = 2, OVERCAST = 3, RAIN = 4, THUNDER = 5, ASH = 6, BLIGHT = 7,
     SNOW = 8, BLIZZARD = 9 }

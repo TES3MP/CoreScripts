@@ -415,6 +415,49 @@ end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
 
+defaultCommands.setTrap = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if Players[pid] == nil then
+        return
+    end
+
+    if isModerator == false then
+        invalidCommand(pid)
+        return
+    end
+
+    if cmd[2] == nil or cmd[3] == nil then
+        tes3mp.SendMessage(pid, 'Invalid inputs! Use /setrap <uniqueIndex> "TrapId"\n')
+        return
+    end
+
+    -- TODO: Make it possible to find the uniqueIndex in the cell it's actually in
+    --       instead of using the current cell
+    local currentCellDescription = Players[pid].data.location.cell
+    local currentCell = LoadedCells[currentCellDescription]
+
+    if currentCell == nil then
+        return
+    end
+
+    local uniqueIndex = cmd[2]
+    local trapId = tableHelper.concatenateFromIndex(cmd, 3)
+    -- Get rid of quotation marks
+    trapId = string.gsub(trapId, '"', '')
+
+    tes3mp.SendMessage(pid, "Setting trap " .. trapId .. " for object " .. uniqueIndex .. 
+        " in current cell " .. currentCellDescription .. "\n")
+
+    currentCell:InitializeObjectData(uniqueIndex, "")
+    tableHelper.insertValueIfMissing(currentCell.data.packets.trap, uniqueIndex)
+    currentCell.data.objectData[uniqueIndex].trapSpellId = trapId
+    objects = { currentCell.data.objectData[uniqueIndex] }
+    currentCell:LoadObjectsByPacketType("ObjectTrap", pid, currentCell.data.objectData, {uniqueIndex}, true)
+end
+
+customCommandHooks.registerCommand("settrap", defaultCommands.setTrap)
+
 defaultCommands.runStartup = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 

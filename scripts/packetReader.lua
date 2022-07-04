@@ -509,6 +509,9 @@ packetReader.GetObjectPacketTables = function(packetType)
 
             elseif packetType == "ObjectLock" then
                 object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+            elseif packetType == "ObjectTrap" then
+                object.trapSpellId = tes3mp.GetObjectTrapSpellId(packetIndex)
+                object.trapAction = tes3mp.GetObjectTrapAction(packetIndex)
             elseif packetType == "ObjectDialogueChoice" then
                 object.dialogueChoiceType = tes3mp.GetObjectDialogueChoiceType(packetIndex)
 

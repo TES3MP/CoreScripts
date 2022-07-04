@@ -140,7 +140,14 @@ packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
     if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectDisarmState(true)
+    if objectData.trapSpellId ~= nil then tes3mp.SetObjectTrapSpellId(objectData.trapSpellId) end
+    
+    if objectData.trapAction ~= nil then
+        tes3mp.SetObjectTrapAction(objectData.trapAction)
+    else
+        tes3mp.SetObjectTrapAction(enumerations.trap.SET_TRAP)
+    end
+    
     tes3mp.AddObject()
 end
 
