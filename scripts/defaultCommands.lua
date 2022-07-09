@@ -428,7 +428,7 @@ defaultCommands.setTrap = function(pid, cmd)
     end
 
     if cmd[2] == nil or cmd[3] == nil then
-        tes3mp.SendMessage(pid, 'Invalid inputs! Use /setrap <uniqueIndex> "TrapId"\n')
+        tes3mp.SendMessage(pid, 'Invalid inputs! Use /settrap <uniqueIndex> <spellId>\n')
         return
     end
 
@@ -442,16 +442,16 @@ defaultCommands.setTrap = function(pid, cmd)
     end
 
     local uniqueIndex = cmd[2]
-    local trapId = tableHelper.concatenateFromIndex(cmd, 3)
+    local spellId = tableHelper.concatenateFromIndex(cmd, 3)
     -- Get rid of quotation marks
-    trapId = string.gsub(trapId, '"', '')
+    spellId = string.gsub(spellId, '"', '')
 
-    tes3mp.SendMessage(pid, "Setting trap " .. trapId .. " for object " .. uniqueIndex .. 
+    tes3mp.SendMessage(pid, "Setting spell " .. spellId .. " as trap for object " .. uniqueIndex .. 
         " in current cell " .. currentCellDescription .. "\n")
 
     currentCell:InitializeObjectData(uniqueIndex, "")
     tableHelper.insertValueIfMissing(currentCell.data.packets.trap, uniqueIndex)
-    currentCell.data.objectData[uniqueIndex].trapSpellId = trapId
+    currentCell.data.objectData[uniqueIndex].trapSpellId = spellId
     objects = { currentCell.data.objectData[uniqueIndex] }
     currentCell:LoadObjectsByPacketType("ObjectTrap", pid, currentCell.data.objectData, {uniqueIndex}, true)
 end
@@ -510,7 +510,7 @@ defaultCommands.setPlayerModel = function(pid, cmd)
 
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         if cmd[3] == nil then
-            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> "Model name"\n')
+            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> <modelFile>\n')
             return
         end
 

@@ -91,7 +91,10 @@ Menus["help moderator page 1"] = {
             color.White .. "Set the current month in the world's time\n" ..
         color.Yellow .. "/settimescale day/night/both <value>\n" ..
             color.White .. "Set the timescale in the world's time (30 by default, which is 120 real seconds " ..
-            "per ingame hour)\n",
+            "per ingame hour)\n" ..
+        color.Yellow .. "/resetcell \"Cell Name\"\n" ..
+            color.White .. "Reset a cell, returning all the objects in it to their original states\n"
+        ,
     buttons = {
         { caption = "Moderator help page 2",
             displayConditions = {
@@ -130,6 +133,8 @@ Menus["help moderator page 2"] = {
             color.Yellow .. "(/tpto)\n" ..
         color.Yellow .. "/cells\n" ..
             color.White .. "List all loaded cells on the server\n" ..
+        color.Yellow .. "/regions\n" ..
+            color.White .. "List all loaded regions on the server\n" ..
         color.Yellow .. "/getpos <pid>\n" ..
             color.White .. "Get player position and cell\n" ..
         color.Yellow .. "/setattr <pid> <attribute> <value>\n" ..
@@ -141,6 +146,11 @@ Menus["help moderator page 2"] = {
         color.Yellow .. "/setauthority <pid> <cell>\n" ..
             color.White .. "Forcibly set a certain player as the authority of a cell " ..
             color.Yellow .. "(/setauth)\n" ..
+        color.Yellow .. "/overridedestination all/<pid> \"Old Cell Name\" \"New Cell Name\"\n" ..
+            color.White .. "Replace cell transitions to a specific cell with transitions to another cell, " ..
+            "for all players or for a specific one\n" ..
+        color.Yellow .. "/settrap <uniqueIndex> <spellId>\n" ..
+            color.White .. "Set a spell ID as the trap for an object in the current cell\n" ..
         color.Yellow .. "/advancedexample\n" ..
             color.White .. "Display an example of an advanced menu using menuHelper " ..
             color.Yellow .. "(/advex)",
@@ -195,6 +205,8 @@ Menus["help admin page 1"] = {
         color.Yellow .. "/usecreaturename <pid> on/off\n" ..
             color.White .. "Set whether a player disguised as a creature shows up as having that creature's " ..
             "name when hovered over\n" ..
+        color.Yellow .. "/setmodel <pid> <modelFile>\n" ..
+            color.White .. "Set the animation model for a player, e.g. /setmodel <pid> base_animkna.nif\n" ..
         color.Yellow .. "/addmoderator <pid>\n" ..
             color.White .. "Promote player to moderator\n" ..
         color.Yellow .. "/removemoderator <pid>\n" ..
