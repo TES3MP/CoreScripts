@@ -19,6 +19,15 @@ packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
         for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
 
             if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+                if spellInstanceValues.caster ~= nil and spellInstanceValues.caster.playerName ~= nil then
+                    local casterName = spellInstanceValues.caster.playerName
+
+                    if logicHandler.IsPlayerNameLoggedIn(casterName) then
+                        local casterPid = logicHandler.GetPidByName(casterName)
+                        tes3mp.SetSpellsActiveCasterPid(casterPid)
+                    end
+                end
+
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
                     if effectTable.timeLeft > 0 then
