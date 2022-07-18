@@ -352,7 +352,7 @@ function menuHelper.ProcessVariables(pid, inputTable)
                 end
             end
         else
-            resultValue = tostring(tableElement)
+            resultValue = tableElement
         end
 
         table.insert(resultTable, resultValue)
