@@ -75,12 +75,12 @@ Menus["advanced example world"] = {
 Menus["advanced example logichandler"] = {
     text = color.Orange .. "Select a function to run on the logicHandler.",
     buttons = {
-        { caption = "CreateObjectAtPlayer(menuHelper.variables.currentPid(), \"rat\", \"spawn\")",
+        { caption = "CreateObjectAtPlayer(menuHelper.variables.currentPid(), {refId = \"rat\"}, \"spawn\")",
             destinations = {
                 menuHelper.destinations.setDefault(nil,
                 {
                     menuHelper.effects.runGlobalFunction("logicHandler", "CreateObjectAtPlayer",
-                        {menuHelper.variables.currentPid(), "rat", "spawn"})
+                        {menuHelper.variables.currentPid(), {refId = "rat"}, "spawn"})
                 })
             }
         },
