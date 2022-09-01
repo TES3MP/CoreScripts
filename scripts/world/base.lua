@@ -153,14 +153,14 @@ function BaseWorld:IncrementDay()
     local month = self.data.time.month
 
     -- Is the new day higher than the number of days in the current month?
-    if day + 1 > self.monthLengths[month] then
+    if day + 1 > (self.monthLengths[month] or 0) then
 
         -- Is the new month higher than the number of months in a year?
         if month + 1 > 12 then
             self.data.time.year = self.data.time.year + 1
             self.data.time.month = 1
         else
-            self.data.time.month = month + 1
+            self.data.time.month = math.max(1, month + 1)
         end
 
         self.data.time.day = 1
@@ -280,6 +280,12 @@ function BaseWorld:LoadTime(pid, forEveryone)
 
     tes3mp.SetHour(self.data.time.hour)
     tes3mp.SetDay(self.data.time.day)
+
+    if self.data.time.month < 1 then
+        self.data.time.month = 1
+    else if self.data.time.month > 12 then
+        self.data.time.month = 12
+    end
 
     -- The first month has an index of 0 in the C++ code, but
     -- table values should be intuitive and range from 1 to 12,
