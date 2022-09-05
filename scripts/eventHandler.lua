@@ -185,20 +185,44 @@ eventHandler.InitializeDefaultHandlers = function()
         local cell = LoadedCells[cellDescription]
 
         tes3mp.ClearKillChanges()
+		
+		if config.shareKill == true then
+		
+			for uniqueIndex, actor in pairs(actors) do
+				if WorldInstance.data.kills[actor.refId] == nil then
+					WorldInstance.data.kills[actor.refId] = 0
+				end
 
-        for uniqueIndex, actor in pairs(actors) do
-            if WorldInstance.data.kills[actor.refId] == nil then
-                WorldInstance.data.kills[actor.refId] = 0
-            end
+				WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
+				WorldInstance:QuicksaveToDrive()
+				tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
 
-            WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
-            WorldInstance:QuicksaveToDrive()
-            tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
+				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
+			end
+			
+			tes3mp.SendWorldKillCount(pid, true)
+			
+		elseif config.shareKill == false then
+		
+			if Players[pid].data.kills == nil then
+				Players[pid].data.kills = {}
+			end
+			
+			for uniqueIndex, actor in pairs(actors) do
+				if Players[pid].data.kills[actor.refId] == nil then
+					Players[pid].data.kills[actor.refId] = 0
+				end
 
-            table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
-        end
+				Players[pid].data.kills[actor.refId] = Players[pid].data.kills[actor.refId] + 1
+				Players[pid]:QuicksaveToDrive()
+				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
 
-        tes3mp.SendWorldKillCount(pid, true)
+				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
+			end		
+			
+			tes3mp.SendWorldKillCount(pid, false)
+			
+		end
 
         cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(actors))
     end)
