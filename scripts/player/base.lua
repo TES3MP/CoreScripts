@@ -1485,6 +1485,21 @@ function BasePlayer:SaveClientScriptGlobal(variables)
     stateHelper:SaveClientScriptGlobal(self, variables)
 end
 
+function BasePlayer:LoadKill(pid, forEveryone)
+    
+    if self.data.kills == nil then
+        self.data.kills = {}
+    end    
+    
+    tes3mp.ClearKillChanges()
+    
+    for refId, killCount in pairs(self.data.kills) do
+        tes3mp.AddKill(refId, killCount)
+    end
+
+    tes3mp.SendWorldKillCount(pid, forEveryone)
+end
+
 function BasePlayer:LoadDestinationOverrides(pid)
     stateHelper:LoadDestinationOverrides(self.pid, self)
 end
