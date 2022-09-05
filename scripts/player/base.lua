@@ -284,7 +284,11 @@ function BasePlayer:FinishLogin()
             self:LoadReputation()
         end
 
-        WorldInstance:LoadKills(self.pid)
+		if config.shareKill == true then
+			WorldInstance:LoadKills(self.pid)
+		else
+			self:LoadKill(self.pid, false)
+		end	
 
         self:LoadSpecialStates()
 
@@ -376,7 +380,11 @@ function BasePlayer:EndCharGen()
         WorldInstance:LoadTopics(self.pid)
     end
 
-    WorldInstance:LoadKills(self.pid)
+	if config.shareKill == true then
+		WorldInstance:LoadKills(self.pid)
+	else
+		self:LoadKill(self.pid, false)
+	end	
 
     if spawnUsed ~= nil and spawnUsed.cellDescription ~= nil then
         tes3mp.SetCell(self.pid, spawnUsed.cellDescription)
