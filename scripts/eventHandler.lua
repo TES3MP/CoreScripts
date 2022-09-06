@@ -202,7 +202,7 @@ eventHandler.InitializeDefaultHandlers = function()
 			
 			tes3mp.SendWorldKillCount(pid, true)
 			
-		elseif config.shareKill == false then
+		else
 		
 			if Players[pid].data.kills == nil then
 				Players[pid].data.kills = {}
