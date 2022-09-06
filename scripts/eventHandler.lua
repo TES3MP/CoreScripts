@@ -186,7 +186,7 @@ eventHandler.InitializeDefaultHandlers = function()
 
         tes3mp.ClearKillChanges()
 		
-		if config.shareKill == true then
+		if config.shareKills == true then
 		
 			for uniqueIndex, actor in pairs(actors) do
 				if WorldInstance.data.kills[actor.refId] == nil then
