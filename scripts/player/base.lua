@@ -284,10 +284,10 @@ function BasePlayer:FinishLogin()
             self:LoadReputation()
         end
 
-		if config.shareKill == true then
+		if config.shareKills == true then
 			WorldInstance:LoadKills(self.pid)
 		else
-			self:LoadKill(self.pid, false)
+			self:LoadKills(self.pid, false)
 		end	
 
         self:LoadSpecialStates()
@@ -380,10 +380,10 @@ function BasePlayer:EndCharGen()
         WorldInstance:LoadTopics(self.pid)
     end
 
-	if config.shareKill == true then
+	if config.shareKills == true then
 		WorldInstance:LoadKills(self.pid)
 	else
-		self:LoadKill(self.pid, false)
+		self:LoadKills(self.pid, false)
 	end	
 
     if spawnUsed ~= nil and spawnUsed.cellDescription ~= nil then
@@ -1493,7 +1493,7 @@ function BasePlayer:SaveClientScriptGlobal(variables)
     stateHelper:SaveClientScriptGlobal(self, variables)
 end
 
-function BasePlayer:LoadKill(pid, forEveryone)
+function BasePlayer:LoadKills(pid, forEveryone)
     
     if self.data.kills == nil then
         self.data.kills = {}
