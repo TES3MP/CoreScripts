@@ -731,7 +731,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
-    elseif cmd[1] == "resetkills" and moderator and config.shareKill == true then
+    elseif cmd[1] == "resetkills" and moderator and config.shareKills == true then
 
         -- Set all currently recorded kills to 0 for connected players
         for refId, killCount in pairs(WorldInstance.data.kills) do
@@ -742,7 +742,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         WorldInstance:LoadKills(pid, true)
         tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
         
-    elseif cmd[1] == "resetkills" and config.shareKill == false then
+    elseif cmd[1] == "resetkills" and config.shareKills == false then
 	
 		if Players[pid].data.kills == nil then
 			Players[pid].data.kills = {}
