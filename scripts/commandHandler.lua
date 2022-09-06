@@ -731,7 +731,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
-    elseif cmd[1] == "resetkills" and moderator then
+    elseif cmd[1] == "resetkills" and moderator and config.shareKill == true then
 
         -- Set all currently recorded kills to 0 for connected players
         for refId, killCount in pairs(WorldInstance.data.kills) do
