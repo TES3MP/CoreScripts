@@ -189,7 +189,23 @@ eventHandler.InitializeDefaultHandlers = function()
         tes3mp.ClearKillChanges()
 		
 		if config.shareKills == true then
-		
+
+			for uniqueIndex, actor in pairs(actors) do
+				if WorldInstance.data.kills[actor.refId] == nil then
+					WorldInstance.data.kills[actor.refId] = 0
+				end
+
+				WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
+				WorldInstance:QuicksaveToDrive()
+				tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
+
+				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
+			end
+
+			tes3mp.SendWorldKillCount(pid, true)
+
+		else
+			
 			if Players[pid].data.kills == nil then
 				Players[pid].data.kills = {}
 			end
