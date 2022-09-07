@@ -226,7 +226,7 @@ eventHandler.InitializeDefaultHandlers = function()
 				
 				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
 				
-				for alliedName, slot in pairs(Players[pid].data.alliedPlayers) do	
+				for _, alliedName in ipairs(self.data.alliedPlayers) do	
 				
 					local alliedPid = logicHandler.GetPlayerByName(alliedName).pid
 					
@@ -254,7 +254,7 @@ eventHandler.InitializeDefaultHandlers = function()
 			
 			for targetIndex, actor in pairs(actors) do
 			
-				for targetName, slot in pairs(sendKills[targetIndex].playersName) do
+				for _, targetName in pairs(sendKills[targetIndex].playersName) do
 				
 					local targetPid = logicHandler.GetPlayerByName(targetName).pid
 					
