@@ -398,7 +398,7 @@ eventHandler.InitializeDefaultHandlers = function()
 						sendKills[uniqueIndex] = {timestamp = os.time(), playersName = {}}	
 					else
 						if os.time() - sendKills[uniqueIndex].timestamp >= 600 then
-							sendKills[uniqueIndex] = nil
+							sendKills[uniqueIndex] = {timestamp = os.time(), playersName = {}}
 						else
 							sendKills[uniqueIndex].timestamp = os.time()
 						end
