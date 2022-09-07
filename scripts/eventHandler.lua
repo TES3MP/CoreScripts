@@ -254,7 +254,7 @@ eventHandler.InitializeDefaultHandlers = function()
 			
 			for targetIndex, actor in pairs(actors) do
 			
-				for _, targetName in pairs(sendKills[targetIndex].playersName) do
+				for _, targetName in ipairs(sendKills[targetIndex].playersName) do
 				
 					local targetPid = logicHandler.GetPlayerByName(targetName).pid
 					
