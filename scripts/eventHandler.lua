@@ -4,6 +4,8 @@ commandHandler = require("commandHandler")
 
 local consoleKickMessage = " has been kicked for using the console despite not having the permission to do so.\n"
 
+local sendKills = {}
+
 eventHandler.InitializeDefaultValidators = function()
 
     -- Don't validate object deletions for currently unusable containers (such as
@@ -188,39 +190,67 @@ eventHandler.InitializeDefaultHandlers = function()
 		
 		if config.shareKills == true then
 		
-			for uniqueIndex, actor in pairs(actors) do
-				if WorldInstance.data.kills[actor.refId] == nil then
-					WorldInstance.data.kills[actor.refId] = 0
-				end
-
-				WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
-				WorldInstance:QuicksaveToDrive()
-				tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
-
-				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
-			end
-			
-			tes3mp.SendWorldKillCount(pid, true)
-			
-		else
-		
 			if Players[pid].data.kills == nil then
 				Players[pid].data.kills = {}
 			end
-			
+
 			for uniqueIndex, actor in pairs(actors) do
+			
 				if Players[pid].data.kills[actor.refId] == nil then
 					Players[pid].data.kills[actor.refId] = 0
 				end
 
 				Players[pid].data.kills[actor.refId] = Players[pid].data.kills[actor.refId] + 1
 				Players[pid]:QuicksaveToDrive()
+				
+				if sendKills[uniqueIndex] == nil then
+					sendKills[uniqueIndex] = {timestamp = os.time(), playersName = {}}
+				end
+				tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[pid].accountName))
+				
 				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
+				
+				for alliedName, slot in pairs(Players[pid].data.alliedPlayers) do	
+				
+					local alliedPid = logicHandler.GetPlayerByName(alliedName).pid
+					
+					if Players[alliedPid] ~= nil and Players[alliedPid]:IsLoggedIn() then	
+					
+						if Players[alliedPid].data.kills == nil then
+							Players[alliedPid].data.kills = {}
+						end
+						
+						if Players[alliedPid].data.kills[actor.refId] == nil then
+							Players[alliedPid].data.kills[actor.refId] = 0
+						end
+						
+						Players[alliedPid].data.kills[actor.refId] = Players[alliedPid].data.kills[actor.refId] + 1
+						Players[alliedPid]:QuicksaveToDrive()
+						tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[alliedPid].accountName))
+						
+					end	
+					
+				end
 
 				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
+				
 			end		
 			
-			tes3mp.SendWorldKillCount(pid, false)
+			for targetIndex, actor in pairs(actors) do
+			
+				for targetName, slot in pairs(sendKills[targetIndex].playersName) do
+				
+					local targetPid = logicHandler.GetPlayerByName(targetName).pid
+					
+					if Players[targetPid] ~= nil and Players[targetPid]:IsLoggedIn() then
+						tes3mp.SendWorldKillCount(targetPid, false)
+					end
+					
+				end
+				
+				sendKills[targetIndex] = nil
+				
+			end
 			
 		end
 
@@ -345,6 +375,23 @@ eventHandler.InitializeDefaultHandlers = function()
 
             if object.hit.success == true then
                 debugMessage = debugMessage .. " has successfully hit "
+				
+				if config.shareKills == false and object.hittingPid ~= nil then
+				
+					if sendKills[uniqueIndex] == nil then
+						sendKills[uniqueIndex] = {timestamp = os.time(), playersName = {}}	
+					else
+						if os.time() - sendKills[uniqueIndex].timestamp >= 600 then
+							sendKills[uniqueIndex] = nil
+						else
+							sendKills[uniqueIndex].timestamp = os.time()
+						end
+					end
+					
+					tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[object.hittingPid].accountName))
+					
+				end
+				
             else
                 debugMessage = debugMessage .. " has missed hitting "
             end
