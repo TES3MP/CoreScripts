@@ -115,6 +115,9 @@ config.shareMapExploration = false
 -- Whether ingame videos should be played for other players when triggered by one player
 config.shareVideos = true
 
+-- Whether mobs and npcs in the game should be shared for all players when killed
+config.shareKills = true
+
 -- Which clientside script records should be blanked out so they are not run
 -- Note: By default, the original character generation scripts are included
 --       because they're not suitable for multiplayer
