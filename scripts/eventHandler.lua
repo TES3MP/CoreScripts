@@ -586,12 +586,12 @@ eventHandler.OnPlayerDisconnect = function(pid)
                 if Players[pid].data.location.regionName ~= nil then
                     logicHandler.UnloadRegionForPlayer(pid, Players[pid].data.location.regionName)
                 end
-
-                Players[pid]:Destroy()
-                Players[pid] = nil
             end
             
             customEventHooks.triggerHandlers("OnPlayerDisconnect", eventStatus, {pid})
+            
+            Players[pid]:Destroy()
+            Players[pid] = nil
         end
     end
 
