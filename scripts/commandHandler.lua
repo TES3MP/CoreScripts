@@ -654,7 +654,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         elseif refId ~= nil and cmd[3] == "off" then
             collisionState = false
         else
-            Players[pid]:Message("Use /addcollision <refId> on/off\n")
+            Players[pid]:Message("Use /overridecollision <refId> on/off\n")
             return false
         end
 
