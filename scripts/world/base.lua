@@ -283,7 +283,7 @@ function BaseWorld:LoadTime(pid, forEveryone)
 
     if self.data.time.month < 1 then
         self.data.time.month = 1
-    else if self.data.time.month > 12 then
+    elseif self.data.time.month > 12 then
         self.data.time.month = 12
     end
 
