@@ -226,27 +226,31 @@ eventHandler.InitializeDefaultHandlers = function()
 				
 				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
 				
-				for _, alliedName in ipairs(Players[pid].data.alliedPlayers) do	
-				
-					local alliedPid = logicHandler.GetPlayerByName(alliedName).pid
-					
-					if Players[alliedPid] ~= nil and Players[alliedPid]:IsLoggedIn() then	
-					
-						if Players[alliedPid].data.kills == nil then
-							Players[alliedPid].data.kills = {}
-						end
-						
-						if Players[alliedPid].data.kills[actor.refId] == nil then
-							Players[alliedPid].data.kills[actor.refId] = 0
-						end
-						
-						Players[alliedPid].data.kills[actor.refId] = Players[alliedPid].data.kills[actor.refId] + 1
-						Players[alliedPid]:QuicksaveToDrive()
-						tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[alliedPid].accountName))
-						
-					end	
-					
-				end
+				for _, alliedName in ipairs(Players[pid].data.alliedPlayers) do    
+
+                    if logicHandler.GetPlayerByName(alliedName) then
+                    
+                        local alliedPid = logicHandler.GetPlayerByName(alliedName).pid
+                        
+                        if Players[alliedPid] ~= nil and Players[alliedPid]:IsLoggedIn() then    
+                        
+                            if Players[alliedPid].data.kills == nil then
+                                Players[alliedPid].data.kills = {}
+                            end
+                            
+                            if Players[alliedPid].data.kills[actor.refId] == nil then
+                                Players[alliedPid].data.kills[actor.refId] = 0
+                            end
+                            
+                            Players[alliedPid].data.kills[actor.refId] = Players[alliedPid].data.kills[actor.refId] + 1
+                            Players[alliedPid]:QuicksaveToDrive()
+                            tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[alliedPid].accountName))
+                            
+                        end
+                        
+                    end
+                    
+                end
 
 				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
 				
