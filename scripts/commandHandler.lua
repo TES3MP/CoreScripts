@@ -875,15 +875,20 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif cmd[1] == "speech" or cmd[1] == "s" then
 
         local isValid = false
+        local race = string.lower(Players[pid].data.character.race)
 
-        if cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
-            isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
-        end
+        if speechCollections[race] then
+            if cmd[2] ~= nil and cmd[3] ~= nil and type(tonumber(cmd[3])) == "number" then
+                isValid = speechHelper.PlaySpeech(pid, cmd[2], tonumber(cmd[3]))
+            end
 
-        if not isValid then
-            local validList = speechHelper.GetPrintableValidListForPid(pid)
-            tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
-                .. validList .. "\n", false)
+            if not isValid then
+                local validList = speechHelper.GetPrintableValidListForPid(pid)
+                tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
+                    .. validList .. "\n", false)
+            end
+        else
+            tes3mp.SendMessage(pid, "There are no speech lines for your race.")
         end
 
     elseif cmd[1] == "confiscate" and moderator then
