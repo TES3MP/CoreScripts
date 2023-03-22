@@ -1079,7 +1079,7 @@ function commandHandler.StoreRecord(pid, cmd)
                 Players[pid]:Message("Please provide the minimum number of arguments required.\n")
                 return
             else
-                inputConcatenation = tableHelper.concatenateFromIndex(cmd, 5)
+                inputConcatenation = tableHelper.concatenateFromIndex(cmd, 5, ",")
                 inputValues = tableHelper.getTableFromCommaSplit(inputConcatenation)
             end
 
