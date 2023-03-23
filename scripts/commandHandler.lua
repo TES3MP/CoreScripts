@@ -691,9 +691,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             if package.loaded[scriptName] then
                 
                 if type(package.loaded[scriptName]) ~= "table" then
-					Players[pid]:Message(scriptName .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n")
-					return
-				end
+		    Players[pid]:Message(scriptName .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n")
+		    return
+		end
                 
                 Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
                 wasLoaded = true
