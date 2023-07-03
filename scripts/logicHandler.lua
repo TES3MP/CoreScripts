@@ -693,9 +693,7 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
             end
         elseif Players[pid] ~= nil then
             table.insert(Players[pid].consoleCommandsQueued, consoleCommand)
-        end
-    elseif Players[pid] ~= nil then
-        table.insert(Players[pid].consoleCommandsQueued, consoleCommand)
+	end
     end
 
     tes3mp.SendConsoleCommand(forEveryone, false)
