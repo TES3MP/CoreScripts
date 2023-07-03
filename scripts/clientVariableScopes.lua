@@ -299,7 +299,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "TR_m3_AT_SilentNight_stage", "TR_m3_AT_SilentNight_Rat", "TR_m3_q_TheRiftDral", "TR_m3_q_TheRiftTilresi", "TR_m3_OE_MG_HallOpen", "TR_m3_Aim_ShipSneak", 
                 "TR_m3_TT_ProverbCounter", "TR_m3_TT_Lloris4Indoril", "TR_m3_TT_Lloris4Hlaalu", "TR_m3_VysAssanudCheck", "TR_m3_TT_LatestRumorATGlobal", 
                 "TR_m3_Kha_SY_convinced", "TR_m3_Kha_SY_final", "TR_m3_TT_RIP_garvs_heresy", "TR_m3_TT_RIP_refusecount", "TR_m4_TJ_Court_State", "TR_m2_NisirelConfronted",
-                "TR_m3_q_A3_Seen_Basement", "TR_m3_OE_elysanadiamondstole", "TR_m3_OE_KtD_Tur", "TR_m3_OE_KtD_Gul", "TR_m3_OE_KtD_Mur", "TR_m3_OE_KtD_Ema",
+                "TR_m3_q_A3_Seen_Basement", "TR_m3_OE_elysanadiamondstole", "TR_m3_OE_KtD_Tur", "TR_m3_OE_KtD_Gul", "TR_m3_OE_KtD_Mur", "TR_m3_OE_KtD_Ema", "TR_m3_OE_StendarrIdolsOutlawed"
                 
             },
             kills = {
@@ -329,7 +329,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 -- both
                 "TR_m3_OE_EECq1solve", "TR_m3_OE_EECq2solve",
                 -- events
-                "TR_m3_OE_StendarrIdolsOutlawed", "TR_Thirr_Conflict_Score", "TR_Thirr_Conflict_Heat", "TR_m3_TT_g_ritstart"
+                "TR_Thirr_Conflict_Score", "TR_Thirr_Conflict_Heat", "TR_m3_TT_g_ritstart"
             },
             unknown = {
                 

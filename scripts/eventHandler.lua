@@ -218,60 +218,55 @@ eventHandler.InitializeDefaultHandlers = function()
 
 				Players[pid].data.kills[actor.refId] = Players[pid].data.kills[actor.refId] + 1
 				Players[pid]:QuicksaveToDrive()
-				
+
 				if sendKills[uniqueIndex] == nil then
 					sendKills[uniqueIndex] = {timestamp = os.time(), playersName = {}}
 				end
 				tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[pid].accountName))
-				
+
 				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
-				
 				for _, alliedName in ipairs(Players[pid].data.alliedPlayers) do	
 
 					if logicHandler.GetPlayerByName(alliedName) then
-					
 						local alliedPid = logicHandler.GetPlayerByName(alliedName).pid
-						
-						if Players[alliedPid] ~= nil and Players[alliedPid]:IsLoggedIn() then	
-						
+						if Players[alliedPid] ~= nil and Players[alliedPid]:IsLoggedIn() then
+
 							if Players[alliedPid].data.kills == nil then
 								Players[alliedPid].data.kills = {}
 							end
-							
+
 							if Players[alliedPid].data.kills[actor.refId] == nil then
 								Players[alliedPid].data.kills[actor.refId] = 0
 							end
-							
+
 							Players[alliedPid].data.kills[actor.refId] = Players[alliedPid].data.kills[actor.refId] + 1
 							Players[alliedPid]:QuicksaveToDrive()
 							tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[alliedPid].accountName))
-							
+
 						end
-						
 					end
-					
 				end
 
 				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
-				
-			end		
-			
+
+			end
+
 			for targetIndex, actor in pairs(actors) do
-			
+
 				for _, targetName in ipairs(sendKills[targetIndex].playersName) do
-				
+
 					local targetPid = logicHandler.GetPlayerByName(targetName).pid
-					
+
 					if Players[targetPid] ~= nil and Players[targetPid]:IsLoggedIn() then
 						tes3mp.SendWorldKillCount(targetPid, false)
 					end
-					
+
 				end
-				
+
 				sendKills[targetIndex] = nil
-				
+
 			end
-			
+
 		end
 
         cell:RequestContainers(pid, tableHelper.getArrayFromIndexes(actors))

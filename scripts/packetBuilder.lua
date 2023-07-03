@@ -174,6 +174,20 @@ packetBuilder.AddDoorState = function(uniqueIndex, objectData)
     tes3mp.AddObject()
 end
 
+packetBuilder.AddDoorDestination = function(uniqueIndex, objectData)
+
+    local splitIndex = uniqueIndex:split("-")
+    tes3mp.SetObjectRefNum(splitIndex[1])
+    tes3mp.SetObjectMpNum(splitIndex[2])
+    tes3mp.SetObjectRefId(objectData.refId)
+    local destination = objectData.doorDestination
+    tes3mp.SetObjectDoorTeleportState(destination.teleport)
+    tes3mp.SetObjectDoorDestinationCell(destination.cell)
+    tes3mp.SetObjectDoorDestinationPosition(destination.posX, destination.posY, destination.posZ)
+    tes3mp.SetObjectDoorDestinationRotation(destination.rotX, destination.rotZ)
+    tes3mp.AddObject()
+end
+
 packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
