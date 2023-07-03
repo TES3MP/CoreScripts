@@ -19,6 +19,15 @@ packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
         for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
 
             if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
+                if spellInstanceValues.caster ~= nil and spellInstanceValues.caster.playerName ~= nil then
+                    local casterName = spellInstanceValues.caster.playerName
+
+                    if logicHandler.IsPlayerNameLoggedIn(casterName) then
+                        local casterPid = logicHandler.GetPidByName(casterName)
+                        tes3mp.SetSpellsActiveCasterPid(casterPid)
+                    end
+                end
+
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
                     if effectTable.timeLeft > 0 then
@@ -140,7 +149,14 @@ packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
     tes3mp.SetObjectRefNum(splitIndex[1])
     tes3mp.SetObjectMpNum(splitIndex[2])
     if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectDisarmState(true)
+    if objectData.trapSpellId ~= nil then tes3mp.SetObjectTrapSpellId(objectData.trapSpellId) end
+    
+    if objectData.trapAction ~= nil then
+        tes3mp.SetObjectTrapAction(objectData.trapAction)
+    else
+        tes3mp.SetObjectTrapAction(enumerations.trap.SET_TRAP)
+    end
+    
     tes3mp.AddObject()
 end
 

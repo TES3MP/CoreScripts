@@ -415,6 +415,49 @@ end
 
 customCommandHooks.registerCommand("overridedestination", defaultCommands.overrideDestination)
 
+defaultCommands.setTrap = function(pid, cmd)
+    local isModerator, isAdmin, isServerOwner = getRanks(pid)
+
+    if Players[pid] == nil then
+        return
+    end
+
+    if isModerator == false then
+        invalidCommand(pid)
+        return
+    end
+
+    if cmd[2] == nil or cmd[3] == nil then
+        tes3mp.SendMessage(pid, 'Invalid inputs! Use /settrap <uniqueIndex> <spellId>\n')
+        return
+    end
+
+    -- TODO: Make it possible to find the uniqueIndex in the cell it's actually in
+    --       instead of using the current cell
+    local currentCellDescription = Players[pid].data.location.cell
+    local currentCell = LoadedCells[currentCellDescription]
+
+    if currentCell == nil then
+        return
+    end
+
+    local uniqueIndex = cmd[2]
+    local spellId = tableHelper.concatenateFromIndex(cmd, 3)
+    -- Get rid of quotation marks
+    spellId = string.gsub(spellId, '"', '')
+
+    tes3mp.SendMessage(pid, "Setting spell " .. spellId .. " as trap for object " .. uniqueIndex .. 
+        " in current cell " .. currentCellDescription .. "\n")
+
+    currentCell:InitializeObjectData(uniqueIndex, "")
+    tableHelper.insertValueIfMissing(currentCell.data.packets.trap, uniqueIndex)
+    currentCell.data.objectData[uniqueIndex].trapSpellId = spellId
+    objects = { currentCell.data.objectData[uniqueIndex] }
+    currentCell:LoadObjectsByPacketType("ObjectTrap", pid, currentCell.data.objectData, {uniqueIndex}, true)
+end
+
+customCommandHooks.registerCommand("settrap", defaultCommands.setTrap)
+
 defaultCommands.runStartup = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
@@ -467,7 +510,7 @@ defaultCommands.setPlayerModel = function(pid, cmd)
 
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         if cmd[3] == nil then
-            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> "Model name"\n')
+            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> <modelFile>\n')
             return
         end
 

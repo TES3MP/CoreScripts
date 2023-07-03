@@ -170,7 +170,7 @@ function OnServerInit()
 
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerInit\"")
 
-    local expectedVersionPrefix = "0.8.1"
+    local expectedVersionPrefix = "0.8.2"
     local serverVersion = tes3mp.GetServerVersion()
 
     if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
@@ -271,12 +271,15 @@ function OnServerPostInit()
             end
         elseif config.respawnAtTribunalTemple == true then
             respawnCell = "nearest Tribunal temple"
-        else
+        elseif type(config.defaultRespawn) == "table" then
             respawnCell = config.defaultRespawn.cellDescription
         end
 
-        tes3mp.SetRuleString("respawnCell", respawnCell)
+        if respawnCell ~= nil then
+            tes3mp.SetRuleString("respawnCell", respawnCell)
+        end
     end
+
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
 end
 

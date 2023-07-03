@@ -191,6 +191,17 @@ logicHandler.GetPlayerByName = function(targetName)
     end
 end
 
+-- Get the pid of an online player from their name
+logicHandler.GetPidByName = function(targetName)
+
+    for iteratorPid, player in pairs(Players) do
+
+        if string.lower(targetName) == string.lower(player.accountName) then
+            return iteratorPid
+        end
+    end
+end
+
 logicHandler.BanPlayer = function(pid, targetName)
 
     -- Ban players based on their account names, i.e. based on the filenames used for their JSON files that

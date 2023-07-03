@@ -373,7 +373,9 @@ packetReader.GetObjectPacketTables = function(packetType)
                 local soundId = tes3mp.GetObjectSoundId(packetIndex)
 
                 if isObjectPlayer then
-                    player.soundId = soundId
+                    if player ~= nil then
+                        player.soundId = soundId
+                    end
                 else
                     object.soundId = soundId
                 end
@@ -386,8 +388,10 @@ packetReader.GetObjectPacketTables = function(packetType)
                     local activatingPid = tes3mp.GetObjectActivatingPid(packetIndex)
 
                     if isObjectPlayer then
-                        player.activatingPid = activatingPid
-                        player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
+                        if player ~= nil then
+                            player.activatingPid = activatingPid
+                            player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
+                        end
                     else
                         object.activatingPid = activatingPid
                     end
@@ -397,8 +401,10 @@ packetReader.GetObjectPacketTables = function(packetType)
                         "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
 
                     if isObjectPlayer then
-                        player.activatingRefId = activatingRefId
-                        player.activatingUniqueIndex = activatingUniqueIndex
+                        if player ~= nil then
+                            player.activatingRefId = activatingRefId
+                            player.activatingUniqueIndex = activatingUniqueIndex
+                        end
                     else
                         object.activatingRefId = activatingRefId
                         object.activatingUniqueIndex = activatingUniqueIndex
@@ -415,7 +421,9 @@ packetReader.GetObjectPacketTables = function(packetType)
                 }
 
                 if isObjectPlayer then
-                    player.hit = hit
+                    if player ~= nil then
+                        player.hit = hit
+                    end
                 else
                     object.hit = hit
                 end
@@ -426,7 +434,11 @@ packetReader.GetObjectPacketTables = function(packetType)
                     local hittingPid = tes3mp.GetObjectHittingPid(packetIndex)
 
                     if isObjectPlayer then
-                        player.hittingPid = hittingPid
+                        if player ~= nil then
+                            player.hittingPid = hittingPid
+                            player.hittingRefId = nil
+                            player.hittingUniqueIndex = nil
+                        end
                     else
                         object.hittingPid = hittingPid
                     end
@@ -436,8 +448,11 @@ packetReader.GetObjectPacketTables = function(packetType)
                         "-" .. tes3mp.GetObjectHittingMpNum(packetIndex)
 
                     if isObjectPlayer then
-                        player.hittingRefId = hittingRefId
-                        player.hittingUniqueIndex = hittingUniqueIndex
+                        if player ~= nil then
+                            player.hittingPid = nil
+                            player.hittingRefId = hittingRefId
+                            player.hittingUniqueIndex = hittingUniqueIndex
+                        end
                     else
                         object.hittingRefId = hittingRefId
                         object.hittingUniqueIndex = hittingUniqueIndex
@@ -494,6 +509,9 @@ packetReader.GetObjectPacketTables = function(packetType)
 
             elseif packetType == "ObjectLock" then
                 object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+            elseif packetType == "ObjectTrap" then
+                object.trapSpellId = tes3mp.GetObjectTrapSpellId(packetIndex)
+                object.trapAction = tes3mp.GetObjectTrapAction(packetIndex)
             elseif packetType == "ObjectDialogueChoice" then
                 object.dialogueChoiceType = tes3mp.GetObjectDialogueChoiceType(packetIndex)
 
