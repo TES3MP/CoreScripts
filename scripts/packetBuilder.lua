@@ -296,57 +296,36 @@ packetBuilder.AddInventoryItemToRecord = function(item)
 end
 
 packetBuilder.AddRecordByType = function(id, record, storeType)
-
-    if storeType == "activator" then
-        packetBuilder.AddActivatorRecord(id, record)
-    elseif storeType == "apparatus" then
-        packetBuilder.AddApparatusRecord(id, record)
-    elseif storeType == "armor" then
-        packetBuilder.AddArmorRecord(id, record)
-    elseif storeType == "bodypart" then
-        packetBuilder.AddBodyPartRecord(id, record)
-    elseif storeType == "book" then
-        packetBuilder.AddBookRecord(id, record)
-    elseif storeType == "cell" then
-        packetBuilder.AddCellRecord(id, record)
-    elseif storeType == "clothing" then
-        packetBuilder.AddClothingRecord(id, record)
-    elseif storeType == "container" then
-        packetBuilder.AddContainerRecord(id, record)
-    elseif storeType == "creature" then
-        packetBuilder.AddCreatureRecord(id, record)
-    elseif storeType == "door" then
-        packetBuilder.AddDoorRecord(id, record)
-    elseif storeType == "enchantment" then
-        packetBuilder.AddEnchantmentRecord(id, record)
-    elseif storeType == "gamesetting" then
-        packetBuilder.AddGameSettingRecord(id, record)
-    elseif storeType == "ingredient" then
-        packetBuilder.AddIngredientRecord(id, record)
-    elseif storeType == "light" then
-        packetBuilder.AddLightRecord(id, record)
-    elseif storeType == "lockpick" then
-        packetBuilder.AddLockpickRecord(id, record)
-    elseif storeType == "miscellaneous" then
-        packetBuilder.AddMiscellaneousRecord(id, record)
-    elseif storeType == "npc" then
-        packetBuilder.AddNpcRecord(id, record)
-    elseif storeType == "potion" then
-        packetBuilder.AddPotionRecord(id, record)
-    elseif storeType == "probe" then
-        packetBuilder.AddProbeRecord(id, record)
-    elseif storeType == "repair" then
-        packetBuilder.AddRepairRecord(id, record)
-    elseif storeType == "script" then
-        packetBuilder.AddScriptRecord(id, record)
-    elseif storeType == "sound" then
-        packetBuilder.AddSoundRecord(id, record)
-    elseif storeType == "spell" then
-        packetBuilder.AddSpellRecord(id, record)
-    elseif storeType == "static" then
-        packetBuilder.AddStaticRecord(id, record)
-    elseif storeType == "weapon" then
-        packetBuilder.AddWeaponRecord(id, record)
+    local stype = {
+        ["activator"] = packetBuilder.AddActivatorRecord,
+        ["apparatus"] = packetBuilder.AddApparatusRecord,
+        ["armor"] = packetBuilder.AddArmorRecord,
+        ["bodypart"] = packetBuilder.AddBodyPartRecord,
+        ["book"] = packetBuilder.AddBookRecord,
+        ["cell"] = packetBuilder.AddCellRecord,
+        ["clothing"] = packetBuilder.AddClothingRecord,
+        ["container"] = packetBuilder.AddContainerRecord,
+        ["creature"] = packetBuilder.AddCreatureRecord,
+        ["door"] = packetBuilder.AddDoorRecord,
+        ["enchantment"] = packetBuilder.AddEnchantmentRecord,
+        ["gamesetting"] = packetBuilder.AddGameSettingRecord,
+        ["ingredient"] = packetBuilder.AddIngredientRecord,
+        ["light"] = packetBuilder.AddLightRecord,
+        ["lockpick"] = packetBuilder.AddLockpickRecord,
+        ["miscellaneous"] = packetBuilder.AddMiscellaneousRecord,
+        ["npc"] = packetBuilder.AddNpcRecord,
+        ["potion"] = packetBuilder.AddPotionRecord,
+        ["probe"] = packetBuilder.AddProbeRecord,
+        ["repair"] = packetBuilder.AddRepairRecord,
+        ["script"] = packetBuilder.AddScriptRecord,
+        ["sound"] = packetBuilder.AddSoundRecord,
+        ["spell"] = packetBuilder.AddSpellRecord,
+        ["static"] = packetBuilder.AddStaticRecord,
+        ["weapon"] = packetBuilder.AddWeaponRecord,
+    }
+    
+    if stype[storeType] then
+        stype[storeType](id, record)
     end
 end
 
