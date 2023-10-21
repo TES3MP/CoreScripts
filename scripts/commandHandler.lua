@@ -737,7 +737,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
-    elseif cmd[1] == "resetkills" and moderator then
+    elseif cmd[1] == "resetkills" and moderator and config.shareKills == true then
 
         -- Set all currently recorded kills to 0 for connected players
         for refId, killCount in pairs(WorldInstance.data.kills) do
@@ -747,7 +747,21 @@ function commandHandler.ProcessCommand(pid, cmd)
         WorldInstance:QuicksaveToDrive()
         WorldInstance:LoadKills(pid, true)
         tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
+        
+    elseif cmd[1] == "resetkills" and config.shareKills == false then
+	
+		if Players[pid].data.kills == nil then
+			Players[pid].data.kills = {}
+		end
+        -- Set all currently recorded kills to 0 for players
+        for refId, killCount in pairs(Players[pid].data.kills) do
+            Players[pid].data.kills[refId] = 0
+        end
 
+        Players[pid]:QuicksaveToDrive()
+        Players[pid]:LoadKills(pid, false)
+        tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", false)
+        
     elseif cmd[1] == "suicide" then
         if config.allowSuicideCommand == true then
             tes3mp.SetHealthCurrent(pid, 0)
