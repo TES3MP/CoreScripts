@@ -1659,10 +1659,17 @@ eventHandler.OnVideoPlay = function(pid)
         tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
-        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
+        local consoleCommand = tes3mp.GetObjectListConsoleCommand()
+        local hasConsoleVideoQueued = tableHelper.containsValue(Players[pid].consoleVideosQueued, consoleCommand)
+        
+        if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) and not hasConsoleVideoQueued then
             tes3mp.Kick(pid)
             tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
+        end
+
+        if hasConsoleVideoQueued then
+            Players[pid].consoleVideosQueued = {}
         end
 
         if config.shareVideos == true then
