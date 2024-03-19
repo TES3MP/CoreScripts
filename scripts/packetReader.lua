@@ -416,6 +416,9 @@ packetReader.GetObjectPacketTables = function(packetType)
 
                 if isObjectPlayer then
                     player.hit = hit
+		    player.hittingPid = nil			
+		    player.hittingRefId = nil
+		    player.hittingUniqueIndex = nil	
                 else
                     object.hit = hit
                 end
