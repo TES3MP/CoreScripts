@@ -82,7 +82,7 @@ Menus["default crafting pillow hammock"] = {
                 },
                 {
                     menuHelper.effects.removeItem({"misc_clothbolt_01", "misc_clothbolt_02", "misc_clothbolt_03"}, 1),
-                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 15)
+                    menuHelper.effects.giveItem("misc_uni_pillow_02", 15)
                 })
             }
         },
@@ -95,7 +95,7 @@ Menus["default crafting pillow hammock"] = {
                 },
                 {
                     menuHelper.effects.removeItem({"misc_clothbolt_01", "misc_clothbolt_02", "misc_clothbolt_03"}, 4),
-                    menuHelper.effects.giveItem("Misc_Uni_Pillow_02", 60)
+                    menuHelper.effects.giveItem("misc_uni_pillow_02", 60)
                 })
             }
         },
