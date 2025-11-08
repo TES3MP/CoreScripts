@@ -331,6 +331,7 @@ function BasePlayer:EndCharGen()
     self:SaveClass(packetReader.GetPlayerPacketTables(self.pid, "PlayerClass"))
     self:SaveStatsDynamic(packetReader.GetPlayerPacketTables(self.pid, "PlayerStatsDynamic"))
     self:SaveEquipment(packetReader.GetPlayerPacketTables(self.pid, "PlayerEquipment"))
+    self:SaveShapeshift(packetReader.GetPlayerPacketTables(self.pid, "PlayerShapeshift"))
     self:SaveIpAddress()
     self:CreateAccount()
 
