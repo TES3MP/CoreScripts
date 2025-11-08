@@ -839,7 +839,7 @@ function BasePlayer:SaveAttributes(playerPacket)
             local message = "Your base " .. attributeName .. " has exceeded the maximum allowed value " ..
                 "and been reset to its last recorded one.\n"
             tes3mp.SendMessage(self.pid, message)
-        elseif (attribute.base + attribute.modifier) > maxAttributeValue then
+        elseif (attribute.base + attribute.modifier) > maxAttributeValue and not config.ignoreModifierWithMaxAttribute then
             tes3mp.ClearAttributeModifier(self.pid, attributeId)
             tes3mp.SendAttributes(self.pid)
 

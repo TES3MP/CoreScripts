@@ -193,6 +193,9 @@ config.forbiddenCells = { "ToddTest" }
 -- The maximum value that any attribute except Speed is allowed to have
 config.maxAttributeValue = 200
 
+-- Allow modifier values to bypass allowed attribute values
+config.ignoreModifierWithMaxAttribute = false
+
 -- The maximum value that Speed is allowed to have
 -- Note: Speed is given special treatment because of the Boots of Blinding Speed
 config.maxSpeedValue = 365
