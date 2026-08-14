@@ -1062,9 +1062,16 @@ function BasePlayer:SaveEquipment(playerPacket)
                     previousItem.refId, previousItem.charge, previousItem.enchantmentCharge)
 
                 if inventoryIndex ~= nil then
-                    self.data.inventory[inventoryIndex].count = newCount
-                    self.data.inventory[inventoryIndex].charge = newCharge
-                    self.data.inventory[inventoryIndex].enchantmentCharge = newEnchantmentCharge
+                    -- Players can equip a single lockpick/probe from a stack in their inventory
+                    -- Needs to be separated from the stack when durability changes
+                    if previousItem.charge ~= newCharge and self.data.inventory[inventoryIndex].count > 1 then
+                        self.data.inventory[inventoryIndex].count = self.data.inventory[inventoryIndex].count - 1
+                        table.insert(self.data.inventory, tableHelper.deepCopy(equipmentItem))
+                    else
+                        self.data.inventory[inventoryIndex].count = newCount
+                        self.data.inventory[inventoryIndex].charge = newCharge
+                        self.data.inventory[inventoryIndex].enchantmentCharge = newEnchantmentCharge
+                    end
                 end
             end
 
